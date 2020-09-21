@@ -350,7 +350,8 @@ public class DDMFormAdminDisplayContext {
 		throws PortalException {
 
 		DDMFormViewFormInstanceRecordDisplayContext
-			formViewRecordDisplayContext = getFormViewRecordDisplayContext();
+			formViewRecordDisplayContext = 
+			getFormViewRecordDisplayContext();
 
 		return formViewRecordDisplayContext.getDDMFormHTML(
 			renderRequest, readOnly);
