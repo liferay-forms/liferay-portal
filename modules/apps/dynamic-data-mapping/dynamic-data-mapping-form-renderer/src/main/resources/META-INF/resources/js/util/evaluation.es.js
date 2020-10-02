@@ -128,6 +128,12 @@ export const mergePages = (
 					) || {};
 			}
 
+			let value = sourceField.value;
+
+			if (field.valueChanged) {
+				value = field.value;
+			}
+
 			let newField = {
 				...sourceField,
 				...field,
@@ -136,6 +142,7 @@ export const mergePages = (
 					sourceField.displayErrors || field.fieldName === fieldName,
 				editingLanguageId,
 				valid: field.valid !== false,
+				value: value,
 			};
 
 			if (newField.type === 'options') {
