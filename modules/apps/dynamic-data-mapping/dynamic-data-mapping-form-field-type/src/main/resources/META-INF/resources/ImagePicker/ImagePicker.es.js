@@ -33,6 +33,8 @@ const ImagePicker = ({
 	onFieldChanged,
 	portletNamespace,
 	readOnly,
+	required,
+	invalid,
 }) => {
 	const [imageValues, setImageValues] = useSyncValue(inputValue);
 	const [modalVisible, setModalVisible] = useState(false);
@@ -117,6 +119,10 @@ const ImagePicker = ({
 							id={id ? id : name}
 							type="text"
 							value={imageValues.title}
+							aria-labelledby={`${name}_fieldLabel`}
+							aria-errormessage={name + '_fieldError'}
+							aria-required={required}
+							aria-invalid={invalid}
 						/>
 					</ClayInput.GroupItem>
 
@@ -126,6 +132,7 @@ const ImagePicker = ({
 							displayType="secondary"
 							onClick={handleItemSelectorTriggerClick}
 							type="button"
+							aria-labelledby={`${name}_selectLabel ${name}_fieldLabel`}
 						>
 							{Liferay.Language.get('select')}
 						</ClayButton>
@@ -152,6 +159,7 @@ const ImagePicker = ({
 									)
 								}
 								type="button"
+								aria-labelledby={`${name}_clearLabel ${name}_fieldLabel`}
 							>
 								{Liferay.Language.get('clear')}
 							</ClayButton>
@@ -217,6 +225,23 @@ const ImagePicker = ({
 					</>
 				)
 			)}
+
+			<span id={`${name}_clearLabel`} className="sr-only">
+				{` ${Liferay.Language.get('clear')} `}
+			</span>
+			<span id={`${name}_selectLabel`} className="sr-only">
+				{` ${Liferay.Language.get('select')} `}
+			</span>
+			<span id={`${name}_selectedLabel`} className="sr-only">
+				{` ${Liferay.Language.get('selected')} `}
+			</span>
+			<span id={`${name}_imageLabel`} className="sr-only">
+				{` ${Liferay.Language.get('image')} `}
+			</span>
+			<span id={`${name}_imageTitleName`} className="sr-only">
+				{` ${imageValues.title || ''} `}
+			</span>
+
 		</>
 	);
 };
@@ -264,6 +289,10 @@ const Main = ({
 		return null;
 	};
 
+	const getInputValue = transformValue(inputValue) ?? transformValue(value) ?? defaultValue;
+
+	const addLabelsIds = getInputValue.title ? [`${name}_imageLabel`,`${name}_imageTitleName`,`${name}_selectedLabel`] : [];
+
 	return (
 		<FieldBase
 			{...otherProps}
@@ -273,14 +302,11 @@ const Main = ({
 			name={name}
 			readOnly={isSignedIn ? readOnly : true}
 			valid={isSignedIn ? valid : false}
+			addLabelsIds={addLabelsIds}
 		>
 			<ImagePicker
 				id={id}
-				inputValue={
-					transformValue(inputValue) ??
-					transformValue(value) ??
-					defaultValue
-				}
+				inputValue={getInputValue}
 				itemSelectorURL={itemSelectorURL}
 				name={name}
 				onClearClick={({event, ...data}) => onChange(event, data)}
@@ -290,6 +316,8 @@ const Main = ({
 				onFieldChanged={({event, ...data}) => onChange(event, data)}
 				portletNamespace={portletNamespace}
 				readOnly={isSignedIn ? readOnly : true}
+				required={otherProps.required}
+				invalid={!otherProps.valid}
 			/>
 		</FieldBase>
 	);

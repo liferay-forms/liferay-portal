@@ -40,6 +40,8 @@ const ClayColorPickerWithState = ({
 	onValueChange,
 	readOnly,
 	spritemap,
+	required,
+	invalid,
 }) => {
 	const [customColors, setCustoms] = useState(DEFAULT_COLORS);
 
@@ -70,6 +72,11 @@ const ClayColorPickerWithState = ({
 			}}
 			spritemap={spritemap}
 			value={color}
+			id={name}
+			aria-labelledby={`${name}_fieldLabel`}
+			aria-errormessage={name + '_fieldError'}
+			aria-required={required}
+			aria-invalid={invalid}
 		/>
 	);
 };
@@ -99,6 +106,8 @@ const ColorPicker = ({
 			onValueChange={(value) => onChange({}, value)}
 			readOnly={readOnly}
 			spritemap={spritemap}
+			required={otherProps.required || false}
+			invalid={!otherProps.valid || false}
 		/>
 	</FieldBase>
 );

@@ -55,20 +55,31 @@ const Radio = ({
 		<FieldBase {...otherProps} name={name} readOnly={disabled}>
 			<div className="ddm-radio" onBlur={onBlur} onFocus={onFocus}>
 				{options.map((option) => (
-					<ClayRadio
-						checked={currentValue === option.value}
-						disabled={disabled}
-						inline={inline}
-						key={option.value}
-						label={option.label}
-						name={name}
-						onChange={(event) => {
-							setCurrentValue(option.value);
+					<>
+						<ClayRadio
+							checked={currentValue === option.value}
+							disabled={disabled}
+							inline={inline}
+							key={option.value}
+							label={option.label}
+							name={name}
+							onChange={(event) => {
+								setCurrentValue(option.value);
 
-							onChange(event);
-						}}
-						value={option.value}
-					/>
+								onChange(event);
+							}}
+							value={option.value}
+							id={`${name}_${option.value}`}
+							aria-labelledby={`${name}_${option.value}_fieldLabel ${name}_fieldLabel`}
+							aria-errormessage={name + '_fieldError'}
+							aria-required={otherProps.required || false}
+							aria-invalid={!otherProps.valid || false}
+							aria-checked={currentValue === option.value}
+						/>
+						<span className="sr-only" id={`${name}_${option.value}_fieldLabel`}>
+							{option.label}
+						</span>
+					</>
 				))}
 			</div>
 		</FieldBase>

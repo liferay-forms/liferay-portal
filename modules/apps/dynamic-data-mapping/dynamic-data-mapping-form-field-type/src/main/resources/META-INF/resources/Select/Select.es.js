@@ -180,6 +180,9 @@ const DropdownItem = ({
 	onSelect,
 	option,
 	options,
+	name,
+	required,
+	valid,
 }) => (
 	<>
 		<ClayDropDown.Item
@@ -198,10 +201,11 @@ const DropdownItem = ({
 				});
 			}}
 			value={options.value}
+			aria-labelledby={`${name}_${option.value}_fieldLabel ${name}_fieldLabel`}
+			aria-selected={currentValue.includes(option.value)}
 		>
 			{multiple ? (
 				<ClayCheckbox
-					aria-label={option.label}
 					checked={currentValue.includes(option.value)}
 					data-testid={`labelItem-${option.value}`}
 					label={option.label}
@@ -213,11 +217,19 @@ const DropdownItem = ({
 							option,
 						});
 					}}
+					aria-labelledby={`${name}_${option.value}_fieldLabel ${name}_fieldLabel`}
+					aria-errormessage={name + '_fieldError'}
+					required={required}
+					invalid={!valid}
 				/>
 			) : (
 				option.label
 			)}
 		</ClayDropDown.Item>
+
+		<span id={`${name}_${option.value}_fieldLabel`} className="sr-only">
+			{option.label}
+		</span>
 
 		{option && option.separator && <ClayDropDown.Divider />}
 	</>
@@ -229,6 +241,9 @@ const DropdownList = ({
 	handleSelect,
 	multiple,
 	options,
+	name,
+	required,
+	valid,
 }) => (
 	<ClayDropDown.ItemList>
 		{options.map((option, index) => (
@@ -241,6 +256,9 @@ const DropdownList = ({
 				onSelect={handleSelect}
 				option={option}
 				options={options}
+				name={name}
+				required={required}
+				valid={valid}
 			/>
 		))}
 	</ClayDropDown.ItemList>
@@ -252,6 +270,9 @@ const DropdownListWithSearch = ({
 	handleSelect,
 	multiple,
 	options,
+	name,
+	required,
+	valid,
 }) => {
 	const [query, setQuery] = useState('');
 	const [filteredOptions, setFilteredOptions] = useState([]);
@@ -285,6 +306,9 @@ const DropdownListWithSearch = ({
 					handleSelect={handleSelect}
 					multiple={multiple}
 					options={filteredOptions}
+					name={name}
+					required={required}
+					valid={valid}
 				/>
 			) : (
 				<div className="dropdown-section text-muted">
@@ -303,6 +327,7 @@ const Trigger = forwardRef(
 			onTriggerKeyDown,
 			readOnly,
 			value,
+			name,
 			...otherProps
 		},
 		ref
@@ -310,7 +335,7 @@ const Trigger = forwardRef(
 		return (
 			<>
 				{!readOnly && (
-					<HiddenSelectInput value={value} {...otherProps} />
+					<HiddenSelectInput value={value} name={name} {...otherProps} />
 				)}
 				<VisibleSelectInput
 					onClick={onTriggerClicked}
@@ -319,6 +344,7 @@ const Trigger = forwardRef(
 					readOnly={readOnly}
 					ref={ref}
 					value={value}
+					name={name}
 					{...otherProps}
 				/>
 			</>
@@ -335,6 +361,7 @@ const Select = ({
 	predefinedValue,
 	readOnly,
 	value,
+	name,
 	...otherProps
 }) => {
 	const menuElementRef = useRef(null);
@@ -457,6 +484,7 @@ const Select = ({
 				readOnly={readOnly}
 				ref={triggerElementRef}
 				value={currentValue}
+				name={name}
 				{...otherProps}
 			/>
 			<ClayDropDown.Menu
@@ -488,6 +516,9 @@ const Select = ({
 						handleSelect={handleSelect}
 						multiple={multiple}
 						options={options}
+						name={name}
+						required={otherProps.required}
+						valid={otherProps.valid}
 					/>
 				) : (
 					<DropdownList
@@ -496,6 +527,9 @@ const Select = ({
 						handleSelect={handleSelect}
 						multiple={multiple}
 						options={options}
+						name={name}
+						required={otherProps.required}
+						valid={otherProps.valid}
 					/>
 				)}
 			</ClayDropDown.Menu>

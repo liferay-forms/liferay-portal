@@ -47,6 +47,10 @@ const Password = ({
 				placeholder={placeholder}
 				type="password"
 				value={value}
+				aria-labelledby={`${name}_fieldLabel`}
+				aria-errormessage={name + '_fieldError'}
+				aria-required={required}
+				aria-invalid={invalid}
 			/>
 		</FieldBase>
 	);

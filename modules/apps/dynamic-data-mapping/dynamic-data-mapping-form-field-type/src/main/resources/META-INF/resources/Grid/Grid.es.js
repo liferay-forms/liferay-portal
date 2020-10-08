@@ -44,6 +44,9 @@ const TableBodyColumns = ({
 	onFocus,
 	row,
 	value,
+	name,
+	required,
+	invalid,
 }) => {
 	const columnLabel = Liferay.Language.get('column');
 	const rowLabel = Liferay.Language.get('row');
@@ -52,7 +55,6 @@ const TableBodyColumns = ({
 		return (
 			<ClayTable.Cell key={`cell-${column.value}-${colIndex}`}>
 				<ClayRadio
-					aria-label={`${rowLabel}: ${row.label}, ${columnLabel}: ${column.label}`}
 					checked={column.value === value[row.value]}
 					className="form-builder-grid-field"
 					disabled={disabled}
@@ -61,7 +63,16 @@ const TableBodyColumns = ({
 					onChange={onChange}
 					onFocus={onFocus}
 					value={column.value}
+					id={`${name}_${column.value}_${row.value}`}
+					aria-labelledby={`${name}_${column.value}_${row.value}_fieldLabel ${name}_fieldLabel`}
+					aria-errormessage={name + '_fieldError'}
+					aria-required={required}
+					aria-invalid={invalid}
+					aria-checked={column.value === value[row.value]}
 				/>
+				<span id={`${name}_${column.value}_${row.value}_fieldLabel`} className="sr-only">
+					{`${rowLabel}: ${row.label}, ${columnLabel}: ${column.label}`}
+				</span>
 			</ClayTable.Cell>
 		);
 	});
@@ -76,6 +87,8 @@ const Grid = ({
 	onFocus,
 	rows = [{label: 'row', value: 'jehf'}],
 	value,
+	required,
+	invalid,
 	...otherProps
 }) => (
 	<div className="table-responsive" {...otherProps}>
@@ -104,7 +117,6 @@ const Grid = ({
 					return (
 						<ClayTable.Row
 							key={`row-${row.value}-${rowIndex}`}
-							name={row.value}
 						>
 							<ClayTable.Cell>{row.label}</ClayTable.Cell>
 
@@ -116,6 +128,9 @@ const Grid = ({
 								onFocus={onFocus}
 								row={row}
 								value={value}
+								name={name}
+								required={required}
+								invalid={invalid}
 							/>
 						</ClayTable.Row>
 					);
@@ -160,6 +175,8 @@ const Main = ({
 				onFocus={onFocus}
 				rows={rows}
 				value={state}
+				required={otherProps.required}
+				invalid={!otherProps.valid}
 			/>
 		</FieldBase>
 	);

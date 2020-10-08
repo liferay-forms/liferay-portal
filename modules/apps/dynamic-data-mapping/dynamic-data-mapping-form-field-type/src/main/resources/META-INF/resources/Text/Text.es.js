@@ -37,6 +37,8 @@ const Text = ({
 	placeholder,
 	syncDelay,
 	value: initialValue,
+	required,
+	invalid,
 }) => {
 	const [value, setValue] = useSyncValue(initialValue, syncDelay);
 
@@ -78,6 +80,11 @@ const Text = ({
 			placeholder={placeholder}
 			type="text"
 			value={value}
+			id={id || name}
+			aria-labelledby={`${name}_fieldLabel`}
+			aria-errormessage={name + '_fieldError'}
+			aria-required={required}
+			aria-invalid={invalid}
 		/>
 	);
 };
@@ -92,6 +99,8 @@ const Textarea = ({
 	placeholder,
 	syncDelay,
 	value: initialValue,
+	required,
+	invalid,
 }) => {
 	const [value, setValue] = useSyncValue(initialValue, syncDelay);
 
@@ -108,8 +117,11 @@ const Textarea = ({
 			}}
 			onFocus={onFocus}
 			placeholder={placeholder}
-			type="text"
 			value={value}
+			aria-labelledby={`${name}_fieldLabel`}
+			aria-errormessage={name + '_fieldError'}
+			aria-required={required}
+			aria-invalid={invalid}
 		/>
 	);
 };
@@ -125,6 +137,8 @@ const Autocomplete = ({
 	placeholder,
 	syncDelay,
 	value: initialValue,
+	required,
+	invalid,
 }) => {
 	const [value, setValue] = useSyncValue(initialValue, syncDelay);
 	const [visible, setVisible] = useState(false);
@@ -203,6 +217,10 @@ const Autocomplete = ({
 				placeholder={placeholder}
 				ref={inputRef}
 				value={value}
+				aria-labelledby={`${name}_fieldLabel`}
+				aria-errormessage={name + '_fieldError'}
+				aria-required={required}
+				aria-invalid={invalid}
 			/>
 
 			<ClayAutocomplete.DropDown
@@ -314,6 +332,8 @@ const Main = ({
 				placeholder={placeholder}
 				syncDelay={syncDelay}
 				value={value ? value : predefinedValue}
+				required={otherProps.required}
+				invalid={!otherProps.valid}
 			/>
 		</FieldBase>
 	);

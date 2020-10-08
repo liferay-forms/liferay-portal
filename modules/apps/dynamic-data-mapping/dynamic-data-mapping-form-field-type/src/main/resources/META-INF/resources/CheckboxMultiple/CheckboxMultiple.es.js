@@ -29,6 +29,8 @@ const Switcher = ({
 	onChange,
 	onFocus,
 	value,
+	required,
+	invalid,
 }) => (
 	<div
 		className={classNames('lfr-ddm-form-field-checkbox-switch', {
@@ -46,11 +48,16 @@ const Switcher = ({
 				onFocus={onFocus}
 				type="checkbox"
 				value={value}
+				id={`${name}_${value}`}
+				aria-labelledby={`${name}_${value}_fieldLabel ${name}_fieldLabel`}
+				aria-errormessage={name + '_fieldError'}
+				aria-required={required}
+				aria-invalid={invalid}
 			/>
 			<span aria-hidden="true" className="toggle-switch-bar">
 				<span className="toggle-switch-handle"></span>
 			</span>
-			<span className="toggle-switch-label">{label}</span>
+			<span id={`${name}_${value}_fieldLabel`} className="toggle-switch-label">{label}</span>
 		</label>
 	</div>
 );
@@ -66,6 +73,8 @@ const CheckboxMultiple = ({
 	options,
 	predefinedValue,
 	value: initialValue,
+	required,
+	invalid,
 }) => {
 	const [value, setValue] = useState(initialValue);
 
@@ -100,6 +109,8 @@ const CheckboxMultiple = ({
 					onChange={handleChange}
 					onFocus={onFocus}
 					value={option.value}
+					required={required}
+					invalid={invalid}
 				/>
 			))}
 		</div>
@@ -140,6 +151,8 @@ const Main = ({
 			options={options}
 			predefinedValue={setJSONArrayValue(predefinedValue)}
 			value={setJSONArrayValue(value)}
+			required={otherProps.required || false}
+			invalid={!otherProps.valid || false}
 		/>
 	</FieldBase>
 );

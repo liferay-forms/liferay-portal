@@ -52,6 +52,7 @@ const Numeric = ({
 		thousandsSeparator: ',',
 	},
 	value,
+	name,
 	...otherProps
 }) => {
 	const [currentValue, setCurrentValue] = useState(value);
@@ -138,6 +139,12 @@ const Numeric = ({
 			ref={inputRef}
 			type="text"
 			value={currentValue}
+			name={name}
+			id={name}
+			aria-labelledby={`${name}_fieldLabel`}
+			aria-errormessage={name + '_fieldError'}
+			aria-required={otherProps.required || false}
+			aria-invalid={!otherProps.valid || false}
 		/>
 	);
 };

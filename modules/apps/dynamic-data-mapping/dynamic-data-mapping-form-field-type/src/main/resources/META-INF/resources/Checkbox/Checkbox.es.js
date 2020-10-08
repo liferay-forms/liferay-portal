@@ -27,6 +27,7 @@ const Switcher = ({
 	required,
 	showLabel,
 	spritemap,
+	invalid,
 }) => {
 	const [checked, setChecked] = useState(initialChecked);
 
@@ -43,13 +44,18 @@ const Switcher = ({
 				}}
 				type="checkbox"
 				value={true}
+				id={name}
+				aria-labelledby={`${name}_fieldLabel`}
+				aria-errormessage={name + '_fieldError'}
+				aria-required={required}
+				aria-invalid={invalid}
 			/>
 
 			<span aria-hidden="true" className="toggle-switch-bar">
 				<span className="toggle-switch-handle"></span>
 
 				{(showLabel || required) && (
-					<span className="toggle-switch-text toggle-switch-text-right">
+					<span id={`${name}_fieldLabel`} className="toggle-switch-text toggle-switch-text-right">
 						{showLabel && label}
 
 						{required && (
@@ -133,6 +139,7 @@ const Main = ({
 				required={required}
 				showLabel={showLabel}
 				spritemap={spritemap}
+				invalid={!otherProps.valid}
 			/>
 		</FieldBase>
 	);

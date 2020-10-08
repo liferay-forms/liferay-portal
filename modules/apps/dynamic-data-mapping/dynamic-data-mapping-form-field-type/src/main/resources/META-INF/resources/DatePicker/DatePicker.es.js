@@ -118,6 +118,8 @@ const DatePicker = ({
 	onChange,
 	spritemap,
 	value: initialValue,
+	required,
+	invalid,
 }) => {
 	const inputRef = useRef(null);
 	const maskInstance = useRef(null);
@@ -206,6 +208,11 @@ const DatePicker = ({
 				spritemap={spritemap}
 				value={value}
 				years={years}
+				id={name}
+				aria-labelledby={`${name}_fieldLabel`}
+				aria-errormessage={name + '_fieldError'}
+				aria-required={required}
+				aria-invalid={invalid}
 			/>
 		</>
 	);
@@ -234,6 +241,8 @@ const Main = ({
 			placeholder={placeholder}
 			spritemap={spritemap}
 			value={value ? value : predefinedValue}
+			required={otherProps.required || false}
+			invalid={!otherProps.valid || false}
 		/>
 	</FieldBase>
 );
