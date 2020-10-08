@@ -3,12 +3,11 @@
 exports[`Select calls onChange callback when an item is selected using multiselect 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
     <select
-      aria-hidden="true"
+      aria-errormessage="undefined_fieldError"
       class="form-control form-control"
       hidden=""
       multiple=""
@@ -25,6 +24,7 @@ exports[`Select calls onChange callback when an item is selected using multisele
       style=""
     >
       <div
+        aria-labelledby="undefined_item7_optionLabel undefined_selectedLabel undefined_fieldLabel"
         class="form-control results-chosen select-field-trigger multiple-label-list"
         tabindex="0"
       >
@@ -42,6 +42,7 @@ exports[`Select calls onChange callback when an item is selected using multisele
               class="label-item label-item-after"
             >
               <button
+                aria-labelledby="undefined_removeLabel undefined_item7_optionLabel undefined_fieldLabel"
                 class="close"
                 data-testid="closeButtonitem7"
                 type="button"
@@ -57,6 +58,12 @@ exports[`Select calls onChange callback when an item is selected using multisele
               </button>
             </span>
           </span>
+          <span
+            class="sr-only"
+            id="undefined_item7_optionLabel"
+          >
+            label7
+          </span>
         </li>
         <a
           class="select-arrow-down-container"
@@ -71,6 +78,18 @@ exports[`Select calls onChange callback when an item is selected using multisele
           </svg>
         </a>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_selectedLabel"
+      >
+        selected
+      </span>
+      <span
+        class="sr-only"
+        id="undefined_removeLabel"
+      >
+        remove
+      </span>
     </div>
     <div>
       <div
@@ -84,6 +103,8 @@ exports[`Select calls onChange callback when an item is selected using multisele
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_item1_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-0"
               label="label1"
@@ -93,7 +114,10 @@ exports[`Select calls onChange callback when an item is selected using multisele
               >
                 <label>
                   <input
-                    aria-label="label1"
+                    aria-checked="false"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_item1_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-item1"
                     type="checkbox"
@@ -111,10 +135,18 @@ exports[`Select calls onChange callback when an item is selected using multisele
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_item1_fieldLabel"
+          >
+            label1
+          </span>
           <li
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_item2_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-1"
               label="label2"
@@ -124,7 +156,10 @@ exports[`Select calls onChange callback when an item is selected using multisele
               >
                 <label>
                   <input
-                    aria-label="label2"
+                    aria-checked="false"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_item2_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-item2"
                     type="checkbox"
@@ -142,10 +177,18 @@ exports[`Select calls onChange callback when an item is selected using multisele
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_item2_fieldLabel"
+          >
+            label2
+          </span>
           <li
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_item3_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-2"
               label="label3"
@@ -155,7 +198,10 @@ exports[`Select calls onChange callback when an item is selected using multisele
               >
                 <label>
                   <input
-                    aria-label="label3"
+                    aria-checked="false"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_item3_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-item3"
                     type="checkbox"
@@ -173,10 +219,18 @@ exports[`Select calls onChange callback when an item is selected using multisele
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_item3_fieldLabel"
+          >
+            label3
+          </span>
           <li
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_item4_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-3"
               label="label4"
@@ -186,7 +240,10 @@ exports[`Select calls onChange callback when an item is selected using multisele
               >
                 <label>
                   <input
-                    aria-label="label4"
+                    aria-checked="false"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_item4_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-item4"
                     type="checkbox"
@@ -204,10 +261,18 @@ exports[`Select calls onChange callback when an item is selected using multisele
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_item4_fieldLabel"
+          >
+            label4
+          </span>
           <li
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_item5_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-4"
               label="label5"
@@ -217,7 +282,10 @@ exports[`Select calls onChange callback when an item is selected using multisele
               >
                 <label>
                   <input
-                    aria-label="label5"
+                    aria-checked="false"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_item5_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-item5"
                     type="checkbox"
@@ -235,10 +303,18 @@ exports[`Select calls onChange callback when an item is selected using multisele
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_item5_fieldLabel"
+          >
+            label5
+          </span>
           <li
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_item6_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-5"
               label="label6"
@@ -248,7 +324,10 @@ exports[`Select calls onChange callback when an item is selected using multisele
               >
                 <label>
                   <input
-                    aria-label="label6"
+                    aria-checked="false"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_item6_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-item6"
                     type="checkbox"
@@ -266,10 +345,18 @@ exports[`Select calls onChange callback when an item is selected using multisele
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_item6_fieldLabel"
+          >
+            label6
+          </span>
           <li
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_item7_fieldLabel undefined_fieldLabel"
+              aria-selected="true"
               class="dropdown-item"
               data-testid="dropdownItem-6"
               label="label7"
@@ -279,7 +366,10 @@ exports[`Select calls onChange callback when an item is selected using multisele
               >
                 <label>
                   <input
-                    aria-label="label7"
+                    aria-checked="true"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_item7_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-item7"
                     type="checkbox"
@@ -297,10 +387,15 @@ exports[`Select calls onChange callback when an item is selected using multisele
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_item7_fieldLabel"
+          >
+            label7
+          </span>
         </ul>
       </div>
     </div>
-    
   </div>
 </div>
 `;
@@ -308,12 +403,11 @@ exports[`Select calls onChange callback when an item is selected using multisele
 exports[`Select filters according to the input and calls onChange callback when an item is selected using search 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
     <select
-      aria-hidden="true"
+      aria-errormessage="undefined_fieldError"
       class="form-control form-control"
       hidden=""
       multiple=""
@@ -322,18 +416,22 @@ exports[`Select filters according to the input and calls onChange callback when 
       <option
         disabled=""
         value=""
-      />
+      >
+        undefined
+      </option>
     </select>
     <div
       class="form-builder-select-field input-group-container"
       style=""
     >
       <div
+        aria-labelledby="undefined_placeholderLabel undefined_fieldLabel"
         class="form-control results-chosen select-field-trigger multiple-label-list"
         tabindex="0"
       >
         <div
           class="option-selected option-selected-placeholder"
+          id="undefined_placeholderLabel"
         >
           choose-options
         </div>
@@ -350,6 +448,18 @@ exports[`Select filters according to the input and calls onChange callback when 
           </svg>
         </a>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_selectedLabel"
+      >
+        selected
+      </span>
+      <span
+        class="sr-only"
+        id="undefined_removeLabel"
+      >
+        remove
+      </span>
     </div>
     <div>
       <div
@@ -401,6 +511,8 @@ exports[`Select filters according to the input and calls onChange callback when 
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_null_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-0"
               label="choose-an-option"
@@ -410,7 +522,10 @@ exports[`Select filters according to the input and calls onChange callback when 
               >
                 <label>
                   <input
-                    aria-label="choose-an-option"
+                    aria-checked="false"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_null_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-null"
                     type="checkbox"
@@ -428,10 +543,18 @@ exports[`Select filters according to the input and calls onChange callback when 
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_null_fieldLabel"
+          >
+            choose-an-option
+          </span>
           <li
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_item1_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-1"
               label="label1"
@@ -441,7 +564,10 @@ exports[`Select filters according to the input and calls onChange callback when 
               >
                 <label>
                   <input
-                    aria-label="label1"
+                    aria-checked="false"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_item1_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-item1"
                     type="checkbox"
@@ -459,10 +585,18 @@ exports[`Select filters according to the input and calls onChange callback when 
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_item1_fieldLabel"
+          >
+            label1
+          </span>
           <li
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_item10_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-2"
               label="label10"
@@ -472,7 +606,10 @@ exports[`Select filters according to the input and calls onChange callback when 
               >
                 <label>
                   <input
-                    aria-label="label10"
+                    aria-checked="false"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_item10_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-item10"
                     type="checkbox"
@@ -490,10 +627,18 @@ exports[`Select filters according to the input and calls onChange callback when 
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_item10_fieldLabel"
+          >
+            label10
+          </span>
           <li
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_item11_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-3"
               label="label11"
@@ -503,7 +648,10 @@ exports[`Select filters according to the input and calls onChange callback when 
               >
                 <label>
                   <input
-                    aria-label="label11"
+                    aria-checked="false"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_item11_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-item11"
                     type="checkbox"
@@ -521,10 +669,18 @@ exports[`Select filters according to the input and calls onChange callback when 
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_item11_fieldLabel"
+          >
+            label11
+          </span>
           <li
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_item12_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-4"
               label="label12"
@@ -534,7 +690,10 @@ exports[`Select filters according to the input and calls onChange callback when 
               >
                 <label>
                   <input
-                    aria-label="label12"
+                    aria-checked="false"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_item12_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-item12"
                     type="checkbox"
@@ -552,10 +711,15 @@ exports[`Select filters according to the input and calls onChange callback when 
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_item12_fieldLabel"
+          >
+            label12
+          </span>
         </ul>
       </div>
     </div>
-    
   </div>
 </div>
 `;
@@ -563,12 +727,11 @@ exports[`Select filters according to the input and calls onChange callback when 
 exports[`Select has a help text 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
     <select
-      aria-hidden="true"
+      aria-errormessage="undefined_fieldError"
       class="form-control form-control"
       hidden=""
       multiple=""
@@ -576,17 +739,21 @@ exports[`Select has a help text 1`] = `
       <option
         disabled=""
         value=""
-      />
+      >
+        undefined
+      </option>
     </select>
     <div
       class="form-builder-select-field input-group-container"
     >
       <div
+        aria-labelledby="undefined_placeholderLabel undefined_fieldLabel"
         class="form-control results-chosen select-field-trigger"
         tabindex="0"
       >
         <div
           class="option-selected option-selected-placeholder"
+          id="undefined_placeholderLabel"
         >
           choose-an-option
         </div>
@@ -603,6 +770,18 @@ exports[`Select has a help text 1`] = `
           </svg>
         </a>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_selectedLabel"
+      >
+        selected
+      </span>
+      <span
+        class="sr-only"
+        id="undefined_removeLabel"
+      >
+        remove
+      </span>
     </div>
     <div>
       <div
@@ -615,6 +794,8 @@ exports[`Select has a help text 1`] = `
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_null_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-0"
               label="choose-an-option"
@@ -622,22 +803,20 @@ exports[`Select has a help text 1`] = `
               choose-an-option
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_null_fieldLabel"
+          >
+            choose-an-option
+          </span>
         </ul>
       </div>
     </div>
     <span
-      aria-hidden="true"
       class="form-text"
+      id="undefined_fieldTip"
     >
       Type something
-    </span>
-    <span
-      aria-hidden="false"
-      hidden=""
-      id="undefined_fieldDetails"
-    >
-      Type something
-      <br />
     </span>
   </div>
 </div>
@@ -646,12 +825,11 @@ exports[`Select has a help text 1`] = `
 exports[`Select has a key 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
     <select
-      aria-hidden="true"
+      aria-errormessage="undefined_fieldError"
       class="form-control form-control"
       hidden=""
       multiple=""
@@ -659,17 +837,21 @@ exports[`Select has a key 1`] = `
       <option
         disabled=""
         value=""
-      />
+      >
+        undefined
+      </option>
     </select>
     <div
       class="form-builder-select-field input-group-container"
     >
       <div
+        aria-labelledby="undefined_placeholderLabel undefined_fieldLabel"
         class="form-control results-chosen select-field-trigger"
         tabindex="0"
       >
         <div
           class="option-selected option-selected-placeholder"
+          id="undefined_placeholderLabel"
         >
           choose-an-option
         </div>
@@ -686,6 +868,18 @@ exports[`Select has a key 1`] = `
           </svg>
         </a>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_selectedLabel"
+      >
+        selected
+      </span>
+      <span
+        class="sr-only"
+        id="undefined_removeLabel"
+      >
+        remove
+      </span>
     </div>
     <div>
       <div
@@ -698,6 +892,8 @@ exports[`Select has a key 1`] = `
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_null_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-0"
               label="choose-an-option"
@@ -705,10 +901,15 @@ exports[`Select has a key 1`] = `
               choose-an-option
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_null_fieldLabel"
+          >
+            choose-an-option
+          </span>
         </ul>
       </div>
     </div>
-    
   </div>
 </div>
 `;
@@ -719,14 +920,15 @@ exports[`Select has a label 1`] = `
     class="form-group hide"
   >
     <label
-      aria-labelledby="undefined_fieldDetails"
+      aria-labelledby="undefined_fieldOnlyLabel"
       class="ddm-label"
+      id="undefined_fieldLabel"
       tabindex="0"
     >
       label
     </label>
     <select
-      aria-hidden="true"
+      aria-errormessage="undefined_fieldError"
       class="form-control form-control"
       hidden=""
       multiple=""
@@ -734,17 +936,21 @@ exports[`Select has a label 1`] = `
       <option
         disabled=""
         value=""
-      />
+      >
+        undefined
+      </option>
     </select>
     <div
       class="form-builder-select-field input-group-container"
     >
       <div
+        aria-labelledby="undefined_placeholderLabel undefined_fieldLabel"
         class="form-control results-chosen select-field-trigger"
         tabindex="0"
       >
         <div
           class="option-selected option-selected-placeholder"
+          id="undefined_placeholderLabel"
         >
           choose-an-option
         </div>
@@ -761,6 +967,18 @@ exports[`Select has a label 1`] = `
           </svg>
         </a>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_selectedLabel"
+      >
+        selected
+      </span>
+      <span
+        class="sr-only"
+        id="undefined_removeLabel"
+      >
+        remove
+      </span>
     </div>
     <div>
       <div
@@ -773,6 +991,8 @@ exports[`Select has a label 1`] = `
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_null_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-0"
               label="choose-an-option"
@@ -780,16 +1000,20 @@ exports[`Select has a label 1`] = `
               choose-an-option
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_null_fieldLabel"
+          >
+            choose-an-option
+          </span>
         </ul>
       </div>
     </div>
     <span
-      aria-hidden="false"
-      hidden=""
-      id="undefined_fieldDetails"
+      class="sr-only"
+      id="undefined_fieldOnlyLabel"
     >
       label
-      <br />
     </span>
   </div>
 </div>
@@ -798,12 +1022,11 @@ exports[`Select has a label 1`] = `
 exports[`Select has a placeholder 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
     <select
-      aria-hidden="true"
+      aria-errormessage="undefined_fieldError"
       class="form-control form-control"
       hidden=""
       multiple=""
@@ -811,17 +1034,21 @@ exports[`Select has a placeholder 1`] = `
       <option
         disabled=""
         value=""
-      />
+      >
+        undefined
+      </option>
     </select>
     <div
       class="form-builder-select-field input-group-container"
     >
       <div
+        aria-labelledby="undefined_placeholderLabel undefined_fieldLabel"
         class="form-control results-chosen select-field-trigger"
         tabindex="0"
       >
         <div
           class="option-selected option-selected-placeholder"
+          id="undefined_placeholderLabel"
         >
           choose-an-option
         </div>
@@ -838,6 +1065,18 @@ exports[`Select has a placeholder 1`] = `
           </svg>
         </a>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_selectedLabel"
+      >
+        selected
+      </span>
+      <span
+        class="sr-only"
+        id="undefined_removeLabel"
+      >
+        remove
+      </span>
     </div>
     <div>
       <div
@@ -850,6 +1089,8 @@ exports[`Select has a placeholder 1`] = `
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_null_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-0"
               label="choose-an-option"
@@ -857,10 +1098,15 @@ exports[`Select has a placeholder 1`] = `
               choose-an-option
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_null_fieldLabel"
+          >
+            choose-an-option
+          </span>
         </ul>
       </div>
     </div>
-    
   </div>
 </div>
 `;
@@ -868,12 +1114,11 @@ exports[`Select has a placeholder 1`] = `
 exports[`Select has a predefinedValue 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
     <select
-      aria-hidden="true"
+      aria-errormessage="undefined_fieldError"
       class="form-control form-control"
       hidden=""
       multiple=""
@@ -881,17 +1126,21 @@ exports[`Select has a predefinedValue 1`] = `
       <option
         disabled=""
         value=""
-      />
+      >
+        undefined
+      </option>
     </select>
     <div
       class="form-builder-select-field input-group-container"
     >
       <div
+        aria-labelledby="undefined_placeholderLabel undefined_fieldLabel"
         class="form-control results-chosen select-field-trigger"
         tabindex="0"
       >
         <div
           class="option-selected option-selected-placeholder"
+          id="undefined_placeholderLabel"
         >
           choose-an-option
         </div>
@@ -908,6 +1157,18 @@ exports[`Select has a predefinedValue 1`] = `
           </svg>
         </a>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_selectedLabel"
+      >
+        selected
+      </span>
+      <span
+        class="sr-only"
+        id="undefined_removeLabel"
+      >
+        remove
+      </span>
     </div>
     <div>
       <div
@@ -920,6 +1181,8 @@ exports[`Select has a predefinedValue 1`] = `
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_null_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-0"
               label="choose-an-option"
@@ -927,10 +1190,15 @@ exports[`Select has a predefinedValue 1`] = `
               choose-an-option
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_null_fieldLabel"
+          >
+            choose-an-option
+          </span>
         </ul>
       </div>
     </div>
-    
   </div>
 </div>
 `;
@@ -938,12 +1206,11 @@ exports[`Select has a predefinedValue 1`] = `
 exports[`Select has a value 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
     <select
-      aria-hidden="true"
+      aria-errormessage="undefined_fieldError"
       class="form-control form-control"
       hidden=""
       multiple=""
@@ -951,17 +1218,21 @@ exports[`Select has a value 1`] = `
       <option
         disabled=""
         value=""
-      />
+      >
+        undefined
+      </option>
     </select>
     <div
       class="form-builder-select-field input-group-container"
     >
       <div
+        aria-labelledby="undefined_placeholderLabel undefined_fieldLabel"
         class="form-control results-chosen select-field-trigger"
         tabindex="0"
       >
         <div
           class="option-selected option-selected-placeholder"
+          id="undefined_placeholderLabel"
         >
           choose-an-option
         </div>
@@ -978,6 +1249,18 @@ exports[`Select has a value 1`] = `
           </svg>
         </a>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_selectedLabel"
+      >
+        selected
+      </span>
+      <span
+        class="sr-only"
+        id="undefined_removeLabel"
+      >
+        remove
+      </span>
     </div>
     <div>
       <div
@@ -990,6 +1273,8 @@ exports[`Select has a value 1`] = `
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_null_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-0"
               label="choose-an-option"
@@ -997,10 +1282,15 @@ exports[`Select has a value 1`] = `
               choose-an-option
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_null_fieldLabel"
+          >
+            choose-an-option
+          </span>
         </ul>
       </div>
     </div>
-    
   </div>
 </div>
 `;
@@ -1008,12 +1298,11 @@ exports[`Select has a value 1`] = `
 exports[`Select has an id 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
     <select
-      aria-hidden="true"
+      aria-errormessage="undefined_fieldError"
       class="form-control form-control"
       hidden=""
       multiple=""
@@ -1021,18 +1310,22 @@ exports[`Select has an id 1`] = `
       <option
         disabled=""
         value=""
-      />
+      >
+        undefined
+      </option>
     </select>
     <div
       class="form-builder-select-field input-group-container"
     >
       <div
+        aria-labelledby="undefined_placeholderLabel undefined_fieldLabel"
         class="form-control results-chosen select-field-trigger"
         id="Id"
         tabindex="0"
       >
         <div
           class="option-selected option-selected-placeholder"
+          id="undefined_placeholderLabel"
         >
           choose-an-option
         </div>
@@ -1049,6 +1342,18 @@ exports[`Select has an id 1`] = `
           </svg>
         </a>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_selectedLabel"
+      >
+        selected
+      </span>
+      <span
+        class="sr-only"
+        id="undefined_removeLabel"
+      >
+        remove
+      </span>
     </div>
     <div>
       <div
@@ -1061,6 +1366,8 @@ exports[`Select has an id 1`] = `
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_null_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-0"
               label="choose-an-option"
@@ -1068,10 +1375,15 @@ exports[`Select has an id 1`] = `
               choose-an-option
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_null_fieldLabel"
+          >
+            choose-an-option
+          </span>
         </ul>
       </div>
     </div>
-    
   </div>
 </div>
 `;
@@ -1079,12 +1391,11 @@ exports[`Select has an id 1`] = `
 exports[`Select has class dropdown-opened when it's opened 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
     <select
-      aria-hidden="true"
+      aria-errormessage="undefined_fieldError"
       class="form-control form-control"
       hidden=""
       multiple=""
@@ -1092,17 +1403,21 @@ exports[`Select has class dropdown-opened when it's opened 1`] = `
       <option
         disabled=""
         value=""
-      />
+      >
+        undefined
+      </option>
     </select>
     <div
       class="form-builder-select-field input-group-container"
     >
       <div
+        aria-labelledby="undefined_placeholderLabel undefined_fieldLabel"
         class="form-control results-chosen select-field-trigger"
         tabindex="0"
       >
         <div
           class="option-selected option-selected-placeholder"
+          id="undefined_placeholderLabel"
         >
           choose-an-option
         </div>
@@ -1119,6 +1434,18 @@ exports[`Select has class dropdown-opened when it's opened 1`] = `
           </svg>
         </a>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_selectedLabel"
+      >
+        selected
+      </span>
+      <span
+        class="sr-only"
+        id="undefined_removeLabel"
+      >
+        remove
+      </span>
     </div>
     <div>
       <div
@@ -1131,6 +1458,8 @@ exports[`Select has class dropdown-opened when it's opened 1`] = `
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_null_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-0"
               label="choose-an-option"
@@ -1138,10 +1467,15 @@ exports[`Select has class dropdown-opened when it's opened 1`] = `
               choose-an-option
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_null_fieldLabel"
+          >
+            choose-an-option
+          </span>
         </ul>
       </div>
     </div>
-    
   </div>
 </div>
 `;
@@ -1149,12 +1483,11 @@ exports[`Select has class dropdown-opened when it's opened 1`] = `
 exports[`Select is closed by default 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
     <select
-      aria-hidden="true"
+      aria-errormessage="undefined_fieldError"
       class="form-control form-control"
       hidden=""
       multiple=""
@@ -1162,17 +1495,21 @@ exports[`Select is closed by default 1`] = `
       <option
         disabled=""
         value=""
-      />
+      >
+        undefined
+      </option>
     </select>
     <div
       class="form-builder-select-field input-group-container"
     >
       <div
+        aria-labelledby="undefined_placeholderLabel undefined_fieldLabel"
         class="form-control results-chosen select-field-trigger"
         tabindex="0"
       >
         <div
           class="option-selected option-selected-placeholder"
+          id="undefined_placeholderLabel"
         >
           choose-an-option
         </div>
@@ -1189,6 +1526,18 @@ exports[`Select is closed by default 1`] = `
           </svg>
         </a>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_selectedLabel"
+      >
+        selected
+      </span>
+      <span
+        class="sr-only"
+        id="undefined_removeLabel"
+      >
+        remove
+      </span>
     </div>
     <div>
       <div
@@ -1201,6 +1550,8 @@ exports[`Select is closed by default 1`] = `
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_null_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-0"
               label="choose-an-option"
@@ -1208,10 +1559,15 @@ exports[`Select is closed by default 1`] = `
               choose-an-option
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_null_fieldLabel"
+          >
+            choose-an-option
+          </span>
         </ul>
       </div>
     </div>
-    
   </div>
 </div>
 `;
@@ -1219,12 +1575,11 @@ exports[`Select is closed by default 1`] = `
 exports[`Select is not required 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
     <select
-      aria-hidden="true"
+      aria-errormessage="undefined_fieldError"
       class="form-control form-control"
       hidden=""
       multiple=""
@@ -1232,17 +1587,21 @@ exports[`Select is not required 1`] = `
       <option
         disabled=""
         value=""
-      />
+      >
+        undefined
+      </option>
     </select>
     <div
       class="form-builder-select-field input-group-container"
     >
       <div
+        aria-labelledby="undefined_placeholderLabel undefined_fieldLabel"
         class="form-control results-chosen select-field-trigger"
         tabindex="0"
       >
         <div
           class="option-selected option-selected-placeholder"
+          id="undefined_placeholderLabel"
         >
           choose-an-option
         </div>
@@ -1259,6 +1618,18 @@ exports[`Select is not required 1`] = `
           </svg>
         </a>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_selectedLabel"
+      >
+        selected
+      </span>
+      <span
+        class="sr-only"
+        id="undefined_removeLabel"
+      >
+        remove
+      </span>
     </div>
     <div>
       <div
@@ -1271,6 +1642,8 @@ exports[`Select is not required 1`] = `
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_null_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-0"
               label="choose-an-option"
@@ -1278,10 +1651,15 @@ exports[`Select is not required 1`] = `
               choose-an-option
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_null_fieldLabel"
+          >
+            choose-an-option
+          </span>
         </ul>
       </div>
     </div>
-    
   </div>
 </div>
 `;
@@ -1292,8 +1670,9 @@ exports[`Select puts an asterisk when field is required 1`] = `
     class="form-group hide"
   >
     <label
-      aria-labelledby="undefined_fieldDetails"
+      aria-labelledby="undefined_fieldOnlyLabel undefined_fieldRequired"
       class="ddm-label"
+      id="undefined_fieldLabel"
       tabindex="0"
     >
       This is the label
@@ -1309,27 +1688,38 @@ exports[`Select puts an asterisk when field is required 1`] = `
           />
         </svg>
       </span>
+      <span
+        class="sr-only"
+        id="undefined_fieldRequired"
+      >
+        required
+      </span>
     </label>
     <select
-      aria-hidden="true"
+      aria-errormessage="undefined_fieldError"
       class="form-control form-control"
       hidden=""
       multiple=""
+      required=""
     >
       <option
         disabled=""
         value=""
-      />
+      >
+        undefined
+      </option>
     </select>
     <div
       class="form-builder-select-field input-group-container"
     >
       <div
+        aria-labelledby="undefined_placeholderLabel undefined_fieldLabel"
         class="form-control results-chosen select-field-trigger"
         tabindex="0"
       >
         <div
           class="option-selected option-selected-placeholder"
+          id="undefined_placeholderLabel"
         >
           choose-an-option
         </div>
@@ -1346,6 +1736,18 @@ exports[`Select puts an asterisk when field is required 1`] = `
           </svg>
         </a>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_selectedLabel"
+      >
+        selected
+      </span>
+      <span
+        class="sr-only"
+        id="undefined_removeLabel"
+      >
+        remove
+      </span>
     </div>
     <div>
       <div
@@ -1358,6 +1760,8 @@ exports[`Select puts an asterisk when field is required 1`] = `
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_null_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-0"
               label="choose-an-option"
@@ -1365,17 +1769,20 @@ exports[`Select puts an asterisk when field is required 1`] = `
               choose-an-option
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_null_fieldLabel"
+          >
+            choose-an-option
+          </span>
         </ul>
       </div>
     </div>
     <span
-      aria-hidden="false"
-      hidden=""
-      id="undefined_fieldDetails"
+      class="sr-only"
+      id="undefined_fieldOnlyLabel"
     >
       This is the label
-      <br />
-      required
     </span>
   </div>
 </div>
@@ -1387,14 +1794,15 @@ exports[`Select renders Label if showLabel is true 1`] = `
     class="form-group hide"
   >
     <label
-      aria-labelledby="undefined_fieldDetails"
+      aria-labelledby="undefined_fieldOnlyLabel"
       class="ddm-label"
+      id="undefined_fieldLabel"
       tabindex="0"
     >
       text
     </label>
     <select
-      aria-hidden="true"
+      aria-errormessage="undefined_fieldError"
       class="form-control form-control"
       hidden=""
       multiple=""
@@ -1402,17 +1810,21 @@ exports[`Select renders Label if showLabel is true 1`] = `
       <option
         disabled=""
         value=""
-      />
+      >
+        undefined
+      </option>
     </select>
     <div
       class="form-builder-select-field input-group-container"
     >
       <div
+        aria-labelledby="undefined_placeholderLabel undefined_fieldLabel"
         class="form-control results-chosen select-field-trigger"
         tabindex="0"
       >
         <div
           class="option-selected option-selected-placeholder"
+          id="undefined_placeholderLabel"
         >
           choose-an-option
         </div>
@@ -1429,6 +1841,18 @@ exports[`Select renders Label if showLabel is true 1`] = `
           </svg>
         </a>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_selectedLabel"
+      >
+        selected
+      </span>
+      <span
+        class="sr-only"
+        id="undefined_removeLabel"
+      >
+        remove
+      </span>
     </div>
     <div>
       <div
@@ -1441,6 +1865,8 @@ exports[`Select renders Label if showLabel is true 1`] = `
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_null_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-0"
               label="choose-an-option"
@@ -1448,16 +1874,20 @@ exports[`Select renders Label if showLabel is true 1`] = `
               choose-an-option
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_null_fieldLabel"
+          >
+            choose-an-option
+          </span>
         </ul>
       </div>
     </div>
     <span
-      aria-hidden="false"
-      hidden=""
-      id="undefined_fieldDetails"
+      class="sr-only"
+      id="undefined_fieldOnlyLabel"
     >
       text
-      <br />
     </span>
   </div>
 </div>
@@ -1466,12 +1896,11 @@ exports[`Select renders Label if showLabel is true 1`] = `
 exports[`Select renders no options when options come empty 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
     <select
-      aria-hidden="true"
+      aria-errormessage="undefined_fieldError"
       class="form-control form-control"
       hidden=""
       multiple=""
@@ -1479,17 +1908,21 @@ exports[`Select renders no options when options come empty 1`] = `
       <option
         disabled=""
         value=""
-      />
+      >
+        undefined
+      </option>
     </select>
     <div
       class="form-builder-select-field input-group-container"
     >
       <div
+        aria-labelledby="undefined_placeholderLabel undefined_fieldLabel"
         class="form-control results-chosen select-field-trigger"
         tabindex="0"
       >
         <div
           class="option-selected option-selected-placeholder"
+          id="undefined_placeholderLabel"
         >
           choose-an-option
         </div>
@@ -1506,6 +1939,18 @@ exports[`Select renders no options when options come empty 1`] = `
           </svg>
         </a>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_selectedLabel"
+      >
+        selected
+      </span>
+      <span
+        class="sr-only"
+        id="undefined_removeLabel"
+      >
+        remove
+      </span>
     </div>
     <div>
       <div
@@ -1518,6 +1963,8 @@ exports[`Select renders no options when options come empty 1`] = `
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_null_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-0"
               label="choose-an-option"
@@ -1525,10 +1972,15 @@ exports[`Select renders no options when options come empty 1`] = `
               choose-an-option
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_null_fieldLabel"
+          >
+            choose-an-option
+          </span>
         </ul>
       </div>
     </div>
-    
   </div>
 </div>
 `;
@@ -1536,12 +1988,11 @@ exports[`Select renders no options when options come empty 1`] = `
 exports[`Select renders options 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
     <select
-      aria-hidden="true"
+      aria-errormessage="undefined_fieldError"
       class="form-control form-control"
       hidden=""
       multiple=""
@@ -1549,17 +2000,21 @@ exports[`Select renders options 1`] = `
       <option
         disabled=""
         value=""
-      />
+      >
+        undefined
+      </option>
     </select>
     <div
       class="form-builder-select-field input-group-container"
     >
       <div
+        aria-labelledby="undefined_placeholderLabel undefined_fieldLabel"
         class="form-control results-chosen select-field-trigger"
         tabindex="0"
       >
         <div
           class="option-selected option-selected-placeholder"
+          id="undefined_placeholderLabel"
         >
           choose-an-option
         </div>
@@ -1576,6 +2031,18 @@ exports[`Select renders options 1`] = `
           </svg>
         </a>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_selectedLabel"
+      >
+        selected
+      </span>
+      <span
+        class="sr-only"
+        id="undefined_removeLabel"
+      >
+        remove
+      </span>
     </div>
     <div>
       <div
@@ -1588,6 +2055,8 @@ exports[`Select renders options 1`] = `
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_null_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-0"
               label="choose-an-option"
@@ -1595,10 +2064,18 @@ exports[`Select renders options 1`] = `
               choose-an-option
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_null_fieldLabel"
+          >
+            choose-an-option
+          </span>
           <li
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_item_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-1"
               label="label"
@@ -1606,10 +2083,15 @@ exports[`Select renders options 1`] = `
               label
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_item_fieldLabel"
+          >
+            label
+          </span>
         </ul>
       </div>
     </div>
-    
   </div>
 </div>
 `;
@@ -1617,12 +2099,11 @@ exports[`Select renders options 1`] = `
 exports[`Select shows a search input when the number of options is more than the maximum allowed 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
     <select
-      aria-hidden="true"
+      aria-errormessage="undefined_fieldError"
       class="form-control form-control"
       hidden=""
       multiple=""
@@ -1631,18 +2112,22 @@ exports[`Select shows a search input when the number of options is more than the
       <option
         disabled=""
         value=""
-      />
+      >
+        undefined
+      </option>
     </select>
     <div
       class="form-builder-select-field input-group-container"
       style=""
     >
       <div
+        aria-labelledby="undefined_placeholderLabel undefined_fieldLabel"
         class="form-control results-chosen select-field-trigger multiple-label-list"
         tabindex="0"
       >
         <div
           class="option-selected option-selected-placeholder"
+          id="undefined_placeholderLabel"
         >
           choose-options
         </div>
@@ -1659,6 +2144,18 @@ exports[`Select shows a search input when the number of options is more than the
           </svg>
         </a>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_selectedLabel"
+      >
+        selected
+      </span>
+      <span
+        class="sr-only"
+        id="undefined_removeLabel"
+      >
+        remove
+      </span>
     </div>
     <div>
       <div
@@ -1710,6 +2207,8 @@ exports[`Select shows a search input when the number of options is more than the
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_null_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-0"
               label="choose-an-option"
@@ -1719,7 +2218,10 @@ exports[`Select shows a search input when the number of options is more than the
               >
                 <label>
                   <input
-                    aria-label="choose-an-option"
+                    aria-checked="false"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_null_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-null"
                     type="checkbox"
@@ -1737,10 +2239,18 @@ exports[`Select shows a search input when the number of options is more than the
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_null_fieldLabel"
+          >
+            choose-an-option
+          </span>
           <li
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_item1_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-1"
               label="label1"
@@ -1750,7 +2260,10 @@ exports[`Select shows a search input when the number of options is more than the
               >
                 <label>
                   <input
-                    aria-label="label1"
+                    aria-checked="false"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_item1_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-item1"
                     type="checkbox"
@@ -1768,10 +2281,18 @@ exports[`Select shows a search input when the number of options is more than the
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_item1_fieldLabel"
+          >
+            label1
+          </span>
           <li
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_item2_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-2"
               label="label2"
@@ -1781,7 +2302,10 @@ exports[`Select shows a search input when the number of options is more than the
               >
                 <label>
                   <input
-                    aria-label="label2"
+                    aria-checked="false"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_item2_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-item2"
                     type="checkbox"
@@ -1799,10 +2323,18 @@ exports[`Select shows a search input when the number of options is more than the
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_item2_fieldLabel"
+          >
+            label2
+          </span>
           <li
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_item3_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-3"
               label="label3"
@@ -1812,7 +2344,10 @@ exports[`Select shows a search input when the number of options is more than the
               >
                 <label>
                   <input
-                    aria-label="label3"
+                    aria-checked="false"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_item3_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-item3"
                     type="checkbox"
@@ -1830,10 +2365,18 @@ exports[`Select shows a search input when the number of options is more than the
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_item3_fieldLabel"
+          >
+            label3
+          </span>
           <li
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_item4_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-4"
               label="label4"
@@ -1843,7 +2386,10 @@ exports[`Select shows a search input when the number of options is more than the
               >
                 <label>
                   <input
-                    aria-label="label4"
+                    aria-checked="false"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_item4_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-item4"
                     type="checkbox"
@@ -1861,10 +2407,18 @@ exports[`Select shows a search input when the number of options is more than the
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_item4_fieldLabel"
+          >
+            label4
+          </span>
           <li
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_item5_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-5"
               label="label5"
@@ -1874,7 +2428,10 @@ exports[`Select shows a search input when the number of options is more than the
               >
                 <label>
                   <input
-                    aria-label="label5"
+                    aria-checked="false"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_item5_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-item5"
                     type="checkbox"
@@ -1892,10 +2449,18 @@ exports[`Select shows a search input when the number of options is more than the
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_item5_fieldLabel"
+          >
+            label5
+          </span>
           <li
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_item6_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-6"
               label="label6"
@@ -1905,7 +2470,10 @@ exports[`Select shows a search input when the number of options is more than the
               >
                 <label>
                   <input
-                    aria-label="label6"
+                    aria-checked="false"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_item6_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-item6"
                     type="checkbox"
@@ -1923,10 +2491,18 @@ exports[`Select shows a search input when the number of options is more than the
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_item6_fieldLabel"
+          >
+            label6
+          </span>
           <li
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_item7_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-7"
               label="label7"
@@ -1936,7 +2512,10 @@ exports[`Select shows a search input when the number of options is more than the
               >
                 <label>
                   <input
-                    aria-label="label7"
+                    aria-checked="false"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_item7_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-item7"
                     type="checkbox"
@@ -1954,10 +2533,18 @@ exports[`Select shows a search input when the number of options is more than the
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_item7_fieldLabel"
+          >
+            label7
+          </span>
           <li
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_item8_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-8"
               label="label8"
@@ -1967,7 +2554,10 @@ exports[`Select shows a search input when the number of options is more than the
               >
                 <label>
                   <input
-                    aria-label="label8"
+                    aria-checked="false"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_item8_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-item8"
                     type="checkbox"
@@ -1985,10 +2575,18 @@ exports[`Select shows a search input when the number of options is more than the
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_item8_fieldLabel"
+          >
+            label8
+          </span>
           <li
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_item9_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-9"
               label="label9"
@@ -1998,7 +2596,10 @@ exports[`Select shows a search input when the number of options is more than the
               >
                 <label>
                   <input
-                    aria-label="label9"
+                    aria-checked="false"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_item9_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-item9"
                     type="checkbox"
@@ -2016,10 +2617,18 @@ exports[`Select shows a search input when the number of options is more than the
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_item9_fieldLabel"
+          >
+            label9
+          </span>
           <li
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_item10_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-10"
               label="label10"
@@ -2029,7 +2638,10 @@ exports[`Select shows a search input when the number of options is more than the
               >
                 <label>
                   <input
-                    aria-label="label10"
+                    aria-checked="false"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_item10_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-item10"
                     type="checkbox"
@@ -2047,10 +2659,18 @@ exports[`Select shows a search input when the number of options is more than the
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_item10_fieldLabel"
+          >
+            label10
+          </span>
           <li
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_item11_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-11"
               label="label11"
@@ -2060,7 +2680,10 @@ exports[`Select shows a search input when the number of options is more than the
               >
                 <label>
                   <input
-                    aria-label="label11"
+                    aria-checked="false"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_item11_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-item11"
                     type="checkbox"
@@ -2078,10 +2701,18 @@ exports[`Select shows a search input when the number of options is more than the
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_item11_fieldLabel"
+          >
+            label11
+          </span>
           <li
             aria-selected="false"
           >
             <button
+              aria-labelledby="undefined_item12_fieldLabel undefined_fieldLabel"
+              aria-selected="false"
               class="dropdown-item"
               data-testid="dropdownItem-12"
               label="label12"
@@ -2091,7 +2722,10 @@ exports[`Select shows a search input when the number of options is more than the
               >
                 <label>
                   <input
-                    aria-label="label12"
+                    aria-checked="false"
+                    aria-errormessage="undefined_fieldError"
+                    aria-invalid="true"
+                    aria-labelledby="undefined_item12_fieldLabel undefined_fieldLabel"
                     class="custom-control-input"
                     data-testid="labelItem-item12"
                     type="checkbox"
@@ -2109,10 +2743,15 @@ exports[`Select shows a search input when the number of options is more than the
               </div>
             </button>
           </li>
+          <span
+            class="sr-only"
+            id="undefined_item12_fieldLabel"
+          >
+            label12
+          </span>
         </ul>
       </div>
     </div>
-    
   </div>
 </div>
 `;

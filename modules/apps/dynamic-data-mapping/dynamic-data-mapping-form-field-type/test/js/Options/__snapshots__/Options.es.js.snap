@@ -3,7 +3,6 @@
 exports[`Options shows the options 1`] = `
 <div>
   <div
-    aria-labelledby="options_fieldDetails"
     class="form-group hide"
     data-field-name="options"
     tabindex="0"
@@ -34,18 +33,19 @@ exports[`Options shows the options 1`] = `
           class="ddm-option-entry"
         >
           <div
-            aria-labelledby="option0_fieldDetails"
             class="form-group hide"
             data-field-name="option0"
             tabindex="0"
           >
             <div
-              aria-labelledby="keyValueLabeloption0_fieldDetails"
               class="form-group hide"
               data-field-name="keyValueLabeloption0"
               tabindex="0"
             >
               <input
+                aria-errormessage="keyValueLabeloption0_fieldError"
+                aria-invalid="true"
+                aria-labelledby="keyValueLabeloption0_fieldLabel"
                 class="form-control ddm-field-text"
                 id="keyValueLabeloption0"
                 name="keyValueLabeloption0"
@@ -53,7 +53,6 @@ exports[`Options shows the options 1`] = `
                 type="text"
                 value="Option 1"
               />
-              
             </div>
             <div
               class="active form-text key-value-editor"
@@ -71,7 +70,6 @@ exports[`Options shows the options 1`] = `
                 value="Option1"
               />
             </div>
-            
           </div>
           <button
             class="close close-modal"
@@ -111,18 +109,19 @@ exports[`Options shows the options 1`] = `
           class="ddm-option-entry"
         >
           <div
-            aria-labelledby="option1_fieldDetails"
             class="form-group hide"
             data-field-name="option1"
             tabindex="0"
           >
             <div
-              aria-labelledby="keyValueLabeloption1_fieldDetails"
               class="form-group hide"
               data-field-name="keyValueLabeloption1"
               tabindex="0"
             >
               <input
+                aria-errormessage="keyValueLabeloption1_fieldError"
+                aria-invalid="true"
+                aria-labelledby="keyValueLabeloption1_fieldLabel"
                 class="form-control ddm-field-text"
                 id="keyValueLabeloption1"
                 name="keyValueLabeloption1"
@@ -130,7 +129,6 @@ exports[`Options shows the options 1`] = `
                 type="text"
                 value="Option 2"
               />
-              
             </div>
             <div
               class="active form-text key-value-editor"
@@ -148,7 +146,6 @@ exports[`Options shows the options 1`] = `
                 value="Option2"
               />
             </div>
-            
           </div>
           <button
             class="close close-modal"
@@ -188,18 +185,19 @@ exports[`Options shows the options 1`] = `
           class="ddm-option-entry"
         >
           <div
-            aria-labelledby="option2_fieldDetails"
             class="form-group hide"
             data-field-name="option2"
             tabindex="0"
           >
             <div
-              aria-labelledby="keyValueLabeloption2_fieldDetails"
               class="form-group hide"
               data-field-name="keyValueLabeloption2"
               tabindex="0"
             >
               <input
+                aria-errormessage="keyValueLabeloption2_fieldError"
+                aria-invalid="true"
+                aria-labelledby="keyValueLabeloption2_fieldLabel"
                 class="form-control ddm-field-text"
                 id="keyValueLabeloption2"
                 name="keyValueLabeloption2"
@@ -207,7 +205,6 @@ exports[`Options shows the options 1`] = `
                 type="text"
                 value=""
               />
-              
             </div>
             <div
               class="active form-text key-value-editor"
@@ -225,12 +222,10 @@ exports[`Options shows the options 1`] = `
                 value="Any<String>"
               />
             </div>
-            
           </div>
         </div>
       </div>
     </div>
-    
   </div>
 </div>
 `;

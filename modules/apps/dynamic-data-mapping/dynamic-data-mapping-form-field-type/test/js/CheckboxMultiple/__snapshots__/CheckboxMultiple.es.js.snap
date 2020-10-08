@@ -3,7 +3,6 @@
 exports[`Field Checkbox Multiple has a helptext 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -17,7 +16,12 @@ exports[`Field Checkbox Multiple has a helptext 1`] = `
           class="simple-toggle-switch toggle-switch"
         >
           <input
+            aria-checked="false"
+            aria-errormessage="undefined_fieldError"
+            aria-invalid="true"
+            aria-labelledby="undefined_option1_fieldLabel undefined_fieldLabel"
             class="toggle-switch-check"
+            id="undefined_option1"
             type="checkbox"
             value="option1"
           />
@@ -36,6 +40,12 @@ exports[`Field Checkbox Multiple has a helptext 1`] = `
           </span>
         </label>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_option1_fieldLabel"
+      >
+        Option 1
+      </span>
       <div
         class="lfr-ddm-form-field-checkbox-switch"
       >
@@ -43,7 +53,12 @@ exports[`Field Checkbox Multiple has a helptext 1`] = `
           class="simple-toggle-switch toggle-switch"
         >
           <input
+            aria-checked="false"
+            aria-errormessage="undefined_fieldError"
+            aria-invalid="true"
+            aria-labelledby="undefined_option2_fieldLabel undefined_fieldLabel"
             class="toggle-switch-check"
+            id="undefined_option2"
             type="checkbox"
             value="option2"
           />
@@ -62,20 +77,18 @@ exports[`Field Checkbox Multiple has a helptext 1`] = `
           </span>
         </label>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_option2_fieldLabel"
+      >
+        Option 2
+      </span>
     </div>
     <span
-      aria-hidden="true"
       class="form-text"
+      id="undefined_fieldTip"
     >
       Type something
-    </span>
-    <span
-      aria-hidden="false"
-      hidden=""
-      id="undefined_fieldDetails"
-    >
-      Type something
-      <br />
     </span>
   </div>
 </div>
@@ -84,7 +97,6 @@ exports[`Field Checkbox Multiple has a helptext 1`] = `
 exports[`Field Checkbox Multiple has a key 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -98,7 +110,12 @@ exports[`Field Checkbox Multiple has a key 1`] = `
           class="simple-toggle-switch toggle-switch"
         >
           <input
+            aria-checked="false"
+            aria-errormessage="undefined_fieldError"
+            aria-invalid="true"
+            aria-labelledby="undefined_option1_fieldLabel undefined_fieldLabel"
             class="toggle-switch-check"
+            id="undefined_option1"
             type="checkbox"
             value="option1"
           />
@@ -117,6 +134,12 @@ exports[`Field Checkbox Multiple has a key 1`] = `
           </span>
         </label>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_option1_fieldLabel"
+      >
+        Option 1
+      </span>
       <div
         class="lfr-ddm-form-field-checkbox-switch"
       >
@@ -124,7 +147,12 @@ exports[`Field Checkbox Multiple has a key 1`] = `
           class="simple-toggle-switch toggle-switch"
         >
           <input
+            aria-checked="false"
+            aria-errormessage="undefined_fieldError"
+            aria-invalid="true"
+            aria-labelledby="undefined_option2_fieldLabel undefined_fieldLabel"
             class="toggle-switch-check"
+            id="undefined_option2"
             type="checkbox"
             value="option2"
           />
@@ -143,8 +171,13 @@ exports[`Field Checkbox Multiple has a key 1`] = `
           </span>
         </label>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_option2_fieldLabel"
+      >
+        Option 2
+      </span>
     </div>
-    
   </div>
 </div>
 `;
@@ -155,8 +188,9 @@ exports[`Field Checkbox Multiple has a label 1`] = `
     class="form-group hide"
   >
     <label
-      aria-labelledby="undefined_fieldDetails"
+      aria-labelledby="undefined_fieldOnlyLabel"
       class="ddm-label"
+      id="undefined_fieldLabel"
       tabindex="0"
     >
       label
@@ -171,7 +205,12 @@ exports[`Field Checkbox Multiple has a label 1`] = `
           class="simple-toggle-switch toggle-switch"
         >
           <input
+            aria-checked="false"
+            aria-errormessage="undefined_fieldError"
+            aria-invalid="true"
+            aria-labelledby="undefined_option1_fieldLabel undefined_fieldLabel"
             class="toggle-switch-check"
+            id="undefined_option1"
             type="checkbox"
             value="option1"
           />
@@ -190,6 +229,12 @@ exports[`Field Checkbox Multiple has a label 1`] = `
           </span>
         </label>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_option1_fieldLabel"
+      >
+        Option 1
+      </span>
       <div
         class="lfr-ddm-form-field-checkbox-switch"
       >
@@ -197,7 +242,12 @@ exports[`Field Checkbox Multiple has a label 1`] = `
           class="simple-toggle-switch toggle-switch"
         >
           <input
+            aria-checked="false"
+            aria-errormessage="undefined_fieldError"
+            aria-invalid="true"
+            aria-labelledby="undefined_option2_fieldLabel undefined_fieldLabel"
             class="toggle-switch-check"
+            id="undefined_option2"
             type="checkbox"
             value="option2"
           />
@@ -216,14 +266,18 @@ exports[`Field Checkbox Multiple has a label 1`] = `
           </span>
         </label>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_option2_fieldLabel"
+      >
+        Option 2
+      </span>
     </div>
     <span
-      aria-hidden="false"
-      hidden=""
-      id="undefined_fieldDetails"
+      class="sr-only"
+      id="undefined_fieldOnlyLabel"
     >
       label
-      <br />
     </span>
   </div>
 </div>
@@ -232,7 +286,6 @@ exports[`Field Checkbox Multiple has a label 1`] = `
 exports[`Field Checkbox Multiple has a predefined Value 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -246,7 +299,12 @@ exports[`Field Checkbox Multiple has a predefined Value 1`] = `
           class="simple-toggle-switch toggle-switch"
         >
           <input
+            aria-checked="false"
+            aria-errormessage="undefined_fieldError"
+            aria-invalid="true"
+            aria-labelledby="undefined_option1_fieldLabel undefined_fieldLabel"
             class="toggle-switch-check"
+            id="undefined_option1"
             type="checkbox"
             value="option1"
           />
@@ -265,6 +323,12 @@ exports[`Field Checkbox Multiple has a predefined Value 1`] = `
           </span>
         </label>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_option1_fieldLabel"
+      >
+        Option 1
+      </span>
       <div
         class="lfr-ddm-form-field-checkbox-switch"
       >
@@ -272,7 +336,12 @@ exports[`Field Checkbox Multiple has a predefined Value 1`] = `
           class="simple-toggle-switch toggle-switch"
         >
           <input
+            aria-checked="false"
+            aria-errormessage="undefined_fieldError"
+            aria-invalid="true"
+            aria-labelledby="undefined_option2_fieldLabel undefined_fieldLabel"
             class="toggle-switch-check"
+            id="undefined_option2"
             type="checkbox"
             value="option2"
           />
@@ -291,8 +360,13 @@ exports[`Field Checkbox Multiple has a predefined Value 1`] = `
           </span>
         </label>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_option2_fieldLabel"
+      >
+        Option 2
+      </span>
     </div>
-    
   </div>
 </div>
 `;
@@ -300,7 +374,6 @@ exports[`Field Checkbox Multiple has a predefined Value 1`] = `
 exports[`Field Checkbox Multiple has a spritemap 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -314,7 +387,12 @@ exports[`Field Checkbox Multiple has a spritemap 1`] = `
           class="simple-toggle-switch toggle-switch"
         >
           <input
+            aria-checked="false"
+            aria-errormessage="undefined_fieldError"
+            aria-invalid="true"
+            aria-labelledby="undefined_option1_fieldLabel undefined_fieldLabel"
             class="toggle-switch-check"
+            id="undefined_option1"
             type="checkbox"
             value="option1"
           />
@@ -333,6 +411,12 @@ exports[`Field Checkbox Multiple has a spritemap 1`] = `
           </span>
         </label>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_option1_fieldLabel"
+      >
+        Option 1
+      </span>
       <div
         class="lfr-ddm-form-field-checkbox-switch"
       >
@@ -340,7 +424,12 @@ exports[`Field Checkbox Multiple has a spritemap 1`] = `
           class="simple-toggle-switch toggle-switch"
         >
           <input
+            aria-checked="false"
+            aria-errormessage="undefined_fieldError"
+            aria-invalid="true"
+            aria-labelledby="undefined_option2_fieldLabel undefined_fieldLabel"
             class="toggle-switch-check"
+            id="undefined_option2"
             type="checkbox"
             value="option2"
           />
@@ -359,8 +448,13 @@ exports[`Field Checkbox Multiple has a spritemap 1`] = `
           </span>
         </label>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_option2_fieldLabel"
+      >
+        Option 2
+      </span>
     </div>
-    
   </div>
 </div>
 `;
@@ -368,7 +462,6 @@ exports[`Field Checkbox Multiple has a spritemap 1`] = `
 exports[`Field Checkbox Multiple has a value 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -382,7 +475,12 @@ exports[`Field Checkbox Multiple has a value 1`] = `
           class="simple-toggle-switch toggle-switch"
         >
           <input
+            aria-checked="false"
+            aria-errormessage="undefined_fieldError"
+            aria-invalid="true"
+            aria-labelledby="undefined_option1_fieldLabel undefined_fieldLabel"
             class="toggle-switch-check"
+            id="undefined_option1"
             type="checkbox"
             value="option1"
           />
@@ -401,6 +499,12 @@ exports[`Field Checkbox Multiple has a value 1`] = `
           </span>
         </label>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_option1_fieldLabel"
+      >
+        Option 1
+      </span>
       <div
         class="lfr-ddm-form-field-checkbox-switch"
       >
@@ -408,7 +512,12 @@ exports[`Field Checkbox Multiple has a value 1`] = `
           class="simple-toggle-switch toggle-switch"
         >
           <input
+            aria-checked="false"
+            aria-errormessage="undefined_fieldError"
+            aria-invalid="true"
+            aria-labelledby="undefined_option2_fieldLabel undefined_fieldLabel"
             class="toggle-switch-check"
+            id="undefined_option2"
             type="checkbox"
             value="option2"
           />
@@ -427,8 +536,13 @@ exports[`Field Checkbox Multiple has a value 1`] = `
           </span>
         </label>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_option2_fieldLabel"
+      >
+        Option 2
+      </span>
     </div>
-    
   </div>
 </div>
 `;
@@ -436,7 +550,6 @@ exports[`Field Checkbox Multiple has a value 1`] = `
 exports[`Field Checkbox Multiple has an id 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -450,7 +563,12 @@ exports[`Field Checkbox Multiple has an id 1`] = `
           class="simple-toggle-switch toggle-switch"
         >
           <input
+            aria-checked="false"
+            aria-errormessage="undefined_fieldError"
+            aria-invalid="true"
+            aria-labelledby="undefined_option1_fieldLabel undefined_fieldLabel"
             class="toggle-switch-check"
+            id="undefined_option1"
             type="checkbox"
             value="option1"
           />
@@ -469,6 +587,12 @@ exports[`Field Checkbox Multiple has an id 1`] = `
           </span>
         </label>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_option1_fieldLabel"
+      >
+        Option 1
+      </span>
       <div
         class="lfr-ddm-form-field-checkbox-switch"
       >
@@ -476,7 +600,12 @@ exports[`Field Checkbox Multiple has an id 1`] = `
           class="simple-toggle-switch toggle-switch"
         >
           <input
+            aria-checked="false"
+            aria-errormessage="undefined_fieldError"
+            aria-invalid="true"
+            aria-labelledby="undefined_option2_fieldLabel undefined_fieldLabel"
             class="toggle-switch-check"
+            id="undefined_option2"
             type="checkbox"
             value="option2"
           />
@@ -495,8 +624,13 @@ exports[`Field Checkbox Multiple has an id 1`] = `
           </span>
         </label>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_option2_fieldLabel"
+      >
+        Option 2
+      </span>
     </div>
-    
   </div>
 </div>
 `;
@@ -504,7 +638,6 @@ exports[`Field Checkbox Multiple has an id 1`] = `
 exports[`Field Checkbox Multiple is not editable 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -518,8 +651,13 @@ exports[`Field Checkbox Multiple is not editable 1`] = `
           class="simple-toggle-switch toggle-switch"
         >
           <input
+            aria-checked="false"
+            aria-errormessage="undefined_fieldError"
+            aria-invalid="true"
+            aria-labelledby="undefined_option1_fieldLabel undefined_fieldLabel"
             class="toggle-switch-check"
             disabled=""
+            id="undefined_option1"
             type="checkbox"
             value="option1"
           />
@@ -538,6 +676,12 @@ exports[`Field Checkbox Multiple is not editable 1`] = `
           </span>
         </label>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_option1_fieldLabel"
+      >
+        Option 1
+      </span>
       <div
         class="lfr-ddm-form-field-checkbox-switch"
       >
@@ -545,8 +689,13 @@ exports[`Field Checkbox Multiple is not editable 1`] = `
           class="simple-toggle-switch toggle-switch"
         >
           <input
+            aria-checked="false"
+            aria-errormessage="undefined_fieldError"
+            aria-invalid="true"
+            aria-labelledby="undefined_option2_fieldLabel undefined_fieldLabel"
             class="toggle-switch-check"
             disabled=""
+            id="undefined_option2"
             type="checkbox"
             value="option2"
           />
@@ -565,8 +714,13 @@ exports[`Field Checkbox Multiple is not editable 1`] = `
           </span>
         </label>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_option2_fieldLabel"
+      >
+        Option 2
+      </span>
     </div>
-    
   </div>
 </div>
 `;
@@ -574,7 +728,6 @@ exports[`Field Checkbox Multiple is not editable 1`] = `
 exports[`Field Checkbox Multiple is not required 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -588,7 +741,13 @@ exports[`Field Checkbox Multiple is not required 1`] = `
           class="simple-toggle-switch toggle-switch"
         >
           <input
+            aria-checked="false"
+            aria-errormessage="undefined_fieldError"
+            aria-invalid="true"
+            aria-labelledby="undefined_option1_fieldLabel undefined_fieldLabel"
+            aria-required="false"
             class="toggle-switch-check"
+            id="undefined_option1"
             type="checkbox"
             value="option1"
           />
@@ -607,6 +766,12 @@ exports[`Field Checkbox Multiple is not required 1`] = `
           </span>
         </label>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_option1_fieldLabel"
+      >
+        Option 1
+      </span>
       <div
         class="lfr-ddm-form-field-checkbox-switch"
       >
@@ -614,7 +779,13 @@ exports[`Field Checkbox Multiple is not required 1`] = `
           class="simple-toggle-switch toggle-switch"
         >
           <input
+            aria-checked="false"
+            aria-errormessage="undefined_fieldError"
+            aria-invalid="true"
+            aria-labelledby="undefined_option2_fieldLabel undefined_fieldLabel"
+            aria-required="false"
             class="toggle-switch-check"
+            id="undefined_option2"
             type="checkbox"
             value="option2"
           />
@@ -633,8 +804,13 @@ exports[`Field Checkbox Multiple is not required 1`] = `
           </span>
         </label>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_option2_fieldLabel"
+      >
+        Option 2
+      </span>
     </div>
-    
   </div>
 </div>
 `;
@@ -642,7 +818,6 @@ exports[`Field Checkbox Multiple is not required 1`] = `
 exports[`Field Checkbox Multiple is shown as a switcher 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -656,7 +831,12 @@ exports[`Field Checkbox Multiple is shown as a switcher 1`] = `
           class="simple-toggle-switch toggle-switch"
         >
           <input
+            aria-checked="false"
+            aria-errormessage="undefined_fieldError"
+            aria-invalid="true"
+            aria-labelledby="undefined_option1_fieldLabel undefined_fieldLabel"
             class="toggle-switch-check"
+            id="undefined_option1"
             type="checkbox"
             value="option1"
           />
@@ -675,6 +855,12 @@ exports[`Field Checkbox Multiple is shown as a switcher 1`] = `
           </span>
         </label>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_option1_fieldLabel"
+      >
+        Option 1
+      </span>
       <div
         class="lfr-ddm-form-field-checkbox-switch"
       >
@@ -682,7 +868,12 @@ exports[`Field Checkbox Multiple is shown as a switcher 1`] = `
           class="simple-toggle-switch toggle-switch"
         >
           <input
+            aria-checked="false"
+            aria-errormessage="undefined_fieldError"
+            aria-invalid="true"
+            aria-labelledby="undefined_option2_fieldLabel undefined_fieldLabel"
             class="toggle-switch-check"
+            id="undefined_option2"
             type="checkbox"
             value="option2"
           />
@@ -701,8 +892,13 @@ exports[`Field Checkbox Multiple is shown as a switcher 1`] = `
           </span>
         </label>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_option2_fieldLabel"
+      >
+        Option 2
+      </span>
     </div>
-    
   </div>
 </div>
 `;
@@ -710,7 +906,6 @@ exports[`Field Checkbox Multiple is shown as a switcher 1`] = `
 exports[`Field Checkbox Multiple is shown as checkbox 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -722,7 +917,12 @@ exports[`Field Checkbox Multiple is shown as checkbox 1`] = `
       >
         <label>
           <input
+            aria-checked="false"
+            aria-errormessage="undefined_fieldError"
+            aria-invalid="true"
+            aria-labelledby="undefined_option1_fieldLabel undefined_fieldLabel"
             class="custom-control-input"
+            id="undefined_option1"
             type="checkbox"
             value="option1"
           />
@@ -737,12 +937,23 @@ exports[`Field Checkbox Multiple is shown as checkbox 1`] = `
           </span>
         </label>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_option1_fieldLabel"
+      >
+        Option 1
+      </span>
       <div
         class="custom-control custom-checkbox"
       >
         <label>
           <input
+            aria-checked="false"
+            aria-errormessage="undefined_fieldError"
+            aria-invalid="true"
+            aria-labelledby="undefined_option2_fieldLabel undefined_fieldLabel"
             class="custom-control-input"
+            id="undefined_option2"
             type="checkbox"
             value="option2"
           />
@@ -757,8 +968,13 @@ exports[`Field Checkbox Multiple is shown as checkbox 1`] = `
           </span>
         </label>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_option2_fieldLabel"
+      >
+        Option 2
+      </span>
     </div>
-    
   </div>
 </div>
 `;
@@ -769,8 +985,9 @@ exports[`Field Checkbox Multiple renders Label if showLabel is true 1`] = `
     class="form-group hide"
   >
     <label
-      aria-labelledby="undefined_fieldDetails"
+      aria-labelledby="undefined_fieldOnlyLabel"
       class="ddm-label"
+      id="undefined_fieldLabel"
       tabindex="0"
     >
       text
@@ -785,7 +1002,12 @@ exports[`Field Checkbox Multiple renders Label if showLabel is true 1`] = `
           class="simple-toggle-switch toggle-switch"
         >
           <input
+            aria-checked="false"
+            aria-errormessage="undefined_fieldError"
+            aria-invalid="true"
+            aria-labelledby="undefined_option1_fieldLabel undefined_fieldLabel"
             class="toggle-switch-check"
+            id="undefined_option1"
             type="checkbox"
             value="option1"
           />
@@ -804,6 +1026,12 @@ exports[`Field Checkbox Multiple renders Label if showLabel is true 1`] = `
           </span>
         </label>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_option1_fieldLabel"
+      >
+        Option 1
+      </span>
       <div
         class="lfr-ddm-form-field-checkbox-switch"
       >
@@ -811,7 +1039,12 @@ exports[`Field Checkbox Multiple renders Label if showLabel is true 1`] = `
           class="simple-toggle-switch toggle-switch"
         >
           <input
+            aria-checked="false"
+            aria-errormessage="undefined_fieldError"
+            aria-invalid="true"
+            aria-labelledby="undefined_option2_fieldLabel undefined_fieldLabel"
             class="toggle-switch-check"
+            id="undefined_option2"
             type="checkbox"
             value="option2"
           />
@@ -830,14 +1063,18 @@ exports[`Field Checkbox Multiple renders Label if showLabel is true 1`] = `
           </span>
         </label>
       </div>
+      <span
+        class="sr-only"
+        id="undefined_option2_fieldLabel"
+      >
+        Option 2
+      </span>
     </div>
     <span
-      aria-hidden="false"
-      hidden=""
-      id="undefined_fieldDetails"
+      class="sr-only"
+      id="undefined_fieldOnlyLabel"
     >
       text
-      <br />
     </span>
   </div>
 </div>
