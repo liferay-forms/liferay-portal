@@ -34,6 +34,10 @@ const Password = ({
 	return (
 		<FieldBase {...otherProps} name={name} readOnly={disabled}>
 			<input
+				aria-errormessage={`${name}_fieldError`}
+				aria-invalid={!otherProps.valid}
+				aria-labelledby={`${name}_fieldLabel`}
+				aria-required={otherProps.required}
 				className="ddm-field-text form-control"
 				disabled={disabled}
 				id={name}

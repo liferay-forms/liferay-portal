@@ -39,9 +39,12 @@ const TableHead = ({columns}) => (
 const TableBodyColumns = ({
 	columns,
 	disabled,
+	invalid,
+	name,
 	onBlur,
 	onChange,
 	onFocus,
+	required,
 	row,
 	value,
 }) => {
@@ -52,16 +55,27 @@ const TableBodyColumns = ({
 		return (
 			<ClayTable.Cell key={`cell-${column.value}-${colIndex}`}>
 				<ClayRadio
-					aria-label={`${rowLabel}: ${row.label}, ${columnLabel}: ${column.label}`}
+					aria-checked={column.value === value[row.value]}
+					aria-errormessage={`${name}_fieldError`}
+					aria-invalid={invalid}
+					aria-labelledby={`${name}_${column.value}_${row.value}_fieldLabel ${name}_fieldLabel`}
+					aria-required={required}
 					checked={column.value === value[row.value]}
 					className="form-builder-grid-field"
 					disabled={disabled}
+					id={`${name}_${column.value}_${row.value}`}
 					name={row.value}
 					onBlur={onBlur}
 					onChange={onChange}
 					onFocus={onFocus}
 					value={column.value}
 				/>
+				<span
+					className="sr-only"
+					id={`${name}_${column.value}_${row.value}_fieldLabel`}
+				>
+					{`${rowLabel}: ${row.label}, ${columnLabel}: ${column.label}`}
+				</span>
 			</ClayTable.Cell>
 		);
 	});
@@ -76,6 +90,8 @@ const Grid = ({
 	onFocus,
 	rows = [{label: 'row', value: 'jehf'}],
 	value,
+	required,
+	invalid,
 	...otherProps
 }) => (
 	<div className="table-responsive" {...otherProps}>
@@ -102,18 +118,18 @@ const Grid = ({
 			<ClayTable.Body>
 				{rows.map((row, rowIndex) => {
 					return (
-						<ClayTable.Row
-							key={`row-${row.value}-${rowIndex}`}
-							name={row.value}
-						>
+						<ClayTable.Row key={`row-${row.value}-${rowIndex}`}>
 							<ClayTable.Cell>{row.label}</ClayTable.Cell>
 
 							<TableBodyColumns
 								columns={columns}
 								disabled={disabled}
+								invalid={invalid}
+								name={name}
 								onBlur={onBlur}
 								onChange={onChange}
 								onFocus={onFocus}
+								required={required}
 								row={row}
 								value={value}
 							/>
@@ -143,6 +159,7 @@ const Main = ({
 			<Grid
 				columns={columns}
 				disabled={readOnly}
+				invalid={!otherProps.valid}
 				name={name}
 				onBlur={onBlur}
 				onChange={(event) => {
@@ -158,6 +175,7 @@ const Main = ({
 					onChange(event, newState);
 				}}
 				onFocus={onFocus}
+				required={otherProps.required}
 				rows={rows}
 				value={state}
 			/>

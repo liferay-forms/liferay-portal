@@ -21,6 +21,7 @@ import {FieldBase} from '../FieldBase/ReactFieldBase.es';
 const Switcher = ({
 	checked: initialChecked,
 	disabled,
+	invalid,
 	label,
 	name,
 	onChange,
@@ -33,9 +34,14 @@ const Switcher = ({
 	return (
 		<label className="ddm-toggle-switch toggle-switch">
 			<input
+				aria-errormessage={`${name}_fieldError`}
+				aria-invalid={invalid}
+				aria-labelledby={`${name}_checkBoxLabel ${name}_fieldLabel`}
+				aria-required={required}
 				checked={checked}
 				className="toggle-switch-check"
 				disabled={disabled}
+				id={name}
 				name={name}
 				onChange={(event) => {
 					setChecked(event.target.checked);
@@ -49,7 +55,10 @@ const Switcher = ({
 				<span className="toggle-switch-handle"></span>
 
 				{(showLabel || required) && (
-					<span className="toggle-switch-text toggle-switch-text-right">
+					<span
+						className="toggle-switch-text toggle-switch-text-right"
+						id={`${name}_checkBoxLabel`}
+					>
 						{showLabel && label}
 
 						{required && (
@@ -69,6 +78,7 @@ const Switcher = ({
 const Checkbox = ({
 	checked: initialChecked,
 	disabled,
+	invalid,
 	label,
 	name,
 	onChange,
@@ -80,8 +90,14 @@ const Checkbox = ({
 
 	return (
 		<ClayCheckbox
+			aria-checked={checked}
+			aria-errormessage={`${name}_fieldError`}
+			aria-invalid={invalid}
+			aria-labelledby={`${name}_fieldLabel`}
+			aria-required={required}
 			checked={checked}
 			disabled={disabled}
+			id={name}
 			label={showLabel && label}
 			name={name}
 			onChange={(event) => {
@@ -127,6 +143,7 @@ const Main = ({
 			<Toggle
 				checked={value !== undefined ? value : predefinedValue}
 				disabled={disabled}
+				invalid={!otherProps.valid}
 				label={label}
 				name={name}
 				onChange={onChange}

@@ -17,15 +17,24 @@ import React from 'react';
 
 const noop = () => {};
 
-const HiddenSelectInput = ({multiple, name, options, value}) => (
+const HiddenSelectInput = ({
+	multiple,
+	name,
+	options,
+	required,
+	valid,
+	value,
+}) => (
 	<ClaySelect
-		aria-hidden="true"
+		aria-errormessage={`${name}_fieldError`}
 		className="form-control"
 		hidden
 		id={name}
+		invalid={!valid}
 		multiple
 		name={name}
 		onChange={noop}
+		required={required}
 		size={multiple ? options.length : null}
 		value={value}
 	>
@@ -44,7 +53,12 @@ const HiddenSelectInput = ({multiple, name, options, value}) => (
 				}
 			})
 		) : (
-			<ClaySelect.Option defaultValue={value.length} disabled value="" />
+			<ClaySelect.Option
+				defaultValue={value.length}
+				disabled
+				label="undefined"
+				value=""
+			/>
 		)}
 	</ClaySelect>
 );
