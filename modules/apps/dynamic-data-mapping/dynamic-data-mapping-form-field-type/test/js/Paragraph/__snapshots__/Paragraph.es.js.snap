@@ -3,7 +3,6 @@
 exports[`Field Paragraph has a key 1`] = `
 <div>
   <div
-    aria-labelledby="textField_fieldDetails"
     class="form-group hide"
     data-field-name="textField"
     tabindex="0"
@@ -14,9 +13,9 @@ exports[`Field Paragraph has a key 1`] = `
     >
       <div
         class="liferay-ddm-form-field-paragraph-text"
+        id="textField_fieldParagraph"
       />
     </div>
-    
   </div>
 </div>
 `;
@@ -28,9 +27,9 @@ exports[`Field Paragraph has a label 1`] = `
     data-field-name="textField"
   >
     <label
-      aria-labelledby="textField_fieldDetails"
+      aria-labelledby="textField_fieldLabelHidden textField_fieldParagraph"
       class="ddm-label"
-      for="textField"
+      id="textField_fieldLabel"
       tabindex="0"
     >
       label
@@ -41,15 +40,14 @@ exports[`Field Paragraph has a label 1`] = `
     >
       <div
         class="liferay-ddm-form-field-paragraph-text"
+        id="textField_fieldParagraph"
       />
     </div>
     <span
-      aria-hidden="false"
-      hidden=""
-      id="textField_fieldDetails"
+      class="sr-only"
+      id="textField_fieldLabelHidden"
     >
       label
-      <br />
     </span>
   </div>
 </div>
@@ -58,7 +56,6 @@ exports[`Field Paragraph has a label 1`] = `
 exports[`Field Paragraph has a placeholder 1`] = `
 <div>
   <div
-    aria-labelledby="textField_fieldDetails"
     class="form-group hide"
     data-field-name="textField"
     tabindex="0"
@@ -69,9 +66,9 @@ exports[`Field Paragraph has a placeholder 1`] = `
     >
       <div
         class="liferay-ddm-form-field-paragraph-text"
+        id="textField_fieldParagraph"
       />
     </div>
-    
   </div>
 </div>
 `;
@@ -79,7 +76,6 @@ exports[`Field Paragraph has a placeholder 1`] = `
 exports[`Field Paragraph has a value 1`] = `
 <div>
   <div
-    aria-labelledby="textField_fieldDetails"
     class="form-group hide"
     data-field-name="textField"
     tabindex="0"
@@ -90,9 +86,9 @@ exports[`Field Paragraph has a value 1`] = `
     >
       <div
         class="liferay-ddm-form-field-paragraph-text"
+        id="textField_fieldParagraph"
       />
     </div>
-    
   </div>
 </div>
 `;
@@ -100,7 +96,6 @@ exports[`Field Paragraph has a value 1`] = `
 exports[`Field Paragraph has an id 1`] = `
 <div>
   <div
-    aria-labelledby="textField_fieldDetails"
     class="form-group hide"
     data-field-name="textField"
     tabindex="0"
@@ -111,9 +106,9 @@ exports[`Field Paragraph has an id 1`] = `
     >
       <div
         class="liferay-ddm-form-field-paragraph-text"
+        id="textField_fieldParagraph"
       />
     </div>
-    
   </div>
 </div>
 `;
@@ -121,7 +116,6 @@ exports[`Field Paragraph has an id 1`] = `
 exports[`Field Paragraph is not required 1`] = `
 <div>
   <div
-    aria-labelledby="textField_fieldDetails"
     class="form-group hide"
     data-field-name="textField"
     tabindex="0"
@@ -132,9 +126,9 @@ exports[`Field Paragraph is not required 1`] = `
     >
       <div
         class="liferay-ddm-form-field-paragraph-text"
+        id="textField_fieldParagraph"
       />
     </div>
-    
   </div>
 </div>
 `;
@@ -142,7 +136,6 @@ exports[`Field Paragraph is not required 1`] = `
 exports[`Field Paragraph is readOnly 1`] = `
 <div>
   <div
-    aria-labelledby="textField_fieldDetails"
     class="form-group hide"
     data-field-name="textField"
     tabindex="0"
@@ -153,9 +146,9 @@ exports[`Field Paragraph is readOnly 1`] = `
     >
       <div
         class="liferay-ddm-form-field-paragraph-text"
+        id="textField_fieldParagraph"
       />
     </div>
-    
   </div>
 </div>
 `;
@@ -167,9 +160,9 @@ exports[`Field Paragraph renders Label if showLabel is true 1`] = `
     data-field-name="textField"
   >
     <label
-      aria-labelledby="textField_fieldDetails"
+      aria-labelledby="textField_fieldLabelHidden textField_fieldParagraph"
       class="ddm-label"
-      for="textField"
+      id="textField_fieldLabel"
       tabindex="0"
     >
       text
@@ -180,15 +173,14 @@ exports[`Field Paragraph renders Label if showLabel is true 1`] = `
     >
       <div
         class="liferay-ddm-form-field-paragraph-text"
+        id="textField_fieldParagraph"
       />
     </div>
     <span
-      aria-hidden="false"
-      hidden=""
-      id="textField_fieldDetails"
+      class="sr-only"
+      id="textField_fieldLabelHidden"
     >
       text
-      <br />
     </span>
   </div>
 </div>

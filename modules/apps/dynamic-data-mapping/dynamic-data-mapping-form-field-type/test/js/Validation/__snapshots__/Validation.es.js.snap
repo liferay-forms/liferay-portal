@@ -6,7 +6,6 @@ exports[`Validation renders checkbox to enable Validation 1`] = `
     class="form-group lfr-ddm-form-field-validation"
   >
     <div
-      aria-labelledby="enableValidation_fieldDetails"
       class="form-group hide"
       data-field-name="enableValidation"
       tabindex="0"
@@ -15,7 +14,11 @@ exports[`Validation renders checkbox to enable Validation 1`] = `
         class="ddm-toggle-switch toggle-switch"
       >
         <input
+          aria-errormessage="enableValidation_fieldError"
+          aria-invalid="true"
+          aria-labelledby="enableValidation_fieldLabel"
           class="toggle-switch-check"
+          id="enableValidation"
           name="enableValidation"
           type="checkbox"
           value="true"
@@ -29,12 +32,12 @@ exports[`Validation renders checkbox to enable Validation 1`] = `
           />
           <span
             class="toggle-switch-text toggle-switch-text-right"
+            id="enableValidation_fieldLabel"
           >
             Validator
           </span>
         </span>
       </label>
-      
     </div>
   </div>
 </div>

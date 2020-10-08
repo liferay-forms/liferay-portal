@@ -3,7 +3,6 @@
 exports[`Field Color Picker renders field disabled 1`] = `
 <div>
   <div
-    aria-labelledby="colorPicker_fieldDetails"
     class="form-group hide"
     data-field-name="colorPicker"
     tabindex="0"
@@ -40,9 +39,14 @@ exports[`Field Color Picker renders field disabled 1`] = `
           class="input-group-item input-group-append"
         >
           <input
+            aria-errormessage="colorPicker_fieldError"
+            aria-invalid="true"
             aria-label="Color selection is 000000"
+            aria-labelledby="colorPicker_fieldLabel"
+            aria-required="false"
             class="form-control input-group-inset input-group-inset-before"
             disabled=""
+            id="colorPicker"
             type="text"
             value="000000"
           />
@@ -54,7 +58,6 @@ exports[`Field Color Picker renders field disabled 1`] = `
         </div>
       </div>
     </div>
-    
   </div>
 </div>
 `;
@@ -62,7 +65,6 @@ exports[`Field Color Picker renders field disabled 1`] = `
 exports[`Field Color Picker renders field with helptext 1`] = `
 <div>
   <div
-    aria-labelledby="colorPicker_fieldDetails"
     class="form-group hide"
     data-field-name="colorPicker"
     tabindex="0"
@@ -98,8 +100,13 @@ exports[`Field Color Picker renders field with helptext 1`] = `
           class="input-group-item input-group-append"
         >
           <input
+            aria-errormessage="colorPicker_fieldError"
+            aria-invalid="true"
             aria-label="Color selection is 000000"
+            aria-labelledby="colorPicker_fieldLabel"
+            aria-required="false"
             class="form-control input-group-inset input-group-inset-before"
+            id="colorPicker"
             type="text"
             value="000000"
           />
@@ -112,18 +119,10 @@ exports[`Field Color Picker renders field with helptext 1`] = `
       </div>
     </div>
     <span
-      aria-hidden="true"
       class="form-text"
+      id="colorPicker_fieldTip"
     >
       Helptext
-    </span>
-    <span
-      aria-hidden="false"
-      hidden=""
-      id="colorPicker_fieldDetails"
-    >
-      Helptext
-      <br />
     </span>
   </div>
 </div>
@@ -136,9 +135,9 @@ exports[`Field Color Picker renders field with label 1`] = `
     data-field-name="colorPicker"
   >
     <label
-      aria-labelledby="colorPicker_fieldDetails"
+      aria-labelledby="colorPicker_fieldLabelHidden colorPicker_fieldTip"
       class="ddm-label"
-      for="colorPicker"
+      id="colorPicker_fieldLabel"
       tabindex="0"
     >
       label
@@ -174,8 +173,13 @@ exports[`Field Color Picker renders field with label 1`] = `
           class="input-group-item input-group-append"
         >
           <input
+            aria-errormessage="colorPicker_fieldError"
+            aria-invalid="true"
             aria-label="Color selection is 000000"
+            aria-labelledby="colorPicker_fieldLabel"
+            aria-required="false"
             class="form-control input-group-inset input-group-inset-before"
+            id="colorPicker"
             type="text"
             value="000000"
           />
@@ -188,20 +192,16 @@ exports[`Field Color Picker renders field with label 1`] = `
       </div>
     </div>
     <span
-      aria-hidden="true"
-      class="form-text"
-    >
-      Helptext
-    </span>
-    <span
-      aria-hidden="false"
-      hidden=""
-      id="colorPicker_fieldDetails"
+      class="sr-only"
+      id="colorPicker_fieldLabelHidden"
     >
       label
-      <br />
+    </span>
+    <span
+      class="form-text"
+      id="colorPicker_fieldTip"
+    >
       Helptext
-      <br />
     </span>
   </div>
 </div>

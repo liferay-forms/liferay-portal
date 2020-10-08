@@ -3,7 +3,6 @@
 exports[`DatePicker has a predefinedValue 1`] = `
 <div>
   <div
-    aria-labelledby="dateField_fieldDetails"
     class="form-group hide"
     data-field-name="dateField"
     tabindex="0"
@@ -19,6 +18,7 @@ exports[`DatePicker has a predefinedValue 1`] = `
     >
       <div
         class="input-group"
+        id="dateField"
       >
         <div
           class="input-group-item"
@@ -29,6 +29,10 @@ exports[`DatePicker has a predefinedValue 1`] = `
             value="06/02/2020"
           />
           <input
+            aria-errormessage="dateField_fieldError"
+            aria-invalid="true"
+            aria-labelledby="dateField_fieldLabel"
+            aria-required="false"
             class="form-control input-group-inset input-group-inset-after"
             type="text"
             value="06/02/2020"
@@ -53,7 +57,6 @@ exports[`DatePicker has a predefinedValue 1`] = `
         </div>
       </div>
     </div>
-    
   </div>
 </div>
 `;
