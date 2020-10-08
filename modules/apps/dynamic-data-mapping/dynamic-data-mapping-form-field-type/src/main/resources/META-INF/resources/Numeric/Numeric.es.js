@@ -52,6 +52,9 @@ const Numeric = ({
 		thousandsSeparator: ',',
 	},
 	value,
+	name,
+	required,
+	invalid,
 	...otherProps
 }) => {
 	const [currentValue, setCurrentValue] = useState(value);
@@ -121,7 +124,13 @@ const Numeric = ({
 	return (
 		<ClayInput
 			{...otherProps}
+			aria-errormessage={`${name}_fieldError`}
+			aria-invalid={invalid}
+			aria-labelledby={`${name}_fieldLabel`}
+			aria-required={required}
 			disabled={disabled}
+			id={name}
+			name={name}
 			onChange={(event) => {
 				const {value: newValue} = event.target;
 
@@ -173,6 +182,7 @@ const Main = ({
 			disabled={readOnly}
 			editingLanguageId={editingLanguageId}
 			id={id}
+			invalid={!otherProps.valid}
 			localizable={localizable}
 			localizedValue={localizedValue}
 			name={name}
@@ -180,6 +190,7 @@ const Main = ({
 			onChange={onChange}
 			onFocus={onFocus}
 			placeholder={placeholder}
+			required={otherProps.required}
 			symbols={symbols}
 			value={value ? value : predefinedValue}
 		/>

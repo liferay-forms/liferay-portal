@@ -124,11 +124,13 @@ const DocumentLibrary = ({
 	fileEntryTitle = '',
 	fileEntryURL = '',
 	id,
+	invalid,
 	name,
 	onClearButtonClicked,
 	onSelectButtonClicked,
 	placeholder,
 	readOnly,
+	required,
 	value,
 }) => {
 	const [transformedFileEntryTitle, transformedFileEntryURL] = useMemo(
@@ -152,7 +154,11 @@ const DocumentLibrary = ({
 				<ClayInput.Group>
 					<ClayInput.GroupItem prepend>
 						<ClayInput
+							aria-errormessage={`${name}_fieldError`}
+							aria-invalid={invalid}
 							aria-label={Liferay.Language.get('file')}
+							aria-labelledby={`${name}_fieldLabel`}
+							aria-required={required}
 							className="field"
 							disabled
 							id={`${name}inputFile`}
@@ -162,6 +168,7 @@ const DocumentLibrary = ({
 
 					<ClayInput.GroupItem append shrink>
 						<ClayButton
+							aria-labelledby={`${name}_selectLabel ${name}_fieldLabel`}
 							className="select-button"
 							disabled={readOnly}
 							displayType="secondary"
@@ -176,9 +183,7 @@ const DocumentLibrary = ({
 					{transformedFileEntryTitle && (
 						<ClayInput.GroupItem append shrink>
 							<ClayButtonWithIcon
-								aria-label={Liferay.Language.get(
-									'unselect-file'
-								)}
+								aria-labelledby={`${name}_unselectFileLabel ${name}_fileName ${name}_fieldLabel`}
 								className="clear-button"
 								displayType="secondary"
 								onClick={onClearButtonClicked}
@@ -196,6 +201,22 @@ const DocumentLibrary = ({
 				type="hidden"
 				value={value || ''}
 			/>
+
+			<span className="sr-only" id={`${name}_unselectFileLabel`}>
+				{Liferay.Language.get('unselect-file')}
+			</span>
+			<span className="sr-only" id={`${name}_selectLabel`}>
+				{Liferay.Language.get('select')}
+			</span>
+			<span className="sr-only" id={`${name}_selectedLabel`}>
+				{Liferay.Language.get('selected')}
+			</span>
+			<span className="sr-only" id={`${name}_fileNameLabel`}>
+				{Liferay.Language.get('file-name')}
+			</span>
+			<span className="sr-only" id={`${name}_fileName`}>
+				{transformedFileEntryTitle || ''}
+			</span>
 		</div>
 	);
 };
@@ -278,9 +299,14 @@ const Main = ({
 
 	const isSignedIn = Liferay.ThemeDisplay.isSignedIn();
 
+	const addLabelsIds = fileEntryTitle
+		? [`${name}_fileNameLabel`, `${name}_fileName`, `${name}_selectedLabel`]
+		: [];
+
 	return (
 		<FieldBase
 			{...otherProps}
+			addLabelsIds={addLabelsIds}
 			displayErrors={isSignedIn ? displayErrors : true}
 			errorMessage={getErrorMessages(errorMessage, isSignedIn)}
 			id={id}
@@ -292,6 +318,7 @@ const Main = ({
 				fileEntryTitle={fileEntryTitle}
 				fileEntryURL={fileEntryURL}
 				id={id}
+				invalid={!valid}
 				name={name}
 				onClearButtonClicked={(event) => {
 					setCurrentValue(null);
@@ -306,6 +333,7 @@ const Main = ({
 				}
 				placeholder={placeholder}
 				readOnly={isSignedIn ? readOnly : true}
+				required={otherProps.required}
 				value={currentValue || ''}
 			/>
 		</FieldBase>

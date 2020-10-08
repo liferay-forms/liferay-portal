@@ -64,12 +64,18 @@ const getDefaultRows = (nestedFields) => {
 	});
 };
 
-const FieldProperties = ({required, tooltip}) => {
+const FieldProperties = ({required, requiredLabelId, tooltip}) => {
 	return (
 		<>
 			{required && (
 				<span className="reference-mark">
 					<ClayIcon symbol="asterisk" />
+				</span>
+			)}
+
+			{required && (
+				<span className="sr-only" id={requiredLabelId}>
+					{Liferay.Language.get('required')}
 				</span>
 			)}
 
@@ -100,16 +106,14 @@ function FieldBase({
 	required,
 	showLabel = true,
 	style,
-	text,
 	tip,
 	tooltip,
 	type,
 	valid,
 	visible,
+	addLabelsIds = [],
 }) {
 	const {editingLanguageId = themeDisplay.getLanguageId()} = usePage();
-	let fieldDetails = '';
-	const fieldDetailsId = name + '_fieldDetails';
 	const dispatch = useForm();
 	const hasError = displayErrors && errorMessage && !valid;
 	const localizedValueArray = useMemo(() => {
@@ -131,48 +135,54 @@ function FieldBase({
 		return languageValues;
 	}, [localizedValue, editingLanguageId, name]);
 
-	let parentDivAriaLabelledby;
-	let parentDivTabIndex;
 	const renderLabel =
 		(label && showLabel) || required || tooltip || repeatable;
 
 	const repeatedIndex = useMemo(() => getRepeatedIndex(name), [name]);
-	const requiredText = Liferay.Language.get('required');
+
 	const showLegend =
 		type &&
 		(type === 'checkbox_multiple' ||
 			type === 'grid' ||
 			type === 'paragraph' ||
+			type === 'separator' ||
 			type === 'radio');
 
+	const fieldDetailsId = `${name}_fieldLabel`;
+	const labelHiddenId = `${name}_fieldOnlyLabel`;
+	const requiredLabelId = `${name}_fieldRequired`;
+	const tipId = `${name}_fieldTip`;
+	const errorMessageId = `${name}_fieldError`;
+
+	const fieldDetailsIds = [];
+
 	if (renderLabel) {
-		fieldDetails += label + '<br>';
+		fieldDetailsIds.push(labelHiddenId);
 	}
-	else {
-		parentDivTabIndex = 0;
-		parentDivAriaLabelledby = fieldDetailsId;
+	if (required) {
+		fieldDetailsIds.push(requiredLabelId);
 	}
-
 	if (tip) {
-		fieldDetails += tip + '<br>';
+		fieldDetailsIds.push(tipId);
 	}
-
-	if (text) {
-		fieldDetails +=
-			(typeof text === 'object' ? text.content : text) + '<br>';
-	}
-
 	if (hasError) {
-		fieldDetails += errorMessage;
+		fieldDetailsIds.push(errorMessageId);
 	}
-	else if (required) {
-		fieldDetails += requiredText;
+
+	const joinFieldDetailsIds = fieldDetailsIds.join(' ');
+	const joinAddLabelsIds = addLabelsIds.length
+		? ` ${addLabelsIds.join(' ')}`
+		: '';
+
+	let parentDivTabIndex;
+
+	if (!renderLabel) {
+		parentDivTabIndex = 0;
 	}
 
 	return (
 		<ClayTooltipProvider>
 			<div
-				aria-labelledby={parentDivAriaLabelledby}
 				className={classNames('form-group', {
 					'has-error': hasError,
 					hide: !visible,
@@ -186,6 +196,7 @@ function FieldBase({
 					<div className="lfr-ddm-form-field-repeatable-toolbar">
 						{repeatable && repeatedIndex > 0 && (
 							<ClayButton
+								aria-labelledby={`${name}removeDuplicateLabel ${name}_fieldOnlyLabel`}
 								className="ddm-form-field-repeatable-delete-button p-0"
 								disabled={readOnly}
 								onClick={() =>
@@ -199,10 +210,21 @@ function FieldBase({
 								type="button"
 							>
 								<ClayIcon symbol="hr" />
+								<span
+									className="sr-only"
+									id={`${name}removeDuplicateLabel`}
+								>
+									{`${Liferay.Language.get(
+										'remove'
+									)} ${Liferay.Language.get(
+										'duplicate'
+									)} ${Liferay.Language.get('field')}`}
+								</span>
 							</ClayButton>
 						)}
 
 						<ClayButton
+							aria-labelledby={`${name}addDuplicateLabel ${name}_fieldOnlyLabel`}
 							className="ddm-form-field-repeatable-add-button p-0"
 							disabled={readOnly}
 							onClick={() =>
@@ -216,6 +238,14 @@ function FieldBase({
 							type="button"
 						>
 							<ClayIcon symbol="plus" />
+							<span
+								className="sr-only"
+								id={`${name}addDuplicateLabel`}
+							>
+								{`${Liferay.Language.get(
+									'duplicate'
+								)} ${Liferay.Language.get('field')}`}
+							</span>
 						</ClayButton>
 					</div>
 				)}
@@ -225,14 +255,16 @@ function FieldBase({
 						{showLegend ? (
 							<fieldset>
 								<legend
-									aria-labelledby={fieldDetailsId}
+									aria-labelledby={`${joinFieldDetailsIds}${joinAddLabelsIds}`}
 									className="lfr-ddm-legend"
+									id={fieldDetailsId}
 									tabIndex="0"
 								>
 									{label && showLabel && label}
 
 									<FieldProperties
 										required={required}
+										requiredLabelId={requiredLabelId}
 										tooltip={tooltip}
 									/>
 								</legend>
@@ -241,17 +273,19 @@ function FieldBase({
 						) : (
 							<>
 								<label
-									aria-labelledby={fieldDetailsId}
+									aria-labelledby={`${joinFieldDetailsIds}${joinAddLabelsIds}`}
 									className={classNames({
 										'ddm-empty': !showLabel && !required,
 										'ddm-label': showLabel || required,
 									})}
+									id={fieldDetailsId}
 									tabIndex="0"
 								>
 									{label && showLabel && label}
 
 									<FieldProperties
 										required={required}
+										requiredLabelId={requiredLabelId}
 										tooltip={tooltip}
 									/>
 								</label>
@@ -277,29 +311,24 @@ function FieldBase({
 						/>
 					))}
 
+				{renderLabel && (
+					<span className="sr-only" id={labelHiddenId}>
+						{label && showLabel && label}
+					</span>
+				)}
+
 				{tip && (
-					<span aria-hidden="true" className="form-text">
+					<span className="form-text" id={tipId}>
 						{tip}
 					</span>
 				)}
 
 				{hasError && (
-					<span className="form-feedback-group">
-						<div aria-hidden="true" className="form-feedback-item">
+					<span className="form-feedback-group" id={errorMessageId}>
+						<span className="form-feedback-item" role="alert">
 							{errorMessage}
-						</div>
+						</span>
 					</span>
-				)}
-
-				{fieldDetails && (
-					<span
-						aria-hidden="false"
-						dangerouslySetInnerHTML={{
-							__html: fieldDetails,
-						}}
-						hidden
-						id={fieldDetailsId}
-					/>
 				)}
 
 				{nestedFields && <Layout rows={getDefaultRows(nestedFields)} />}

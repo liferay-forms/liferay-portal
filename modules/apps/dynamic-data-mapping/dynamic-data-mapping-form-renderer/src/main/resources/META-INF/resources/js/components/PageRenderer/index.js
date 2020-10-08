@@ -12,9 +12,10 @@
  * details.
  */
 
+import ClayIcon from '@clayui/icon';
 import core from 'metal';
 import React from 'react';
-import ClayIcon from '@clayui/icon';
+
 import {PageProvider} from '../../hooks/usePage.es';
 import * as DefaultVariant from './DefaultVariant.es';
 import * as EditablePageHeader from './EditablePageHeader.es';
@@ -184,7 +185,14 @@ const Renderer = ({
 		PAGE_HEADER_COMPONENT_TYPE[page.headerRenderer] ||
 		Components.PageHeader;
 
-	const hasRequiredFields =  page.rows.filter(x => x && x.columns[0] && x.columns[0].fields[0] && x.columns[0].fields[0].required).length > 0;
+	const hasRequiredFields =
+		page.rows.filter(
+			(x) =>
+				x &&
+				x.columns[0] &&
+				x.columns[0].fields[0] &&
+				x.columns[0].fields[0].required
+		).length > 0;
 
 	return (
 		<Components.Container
@@ -219,10 +227,12 @@ const Renderer = ({
 			>
 				{hasRequiredFields && (
 					<p aria-hidden="true" className="text-secondary">
-						<span className="reference-mark c-mr-2">
+						<span className="c-mr-2 reference-mark">
 							<ClayIcon symbol="asterisk" />
 						</span>
-						{Liferay.Language.get('required-fields-icon-description')}
+						{Liferay.Language.get(
+							'required-fields-icon-description'
+						)}
 					</p>
 				)}
 				<Layout

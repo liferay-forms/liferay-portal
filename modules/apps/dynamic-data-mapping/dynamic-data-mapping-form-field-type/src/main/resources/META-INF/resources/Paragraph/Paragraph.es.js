@@ -17,7 +17,11 @@ import React from 'react';
 import {FieldBase} from '../FieldBase/ReactFieldBase.es';
 
 const Paragraph = ({name, text, ...otherProps}) => (
-	<FieldBase {...otherProps} name={name} text={text}>
+	<FieldBase
+		{...otherProps}
+		addLabelsIds={[`${name}_fieldParagraph`]}
+		name={name}
+	>
 		<div
 			className="form-group liferay-ddm-form-field-paragraph"
 			data-field-name={name}
@@ -27,6 +31,7 @@ const Paragraph = ({name, text, ...otherProps}) => (
 				dangerouslySetInnerHTML={{
 					__html: typeof text === 'object' ? text.content : text,
 				}}
+				id={`${name}_fieldParagraph`}
 			/>
 		</div>
 	</FieldBase>

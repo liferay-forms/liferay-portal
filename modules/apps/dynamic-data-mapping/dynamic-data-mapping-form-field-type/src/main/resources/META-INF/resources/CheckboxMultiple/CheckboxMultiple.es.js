@@ -22,12 +22,15 @@ import {setJSONArrayValue} from '../util/setters.es';
 const Switcher = ({
 	checked,
 	disabled,
+	id,
 	inline,
+	invalid,
 	label,
 	name,
 	onBlur,
 	onChange,
 	onFocus,
+	required,
 	value,
 }) => (
 	<div
@@ -37,9 +40,15 @@ const Switcher = ({
 	>
 		<label className="simple-toggle-switch toggle-switch">
 			<input
+				aria-checked={checked}
+				aria-errormessage={`${name}_fieldError`}
+				aria-invalid={invalid}
+				aria-labelledby={`${name}_${value}_fieldLabel ${name}_fieldLabel`}
+				aria-required={required}
 				checked={checked}
 				className="toggle-switch-check"
 				disabled={disabled}
+				id={id}
 				name={name}
 				onBlur={onBlur}
 				onChange={onChange}
@@ -58,6 +67,7 @@ const Switcher = ({
 const CheckboxMultiple = ({
 	disabled,
 	inline,
+	invalid,
 	isSwitcher,
 	name,
 	onBlur,
@@ -65,6 +75,7 @@ const CheckboxMultiple = ({
 	onFocus,
 	options,
 	predefinedValue,
+	required,
 	value: initialValue,
 }) => {
 	const [value, setValue] = useState(initialValue);
@@ -89,18 +100,34 @@ const CheckboxMultiple = ({
 	return (
 		<div className="lfr-ddm-checkbox-multiple">
 			{options.map((option) => (
-				<Toggle
-					checked={displayValues.includes(option.value)}
-					disabled={disabled}
-					inline={inline}
-					key={option.value}
-					label={option.label}
-					name={name}
-					onBlur={onBlur}
-					onChange={handleChange}
-					onFocus={onFocus}
-					value={option.value}
-				/>
+				<>
+					<Toggle
+						aria-checked={displayValues.includes(option.value)}
+						aria-errormessage={`${name}_fieldError`}
+						aria-invalid={invalid}
+						aria-labelledby={`${name}_${option.value}_fieldLabel ${name}_fieldLabel`}
+						aria-required={required}
+						checked={displayValues.includes(option.value)}
+						disabled={disabled}
+						id={`${name}_${option.value}`}
+						inline={inline}
+						invalid={invalid}
+						key={option.value}
+						label={option.label}
+						name={name}
+						onBlur={onBlur}
+						onChange={handleChange}
+						onFocus={onFocus}
+						required={required}
+						value={option.value}
+					/>
+					<span
+						className="sr-only"
+						id={`${name}_${option.value}_fieldLabel`}
+					>
+						{option.label}
+					</span>
+				</>
 			))}
 		</div>
 	);
@@ -132,6 +159,7 @@ const Main = ({
 		<CheckboxMultiple
 			disabled={readOnly}
 			inline={inline}
+			invalid={!otherProps.valid}
 			isSwitcher={showAsSwitcher}
 			name={name}
 			onBlur={onBlur}
@@ -139,6 +167,7 @@ const Main = ({
 			onFocus={onFocus}
 			options={options}
 			predefinedValue={setJSONArrayValue(predefinedValue)}
+			required={otherProps.required}
 			value={setJSONArrayValue(value)}
 		/>
 	</FieldBase>

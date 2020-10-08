@@ -34,11 +34,13 @@ const DEFAULT_COLORS = [
 
 const ClayColorPickerWithState = ({
 	inputValue,
+	invalid,
 	name,
 	onBlur,
 	onFocus,
 	onValueChange,
 	readOnly,
+	required,
 	spritemap,
 }) => {
 	const [customColors, setCustoms] = useState(DEFAULT_COLORS);
@@ -55,8 +57,13 @@ const ClayColorPickerWithState = ({
 
 	return (
 		<ClayColorPicker
+			aria-errormessage={`${name}_fieldError`}
+			aria-invalid={invalid}
+			aria-labelledby={`${name}_fieldLabel`}
+			aria-required={required}
 			colors={customColors}
 			disabled={readOnly}
+			id={name}
 			label={Liferay.Language.get('color-field-type-label')}
 			name={name}
 			onBlur={onBlur}
@@ -93,11 +100,13 @@ const ColorPicker = ({
 	>
 		<ClayColorPickerWithState
 			inputValue={value ? value : predefinedValue}
+			invalid={!otherProps.valid}
 			name={name}
 			onBlur={onBlur}
 			onFocus={onFocus}
 			onValueChange={(value) => onChange({}, value)}
 			readOnly={readOnly}
+			required={otherProps.required}
 			spritemap={spritemap}
 		/>
 	</FieldBase>

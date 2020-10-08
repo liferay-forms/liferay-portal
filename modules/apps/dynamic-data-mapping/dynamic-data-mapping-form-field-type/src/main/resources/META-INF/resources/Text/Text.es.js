@@ -28,6 +28,7 @@ const Text = ({
 	editingLanguageId,
 	fieldName,
 	id,
+	invalid,
 	localizable,
 	localizedValue,
 	name,
@@ -35,6 +36,7 @@ const Text = ({
 	onChange,
 	onFocus,
 	placeholder,
+	required,
 	syncDelay,
 	value: initialValue,
 }) => {
@@ -61,6 +63,10 @@ const Text = ({
 
 	return (
 		<ClayInput
+			aria-errormessage={`${name}_fieldError`}
+			aria-invalid={invalid}
+			aria-labelledby={`${name}_fieldLabel`}
+			aria-required={required}
 			className="ddm-field-text"
 			disabled={disabled}
 			id={id}
@@ -85,11 +91,13 @@ const Text = ({
 const Textarea = ({
 	disabled,
 	id,
+	invalid,
 	name,
 	onBlur,
 	onChange,
 	onFocus,
 	placeholder,
+	required,
 	syncDelay,
 	value: initialValue,
 }) => {
@@ -97,6 +105,10 @@ const Textarea = ({
 
 	return (
 		<textarea
+			aria-errormessage={`${name}_fieldError`}
+			aria-invalid={invalid}
+			aria-labelledby={`${name}_fieldLabel`}
+			aria-required={required}
 			className="ddm-field-text form-control"
 			disabled={disabled}
 			id={id}
@@ -108,7 +120,6 @@ const Textarea = ({
 			}}
 			onFocus={onFocus}
 			placeholder={placeholder}
-			type="text"
 			value={value}
 		/>
 	);
@@ -117,12 +128,14 @@ const Textarea = ({
 const Autocomplete = ({
 	disabled,
 	id,
+	invalid,
 	name,
 	onBlur,
 	onChange,
 	onFocus,
 	options,
 	placeholder,
+	required,
 	syncDelay,
 	value: initialValue,
 }) => {
@@ -187,6 +200,10 @@ const Autocomplete = ({
 	return (
 		<ClayAutocomplete>
 			<ClayAutocomplete.Input
+				aria-errormessage={`${name}_fieldError`}
+				aria-invalid={invalid}
+				aria-labelledby={`${name}_fieldLabel`}
+				aria-required={required}
 				disabled={disabled}
 				id={id}
 				name={name}
@@ -316,6 +333,7 @@ const Main = ({
 				editingLanguageId={editingLanguageId}
 				fieldName={fieldName}
 				id={id}
+				invalid={!otherProps.valid}
 				localizable={localizable}
 				localizedValue={localizedValue}
 				name={name}
@@ -324,6 +342,7 @@ const Main = ({
 				onFocus={onFocus}
 				options={optionsMemo}
 				placeholder={placeholder}
+				required={otherProps.required}
 				syncDelay={syncDelay}
 				value={value ? value : predefinedValue}
 			/>

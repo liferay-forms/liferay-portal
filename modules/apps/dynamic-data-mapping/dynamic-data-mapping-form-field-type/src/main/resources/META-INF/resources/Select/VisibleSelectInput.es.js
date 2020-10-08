@@ -17,11 +17,12 @@ import ClayLabel from '@clayui/label';
 import classNames from 'classnames';
 import React, {forwardRef} from 'react';
 
-const LabelOptionListItem = ({onCloseButtonClicked, option}) => (
+const LabelOptionListItem = ({name, onCloseButtonClicked, option}) => (
 	<li>
 		<ClayLabel
 			className="ddm-select-option-label"
 			closeButtonProps={{
+				'aria-labelledby': `${name}_removeLabel ${name}_${option.value}_optionLabel ${name}_fieldLabel`,
 				'data-testid': `closeButton${option.value}`,
 				onClick: (event) => {
 					event.preventDefault();
@@ -34,14 +35,18 @@ const LabelOptionListItem = ({onCloseButtonClicked, option}) => (
 		>
 			{option.label}
 		</ClayLabel>
+		<span className="sr-only" id={`${name}_${option.value}_optionLabel`}>
+			{option.label}
+		</span>
 	</li>
 );
 
-const OptionSelected = ({isPlaceholder, label}) => (
+const OptionSelected = ({isPlaceholder, label, name}) => (
 	<div
 		className={classNames('option-selected', {
 			'option-selected-placeholder': isPlaceholder,
 		})}
+		id={`${name}_placeholderLabel`}
 	>
 		{label}
 	</div>
@@ -53,6 +58,7 @@ const VisibleSelectInput = forwardRef(
 			className,
 			id,
 			multiple,
+			name,
 			onClick,
 			onCloseButtonClicked,
 			onKeyDown,
@@ -80,6 +86,17 @@ const VisibleSelectInput = forwardRef(
 			return selectedOption ? selectedOption.label : triggerPlaceholder;
 		};
 
+		const selectedOptionsLabelsIds = [];
+		value.map((item) => {
+			selectedOptionsLabelsIds.push(`${name}_${item}_optionLabel`);
+		});
+		if (selectedOptionsLabelsIds.length > 0) {
+			selectedOptionsLabelsIds.push(`${name}_selectedLabel`);
+		}
+		else {
+			selectedOptionsLabelsIds.push(`${name}_placeholderLabel`);
+		}
+
 		return (
 			<div
 				className={classNames(
@@ -91,6 +108,9 @@ const VisibleSelectInput = forwardRef(
 				ref={ref}
 			>
 				<div
+					aria-labelledby={`${selectedOptionsLabelsIds.join(
+						' '
+					)} ${name}_fieldLabel`}
 					className={classNames(
 						'form-control results-chosen select-field-trigger',
 						{
@@ -106,6 +126,7 @@ const VisibleSelectInput = forwardRef(
 						<OptionSelected
 							isPlaceholder={isValueEmpty}
 							label={selectedLabel()}
+							name={name}
 						/>
 					) : (
 						value.map((item) => {
@@ -116,6 +137,7 @@ const VisibleSelectInput = forwardRef(
 							return (
 								<LabelOptionListItem
 									key={`${option.value}-${option.label}`}
+									name={name}
 									onCloseButtonClicked={onCloseButtonClicked}
 									option={option}
 								/>
@@ -127,6 +149,14 @@ const VisibleSelectInput = forwardRef(
 						<ClayIcon symbol="caret-double" />
 					</a>
 				</div>
+
+				<span className="sr-only" id={`${name}_selectedLabel`}>
+					{Liferay.Language.get('selected')}
+				</span>
+
+				<span className="sr-only" id={`${name}_removeLabel`}>
+					{Liferay.Language.get('remove')}
+				</span>
 			</div>
 		);
 	}

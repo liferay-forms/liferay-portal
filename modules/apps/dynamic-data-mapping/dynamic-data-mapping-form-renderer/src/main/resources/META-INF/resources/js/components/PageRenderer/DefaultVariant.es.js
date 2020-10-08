@@ -213,9 +213,21 @@ export const Page = ({
 /* eslint-disable react/jsx-fragments */
 export const PageHeader = ({description, title}) => (
 	<React.Fragment>
-		{title && <h2 className="lfr-ddm-form-page-title">{title}</h2>}
+		{title && (
+			<h2
+				aria-describedby="lfr-ddm-form-page-title-description"
+				className="lfr-ddm-form-page-title"
+			>
+				{title}
+			</h2>
+		)}
 		{description && (
-			<h3 className="lfr-ddm-form-page-description">{description}</h3>
+			<h3
+				className="lfr-ddm-form-page-description"
+				id="lfr-ddm-form-page-title-description"
+			>
+				{description}
+			</h3>
 		)}
 	</React.Fragment>
 );

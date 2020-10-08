@@ -114,8 +114,10 @@ const getValueForHidden = (value) => {
 
 const DatePicker = ({
 	disabled,
+	invalid,
 	name,
 	onChange,
+	required,
 	spritemap,
 	value: initialValue,
 }) => {
@@ -172,9 +174,14 @@ const DatePicker = ({
 				value={getValueForHidden(value)}
 			/>
 			<ClayDatePicker
+				aria-errormessage={`${name}_fieldError`}
+				aria-invalid={invalid}
+				aria-labelledby={`${name}_fieldLabel`}
+				aria-required={required}
 				dateFormat={dateMask}
 				disabled={disabled}
 				expanded={expanded}
+				id={name}
 				initialMonth={getInitialMonth(value)}
 				onExpandedChange={(expand) => {
 					setExpand(expand);
@@ -229,9 +236,11 @@ const Main = ({
 	>
 		<DatePicker
 			disabled={readOnly}
+			invalid={!otherProps.valid}
 			name={name}
 			onChange={(value) => onChange({}, value)}
 			placeholder={placeholder}
+			required={otherProps.required}
 			spritemap={spritemap}
 			value={value ? value : predefinedValue}
 		/>

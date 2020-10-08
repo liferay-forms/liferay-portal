@@ -26,6 +26,7 @@ const defaultValue = {description: '', title: '', url: ''};
 const ImagePicker = ({
 	id,
 	inputValue,
+	invalid,
 	itemSelectorURL,
 	name,
 	onClearClick,
@@ -33,6 +34,7 @@ const ImagePicker = ({
 	onFieldChanged,
 	portletNamespace,
 	readOnly,
+	required,
 }) => {
 	const [imageValues, setImageValues] = useSyncValue(inputValue);
 	const [modalVisible, setModalVisible] = useState(false);
@@ -112,6 +114,10 @@ const ImagePicker = ({
 				<ClayInput.Group>
 					<ClayInput.GroupItem className="d-none d-sm-block" prepend>
 						<ClayInput
+							aria-errormessage={`${name}_fieldError`}
+							aria-invalid={invalid}
+							aria-labelledby={`${name}_fieldLabel`}
+							aria-required={required}
 							className="field"
 							disabled
 							id={id}
@@ -122,6 +128,7 @@ const ImagePicker = ({
 
 					<ClayInput.GroupItem append shrink>
 						<ClayButton
+							aria-labelledby={`${name}_selectLabel ${name}_fieldLabel`}
 							disabled={readOnly}
 							displayType="secondary"
 							onClick={handleItemSelectorTriggerClick}
@@ -134,6 +141,7 @@ const ImagePicker = ({
 					{imageValues.url && (
 						<ClayInput.GroupItem shrink>
 							<ClayButton
+								aria-labelledby={`${name}_clearLabel ${name}_fieldLabel`}
 								disabled={readOnly}
 								displayType="secondary"
 								onClick={(event) =>
@@ -217,6 +225,22 @@ const ImagePicker = ({
 					</>
 				)
 			)}
+
+			<span className="sr-only" id={`${name}_clearLabel`}>
+				{Liferay.Language.get('clear')}
+			</span>
+			<span className="sr-only" id={`${name}_selectLabel`}>
+				{Liferay.Language.get('select')}
+			</span>
+			<span className="sr-only" id={`${name}_selectedLabel`}>
+				{Liferay.Language.get('selected')}
+			</span>
+			<span className="sr-only" id={`${name}_imageLabel`}>
+				{Liferay.Language.get('image')}
+			</span>
+			<span className="sr-only" id={`${name}_imageTitleName`}>
+				{imageValues.title || ''}
+			</span>
 		</>
 	);
 };
@@ -264,9 +288,21 @@ const Main = ({
 		return null;
 	};
 
+	const getInputValue =
+		transformValue(inputValue) ?? transformValue(value) ?? defaultValue;
+
+	const addLabelsIds = getInputValue.title
+		? [
+				`${name}_imageLabel`,
+				`${name}_imageTitleName`,
+				`${name}_selectedLabel`,
+		  ]
+		: [];
+
 	return (
 		<FieldBase
 			{...otherProps}
+			addLabelsIds={addLabelsIds}
 			displayErrors={isSignedIn ? displayErrors : true}
 			errorMessage={getErrorMessages(errorMessage, isSignedIn)}
 			id={id}
@@ -276,11 +312,8 @@ const Main = ({
 		>
 			<ImagePicker
 				id={id}
-				inputValue={
-					transformValue(inputValue) ??
-					transformValue(value) ??
-					defaultValue
-				}
+				inputValue={getInputValue}
+				invalid={!otherProps.valid}
 				itemSelectorURL={itemSelectorURL}
 				name={name}
 				onClearClick={({event, ...data}) => onChange(event, data)}
@@ -290,6 +323,7 @@ const Main = ({
 				onFieldChanged={({event, ...data}) => onChange(event, data)}
 				portletNamespace={portletNamespace}
 				readOnly={isSignedIn ? readOnly : true}
+				required={otherProps.required}
 			/>
 		</FieldBase>
 	);
