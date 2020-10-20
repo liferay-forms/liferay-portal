@@ -1,4 +1,4 @@
-<%--
+<%@ page import="com.liferay.portal.kernel.util.HashMapBuilder" %><%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -61,6 +61,11 @@ PortletURL portletURL = ddmFormViewFormInstanceRecordsDisplayContext.getPortletU
 				DDMForm ddmForm = ddmFormViewFormInstanceRecordsDisplayContext.getDDMForm(formInstanceRecord);
 
 				Map<String, DDMFormField> ddmFormFieldsMap = ddmForm.getDDMFormFieldsMap(true);
+
+				row.setData(
+					HashMapBuilder.<String, Object>put(
+						"actions", StringUtil.merge(ddmFormViewFormInstanceRecordsDisplayContext.getAvailableActions(permissionChecker))
+					).build());
 
 				for (DDMFormField ddmFormField : ddmFormViewFormInstanceRecordsDisplayContext.getDDMFormFields()) {
 				%>
