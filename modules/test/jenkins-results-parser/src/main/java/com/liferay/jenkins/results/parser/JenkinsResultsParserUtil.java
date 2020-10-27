@@ -17,6 +17,8 @@ package com.liferay.jenkins.results.parser;
 import com.google.common.collect.Lists;
 import com.google.common.io.CountingInputStream;
 
+import com.liferay.jenkins.results.parser.spira.SpiraRelease;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -780,6 +782,42 @@ public class JenkinsResultsParserUtil {
 		return new File(buildProperties.getProperty("base.repository.dir"));
 	}
 
+	public static String getBuildID(
+		String topLevelBuildURL, String testSuiteName) {
+
+		Properties buildProperties = null;
+
+		try {
+			buildProperties = getBuildProperties();
+		}
+		catch (IOException ioException) {
+			throw new RuntimeException(
+				"Unable to get build.properties", ioException);
+		}
+
+		Matcher matcher = _topLevelBuildURLPattern.matcher(topLevelBuildURL);
+
+		matcher.find();
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(matcher.group("cohortNumber"));
+
+		String masterNumber = matcher.group("masterNumber");
+
+		sb.append(String.format("%02d", Integer.parseInt(masterNumber)));
+
+		sb.append(
+			buildProperties.getProperty(
+				"spira.release.id[" + matcher.group("jobName") + "][" +
+					testSuiteName + "]"));
+
+		sb.append("_");
+		sb.append(matcher.group("buildNumber"));
+
+		return sb.toString();
+	}
+
 	public static String getBuildParameter(String buildURL, String key) {
 		Map<String, String> buildParameters = getBuildParameters(buildURL);
 
@@ -900,6 +938,29 @@ public class JenkinsResultsParserUtil {
 		}
 
 		return Arrays.asList(propertyContent.split(","));
+	}
+
+	public static String getBuildURLByBuildID(String buildID) {
+		Matcher matcher = _buildIDPattern.matcher(buildID);
+
+		matcher.find();
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("https://test-");
+		sb.append(matcher.group("cohortNumber"));
+		sb.append("-");
+		sb.append(Integer.parseInt(matcher.group("masterNumber")));
+		sb.append(".liferay.com/job/");
+
+		sb.append(
+			SpiraRelease.getJobNameByID(
+				Integer.parseInt(matcher.group("spiraReleaseID"))));
+
+		sb.append("/");
+		sb.append(matcher.group("buildNumber"));
+
+		return sb.toString();
 	}
 
 	public static BufferedReader getCachedFileBufferedReader(String key) {
@@ -1341,36 +1402,49 @@ public class JenkinsResultsParserUtil {
 		return Float.parseFloat(matcher.group(1));
 	}
 
-	public static String getJenkinsMasterName(String jenkinSlaveName) {
-		jenkinSlaveName = jenkinSlaveName.replaceAll("([^\\.]+).*", "$1");
+	public static String getJenkinsMasterName(String jenkinsSlaveName) {
+		jenkinsSlaveName = jenkinsSlaveName.replaceAll("([^\\.]+).*", "$1");
 
-		Properties buildProperties = null;
+		Map<String, List<String>> jenkinsNodeMap = getJenkinsNodeMap();
 
-		try {
-			buildProperties = getBuildProperties();
-		}
-		catch (IOException ioException) {
-			throw new RuntimeException(
-				"Unable to get build properties", ioException);
-		}
+		if (jenkinsNodeMap != null) {
+			for (Map.Entry<String, List<String>> entry :
+					jenkinsNodeMap.entrySet()) {
 
-		for (Object propertyName : buildProperties.keySet()) {
-			Matcher jenkinsSlavesPropertyNameMatcher =
-				_jenkinsSlavesPropertyNamePattern.matcher(
-					propertyName.toString());
+				List<String> jenkinsSlaveNames = entry.getValue();
 
-			if (jenkinsSlavesPropertyNameMatcher.matches()) {
-				String jenkinsMasterName =
-					jenkinsSlavesPropertyNameMatcher.group(1);
-
-				List<String> jenkinsSlaveNames = getSlaves(
-					buildProperties, jenkinsMasterName, null, false);
-
-				if (jenkinsSlaveNames.contains(jenkinSlaveName)) {
-					return jenkinsMasterName;
+				if (jenkinsSlaveNames.contains(jenkinsSlaveName)) {
+					return entry.getKey();
 				}
 			}
 		}
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("Unable to get Jenkins master name for slave ");
+		sb.append(jenkinsSlaveName);
+		sb.append(".\n");
+		sb.append("Jenkins Node Map:\n");
+
+		if (jenkinsNodeMap != null) {
+			for (Map.Entry<String, List<String>> entry :
+					jenkinsNodeMap.entrySet()) {
+
+				sb.append(entry.getKey());
+				sb.append("\n    ");
+
+				for (String jenkinsNodeName : entry.getValue()) {
+					sb.append(" ");
+					sb.append(jenkinsNodeName);
+				}
+
+				sb.append("\n");
+			}
+		}
+
+		NotificationUtil.sendEmail(
+			sb.toString(), "jenkins", "Unable to get Jenkins master name",
+			"peter.yoo@liferay.com");
 
 		return null;
 	}
@@ -1396,6 +1470,58 @@ public class JenkinsResultsParserUtil {
 		}
 
 		return jenkinsMasters;
+	}
+
+	public static Map<String, List<String>> getJenkinsNodeMap() {
+		Retryable<Map<String, List<String>>> retryable =
+			new Retryable<Map<String, List<String>>>(false, 2, 10, true) {
+
+				@Override
+				public Map<String, List<String>> execute() {
+					Properties buildProperties = null;
+					Map<String, List<String>> jenkinsNodeMap = new HashMap<>();
+
+					try {
+						buildProperties = getBuildProperties(_checkCache);
+					}
+					catch (IOException ioException) {
+						throw new RuntimeException(
+							"Unable to get build properties", ioException);
+					}
+
+					for (Object propertyName : buildProperties.keySet()) {
+						Matcher jenkinsSlavesPropertyNameMatcher =
+							_jenkinsSlavesPropertyNamePattern.matcher(
+								propertyName.toString());
+
+						if (jenkinsSlavesPropertyNameMatcher.matches()) {
+							String jenkinsMasterName =
+								jenkinsSlavesPropertyNameMatcher.group(1);
+
+							List<String> jenkinsSlaveNames = getSlaves(
+								buildProperties, jenkinsMasterName, null,
+								false);
+
+							jenkinsNodeMap.put(
+								jenkinsMasterName, jenkinsSlaveNames);
+						}
+					}
+
+					if (jenkinsNodeMap.isEmpty()) {
+						_checkCache = false;
+
+						throw new RuntimeException(
+							"Unable to load Jenkins node map");
+					}
+
+					return jenkinsNodeMap;
+				}
+
+				private boolean _checkCache = true;
+
+			};
+
+		return retryable.executeWithRetries();
 	}
 
 	public static Properties getJenkinsProperties() throws IOException {
@@ -3871,6 +3997,9 @@ public class JenkinsResultsParserUtil {
 	private static final String _URL_LOAD_BALANCER =
 		"http://cloud-10-0-0-31.lax.liferay.com/osb-jenkins-web/load_balancer";
 
+	private static final Pattern _buildIDPattern = Pattern.compile(
+		"(?<cohortNumber>[\\d]{1})(?<masterNumber>[\\d]{2})" +
+			"(?<spiraReleaseID>[\\d]+)_(?<buildNumber>[\\d]+)");
 	private static final Hashtable<Object, Object> _buildProperties =
 		new Hashtable<>();
 	private static String[] _buildPropertiesURLs;
@@ -3904,6 +4033,10 @@ public class JenkinsResultsParserUtil {
 		}
 	};
 	private static final Set<String> _timeStamps = new HashSet<>();
+	private static final Pattern _topLevelBuildURLPattern = Pattern.compile(
+		"http(?:|s):\\/\\/test-(?<cohortNumber>[\\d]{1})-" +
+			"(?<masterNumber>[\\d]{1,2}).*(?:|\\.liferay\\.com)\\/job\\/" +
+				"(?<jobName>[\\w\\W]*?)\\/(?<buildNumber>[0-9]*)");
 	private static final File _userHomeDir = new File(
 		System.getProperty("user.home"));
 

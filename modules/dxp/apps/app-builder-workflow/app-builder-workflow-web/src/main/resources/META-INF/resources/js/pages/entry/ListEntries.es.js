@@ -12,6 +12,7 @@
 import ClayLabel from '@clayui/label';
 import {AppContext} from 'app-builder-web/js/AppContext.es';
 import Button from 'app-builder-web/js/components/button/Button.es';
+import NoPermissionState from 'app-builder-web/js/components/empty-state/NoPermissionState.es';
 import {Loading} from 'app-builder-web/js/components/loading/Loading.es';
 import ManagementToolbar from 'app-builder-web/js/components/management-toolbar/ManagementToolbar.es';
 import ManagementToolbarResultsBar from 'app-builder-web/js/components/management-toolbar/ManagementToolbarResultsBar.es';
@@ -61,14 +62,14 @@ export default function ListEntries({history}) {
 
 	const {appWorkflowDefinitionId} = useAppWorkflow(appId);
 	const dataRecordApps = useDataRecordApps(appId, dataRecordIds);
+	const permissions = usePermissions();
 
 	const {
 		columns,
 		dataDefinition,
 		dataListView: {fieldNames},
 		isLoading,
-	} = useDataListView(dataListViewId, dataDefinitionId);
-	const permissions = usePermissions();
+	} = useDataListView(dataListViewId, dataDefinitionId, permissions.view);
 
 	const [{isFetching, items, totalCount}, setFetchState] = useState({
 		isFetching: true,
@@ -169,6 +170,8 @@ export default function ListEntries({history}) {
 			languageId: userLanguageId,
 		});
 
+	const refetch = () => doFetch(query, appWorkflowDefinitionId);
+
 	const onCloseModal = (isRefetch) => {
 		setModalVisible(false);
 		setSelectedEntry();
@@ -259,8 +262,6 @@ export default function ListEntries({history}) {
 			});
 	};
 
-	const refetch = () => doFetch(query, appWorkflowDefinitionId);
-
 	useEffect(() => {
 		if (!isEqualObjects(query, previousQuery)) {
 			refetch();
@@ -313,6 +314,10 @@ export default function ListEntries({history}) {
 				}
 			}),
 	}));
+
+	if (!permissions.view) {
+		return <NoPermissionState />;
+	}
 
 	return (
 		<Loading isLoading={isLoading}>

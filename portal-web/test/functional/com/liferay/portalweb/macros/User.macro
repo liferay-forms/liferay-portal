@@ -1353,41 +1353,6 @@ definition {
 		PortletEntry.save();
 	}
 
-	macro editDetailsViaMyAccount {
-		AssertElementPresent.assertElementPresent(locator1 = "TextInput#FIRST_NAME");
-
-		if (isSet(userFirstNameEdit)) {
-			Type(
-				locator1 = "TextInput#FIRST_NAME",
-				value1 = "${userFirstNameEdit}");
-		}
-
-		if (isSet(userLastNameEdit)) {
-			Type(
-				locator1 = "TextInput#LAST_NAME",
-				value1 = "${userLastNameEdit}");
-		}
-
-		if (isSet(userMiddleNameEdit)) {
-			Type(
-				locator1 = "TextInput#MIDDLE_NAME",
-				value1 = "${userMiddleNameEdit}");
-		}
-
-		if (isSet(userScreenNameEdit)) {
-			Type(
-				locator1 = "TextInput#SCREEN_NAME",
-				value1 = "${userScreenNameEdit}");
-
-			Button.clickSave();
-
-			User.confirmPassword(password = "${password}");
-		}
-		else {
-			PortletEntry.save();
-		}
-	}
-
 	macro editDetailsViaProfile {
 		Click.mouseOverClick(locator1 = "Icon#EDIT_PENCIL");
 
@@ -1419,20 +1384,6 @@ definition {
 			value1 = "${languageName}");
 
 		PortletEntry.save();
-	}
-
-	macro editEmailViaMyAccount {
-		Navigator.openURL();
-
-		Navigator.gotoAccountSettings();
-
-		Type(
-			locator1 = "TextInput#EMAIL_ADDRESS",
-			value1 = "${userEmailAddress}");
-
-		Button.clickSave();
-
-		User.confirmPassword(password = "${password}");
 	}
 
 	macro editPasswordCP {
@@ -1683,6 +1634,50 @@ definition {
 			value1 = "${userGender}");
 
 		PortletEntry.save();
+	}
+
+	macro editUserInformation {
+		AssertElementPresent.assertElementPresent(locator1 = "TextInput#FIRST_NAME");
+
+		if (isSet(userFirstNameEdit)) {
+			Type(
+				locator1 = "TextInput#FIRST_NAME",
+				value1 = "${userFirstNameEdit}");
+		}
+
+		if (isSet(userLastNameEdit)) {
+			Type(
+				locator1 = "TextInput#LAST_NAME",
+				value1 = "${userLastNameEdit}");
+		}
+
+		if (isSet(userMiddleNameEdit)) {
+			Type(
+				locator1 = "TextInput#MIDDLE_NAME",
+				value1 = "${userMiddleNameEdit}");
+		}
+
+		PortletEntry.save();
+
+		if (isSet(userScreenNameEdit)) {
+			Type(
+				locator1 = "TextInput#SCREEN_NAME",
+				value1 = "${userScreenNameEdit}");
+
+			Button.clickSave();
+
+			User.confirmPassword(password = "${password}");
+		}
+
+		if (isSet(userEmailAddressEdit)) {
+			Type(
+				locator1 = "TextInput#EMAIL_ADDRESS",
+				value1 = "${userEmailAddressEdit}");
+
+			Button.clickSave();
+
+			User.confirmPassword(password = "${password}");
+		}
 	}
 
 	macro editUserJobTitleCP {
@@ -2719,49 +2714,13 @@ definition {
 				value1 = "No users were found.");
 		}
 		else {
-			var key_userScreenName = "${userScreenName}";
+			UserNavigator.gotoUser(userScreenName = "${userScreenName}");
 
-			Pause(locator1 = "1000");
-
-			AssertTextEquals(
-				locator1 = "UsersAndOrganizations#USER_TABLE_NAME",
-				value1 = "${userFirstName} ${userLastName}");
-
-			AssertTextEquals(
-				locator1 = "UsersAndOrganizations#USER_TABLE_SCREEN_NAME",
-				value1 = "${userScreenName}");
-
-			AssertClick(
-				locator1 = "UsersAndOrganizations#USER_TABLE_NAME",
-				value1 = "${userFirstName} ${userLastName}");
-
-			AssertTextEquals(
-				locator1 = "UsersAndOrganizationsEditUser#DETAILS_SCREEN_NAME_FIELD",
-				value1 = "${userScreenName}");
-
-			AssertTextEquals(
-				locator1 = "UsersAndOrganizationsEditUser#DETAILS_EMAIL_ADDRESS_FIELD",
-				value1 = "${userEmailAddress}");
-
-			AssertTextEquals(
-				locator1 = "UsersAndOrganizationsEditUser#DETAILS_FIRST_NAME_FIELD",
-				value1 = "${userFirstName}");
-
-			AssertTextEquals(
-				locator1 = "UsersAndOrganizationsEditUser#DETAILS_LAST_NAME_FIELD",
-				value1 = "${userLastName}");
-
-			if (isSet(userBirthday)) {
-				AssertTextEquals(
-					locator1 = "UsersAndOrganizationsEditUser#DETAILS_BIRTHDAY_FIELD",
-					value1 = "${userBirthday}");
-			}
-
-			if (isSet(userJobTitle)) {
-				AssertTextEquals(
-					locator1 = "UsersAndOrganizationsEditUser#DETAILS_JOB_TITLE_FIELD",
-					value1 = "${userJobTitle}");
-			}
+			User.viewUserInfomation(
+				userEmailAddress = "${userEmailAddress}",
+				userFirstName = "${userFirstName}",
+				userLastName = "${userLastName}",
+				userScreenName = "${userScreenName}");
 		}
 	}
 
@@ -2877,6 +2836,36 @@ definition {
 					locator1 = "TextInput#GENERIC_TEXT_INPUT",
 					value1 = "${startingValue}");
 			}
+		}
+	}
+
+	macro viewUserInfomation {
+		AssertTextEquals(
+			locator1 = "UsersAndOrganizationsEditUser#DETAILS_SCREEN_NAME_FIELD",
+			value1 = "${userScreenName}");
+
+		AssertTextEquals(
+			locator1 = "UsersAndOrganizationsEditUser#DETAILS_EMAIL_ADDRESS_FIELD",
+			value1 = "${userEmailAddress}");
+
+		AssertTextEquals(
+			locator1 = "UsersAndOrganizationsEditUser#DETAILS_FIRST_NAME_FIELD",
+			value1 = "${userFirstName}");
+
+		AssertTextEquals(
+			locator1 = "UsersAndOrganizationsEditUser#DETAILS_LAST_NAME_FIELD",
+			value1 = "${userLastName}");
+
+		if (isSet(userBirthday)) {
+			AssertTextEquals(
+				locator1 = "UsersAndOrganizationsEditUser#DETAILS_BIRTHDAY_FIELD",
+				value1 = "${userBirthday}");
+		}
+
+		if (isSet(userJobTitle)) {
+			AssertTextEquals(
+				locator1 = "UsersAndOrganizationsEditUser#DETAILS_JOB_TITLE_FIELD",
+				value1 = "${userJobTitle}");
 		}
 	}
 

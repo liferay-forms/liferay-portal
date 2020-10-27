@@ -28,6 +28,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -56,7 +58,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 	description = "Represents a discussion thread in a message board."
 )
 @XmlRootElement(name = "MessageBoardThread")
-public class MessageBoardThread {
+public class MessageBoardThread implements Serializable {
 
 	public static MessageBoardThread toDTO(String json) {
 		return ObjectMapperUtil.readValue(MessageBoardThread.class, json);

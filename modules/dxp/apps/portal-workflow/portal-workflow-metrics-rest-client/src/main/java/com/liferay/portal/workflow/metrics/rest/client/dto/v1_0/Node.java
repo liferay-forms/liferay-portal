@@ -17,6 +17,8 @@ package com.liferay.portal.workflow.metrics.rest.client.dto.v1_0;
 import com.liferay.portal.workflow.metrics.rest.client.function.UnsafeSupplier;
 import com.liferay.portal.workflow.metrics.rest.client.serdes.v1_0.NodeSerDes;
 
+import java.io.Serializable;
+
 import java.util.Date;
 import java.util.Objects;
 
@@ -27,7 +29,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class Node implements Cloneable {
+public class Node implements Cloneable, Serializable {
 
 	public static Node toDTO(String json) {
 		return NodeSerDes.toDTO(json);

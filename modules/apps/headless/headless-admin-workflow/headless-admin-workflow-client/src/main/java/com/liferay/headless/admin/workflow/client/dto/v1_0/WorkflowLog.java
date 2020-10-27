@@ -17,6 +17,8 @@ package com.liferay.headless.admin.workflow.client.dto.v1_0;
 import com.liferay.headless.admin.workflow.client.function.UnsafeSupplier;
 import com.liferay.headless.admin.workflow.client.serdes.v1_0.WorkflowLogSerDes;
 
+import java.io.Serializable;
+
 import java.util.Date;
 import java.util.Objects;
 
@@ -27,7 +29,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class WorkflowLog implements Cloneable {
+public class WorkflowLog implements Cloneable, Serializable {
 
 	public static WorkflowLog toDTO(String json) {
 		return WorkflowLogSerDes.toDTO(json);

@@ -15,6 +15,8 @@ package ${configYAML.apiPackagePath}.client.dto.${escapedVersion};
 import ${configYAML.apiPackagePath}.client.function.UnsafeSupplier;
 import ${configYAML.apiPackagePath}.client.serdes.${escapedVersion}.${schemaName}SerDes;
 
+import java.io.Serializable;
+
 import java.math.BigDecimal;
 
 import java.util.Date;
@@ -28,7 +30,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class ${schemaName} implements Cloneable {
+public class ${schemaName} implements Cloneable, Serializable {
 
 	public static ${schemaName} toDTO(String json) {
 		return ${schemaName}SerDes.toDTO(json);

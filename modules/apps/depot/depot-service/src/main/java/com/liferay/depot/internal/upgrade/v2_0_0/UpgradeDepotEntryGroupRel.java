@@ -26,9 +26,9 @@ public class UpgradeDepotEntryGroupRel extends UpgradeProcess {
 	protected void doUpgrade() throws Exception {
 		alter(
 			DepotEntryGroupRelTable.class,
-			new AlterTableAddColumn("lastPublishDate", "DATE null"),
 			new AlterTableAddColumn("userId", "LONG"),
-			new AlterTableAddColumn("userId", "LONG"));
+			new AlterTableAddColumn("userName", "VARCHAR(75) null"),
+			new AlterTableAddColumn("lastPublishDate", "DATE null"));
 	}
 
 }

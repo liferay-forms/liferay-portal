@@ -26,6 +26,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.math.BigDecimal;
 
 import java.text.DateFormat;
@@ -57,7 +59,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 	requiredProperties = {"modifierAmount", "modifierType", "target", "title"}
 )
 @XmlRootElement(name = "PriceModifier")
-public class PriceModifier {
+public class PriceModifier implements Serializable {
 
 	public static PriceModifier toDTO(String json) {
 		return ObjectMapperUtil.readValue(PriceModifier.class, json);

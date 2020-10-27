@@ -41,11 +41,11 @@ public interface WorkflowDefinitionResource {
 	}
 
 	public Page<WorkflowDefinition> getWorkflowDefinitionsPage(
-			Pagination pagination)
+			Boolean active, Pagination pagination)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse getWorkflowDefinitionsPageHttpResponse(
-			Pagination pagination)
+			Boolean active, Pagination pagination)
 		throws Exception;
 
 	public WorkflowDefinition getWorkflowDefinitionByName(String name)
@@ -145,11 +145,11 @@ public interface WorkflowDefinitionResource {
 		implements WorkflowDefinitionResource {
 
 		public Page<WorkflowDefinition> getWorkflowDefinitionsPage(
-				Pagination pagination)
+				Boolean active, Pagination pagination)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
-				getWorkflowDefinitionsPageHttpResponse(pagination);
+				getWorkflowDefinitionsPageHttpResponse(active, pagination);
 
 			String content = httpResponse.getContent();
 
@@ -172,7 +172,7 @@ public interface WorkflowDefinitionResource {
 		}
 
 		public HttpInvoker.HttpResponse getWorkflowDefinitionsPageHttpResponse(
-				Pagination pagination)
+				Boolean active, Pagination pagination)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -195,6 +195,10 @@ public interface WorkflowDefinitionResource {
 			}
 
 			httpInvoker.httpMethod(HttpInvoker.HttpMethod.GET);
+
+			if (active != null) {
+				httpInvoker.parameter("active", String.valueOf(active));
+			}
 
 			if (pagination != null) {
 				httpInvoker.parameter(

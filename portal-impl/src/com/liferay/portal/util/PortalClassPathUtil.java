@@ -40,6 +40,7 @@ import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
@@ -53,7 +54,7 @@ public class PortalClassPathUtil {
 	public static ProcessConfig createProcessConfig(Class<?>... classes) {
 		ProcessConfig.Builder builder = new ProcessConfig.Builder();
 
-		builder.setArguments(Arrays.asList("-Djava.awt.headless=true"));
+		builder.setArguments(_processArgs);
 
 		String classpath = _buildClassPath(classes);
 
@@ -140,7 +141,7 @@ public class PortalClassPathUtil {
 
 		ProcessConfig.Builder builder = new ProcessConfig.Builder();
 
-		builder.setArguments(Arrays.asList("-Djava.awt.headless=true"));
+		builder.setArguments(_processArgs);
 		builder.setBootstrapClassPath(globalClassPath);
 		builder.setReactClassLoader(classLoader);
 		builder.setRuntimeClassPath(portalClassPath);
@@ -336,5 +337,8 @@ public class PortalClassPathUtil {
 		PortalClassPathUtil.class);
 
 	private static ProcessConfig _portalProcessConfig;
+	private static final List<String> _processArgs = Arrays.asList(
+		"-Dconfiguration.impl.quiet=true", "-Djava.awt.headless=true",
+		"-Dserver.detector.quiet=true", "-Dsystem.properties.quiet=true");
 
 }

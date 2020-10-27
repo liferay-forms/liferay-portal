@@ -14,14 +14,32 @@
 
 import ClayLayout from '@clayui/layout';
 import {SearchInput} from 'data-engine-taglib';
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 
 import {useRequest} from '../../../hooks/index.es';
 import {getLocalizedValue} from '../../../utils/lang.es';
+import EditAppContext, {
+	UPDATE_DATA_LAYOUT_ID,
+	UPDATE_DATA_LIST_VIEW_ID,
+	UPDATE_WORKFLOW_PROCESS_ID,
+} from './EditAppContext.es';
 import ListItems from './ListItems.es';
 
-export default ({defaultLanguageId, endpoint, title, ...restProps}) => {
+const EditAppBody = ({
+	defaultLanguageId,
+	endpoint,
+	itemType,
+	title,
+	...restProps
+}) => {
 	const [searchText, setSearchText] = useState('');
+
+	const {
+		dispatch,
+		state: {
+			app: {dataLayoutId, dataListViewId, workflowDefinitionName},
+		},
+	} = useContext(EditAppContext);
 
 	const {
 		response: {items = []},
@@ -34,12 +52,44 @@ export default ({defaultLanguageId, endpoint, title, ...restProps}) => {
 		)
 	);
 
+	const stepItems = {
+		DATA_LAYOUT: {
+			id: dataLayoutId,
+			items: filteredItems,
+			type: UPDATE_DATA_LAYOUT_ID,
+		},
+		DATA_LIST_VIEW: {
+			id: dataListViewId,
+			items: filteredItems,
+			type: UPDATE_DATA_LIST_VIEW_ID,
+		},
+		WORKFLOW_PROCESS: {
+			id: workflowDefinitionName ?? '',
+			items: [
+				{
+					dateCreated: null,
+					dateModified: null,
+					id: '',
+					name: {
+						[defaultLanguageId]: Liferay.Language.get(
+							'no-workflow'
+						),
+					},
+				},
+				...filteredItems.map(({name, title, ...restProps}) => ({
+					...restProps,
+					id: name,
+					name: {[defaultLanguageId]: title},
+				})),
+			],
+			type: UPDATE_WORKFLOW_PROCESS_ID,
+		},
+	};
+
 	return (
 		<>
 			<ClayLayout.ContentRow className="mb-4 pl-4 pr-4">
-				<ClayLayout.ContentCol expand>
-					<h2>{title}</h2>
-				</ClayLayout.ContentCol>
+				<ClayLayout.ContentCol expand>{title}</ClayLayout.ContentCol>
 			</ClayLayout.ContentRow>
 
 			<ClayLayout.ContentRow className="mb-4 pl-4 pr-4">
@@ -54,10 +104,17 @@ export default ({defaultLanguageId, endpoint, title, ...restProps}) => {
 				<ClayLayout.ContentCol expand>
 					<ListItems
 						defaultLanguageId={defaultLanguageId}
-						isEmpty={filteredItems.length === 0}
+						isEmpty={stepItems[itemType].items.length === 0}
 						isLoading={isLoading}
-						items={filteredItems}
+						itemId={stepItems[itemType].id}
+						items={stepItems[itemType].items}
 						keywords={searchText}
+						onChange={(item) => {
+							dispatch({
+								...item,
+								type: stepItems[itemType].type,
+							});
+						}}
 						{...restProps}
 					/>
 				</ClayLayout.ContentCol>
@@ -65,3 +122,5 @@ export default ({defaultLanguageId, endpoint, title, ...restProps}) => {
 		</>
 	);
 };
+
+export default EditAppBody;

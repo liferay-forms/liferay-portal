@@ -26,6 +26,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -51,7 +53,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @JsonFilter("Liferay.Vulcan")
 @Schema(requiredProperties = {"sku"})
 @XmlRootElement(name = "Attachment")
-public class Attachment {
+public class Attachment implements Serializable {
 
 	public static Attachment toDTO(String json) {
 		return ObjectMapperUtil.readValue(Attachment.class, json);

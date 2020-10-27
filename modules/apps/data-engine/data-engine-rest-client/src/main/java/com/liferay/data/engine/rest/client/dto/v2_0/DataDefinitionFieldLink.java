@@ -17,6 +17,8 @@ package com.liferay.data.engine.rest.client.dto.v2_0;
 import com.liferay.data.engine.rest.client.function.UnsafeSupplier;
 import com.liferay.data.engine.rest.client.serdes.v2_0.DataDefinitionFieldLinkSerDes;
 
+import java.io.Serializable;
+
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class DataDefinitionFieldLink implements Cloneable {
+public class DataDefinitionFieldLink implements Cloneable, Serializable {
 
 	public static DataDefinitionFieldLink toDTO(String json) {
 		return DataDefinitionFieldLinkSerDes.toDTO(json);

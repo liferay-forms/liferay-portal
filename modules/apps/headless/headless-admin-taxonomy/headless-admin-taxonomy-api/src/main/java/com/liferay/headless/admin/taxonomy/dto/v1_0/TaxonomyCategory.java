@@ -28,6 +28,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -56,7 +58,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 	description = "Represents a category, which is a hierarchical classification that can be associated with particular asset types. Properties follow the [category](https://schema.org/category) specification."
 )
 @XmlRootElement(name = "TaxonomyCategory")
-public class TaxonomyCategory {
+public class TaxonomyCategory implements Serializable {
 
 	public static TaxonomyCategory toDTO(String json) {
 		return ObjectMapperUtil.readValue(TaxonomyCategory.class, json);

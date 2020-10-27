@@ -9,6 +9,22 @@ definition {
 		TestCase.setUpPortalInstance();
 
 		User.firstLoginPG();
+
+		PortalSettings.gotoConfiguration(
+			configurationCategory = "User Authentication",
+			configurationName = "General",
+			configurationScope = "Virtual Instance Scope");
+
+		Uncheck(locator1 = "PortalSettingsAuthentication#AUTHENTICATION_GENERAL_REQUIRE_STRANGERS_TO_VERIFY_THEIR_EMAIL_ADDRESS_CHECKBOX");
+
+		PortletEntry.save();
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Search");
+
+		SearchAdministration.executeSearchActions(actionsDescription = "Reindex all search indexes.");
 	}
 
 	tearDown {
@@ -102,7 +118,7 @@ definition {
 
 		CommerceAcceleratorsInitializer.viewAllAccountsFromAccountSelector();
 
-		AssertElementPresent(locator1 = "CommerceNavigation#EMPTY_SEARCH_CONTAINER");
+		AssertElementNotPresent(locator1 = "CommerceAccelerators#ACCOUNT_MANAGEMENT_ROLE_TABLE_NAME");
 	}
 
 	test InitializeNewMiniumSite {
@@ -140,13 +156,17 @@ definition {
 			category = "Product Management",
 			portlet = "Products");
 
-		CommerceEntry.viewPaginationResults(results = "Showing 1 to 10 of 50 entries.");
+		CommerceEntry.viewPaginationResults(results = "Showing 1 to 10 of 50");
 
-		CommerceNavigator.gotoCommercePortletNavItem(navItem = "Options");
+		CommerceNavigator.gotoPortlet(
+			category = "Product Management",
+			portlet = "Options");
 
 		CommerceEntry.viewOptionsEntry(optionName = "Package Quantity");
 
-		CommerceNavigator.gotoCommercePortletNavItem(navItem = "Specifications");
+		CommerceNavigator.gotoPortlet(
+			category = "Product Management",
+			portlet = "Specifications");
 
 		CommerceEntry.viewSpecificationLabelsEntries(specificationLabelsEntries = "Quantity,Dimensions,Fit,Warranty,Length,Weight,Height,Material,Width");
 
@@ -190,13 +210,17 @@ definition {
 			category = "Product Management",
 			portlet = "Products");
 
-		CommerceEntry.viewPaginationResults(results = "Showing 1 to 10 of 50 entries.");
+		CommerceEntry.viewPaginationResults(results = "Showing 1 to 10 of 50");
 
-		CommerceNavigator.gotoCommercePortletNavItem(navItem = "Options");
+		CommerceNavigator.gotoPortlet(
+			category = "Product Management",
+			portlet = "Options");
 
 		CommerceEntry.viewOptionsEntry(optionName = "Package Quantity");
 
-		CommerceNavigator.gotoCommercePortletNavItem(navItem = "Specifications");
+		CommerceNavigator.gotoPortlet(
+			category = "Product Management",
+			portlet = "Specifications");
 
 		CommerceEntry.viewSpecificationLabelsEntries(specificationLabelsEntries = "Quantity,Material,Fit,Dimensions,Weight,Width,Warranty,Length,Height");
 
@@ -259,7 +283,7 @@ definition {
 			productName = "ABS Sensor",
 			productQuantity = "2");
 
-		Refresh();
+		Pause(locator1 = "5000");
 
 		CommerceNavigator.gotoMiniCart();
 
@@ -417,7 +441,7 @@ definition {
 			productName = "ABS Sensor",
 			productQuantity = "2");
 
-		Pause(locator1 = "2000");
+		Pause(locator1 = "5000");
 
 		Refresh();
 
@@ -460,39 +484,31 @@ definition {
 			category = "Order Management",
 			portlet = "Orders");
 
-		CommerceNavigator.gotoCommercePortletNavItem(navItem = "Open");
-
-		ClickNoError(locator1 = "CommerceEntry#BODY_VERTICAL_ELLIPSIS");
-
-		CommerceEntry.clickNoError(menuItem = "Edit");
+		CommerceNavigator.gotoOrderEntryViaAdmin(status = "Open");
 
 		CommerceOrders.viewOrdersEntry(
+			productListPrice = "50.00",
 			productName = "ABS Sensor",
-			productPrice = "100.00",
 			productQuantity = "2",
 			productSKU = "SPEED93015",
-			productUnitPrice = "50.00");
+			productTotalPrice = "100.00");
 
 		CommerceNavigator.gotoPortlet(
 			category = "Order Management",
 			portlet = "Orders");
 
-		CommerceNavigator.gotoCommercePortletNavItem(navItem = "Pending");
-
-		ClickNoError(locator1 = "CommerceEntry#BODY_VERTICAL_ELLIPSIS");
-
-		CommerceEntry.clickNoError(menuItem = "Edit");
+		CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
 
 		CommerceOrders.viewOrdersEntry(
 			addressAddress = "Test Address",
 			addressCity = "Test City",
 			addressZipCode = "Test Zip Code",
 			paymentMethod = "Money Order",
+			productListPrice = "50.00",
 			productName = "ABS Sensor",
-			productPrice = "100.00",
 			productQuantity = "2",
 			productSKU = "SPEED93015",
-			productUnitPrice = "50.00");
+			productTotalPrice = "100.00");
 	}
 
 }

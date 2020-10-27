@@ -179,6 +179,10 @@ components:
                     type: boolean
                 content:
                     type: string
+                dateCreated:
+                    format: date-time
+                    readOnly: true
+                    type: string
                 dateModified:
                     format: date-time
                     readOnly: true
@@ -190,6 +194,11 @@ components:
                     type: string
                 title:
                     type: string
+                title_i18n:
+                    additionalProperties:
+                        type: string
+                    readOnly: true
+                    type: object
                 version:
                     type: string
             type: object
@@ -558,7 +567,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.admin.workflow.client', and version '3.0.5'."
+        'com.liferay.headless.admin.workflow.client', and version '4.0.0'."
     license:
         name: "Apache 2.0"
         url: "http://www.apache.org/licenses/LICENSE-2.0.html"
@@ -570,6 +579,10 @@ paths:
         get:
             operationId: getWorkflowDefinitionsPage
             parameters:
+                - in: query
+                  name: active
+                  schema:
+                      type: boolean
                 - in: query
                   name: page
                   schema:

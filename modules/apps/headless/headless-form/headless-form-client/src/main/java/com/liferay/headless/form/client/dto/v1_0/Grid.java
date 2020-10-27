@@ -17,6 +17,8 @@ package com.liferay.headless.form.client.dto.v1_0;
 import com.liferay.headless.form.client.function.UnsafeSupplier;
 import com.liferay.headless.form.client.serdes.v1_0.GridSerDes;
 
+import java.io.Serializable;
+
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class Grid implements Cloneable {
+public class Grid implements Cloneable, Serializable {
 
 	public static Grid toDTO(String json) {
 		return GridSerDes.toDTO(json);

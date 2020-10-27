@@ -17,6 +17,8 @@ package com.liferay.headless.commerce.admin.pricing.client.dto.v1_0;
 import com.liferay.headless.commerce.admin.pricing.client.function.UnsafeSupplier;
 import com.liferay.headless.commerce.admin.pricing.client.serdes.v1_0.PriceListAccountGroupSerDes;
 
+import java.io.Serializable;
+
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class PriceListAccountGroup implements Cloneable {
+public class PriceListAccountGroup implements Cloneable, Serializable {
 
 	public static PriceListAccountGroup toDTO(String json) {
 		return PriceListAccountGroupSerDes.toDTO(json);

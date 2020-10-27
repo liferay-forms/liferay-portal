@@ -26,6 +26,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
@@ -45,7 +47,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @GraphQLName("PageSectionDefinition")
 @JsonFilter("Liferay.Vulcan")
 @XmlRootElement(name = "PageSectionDefinition")
-public class PageSectionDefinition {
+public class PageSectionDefinition implements Serializable {
 
 	public static PageSectionDefinition toDTO(String json) {
 		return ObjectMapperUtil.readValue(PageSectionDefinition.class, json);

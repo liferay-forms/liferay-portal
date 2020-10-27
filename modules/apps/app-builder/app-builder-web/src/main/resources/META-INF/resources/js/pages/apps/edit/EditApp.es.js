@@ -116,7 +116,7 @@ export default ({
 									<ClayLayout.Col>
 										<MultiStepNav
 											currentStep={currentStep}
-											steps={['1', '2', '3']}
+											steps={['1', '2', '3', '4']}
 										/>
 									</ClayLayout.Col>
 								</ClayLayout.Row>
@@ -134,9 +134,13 @@ export default ({
 										)}
 										endpoint={`/o/data-engine/v2.0/data-definitions/${dataDefinitionId}/data-layouts`}
 										itemType="DATA_LAYOUT"
-										title={Liferay.Language.get(
-											'select-a-form-view'
-										)}
+										title={
+											<h2>
+												{Liferay.Language.get(
+													'select-a-form-view'
+												)}
+											</h2>
+										}
 									/>
 								)}
 
@@ -153,13 +157,45 @@ export default ({
 										)}
 										endpoint={`/o/data-engine/v2.0/data-definitions/${dataDefinitionId}/data-list-views`}
 										itemType="DATA_LIST_VIEW"
-										title={Liferay.Language.get(
-											'select-a-table-view'
-										)}
+										title={
+											<h2>
+												{Liferay.Language.get(
+													'select-a-table-view'
+												)}
+											</h2>
+										}
 									/>
 								)}
 
-								{currentStep == 2 && <DeployApp />}
+								{currentStep == 2 && (
+									<EditAppBody
+										defaultLanguageId={defaultLanguageId}
+										endpoint={`/o/headless-admin-workflow/v1.0/workflow-definitions?page=-1&pageSize=-1`}
+										itemType="WORKFLOW_PROCESS"
+										title={
+											<>
+												<h2>
+													{Liferay.Language.get(
+														'connect-a-workflow'
+													)}
+													<span className="text-secondary">
+														{` (${Liferay.Language.get(
+															'optional'
+														)})`}
+													</span>
+												</h2>
+
+												<span className="text-secondary">
+													{Liferay.Language.get(
+														'enable-app-submissions-to-flow-through-a-workflow-process'
+													)}
+												</span>
+											</>
+										}
+									/>
+								)}
+
+								{currentStep == 3 && <DeployApp />}
 							</div>
 
 							<h4 className="card-divider"></h4>

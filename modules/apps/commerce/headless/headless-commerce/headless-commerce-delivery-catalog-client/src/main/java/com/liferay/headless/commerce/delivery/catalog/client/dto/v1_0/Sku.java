@@ -17,6 +17,8 @@ package com.liferay.headless.commerce.delivery.catalog.client.dto.v1_0;
 import com.liferay.headless.commerce.delivery.catalog.client.function.UnsafeSupplier;
 import com.liferay.headless.commerce.delivery.catalog.client.serdes.v1_0.SkuSerDes;
 
+import java.io.Serializable;
+
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
@@ -28,7 +30,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class Sku implements Cloneable {
+public class Sku implements Cloneable, Serializable {
 
 	public static Sku toDTO(String json) {
 		return SkuSerDes.toDTO(json);

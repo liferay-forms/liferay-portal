@@ -14,6 +14,7 @@
 
 package com.liferay.analytics.reports.web.internal.data.provider;
 
+import com.liferay.analytics.reports.web.internal.model.AcquisitionChannel;
 import com.liferay.analytics.reports.web.internal.model.CountrySearchKeywords;
 import com.liferay.analytics.reports.web.internal.model.HistogramMetric;
 import com.liferay.analytics.reports.web.internal.model.HistoricalMetric;
@@ -72,6 +73,48 @@ public class AnalyticsReportsDataProviderTest {
 		ReflectionTestUtil.setFieldValue(
 			PrefsPropsUtil.class, "_prefsProps",
 			Mockito.mock(PrefsProps.class));
+	}
+
+	@Test
+	public void testGetAcquisitionChannels() throws Exception {
+		AnalyticsReportsDataProvider analyticsReportsDataProvider =
+			new AnalyticsReportsDataProvider(
+				_getHttp(
+					Collections.singletonMap(
+						"/acquisition-channels",
+						JSONUtil.put(
+							"direct", 5847L
+						).put(
+							"organic", 1732L
+						).put(
+							"paid", 1235L
+						).put(
+							"referrer", 3849L
+						).put(
+							"social", 735L
+						).toString())));
+
+		Map<String, AcquisitionChannel> acquisitionChannels =
+			analyticsReportsDataProvider.getAcquisitionChannels(
+				RandomTestUtil.randomLong(), RandomTestUtil.randomString());
+
+		Assert.assertEquals(
+			acquisitionChannels.toString(), 5, acquisitionChannels.size());
+		Assert.assertEquals(
+			String.valueOf(new AcquisitionChannel("direct", 5847L, 43.64D)),
+			String.valueOf(acquisitionChannels.get("direct")));
+		Assert.assertEquals(
+			String.valueOf(new AcquisitionChannel("organic", 1732L, 12.93D)),
+			String.valueOf(acquisitionChannels.get("organic")));
+		Assert.assertEquals(
+			String.valueOf(new AcquisitionChannel("paid", 1235L, 9.22)),
+			String.valueOf(acquisitionChannels.get("paid")));
+		Assert.assertEquals(
+			String.valueOf(new AcquisitionChannel("referrer", 3849L, 28.73D)),
+			String.valueOf(acquisitionChannels.get("referrer")));
+		Assert.assertEquals(
+			String.valueOf(new AcquisitionChannel("social", 735L, 5.49D)),
+			String.valueOf(acquisitionChannels.get("social")));
 	}
 
 	@Test
@@ -211,37 +254,45 @@ public class AnalyticsReportsDataProviderTest {
 		AnalyticsReportsDataProvider analyticsReportsDataProvider =
 			new AnalyticsReportsDataProvider(
 				_getHttp(
-					Collections.singletonMap(
+					HashMapBuilder.put(
+						"/acquisition-channels",
+						JSONUtil.put(
+							"organic", 3849L
+						).put(
+							"paid", 235L
+						).toString()
+					).put(
 						"/traffic-sources",
 						JSONUtil.putAll(
 							JSONUtil.put(
 								"name", "organic"
 							).put(
-								"trafficAmount", 3849L
+								"trafficAmount", 7849L
 							).put(
-								"trafficShare", 94.25D
+								"trafficShare", 97.25D
 							),
 							JSONUtil.put(
 								"name", "paid"
 							).put(
-								"trafficAmount", 235L
+								"trafficAmount", 135L
 							).put(
-								"trafficShare", 5.75D
+								"trafficShare", 56.75D
 							)
-						).toString())));
+						).toString()
+					).build()));
 
-		List<TrafficSource> trafficSources =
+		Map<String, TrafficSource> trafficSources =
 			analyticsReportsDataProvider.getTrafficSources(
 				RandomTestUtil.randomLong(), RandomTestUtil.randomString());
 
 		Assert.assertEquals(
 			trafficSources.toString(), 2, trafficSources.size());
 		Assert.assertEquals(
-			new TrafficSource(null, "organic", 3849L, 94.25D),
-			trafficSources.get(0));
+			String.valueOf(new TrafficSource(null, "organic", 3849L, 94.25D)),
+			String.valueOf(trafficSources.get("organic")));
 		Assert.assertEquals(
-			new TrafficSource(null, "paid", 235L, 5.75D),
-			trafficSources.get(1));
+			String.valueOf(new TrafficSource(null, "paid", 235L, 5.75D)),
+			String.valueOf(trafficSources.get("paid")));
 	}
 
 	@Test(expected = PortalException.class)
@@ -262,7 +313,14 @@ public class AnalyticsReportsDataProviderTest {
 		AnalyticsReportsDataProvider analyticsReportsDataProvider =
 			new AnalyticsReportsDataProvider(
 				_getHttp(
-					Collections.singletonMap(
+					HashMapBuilder.put(
+						"/acquisition-channels",
+						JSONUtil.put(
+							"organic", 3192L
+						).put(
+							"paid", 206L
+						).toString()
+					).put(
 						"/traffic-sources",
 						JSONUtil.putAll(
 							JSONUtil.put(
@@ -297,9 +355,9 @@ public class AnalyticsReportsDataProviderTest {
 							).put(
 								"name", "organic"
 							).put(
-								"trafficAmount", 3192L
+								"trafficAmount", 1192L
 							).put(
-								"trafficShare", 93.93D
+								"trafficShare", 83.93D
 							),
 							JSONUtil.put(
 								"countryKeywords",
@@ -324,39 +382,42 @@ public class AnalyticsReportsDataProviderTest {
 							).put(
 								"name", "paid"
 							).put(
-								"trafficAmount", 206L
+								"trafficAmount", 2010L
 							).put(
-								"trafficShare", 6.07D
+								"trafficShare", 44.07D
 							)
-						).toString())));
+						).toString()
+					).build()));
 
-		List<TrafficSource> trafficSources =
+		Map<String, TrafficSource> trafficSources =
 			analyticsReportsDataProvider.getTrafficSources(
 				RandomTestUtil.randomLong(), RandomTestUtil.randomString());
 
 		Assert.assertEquals(
 			trafficSources.toString(), 2, trafficSources.size());
 		Assert.assertEquals(
-			new TrafficSource(
-				Collections.singletonList(
-					new CountrySearchKeywords(
-						"us",
-						Arrays.asList(
-							new SearchKeyword("liferay", 1, 3600, 2880L),
-							new SearchKeyword(
-								"liferay portal", 1, 390, 312L)))),
-				"organic", 3192L, 93.93D),
-			trafficSources.get(0));
+			String.valueOf(
+				new TrafficSource(
+					Collections.singletonList(
+						new CountrySearchKeywords(
+							"us",
+							Arrays.asList(
+								new SearchKeyword("liferay", 1, 3600, 2880L),
+								new SearchKeyword(
+									"liferay portal", 1, 390, 312L)))),
+					"organic", 3192L, 93.94D)),
+			String.valueOf(trafficSources.get("organic")));
 		Assert.assertEquals(
-			new TrafficSource(
-				Collections.singletonList(
-					new CountrySearchKeywords(
-						"us",
-						Collections.singletonList(
-							new SearchKeyword(
-								"dxp enterprises", 1, 4400, 206L)))),
-				"paid", 206L, 6.07D),
-			trafficSources.get(1));
+			String.valueOf(
+				new TrafficSource(
+					Collections.singletonList(
+						new CountrySearchKeywords(
+							"us",
+							Collections.singletonList(
+								new SearchKeyword(
+									"dxp enterprises", 1, 4400, 206L)))),
+					"paid", 206L, 6.06D)),
+			String.valueOf(trafficSources.get("paid")));
 	}
 
 	@Test(expected = IllegalArgumentException.class)

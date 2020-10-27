@@ -28,6 +28,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -56,7 +58,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 	description = "Represents a blog post. See [BlogPosting](https://www.schema.org/BlogPosting) for more information."
 )
 @XmlRootElement(name = "BlogPosting")
-public class BlogPosting {
+public class BlogPosting implements Serializable {
 
 	public static BlogPosting toDTO(String json) {
 		return ObjectMapperUtil.readValue(BlogPosting.class, json);

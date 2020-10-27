@@ -26,6 +26,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -54,7 +56,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 	description = "Represents a keyword that describes content. Properties follow the [keywords](https://schema.org/keywords) specification."
 )
 @XmlRootElement(name = "Keyword")
-public class Keyword {
+public class Keyword implements Serializable {
 
 	public static Keyword toDTO(String json) {
 		return ObjectMapperUtil.readValue(Keyword.class, json);

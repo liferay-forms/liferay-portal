@@ -17,6 +17,8 @@ package com.liferay.headless.delivery.client.dto.v1_0;
 import com.liferay.headless.delivery.client.function.UnsafeSupplier;
 import com.liferay.headless.delivery.client.serdes.v1_0.PageCollectionDefinitionSerDes;
 
+import java.io.Serializable;
+
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class PageCollectionDefinition implements Cloneable {
+public class PageCollectionDefinition implements Cloneable, Serializable {
 
 	public static PageCollectionDefinition toDTO(String json) {
 		return PageCollectionDefinitionSerDes.toDTO(json);

@@ -28,6 +28,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -56,7 +58,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 	description = "Represents a Knowledge Base article (`KBArticle`), the main entity in the Knowledge Base API."
 )
 @XmlRootElement(name = "KnowledgeBaseArticle")
-public class KnowledgeBaseArticle {
+public class KnowledgeBaseArticle implements Serializable {
 
 	public static KnowledgeBaseArticle toDTO(String json) {
 		return ObjectMapperUtil.readValue(KnowledgeBaseArticle.class, json);

@@ -159,6 +159,10 @@
 			<finder-column name="companyId" />
 			<finder-column name="name" />
 		</finder>
+		<finder name="C_S" return-type="Collection">
+			<finder-column name="companyId" />
+			<finder-column name="scope" />
+		</finder>
 		<finder name="C_A" return-type="Collection">
 			<finder-column name="companyId" />
 			<finder-column name="active" />

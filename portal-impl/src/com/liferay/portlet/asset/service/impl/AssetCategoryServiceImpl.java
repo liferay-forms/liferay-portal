@@ -416,25 +416,17 @@ public class AssetCategoryServiceImpl extends AssetCategoryServiceBaseImpl {
 			int end)
 		throws PortalException {
 
-		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+		JSONArray jsonArray = null;
 
-		for (long groupId : groupIds) {
-			JSONArray categoriesJSONArray = null;
-
-			if (Validator.isNull(name)) {
-				categoriesJSONArray = toJSONArray(
-					assetCategoryPersistence.filterFindByG_V(
-						groupId, vocabularyIds));
-			}
-			else {
-				categoriesJSONArray = toJSONArray(
-					assetCategoryPersistence.filterFindByG_LikeN_V(
-						groupId, name, vocabularyIds));
-			}
-
-			for (int j = 0; j < categoriesJSONArray.length(); j++) {
-				jsonArray.put(categoriesJSONArray.getJSONObject(j));
-			}
+		if (Validator.isNull(name)) {
+			jsonArray = toJSONArray(
+				assetCategoryPersistence.filterFindByG_V(
+					groupIds, vocabularyIds, start, end));
+		}
+		else {
+			jsonArray = toJSONArray(
+				assetCategoryPersistence.filterFindByG_LikeN_V(
+					groupIds, name, vocabularyIds, start, end));
 		}
 
 		return jsonArray;

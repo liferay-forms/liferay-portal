@@ -66,13 +66,13 @@ const Overlay = ({
 	return (
 		<div className={classNames('column-overlay', {selected})} style={style}>
 			<header>
-				<label>{fieldTypeLabel}</label>
+				<label className="text-truncate">{fieldTypeLabel}</label>
 
 				<Button
 					borderless
 					displayType="secondary"
 					onClick={() => onRemoveFieldName(name)}
-					symbol="times-circle"
+					symbol="trash"
 					tooltip={Liferay.Language.get('remove')}
 				/>
 			</header>

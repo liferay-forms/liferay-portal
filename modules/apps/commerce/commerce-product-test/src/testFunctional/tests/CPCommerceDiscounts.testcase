@@ -25,7 +25,15 @@ definition {
 				portlet = "Discounts");
 
 			if (IsElementNotPresent(locator1 = "CommerceNavigation#EMPTY_SEARCH_CONTAINER")) {
-				CommerceProducts.deleteEntries(deleteMessage = "Are you sure you want to delete the selected discounts?");
+				CommerceEntry.deleteCommerceEntry();
+			}
+
+			CommerceNavigator.gotoPortlet(
+				category = "Store Management",
+				portlet = "Channels");
+
+			if (IsElementNotPresent(locator1 = "CommerceNavigation#EMPTY_SEARCH_CONTAINER")) {
+				CommerceEntry.deleteCommerceEntry();
 			}
 		}
 	}
@@ -53,13 +61,12 @@ definition {
 		Click(locator1 = "Button#PLUS");
 
 		CommerceEntry.addNewDiscountsEntry(
-			channelsEntryName = "Liferay",
-			discountLevel = "15",
-			discountTarget = "Apply to Product",
-			entryTitle = "New Discount",
+			channelsEligibility = "Test Channel",
+			discountAmount = "15",
+			discountName = "Test Discount",
+			discountTarget = "Products",
+			discountType = "Percentage",
 			maximumDiscountAmount = "10");
-
-		Button.clickPublish();
 
 		AssertElementPresent(locator1 = "Message#SUCCESS");
 
@@ -67,13 +74,14 @@ definition {
 			category = "Pricing",
 			portlet = "Discounts");
 
-		CommerceNavigator.gotoEntry(entryName = "New Discount");
+		CommerceNavigator.gotoEntry(entryName = "Test Discount");
 
 		CommerceEntry.viewDiscountsEntry(
-			channelsEntryName = "Liferay",
-			discountLevel = "15.00",
-			discountTarget = "Apply to Product",
-			entryTitle = "New Discount",
+			channelsEligibility = "Test Channel",
+			discountAmount = "15.00",
+			discountName = "Test Discount",
+			discountTarget = "Products",
+			discountType = "Percentage",
 			maximumDiscountAmount = "10.00");
 	}
 

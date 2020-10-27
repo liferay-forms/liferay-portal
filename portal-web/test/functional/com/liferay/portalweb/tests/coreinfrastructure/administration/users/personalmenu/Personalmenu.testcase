@@ -206,6 +206,24 @@ definition {
 			userContact = "edit");
 	}
 
+	@description = "This is a use case for LPS-120825."
+	@priority = "4"
+	test UpdateUserInformation {
+		UserBar.viewUserDefaultIcon();
+
+		Navigator.gotoAccountSettings();
+
+		User.editUserInformation(
+			userEmailAddressEdit = "testadmin@liferay.com",
+			userScreenNameEdit = "testscreen");
+
+		User.viewUserInfomation(
+			userEmailAddress = "testadmin@liferay.com",
+			userFirstName = "Test",
+			userLastName = "Test",
+			userScreenName = "testscreen");
+	}
+
 	@description = "This is a use case for LPS-105387."
 	@priority = "5"
 	test UpdateUserPortrait {
@@ -357,7 +375,7 @@ definition {
 
 	@priority = "4"
 	test ViewNoMyDashboardMyProfileLink {
-		property custom.properties = "layout.user.private.layouts.power.user.required=true${line.separator}layout.user.public.layouts.power.user.required=true";
+		property custom.properties = "jsonws.web.service.paths.excludes=${line.separator}layout.user.private.layouts.power.user.required=true${line.separator}layout.user.public.layouts.power.user.required=true";
 
 		var siteName = TestCase.getSiteName(siteName = "${siteName}");
 

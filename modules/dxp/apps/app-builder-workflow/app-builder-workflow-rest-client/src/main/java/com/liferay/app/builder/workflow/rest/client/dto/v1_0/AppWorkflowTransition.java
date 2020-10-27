@@ -17,6 +17,8 @@ package com.liferay.app.builder.workflow.rest.client.dto.v1_0;
 import com.liferay.app.builder.workflow.rest.client.function.UnsafeSupplier;
 import com.liferay.app.builder.workflow.rest.client.serdes.v1_0.AppWorkflowTransitionSerDes;
 
+import java.io.Serializable;
+
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class AppWorkflowTransition implements Cloneable {
+public class AppWorkflowTransition implements Cloneable, Serializable {
 
 	public static AppWorkflowTransition toDTO(String json) {
 		return AppWorkflowTransitionSerDes.toDTO(json);

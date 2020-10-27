@@ -424,12 +424,7 @@ public class JournalArticleAssetRenderer
 					getClassName(), getClassPK(), themeDisplay);
 
 			if (Validator.isNotNull(friendlyURL)) {
-				if (!_article.isApproved()) {
-					friendlyURL =
-						friendlyURL + StringPool.SLASH + _article.getId();
-				}
-
-				return friendlyURL;
+				return friendlyURL + StringPool.SLASH + _article.getId();
 			}
 		}
 
@@ -443,11 +438,8 @@ public class JournalArticleAssetRenderer
 		sb.append(groupFriendlyURL);
 		sb.append(JournalArticleConstants.CANONICAL_URL_SEPARATOR);
 		sb.append(_article.getUrlTitle(themeDisplay.getLocale()));
-
-		if (!_article.isApproved()) {
-			sb.append(StringPool.SLASH);
-			sb.append(_article.getId());
-		}
+		sb.append(StringPool.SLASH);
+		sb.append(_article.getId());
 
 		return PortalUtil.addPreservedParameters(themeDisplay, sb.toString());
 	}

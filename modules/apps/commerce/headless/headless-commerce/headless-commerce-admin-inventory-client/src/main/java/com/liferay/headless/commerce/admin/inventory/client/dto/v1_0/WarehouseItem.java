@@ -17,6 +17,8 @@ package com.liferay.headless.commerce.admin.inventory.client.dto.v1_0;
 import com.liferay.headless.commerce.admin.inventory.client.function.UnsafeSupplier;
 import com.liferay.headless.commerce.admin.inventory.client.serdes.v1_0.WarehouseItemSerDes;
 
+import java.io.Serializable;
+
 import java.util.Date;
 import java.util.Objects;
 
@@ -27,7 +29,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class WarehouseItem implements Cloneable {
+public class WarehouseItem implements Cloneable, Serializable {
 
 	public static WarehouseItem toDTO(String json) {
 		return WarehouseItemSerDes.toDTO(json);

@@ -75,6 +75,7 @@ public abstract class BaseWorkflowDefinitionResourceImpl
 	@GET
 	@Parameters(
 		value = {
+			@Parameter(in = ParameterIn.QUERY, name = "active"),
 			@Parameter(in = ParameterIn.QUERY, name = "page"),
 			@Parameter(in = ParameterIn.QUERY, name = "pageSize")
 		}
@@ -83,6 +84,7 @@ public abstract class BaseWorkflowDefinitionResourceImpl
 	@Produces({"application/json", "application/xml"})
 	@Tags(value = {@Tag(name = "WorkflowDefinition")})
 	public Page<WorkflowDefinition> getWorkflowDefinitionsPage(
+			@Parameter(hidden = true) @QueryParam("active") Boolean active,
 			@Context Pagination pagination)
 		throws Exception {
 

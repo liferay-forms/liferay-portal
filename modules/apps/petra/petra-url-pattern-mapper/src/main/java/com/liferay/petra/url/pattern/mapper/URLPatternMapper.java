@@ -14,11 +14,28 @@
 
 package com.liferay.petra.url.pattern.mapper;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Consumer;
+
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * @author Carlos Sierra Andrés
  */
+@ProviderType
 public interface URLPatternMapper<T> {
 
+	public void consumeValues(Consumer<T> consumer, String urlPath);
+
 	public T getValue(String urlPath);
+
+	public default Set<T> getValues(String urlPath) {
+		Set<T> values = new HashSet<>(Long.SIZE);
+
+		consumeValues(values::add, urlPath);
+
+		return values;
+	}
 
 }

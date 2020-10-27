@@ -15,6 +15,7 @@
 package com.liferay.petra.url.pattern.mapper.internal;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * @author Carlos Sierra Andrés
@@ -22,6 +23,21 @@ import java.util.Objects;
  */
 public abstract class BaseTrieURLPatternMapper<T>
 	extends BaseURLPatternMapper<T> {
+
+	@Override
+	public void consumeValues(Consumer<T> consumer, String urlPath) {
+		if (Objects.isNull(urlPath)) {
+			return;
+		}
+
+		consumeWildcardValues(consumer, urlPath);
+
+		T extensionValue = getExtensionValue(urlPath);
+
+		if (extensionValue != null) {
+			consumer.accept(extensionValue);
+		}
+	}
 
 	@Override
 	public T getValue(String urlPath) {
@@ -44,6 +60,9 @@ public abstract class BaseTrieURLPatternMapper<T>
 				indexOutOfBoundsException);
 		}
 	}
+
+	protected abstract void consumeWildcardValues(
+		Consumer<T> consumer, String urlPath);
 
 	protected abstract T getExtensionValue(String urlPath);
 

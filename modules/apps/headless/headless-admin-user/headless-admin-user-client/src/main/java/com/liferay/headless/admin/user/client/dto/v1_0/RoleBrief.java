@@ -17,6 +17,8 @@ package com.liferay.headless.admin.user.client.dto.v1_0;
 import com.liferay.headless.admin.user.client.function.UnsafeSupplier;
 import com.liferay.headless.admin.user.client.serdes.v1_0.RoleBriefSerDes;
 
+import java.io.Serializable;
+
 import java.util.Map;
 import java.util.Objects;
 
@@ -27,7 +29,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class RoleBrief implements Cloneable {
+public class RoleBrief implements Cloneable, Serializable {
 
 	public static RoleBrief toDTO(String json) {
 		return RoleBriefSerDes.toDTO(json);

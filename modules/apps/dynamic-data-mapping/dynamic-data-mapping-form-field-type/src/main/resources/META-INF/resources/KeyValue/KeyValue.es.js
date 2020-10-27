@@ -19,15 +19,18 @@ import {FieldBase} from '../FieldBase/ReactFieldBase.es';
 import Text from '../Text/Text.es';
 import {useSyncValue} from '../hooks/useSyncValue.es';
 
-const KeyValue = ({disabled, onChange, value, ...otherProps}) => (
+const KeyValue = ({className, disabled, onChange, value, ...otherProps}) => (
 	<div className="active form-text key-value-editor">
 		<label className="control-label key-value-label">
-			{Liferay.Language.get('field-name')}:
+			{className === 'key-value-reference-input'
+				? Liferay.Language.get('field-reference')
+				: Liferay.Language.get('field-name')}
+			:
 		</label>
 
 		<input
 			{...otherProps}
-			className={`${disabled ? 'disabled ' : ''}key-value-input`}
+			className={`${disabled ? 'disabled ' : ''}${className}`}
 			onChange={(event) => {
 				const value = normalizeFieldName(event.target.value);
 				onChange({target: {value}});
@@ -50,9 +53,12 @@ const Main = ({
 	onFocus,
 	onKeywordBlur,
 	onKeywordChange,
+	onReferenceChange,
 	placeholder,
 	readOnly,
+	reference: initalReference,
 	required,
+	showKeyword = false,
 	showLabel,
 	spritemap,
 	value,
@@ -60,6 +66,7 @@ const Main = ({
 	...otherProps
 }) => {
 	const [keyword, setKeyword] = useSyncValue(initialKeyword);
+	const [reference, setReference] = useSyncValue(initalReference);
 
 	const generateKeywordRef = useRef(generateKeyword);
 
@@ -96,17 +103,29 @@ const Main = ({
 				value={value}
 				visible={visible}
 			/>
+			{showKeyword && (
+				<KeyValue
+					className="key-value-input"
+					disabled={keywordReadOnly}
+					onBlur={onKeywordBlur}
+					onChange={(event) => {
+						const {value} = event.target;
+
+						generateKeywordRef.current = false;
+						onKeywordChange(event, value, false);
+						setKeyword(value);
+					}}
+					value={keyword}
+				/>
+			)}
 			<KeyValue
-				disabled={keywordReadOnly}
+				className="key-value-reference-input"
 				onBlur={onKeywordBlur}
 				onChange={(event) => {
-					const {value} = event.target;
-
-					generateKeywordRef.current = false;
-					onKeywordChange(event, value, false);
-					setKeyword(value);
+					onReferenceChange(event);
+					setReference(event.target.value);
 				}}
-				value={keyword}
+				value={reference}
 			/>
 		</FieldBase>
 	);

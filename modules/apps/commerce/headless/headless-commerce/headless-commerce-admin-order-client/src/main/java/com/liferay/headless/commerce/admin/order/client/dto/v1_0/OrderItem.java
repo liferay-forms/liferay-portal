@@ -17,6 +17,8 @@ package com.liferay.headless.commerce.admin.order.client.dto.v1_0;
 import com.liferay.headless.commerce.admin.order.client.function.UnsafeSupplier;
 import com.liferay.headless.commerce.admin.order.client.serdes.v1_0.OrderItemSerDes;
 
+import java.io.Serializable;
+
 import java.math.BigDecimal;
 
 import java.util.Date;
@@ -30,7 +32,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class OrderItem implements Cloneable {
+public class OrderItem implements Cloneable, Serializable {
 
 	public static OrderItem toDTO(String json) {
 		return OrderItemSerDes.toDTO(json);

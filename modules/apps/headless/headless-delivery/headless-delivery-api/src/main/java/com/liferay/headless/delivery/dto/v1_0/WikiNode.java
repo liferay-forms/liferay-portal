@@ -28,6 +28,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -51,7 +53,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @GraphQLName("WikiNode")
 @JsonFilter("Liferay.Vulcan")
 @XmlRootElement(name = "WikiNode")
-public class WikiNode {
+public class WikiNode implements Serializable {
 
 	public static WikiNode toDTO(String json) {
 		return ObjectMapperUtil.readValue(WikiNode.class, json);

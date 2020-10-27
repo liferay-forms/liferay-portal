@@ -20,19 +20,213 @@ definition {
 		else {
 			Navigator.openURL();
 
+			ApplicationsMenu.gotoPortlet(
+				category = "Users",
+				panel = "Control Panel",
+				portlet = "Accounts");
+
+			while (IsElementNotPresent(locator1 = "CommerceNavigation#EMPTY_SEARCH_CONTAINER")) {
+				Click.clickNoMouseOver(locator1 = "CommerceEntry#ROW_VERTICAL_ELLIPSIS");
+
+				MenuItem.clickNoError(menuItem = "Delete");
+
+				AssertConfirm.waitForConfirmation(value1 = "Are you sure you want to delete this? It will be deleted immediately.");
+			}
+
+			ApplicationsMenu.gotoPortlet(
+				category = "Users",
+				panel = "Control Panel",
+				portlet = "Account Groups");
+
+			while (IsElementNotPresent(locator1 = "CommerceNavigation#EMPTY_SEARCH_CONTAINER")) {
+				Click.clickNoMouseOver(locator1 = "CommerceEntry#ROW_VERTICAL_ELLIPSIS");
+
+				MenuItem.clickNoError(menuItem = "Delete");
+
+				AssertConfirm.waitForConfirmation(value1 = "Are you sure you want to delete this? It will be deleted immediately.");
+			}
+
 			CommerceNavigator.gotoPortlet(
 				category = "Pricing",
+				panel = "Commerce",
 				portlet = "Price Lists");
 
-			if (IsElementNotPresent(locator1 = "CommerceNavigation#EMPTY_SEARCH_CONTAINER")) {
-				CommerceProducts.deleteEntries(deleteMessage = "Are you sure you want to delete the selected price lists?");
+			while (IsElementNotPresent(locator1 = "CommerceNavigation#EMPTY_SEARCH_CONTAINER")) {
+				CommerceEntry.deleteCommerceEntry();
+			}
+
+			CommerceNavigator.gotoPortlet(
+				category = "Product Management",
+				portlet = "Catalogs");
+
+			while (IsElementNotPresent(locator1 = "CommerceNavigation#EMPTY_SEARCH_CONTAINER")) {
+				CommerceEntry.deleteCommerceEntry();
 			}
 		}
+	}
+
+	test AssertPriceListCanBeAssociatedWithAccountAndAccountGroup {
+		property portal.acceptance = "true";
+		property test.name.skip.portal.instance = "CPCommercePriceLists#AssertPriceListCanBeAssociatedWithAccountAndAccountGroup";
+
+		CommerceNavigator.gotoPortlet(
+			category = "Product Management",
+			panel = "Commerce",
+			portlet = "Catalogs");
+
+		Click(locator1 = "Button#PLUS");
+
+		CommerceEntry.addNewCatalogsEntry(
+			catalogCurrency = "US Dollar",
+			catalogLanguage = "English (United States)",
+			catalogName = "Test Catalog");
+
+		Button.click(button = "Submit");
+
+		Refresh();
+
+		CommerceEntry.createNewAccountGroup(
+			accountCriteriaType = "Guest",
+			accountGroupsEntryName = "Test Account Group 1",
+			accountsEntryName = "Test Account 1",
+			user = "Test Test");
+
+		CommerceEntry.createNewAccountGroup(
+			accountCriteriaType = "Guest",
+			accountGroupsEntryName = "Test Account Group 2",
+			accountsEntryName = "Test Account 2",
+			user = "Test Test");
+
+		CommerceNavigator.gotoPortlet(
+			category = "Pricing",
+			panel = "Commerce",
+			portlet = "Price Lists");
+
+		Click(locator1 = "Button#PLUS");
+
+		CommerceEntry.addNewPriceListsEntry(
+			priceListCatalog = "Test Catalog",
+			priceListCurrency = "USD",
+			priceListName = "Test Price List");
+
+		Button.click(button = "Submit");
+
+		CommerceNavigator.gotoEntry(entryName = "Test Price List");
+
+		CommerceEntry.gotoMenuTab(menuTab = "Eligibility");
+
+		CommerceEntry.setEntryEligibility(accountsEligibility = "Test Account 1,Test Account 2");
+
+		CommerceEntry.viewEntryEligibility(accountsEligibility = "Test Account 1,Test Account 2");
+
+		CommerceEntry.setEntryEligibility(accountGroupsEligibility = "Test Account Group 1,Test Account Group 2");
+
+		CommerceEntry.viewEntryEligibility(accountGroupsEligibility = "Test Account Group 1,Test Account Group 2");
+
+		Click(
+			key_radioOption = "Specific Accounts",
+			locator1 = "CommerceEntry#RADIO_BUTTON");
+
+		CommerceEntry.viewEntryEligibility(accountsEligibility = "Test Account 1,Test Account 2");
+
+		Button.clickPublish();
+	}
+
+	test AssertPriceListHaveRequiredNameAndCurrency {
+		property portal.acceptance = "true";
+		property test.name.skip.portal.instance = "CPCommercePriceLists#AssertPriceListHaveRequiredNameAndCurrency";
+
+		CommerceNavigator.gotoPortlet(
+			category = "Product Management",
+			panel = "Commerce",
+			portlet = "Catalogs");
+
+		Click(locator1 = "Button#PLUS");
+
+		CommerceEntry.addNewCatalogsEntry(
+			catalogCurrency = "US Dollar",
+			catalogLanguage = "English (United States)",
+			catalogName = "Test Catalog");
+
+		Button.click(button = "Submit");
+
+		Refresh();
+
+		CommerceNavigator.gotoPortlet(
+			category = "Pricing",
+			panel = "Commerce",
+			portlet = "Price Lists");
+
+		Click(locator1 = "Button#PLUS");
+
+		SelectFrame.selectFrameNoLoading(locator1 = "IFrame#MODAL_BODY");
+
+		AssertElementPresent.assertVisible(
+			key_fieldFieldLabel = "Name",
+			locator1 = "Icon#ASTERISK_DATE_FIELD");
+
+		AssertElementPresent.assertVisible(
+			key_fieldFieldLabel = "Currency",
+			locator1 = "Icon#ASTERISK_DATE_FIELD");
+
+		Pause(locator1 = "3000");
+
+		Select(
+			key_fieldLabel = "Catalog",
+			locator1 = "Select#GENERIC_SELECT_FIELD",
+			value1 = "Test Catalog");
+
+		Select(
+			key_fieldLabel = "Currency",
+			locator1 = "Select#GENERIC_SELECT_FIELD",
+			value1 = "USD");
+
+		Button.click(button = "Submit");
+
+		Alert.viewRequiredField();
+
+		Click(locator1 = "Icon#CLOSE");
+
+		Click(locator1 = "Button#PLUS");
+
+		SelectFrame.selectFrameNoLoading(locator1 = "IFrame#MODAL_BODY");
+
+		Pause(locator1 = "3000");
+
+		Type(
+			locator1 = "TextInput#NAME",
+			value1 = "Test Price List");
+
+		Select(
+			key_fieldLabel = "Catalog",
+			locator1 = "Select#GENERIC_SELECT_FIELD",
+			value1 = "Test Catalog");
+
+		Button.click(button = "Submit");
+
+		Alert.viewRequiredField();
 	}
 
 	test CreateNewPriceList {
 		property portal.acceptance = "quarantine";
 		property test.name.skip.portal.instance = "CPCommercePriceLists#CreateNewPriceList";
+
+		CommerceNavigator.gotoPortlet(
+			category = "Product Management",
+			portlet = "Catalogs");
+
+		Click(locator1 = "Button#PLUS");
+
+		CommerceEntry.addNewCatalogsEntry(
+			catalogCurrency = "US Dollar",
+			catalogLanguage = "English (United States)",
+			catalogName = "Test Catalog");
+
+		AssertClickNoError(
+			locator1 = "Button#SUBMIT",
+			value1 = "Submit");
+
+		Refresh();
 
 		CommerceNavigator.gotoPortlet(
 			category = "Pricing",
@@ -41,24 +235,24 @@ definition {
 		Click(locator1 = "Button#PLUS");
 
 		CommerceEntry.addNewPriceListsEntry(
-			currencyCode = "USD",
-			entryName = "New Price List");
+			priceListCatalog = "Test Catalog",
+			priceListCurrency = "USD",
+			priceListName = "Test Price List");
 
-		Button.clickPublish();
-
-		AssertElementPresent(locator1 = "Message#SUCCESS");
+		AssertClickNoError(
+			locator1 = "Button#SUBMIT",
+			value1 = "Submit");
 
 		CommerceNavigator.gotoPortlet(
 			category = "Pricing",
 			portlet = "Price Lists");
 
-		Click(
-			key_entry = "New Price List",
-			locator1 = "CommerceNavigation#ANY_ENTRY_NAME");
+		CommerceNavigator.gotoEntry(entryName = "Test Price List");
 
 		CommerceEntry.viewPriceListEntry(
-			currencyCode = "USD",
-			entryName = "New Price List");
+			priceListCatalog = "Test Catalog",
+			priceListCurrency = "USD",
+			priceListName = "Test Price List");
 	}
 
 }

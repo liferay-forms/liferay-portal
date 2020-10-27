@@ -17,6 +17,8 @@ package com.liferay.headless.delivery.client.dto.v1_0;
 import com.liferay.headless.delivery.client.function.UnsafeSupplier;
 import com.liferay.headless.delivery.client.serdes.v1_0.StructuredContentSerDes;
 
+import java.io.Serializable;
+
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
@@ -28,7 +30,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class StructuredContent implements Cloneable {
+public class StructuredContent implements Cloneable, Serializable {
 
 	public static StructuredContent toDTO(String json) {
 		return StructuredContentSerDes.toDTO(json);

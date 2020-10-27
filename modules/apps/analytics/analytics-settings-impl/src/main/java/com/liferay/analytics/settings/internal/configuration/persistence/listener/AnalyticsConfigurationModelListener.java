@@ -17,6 +17,7 @@ package com.liferay.analytics.settings.internal.configuration.persistence.listen
 import com.liferay.analytics.settings.configuration.AnalyticsConfiguration;
 import com.liferay.analytics.settings.configuration.AnalyticsConfigurationTracker;
 import com.liferay.portal.configuration.persistence.listener.ConfigurationModelListener;
+import com.liferay.portal.kernel.util.ArrayUtil;
 
 import java.util.Dictionary;
 
@@ -28,7 +29,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	immediate = true,
-	property = "model.class.name=com.liferay.analytics.settings.configuration.AnalyticsConfiguration.scoped",
+	property = "model.class.name=com.liferay.analytics.settings.configuration.AnalyticsConfiguration",
 	service = ConfigurationModelListener.class
 )
 public class AnalyticsConfigurationModelListener
@@ -44,6 +45,14 @@ public class AnalyticsConfigurationModelListener
 		properties.put(
 			"previousSyncAllContacts",
 			analyticsConfiguration.syncAllContacts());
+
+		String[] syncedUserFieldNames =
+			analyticsConfiguration.syncedUserFieldNames();
+
+		if (!ArrayUtil.isEmpty(syncedUserFieldNames)) {
+			properties.put(
+				"previousSyncedUserFieldNames", syncedUserFieldNames);
+		}
 
 		String token = analyticsConfiguration.token();
 

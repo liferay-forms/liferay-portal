@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PropertiesUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -320,6 +321,12 @@ public class ConfigurationImpl
 	}
 
 	protected void printSources(long companyId, String webId) {
+		if (GetterUtil.getBoolean(
+				System.getProperty("configuration.impl.quiet"))) {
+
+			return;
+		}
+
 		List<String> sources = _classLoaderAggregateProperties.loadedSources();
 
 		for (int i = sources.size() - 1; i >= 0; i--) {

@@ -42,6 +42,11 @@ public class DefaultWorkflowDefinition
 	}
 
 	@Override
+	public Date getCreateDate() {
+		return _createDate;
+	}
+
+	@Override
 	public String getDescription() {
 		if (_description == null) {
 			return StringPool.BLANK;
@@ -121,6 +126,10 @@ public class DefaultWorkflowDefinition
 		_content = content;
 	}
 
+	public void setCreateDate(Date createDate) {
+		_createDate = createDate;
+	}
+
 	public void setDescription(String description) {
 		_description = description;
 	}
@@ -164,6 +173,7 @@ public class DefaultWorkflowDefinition
 	private boolean _active;
 	private long _companyId;
 	private String _content;
+	private Date _createDate;
 	private String _description;
 	private InputStream _inputStream;
 	private Date _modifiedDate;

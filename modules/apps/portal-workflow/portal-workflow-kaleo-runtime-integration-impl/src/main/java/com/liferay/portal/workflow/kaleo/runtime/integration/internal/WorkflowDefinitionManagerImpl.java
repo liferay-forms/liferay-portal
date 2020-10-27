@@ -201,7 +201,7 @@ public class WorkflowDefinitionManagerImpl
 
 	@Override
 	public List<WorkflowDefinition> getLatestWorkflowDefinitions(
-			long companyId, int start, int end,
+			Boolean active, long companyId, int start, int end,
 			OrderByComparator<WorkflowDefinition> orderByComparator)
 		throws WorkflowException {
 
@@ -210,12 +210,25 @@ public class WorkflowDefinitionManagerImpl
 
 			serviceContext.setCompanyId(companyId);
 
-			List<KaleoDefinition> kaleoDefinitions =
-				_kaleoDefinitionLocalService.getKaleoDefinitions(
-					start, end,
-					KaleoDefinitionOrderByComparator.getOrderByComparator(
-						orderByComparator, _kaleoWorkflowModelConverter),
-					serviceContext);
+			List<KaleoDefinition> kaleoDefinitions = null;
+
+			if (active == null) {
+				kaleoDefinitions =
+					_kaleoDefinitionLocalService.getScopeKaleoDefinitions(
+						WorkflowDefinitionConstants.SCOPE_ALL, start, end,
+						KaleoDefinitionOrderByComparator.getOrderByComparator(
+							orderByComparator, _kaleoWorkflowModelConverter),
+						serviceContext);
+			}
+			else {
+				kaleoDefinitions =
+					_kaleoDefinitionLocalService.getScopeKaleoDefinitions(
+						WorkflowDefinitionConstants.SCOPE_ALL, active, start,
+						end,
+						KaleoDefinitionOrderByComparator.getOrderByComparator(
+							orderByComparator, _kaleoWorkflowModelConverter),
+						serviceContext);
+			}
 
 			int size = kaleoDefinitions.size();
 
@@ -229,7 +242,7 @@ public class WorkflowDefinitionManagerImpl
 	}
 
 	@Override
-	public int getLatestWorkflowDefinitionsCount(long companyId)
+	public int getLatestWorkflowDefinitionsCount(Boolean active, long companyId)
 		throws WorkflowException {
 
 		try {
@@ -237,8 +250,14 @@ public class WorkflowDefinitionManagerImpl
 
 			serviceContext.setCompanyId(companyId);
 
-			return _kaleoDefinitionLocalService.getKaleoDefinitionsCount(
-				serviceContext);
+			if (active == null) {
+				return _kaleoDefinitionLocalService.
+					getScopeKaleoDefinitionsCount(
+						WorkflowDefinitionConstants.SCOPE_ALL, serviceContext);
+			}
+
+			return _kaleoDefinitionLocalService.getScopeKaleoDefinitionsCount(
+				WorkflowDefinitionConstants.SCOPE_ALL, active, serviceContext);
 		}
 		catch (Exception exception) {
 			throw new WorkflowException(exception);

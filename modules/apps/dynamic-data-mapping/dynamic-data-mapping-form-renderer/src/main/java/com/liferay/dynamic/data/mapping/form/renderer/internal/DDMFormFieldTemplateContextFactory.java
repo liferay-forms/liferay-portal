@@ -155,6 +155,8 @@ public class DDMFormFieldTemplateContextFactory {
 
 		setDDMFormFieldTemplateContextFieldName(
 			ddmFormFieldTemplateContext, ddmFormField.getName());
+		setDDMFormFieldTemplateContextFieldReference(
+			ddmFormFieldTemplateContext, ddmFormField.getFieldReference());
 		setDDMFormFieldTemplateContextLocalizedValue(
 			ddmFormFieldTemplateContext, "label", ddmFormField.getLabel());
 		setDDMFormFieldTemplateContextName(
@@ -280,6 +282,9 @@ public class DDMFormFieldTemplateContextFactory {
 
 		Map<String, LocalizedValue> options = ddmFormFieldOptions.getOptions();
 
+		Map<String, String> optionsReferences =
+			ddmFormFieldOptions.getOptionsReferences();
+
 		for (Map.Entry<String, LocalizedValue> entry : options.entrySet()) {
 			Map<String, String> option = new HashMap<>();
 
@@ -287,6 +292,7 @@ public class DDMFormFieldTemplateContextFactory {
 
 			option.put("label", localizedValue.getString(_locale));
 
+			option.put("reference", optionsReferences.get(entry.getKey()));
 			option.put("value", entry.getKey());
 
 			list.add(option);
@@ -454,6 +460,13 @@ public class DDMFormFieldTemplateContextFactory {
 		Map<String, Object> ddmFormFieldTemplateContext, String fieldName) {
 
 		ddmFormFieldTemplateContext.put("fieldName", fieldName);
+	}
+
+	protected void setDDMFormFieldTemplateContextFieldReference(
+		Map<String, Object> ddmFormFieldTemplateContext,
+		String fieldReference) {
+
+		ddmFormFieldTemplateContext.put("fieldReference", fieldReference);
 	}
 
 	protected void setDDMFormFieldTemplateContextInstanceId(

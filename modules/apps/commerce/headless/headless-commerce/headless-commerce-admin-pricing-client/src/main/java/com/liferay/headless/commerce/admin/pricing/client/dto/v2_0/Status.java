@@ -17,6 +17,8 @@ package com.liferay.headless.commerce.admin.pricing.client.dto.v2_0;
 import com.liferay.headless.commerce.admin.pricing.client.function.UnsafeSupplier;
 import com.liferay.headless.commerce.admin.pricing.client.serdes.v2_0.StatusSerDes;
 
+import java.io.Serializable;
+
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class Status implements Cloneable {
+public class Status implements Cloneable, Serializable {
 
 	public static Status toDTO(String json) {
 		return StatusSerDes.toDTO(json);

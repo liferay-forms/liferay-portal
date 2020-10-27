@@ -26,6 +26,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -49,7 +51,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @GraphQLName("WarehouseItem")
 @JsonFilter("Liferay.Vulcan")
 @XmlRootElement(name = "WarehouseItem")
-public class WarehouseItem {
+public class WarehouseItem implements Serializable {
 
 	public static WarehouseItem toDTO(String json) {
 		return ObjectMapperUtil.readValue(WarehouseItem.class, json);

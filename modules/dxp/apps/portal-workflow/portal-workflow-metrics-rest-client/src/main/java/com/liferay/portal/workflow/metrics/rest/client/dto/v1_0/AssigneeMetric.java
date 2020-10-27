@@ -17,6 +17,8 @@ package com.liferay.portal.workflow.metrics.rest.client.dto.v1_0;
 import com.liferay.portal.workflow.metrics.rest.client.function.UnsafeSupplier;
 import com.liferay.portal.workflow.metrics.rest.client.serdes.v1_0.AssigneeMetricSerDes;
 
+import java.io.Serializable;
+
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class AssigneeMetric implements Cloneable {
+public class AssigneeMetric implements Cloneable, Serializable {
 
 	public static AssigneeMetric toDTO(String json) {
 		return AssigneeMetricSerDes.toDTO(json);

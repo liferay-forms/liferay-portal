@@ -61,16 +61,16 @@ public class AccountGroupDisplay {
 	}
 
 	private AccountGroupDisplay(AccountGroup accountGroup) {
-		_accountEntriesCount = _getAccountEntriesCount();
+		_accountEntriesCount = _getAccountEntriesCount(accountGroup);
 		_accountGroupId = accountGroup.getAccountGroupId();
 		_description = accountGroup.getDescription();
 		_name = accountGroup.getName();
 	}
 
-	private long _getAccountEntriesCount() {
+	private long _getAccountEntriesCount(AccountGroup accountGroup) {
 		return AccountGroupAccountEntryRelLocalServiceUtil.
 			getAccountGroupAccountEntryRelsCountByAccountGroupId(
-				_accountGroupId);
+				accountGroup.getAccountGroupId());
 	}
 
 	private static final AccountGroupDisplay _EMPTY_INSTANCE =

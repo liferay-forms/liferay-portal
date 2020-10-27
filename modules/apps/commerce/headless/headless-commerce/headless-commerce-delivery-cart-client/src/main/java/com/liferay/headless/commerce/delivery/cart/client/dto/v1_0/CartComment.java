@@ -17,6 +17,8 @@ package com.liferay.headless.commerce.delivery.cart.client.dto.v1_0;
 import com.liferay.headless.commerce.delivery.cart.client.function.UnsafeSupplier;
 import com.liferay.headless.commerce.delivery.cart.client.serdes.v1_0.CartCommentSerDes;
 
+import java.io.Serializable;
+
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class CartComment implements Cloneable {
+public class CartComment implements Cloneable, Serializable {
 
 	public static CartComment toDTO(String json) {
 		return CartCommentSerDes.toDTO(json);

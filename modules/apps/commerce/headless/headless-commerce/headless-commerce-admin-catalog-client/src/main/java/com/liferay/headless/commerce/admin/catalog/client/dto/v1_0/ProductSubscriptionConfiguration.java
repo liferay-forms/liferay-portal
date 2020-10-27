@@ -17,6 +17,8 @@ package com.liferay.headless.commerce.admin.catalog.client.dto.v1_0;
 import com.liferay.headless.commerce.admin.catalog.client.function.UnsafeSupplier;
 import com.liferay.headless.commerce.admin.catalog.client.serdes.v1_0.ProductSubscriptionConfigurationSerDes;
 
+import java.io.Serializable;
+
 import java.util.Map;
 import java.util.Objects;
 
@@ -27,7 +29,8 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class ProductSubscriptionConfiguration implements Cloneable {
+public class ProductSubscriptionConfiguration
+	implements Cloneable, Serializable {
 
 	public static ProductSubscriptionConfiguration toDTO(String json) {
 		return ProductSubscriptionConfigurationSerDes.toDTO(json);

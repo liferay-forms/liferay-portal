@@ -2381,7 +2381,8 @@ definition {
 	test VerifySLACustomCalendar {
 		property test.name.skip.portal.instance = "WorkflowMetrics#VerifySLACustomCalendar";
 
-		var appName = "com.liferay.portal.workflow.metrics.sla.calendar.sample";
+		var appName = "com.liferay.portal.workflow.metrics.calendar.sample_1.0.0"
+		var warFileName = "com.liferay.portal.workflow.metrics.sla.calendar.sample";
 
 		WorkflowMetrics.goToWorkflowProcessMetrics(workflowProcessName = "Single Approver");
 
@@ -2408,7 +2409,7 @@ definition {
 
 		AppManager.uploadAppCP(
 			appName = "${appName}",
-			warFileName = "${appName}.jar");
+			warFileName = "${warFileName}.jar");
 
 		AppManager.viewAppCP(
 			appName = "Liferay Portal Workflow Metrics Calendar Sample",

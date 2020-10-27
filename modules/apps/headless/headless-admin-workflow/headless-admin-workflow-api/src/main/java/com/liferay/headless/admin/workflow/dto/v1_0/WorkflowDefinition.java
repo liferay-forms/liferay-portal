@@ -26,6 +26,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -37,6 +39,8 @@ import java.util.Set;
 
 import javax.annotation.Generated;
 
+import javax.validation.Valid;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -47,7 +51,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @GraphQLName("WorkflowDefinition")
 @JsonFilter("Liferay.Vulcan")
 @XmlRootElement(name = "WorkflowDefinition")
-public class WorkflowDefinition {
+public class WorkflowDefinition implements Serializable {
 
 	public static WorkflowDefinition toDTO(String json) {
 		return ObjectMapperUtil.readValue(WorkflowDefinition.class, json);
@@ -108,6 +112,34 @@ public class WorkflowDefinition {
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String content;
+
+	@Schema
+	public Date getDateCreated() {
+		return dateCreated;
+	}
+
+	public void setDateCreated(Date dateCreated) {
+		this.dateCreated = dateCreated;
+	}
+
+	@JsonIgnore
+	public void setDateCreated(
+		UnsafeSupplier<Date, Exception> dateCreatedUnsafeSupplier) {
+
+		try {
+			dateCreated = dateCreatedUnsafeSupplier.get();
+		}
+		catch (RuntimeException re) {
+			throw re;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	protected Date dateCreated;
 
 	@Schema
 	public Date getDateModified() {
@@ -220,6 +252,36 @@ public class WorkflowDefinition {
 	protected String title;
 
 	@Schema
+	@Valid
+	public Map<String, String> getTitle_i18n() {
+		return title_i18n;
+	}
+
+	public void setTitle_i18n(Map<String, String> title_i18n) {
+		this.title_i18n = title_i18n;
+	}
+
+	@JsonIgnore
+	public void setTitle_i18n(
+		UnsafeSupplier<Map<String, String>, Exception>
+			title_i18nUnsafeSupplier) {
+
+		try {
+			title_i18n = title_i18nUnsafeSupplier.get();
+		}
+		catch (RuntimeException re) {
+			throw re;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	protected Map<String, String> title_i18n;
+
+	@Schema
 	public String getVersion() {
 		return version;
 	}
@@ -301,6 +363,20 @@ public class WorkflowDefinition {
 			sb.append("\"");
 		}
 
+		if (dateCreated != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"dateCreated\": ");
+
+			sb.append("\"");
+
+			sb.append(liferayToJSONDateFormat.format(dateCreated));
+
+			sb.append("\"");
+		}
+
 		if (dateModified != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -355,6 +431,16 @@ public class WorkflowDefinition {
 			sb.append(_escape(title));
 
 			sb.append("\"");
+		}
+
+		if (title_i18n != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"title_i18n\": ");
+
+			sb.append(_toJSON(title_i18n));
 		}
 
 		if (version != null) {

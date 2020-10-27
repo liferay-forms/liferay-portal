@@ -89,6 +89,17 @@ definition {
 			locator1 = "ContentRow#ENTRY_CONTENT_ENTRY_NAME");
 	}
 
+	macro configureFilterViaSelectFile {
+		SelectFrame(locator1 = "ItemSelector#ITEM_SELECTOR_IFRAME");
+
+		AssertClick(
+			key_navTab = "${navTab}",
+			locator1 = "ItemSelector#NAVIGATION_SPECIFIC_TAB",
+			value1 = "${navTab}");
+
+		ManagementBar.setFilterAndOrder(filterBy = "${filterBy}");
+	}
+
 	macro gotoItemSelectorViaAlloyEditor {
 		AlloyEditor.clickContentField();
 
@@ -219,9 +230,11 @@ definition {
 
 		SelectFrame(locator1 = "ItemSelector#ITEM_SELECTOR_IFRAME");
 
-		AssertClick(
-			locator1 = "ItemSelector#NAVIGATION_SPECIFIC_TAB",
-			value1 = "Documents and Media");
+		if (IsElementPresent(locator1 = "ItemSelector#NAVIGATION_SPECIFIC_TAB")) {
+			AssertClick(
+				locator1 = "ItemSelector#NAVIGATION_SPECIFIC_TAB",
+				value1 = "${navTab}");
+		}
 
 		if (isSet(dmFolderName)) {
 			var key_dmFolderName = "${dmFolderName}";
@@ -381,8 +394,6 @@ definition {
 				locator1 = "ItemSelector#LOCATION_INFO_CARDS",
 				value1 = "${viewNoLocationInfo}");
 		}
-
-		Click(locator1 = "Link#CLEAR");
 
 		AssertElementNotPresent(locator1 = "Search#SEARCH_INFO");
 

@@ -281,7 +281,7 @@ public class AssetCategoryPersistenceTest {
 	@Test
 	public void testCountByG_VArrayable() throws Exception {
 		_persistence.countByG_V(
-			RandomTestUtil.nextLong(),
+			new long[] {RandomTestUtil.nextLong(), 0L},
 			new long[] {RandomTestUtil.nextLong(), 0L});
 	}
 
@@ -343,7 +343,8 @@ public class AssetCategoryPersistenceTest {
 	@Test
 	public void testCountByG_LikeN_VArrayable() throws Exception {
 		_persistence.countByG_LikeN_V(
-			RandomTestUtil.nextLong(), RandomTestUtil.randomString(),
+			new long[] {RandomTestUtil.nextLong(), 0L},
+			RandomTestUtil.randomString(),
 			new long[] {RandomTestUtil.nextLong(), 0L});
 	}
 

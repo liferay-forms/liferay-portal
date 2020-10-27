@@ -17,6 +17,8 @@ package com.liferay.headless.admin.user.client.dto.v1_0;
 import com.liferay.headless.admin.user.client.function.UnsafeSupplier;
 import com.liferay.headless.admin.user.client.serdes.v1_0.GeoSerDes;
 
+import java.io.Serializable;
+
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class Geo implements Cloneable {
+public class Geo implements Cloneable, Serializable {
 
 	public static Geo toDTO(String json) {
 		return GeoSerDes.toDTO(json);

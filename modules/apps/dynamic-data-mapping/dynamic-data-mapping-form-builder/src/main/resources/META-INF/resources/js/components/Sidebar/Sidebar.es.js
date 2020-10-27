@@ -31,6 +31,7 @@ import {EventHandler} from 'metal-events';
 import Component, {Fragment} from 'metal-jsx';
 import {Config} from 'metal-state';
 
+import RulesSupport from '../../components/RuleBuilder/RulesSupport.es';
 import {focusedFieldStructure} from '../../util/config.es';
 import {selectText} from '../../util/dom.es';
 import {
@@ -185,6 +186,7 @@ class Sidebar extends Component {
 							: false,
 					readOnly:
 						field.fieldName == 'name' ? readOnlyFieldName : false,
+					visible: field.fieldName !== 'name' ? field.visible : false,
 				};
 
 				return {
@@ -690,6 +692,19 @@ class Sidebar extends Component {
 				this._duplicateField(fieldName);
 			}
 			else if (settingsItem === 'delete-field') {
+				const {rules} = this.props;
+
+				if (
+					rules &&
+					RulesSupport.findRuleByFieldName(fieldName, rules)
+				) {
+					const dropdown = document.querySelector(
+						'.dropdown-menu.show'
+					);
+
+					dropdown.classList.remove('show');
+				}
+
 				this._deleteField(fieldName);
 			}
 			else if (settingsItem === 'cancel-field-changes') {

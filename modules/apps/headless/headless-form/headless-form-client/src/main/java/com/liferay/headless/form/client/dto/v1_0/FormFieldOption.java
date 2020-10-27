@@ -17,6 +17,8 @@ package com.liferay.headless.form.client.dto.v1_0;
 import com.liferay.headless.form.client.function.UnsafeSupplier;
 import com.liferay.headless.form.client.serdes.v1_0.FormFieldOptionSerDes;
 
+import java.io.Serializable;
+
 import java.util.Map;
 import java.util.Objects;
 
@@ -27,7 +29,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class FormFieldOption implements Cloneable {
+public class FormFieldOption implements Cloneable, Serializable {
 
 	public static FormFieldOption toDTO(String json) {
 		return FormFieldOptionSerDes.toDTO(json);

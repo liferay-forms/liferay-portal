@@ -26,6 +26,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
@@ -43,7 +45,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @GraphQLName("Histogram")
 @JsonFilter("Liferay.Vulcan")
 @XmlRootElement(name = "Histogram")
-public class Histogram {
+public class Histogram implements Serializable {
 
 	public static Histogram toDTO(String json) {
 		return ObjectMapperUtil.readValue(Histogram.class, json);

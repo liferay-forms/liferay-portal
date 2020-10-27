@@ -17,6 +17,8 @@ package com.liferay.headless.commerce.admin.channel.client.dto.v1_0;
 import com.liferay.headless.commerce.admin.channel.client.function.UnsafeSupplier;
 import com.liferay.headless.commerce.admin.channel.client.serdes.v1_0.ChannelSerDes;
 
+import java.io.Serializable;
+
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class Channel implements Cloneable {
+public class Channel implements Cloneable, Serializable {
 
 	public static Channel toDTO(String json) {
 		return ChannelSerDes.toDTO(json);

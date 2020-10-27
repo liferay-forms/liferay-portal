@@ -17,6 +17,8 @@ package com.liferay.headless.commerce.admin.catalog.client.dto.v1_0;
 import com.liferay.headless.commerce.admin.catalog.client.function.UnsafeSupplier;
 import com.liferay.headless.commerce.admin.catalog.client.serdes.v1_0.AttachmentBase64SerDes;
 
+import java.io.Serializable;
+
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
@@ -28,7 +30,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class AttachmentBase64 implements Cloneable {
+public class AttachmentBase64 implements Cloneable, Serializable {
 
 	public static AttachmentBase64 toDTO(String json) {
 		return AttachmentBase64SerDes.toDTO(json);

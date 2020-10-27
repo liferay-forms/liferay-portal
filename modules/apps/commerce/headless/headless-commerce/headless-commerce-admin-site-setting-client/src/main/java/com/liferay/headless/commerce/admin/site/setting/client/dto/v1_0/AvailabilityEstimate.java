@@ -17,6 +17,8 @@ package com.liferay.headless.commerce.admin.site.setting.client.dto.v1_0;
 import com.liferay.headless.commerce.admin.site.setting.client.function.UnsafeSupplier;
 import com.liferay.headless.commerce.admin.site.setting.client.serdes.v1_0.AvailabilityEstimateSerDes;
 
+import java.io.Serializable;
+
 import java.util.Map;
 import java.util.Objects;
 
@@ -27,7 +29,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class AvailabilityEstimate implements Cloneable {
+public class AvailabilityEstimate implements Cloneable, Serializable {
 
 	public static AvailabilityEstimate toDTO(String json) {
 		return AvailabilityEstimateSerDes.toDTO(json);

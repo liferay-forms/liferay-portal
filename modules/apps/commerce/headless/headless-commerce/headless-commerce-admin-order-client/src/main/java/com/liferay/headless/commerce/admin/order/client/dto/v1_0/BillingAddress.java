@@ -17,6 +17,8 @@ package com.liferay.headless.commerce.admin.order.client.dto.v1_0;
 import com.liferay.headless.commerce.admin.order.client.function.UnsafeSupplier;
 import com.liferay.headless.commerce.admin.order.client.serdes.v1_0.BillingAddressSerDes;
 
+import java.io.Serializable;
+
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class BillingAddress implements Cloneable {
+public class BillingAddress implements Cloneable, Serializable {
 
 	public static BillingAddress toDTO(String json) {
 		return BillingAddressSerDes.toDTO(json);

@@ -170,10 +170,11 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {workflowDefinitions(page: ___, pageSize: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {workflowDefinitions(active: ___, page: ___, pageSize: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
 	public WorkflowDefinitionPage workflowDefinitions(
+			@GraphQLName("active") Boolean active,
 			@GraphQLName("pageSize") int pageSize,
 			@GraphQLName("page") int page)
 		throws Exception {
@@ -183,13 +184,13 @@ public class Query {
 			this::_populateResourceContext,
 			workflowDefinitionResource -> new WorkflowDefinitionPage(
 				workflowDefinitionResource.getWorkflowDefinitionsPage(
-					Pagination.of(page, pageSize))));
+					active, Pagination.of(page, pageSize))));
 	}
 
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {workflowDefinitionByName(name: ___){active, content, dateModified, description, name, title, version}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {workflowDefinitionByName(name: ___){active, content, dateCreated, dateModified, description, name, title, title_i18n, version}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
 	public WorkflowDefinition workflowDefinitionByName(

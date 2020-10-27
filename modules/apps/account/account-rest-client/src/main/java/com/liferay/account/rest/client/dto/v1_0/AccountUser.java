@@ -17,6 +17,8 @@ package com.liferay.account.rest.client.dto.v1_0;
 import com.liferay.account.rest.client.function.UnsafeSupplier;
 import com.liferay.account.rest.client.serdes.v1_0.AccountUserSerDes;
 
+import java.io.Serializable;
+
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class AccountUser implements Cloneable {
+public class AccountUser implements Cloneable, Serializable {
 
 	public static AccountUser toDTO(String json) {
 		return AccountUserSerDes.toDTO(json);

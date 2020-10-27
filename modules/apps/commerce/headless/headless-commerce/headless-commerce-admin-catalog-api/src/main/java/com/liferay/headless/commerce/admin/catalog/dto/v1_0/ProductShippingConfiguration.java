@@ -26,6 +26,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.math.BigDecimal;
 
 import java.util.Iterator;
@@ -48,7 +50,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @GraphQLName("ProductShippingConfiguration")
 @JsonFilter("Liferay.Vulcan")
 @XmlRootElement(name = "ProductShippingConfiguration")
-public class ProductShippingConfiguration {
+public class ProductShippingConfiguration implements Serializable {
 
 	public static ProductShippingConfiguration toDTO(String json) {
 		return ObjectMapperUtil.readValue(

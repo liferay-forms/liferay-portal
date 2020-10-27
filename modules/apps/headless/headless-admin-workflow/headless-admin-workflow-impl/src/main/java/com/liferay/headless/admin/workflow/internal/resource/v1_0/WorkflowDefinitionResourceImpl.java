@@ -17,9 +17,14 @@ package com.liferay.headless.admin.workflow.internal.resource.v1_0;
 import com.liferay.headless.admin.workflow.dto.v1_0.WorkflowDefinition;
 import com.liferay.headless.admin.workflow.resource.v1_0.WorkflowDefinitionResource;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.workflow.WorkflowDefinitionManager;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.LocalizedMapUtil;
+
+import java.util.Locale;
+import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -55,19 +60,19 @@ public class WorkflowDefinitionResourceImpl
 
 	@Override
 	public Page<WorkflowDefinition> getWorkflowDefinitionsPage(
-			Pagination pagination)
+			Boolean active, Pagination pagination)
 		throws Exception {
 
 		return Page.of(
 			transform(
 				_workflowDefinitionManager.getLatestWorkflowDefinitions(
-					contextCompany.getCompanyId(),
+					active, contextCompany.getCompanyId(),
 					pagination.getStartPosition(), pagination.getEndPosition(),
 					null),
 				this::_toWorkflowDefinition),
 			pagination,
 			_workflowDefinitionManager.getLatestWorkflowDefinitionsCount(
-				contextCompany.getCompanyId()));
+				active, contextCompany.getCompanyId()));
 	}
 
 	@Override
@@ -113,14 +118,23 @@ public class WorkflowDefinitionResourceImpl
 		com.liferay.portal.kernel.workflow.WorkflowDefinition
 			workflowDefinition) {
 
+		Map<Locale, String> titleMap = LocalizationUtil.getLocalizationMap(
+			workflowDefinition.getTitle());
+
 		return new WorkflowDefinition() {
 			{
 				active = workflowDefinition.isActive();
 				content = workflowDefinition.getContent();
+				dateCreated = workflowDefinition.getCreateDate();
 				dateModified = workflowDefinition.getModifiedDate();
 				description = workflowDefinition.getDescription();
 				name = workflowDefinition.getName();
-				title = workflowDefinition.getTitle();
+				title = titleMap.get(
+					contextAcceptLanguage.getPreferredLocale());
+				title_i18n = LocalizedMapUtil.getI18nMap(
+					contextAcceptLanguage.isAcceptAllLanguages(),
+					LocalizationUtil.getLocalizationMap(
+						workflowDefinition.getTitle()));
 				version = String.valueOf(workflowDefinition.getVersion());
 			}
 		};

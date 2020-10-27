@@ -26,6 +26,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
@@ -45,7 +47,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @GraphQLName("RenderedContent")
 @JsonFilter("Liferay.Vulcan")
 @XmlRootElement(name = "RenderedContent")
-public class RenderedContent {
+public class RenderedContent implements Serializable {
 
 	public static RenderedContent toDTO(String json) {
 		return ObjectMapperUtil.readValue(RenderedContent.class, json);

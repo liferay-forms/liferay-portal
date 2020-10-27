@@ -25,6 +25,7 @@ import com.liferay.layout.display.page.LayoutDisplayPageProviderTracker;
 import com.liferay.layout.display.page.constants.LayoutDisplayPageWebKeys;
 import com.liferay.layout.test.util.LayoutTestUtil;
 import com.liferay.petra.function.UnsafeSupplier;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -111,6 +112,11 @@ public class GetTrafficSourcesMVCResourceCommandTest {
 					"/api/1.0/data-sources/" + dataSourceId,
 					() -> StringPool.BLANK
 				).put(
+					"/api/1.0/pages/acquisition-channels",
+					() -> JSONUtil.put(
+						"organic", 3192L
+					).toString()
+				).put(
 					"/api/seo/1.0/traffic-sources",
 					() -> JSONUtil.put(
 						JSONUtil.put(
@@ -136,7 +142,7 @@ public class GetTrafficSourcesMVCResourceCommandTest {
 						).put(
 							"name", "organic"
 						).put(
-							"trafficAmount", 3192L
+							"trafficAmount", 3L
 						).put(
 							"trafficShare", 93.93D
 						)
@@ -182,13 +188,15 @@ public class GetTrafficSourcesMVCResourceCommandTest {
 					JSONArray jsonArray = jsonObject.getJSONArray(
 						"trafficSources");
 
-					Assert.assertEquals(2, jsonArray.length());
+					Assert.assertEquals(5, jsonArray.length());
 
 					JSONObject jsonObject1 = jsonArray.getJSONObject(0);
 
 					Assert.assertEquals("organic", jsonObject1.get("name"));
 
-					Assert.assertEquals(93.93D, jsonObject1.get("share"));
+					Assert.assertEquals(
+						100.00D, Double.valueOf(jsonObject1.getString("share")),
+						0.0);
 
 					Assert.assertEquals(3192, jsonObject1.get("value"));
 
@@ -219,9 +227,27 @@ public class GetTrafficSourcesMVCResourceCommandTest {
 
 					JSONObject jsonObject2 = jsonArray.getJSONObject(1);
 
-					Assert.assertEquals("paid", jsonObject2.get("name"));
+					Assert.assertEquals("referral", jsonObject2.get("name"));
 
 					Assert.assertNull(jsonObject2.get("value"));
+
+					JSONObject jsonObject3 = jsonArray.getJSONObject(2);
+
+					Assert.assertEquals("social", jsonObject3.get("name"));
+
+					Assert.assertNull(jsonObject3.get("value"));
+
+					JSONObject jsonObject4 = jsonArray.getJSONObject(3);
+
+					Assert.assertEquals("paid", jsonObject4.get("name"));
+
+					Assert.assertNull(jsonObject4.get("value"));
+
+					JSONObject jsonObject5 = jsonArray.getJSONObject(4);
+
+					Assert.assertEquals("direct", jsonObject5.get("name"));
+
+					Assert.assertNull(jsonObject5.get("value"));
 				});
 		}
 		finally {
@@ -289,29 +315,73 @@ public class GetTrafficSourcesMVCResourceCommandTest {
 								"helpMessage",
 								ResourceBundleUtil.getString(
 									resourceBundle,
-									"this-number-refers-to-the-volume-of-" +
-										"people-that-find-your-page-through-" +
-											"a-search-engine")
+									StringBundler.concat(
+										"this-is-the-number-of-page-views-",
+										"generated-by-people-coming-to-your-",
+										"page-from-other-sites-which-are-not-",
+										"search-engine-pages-or-social-sites"))
 							).put(
-								"name", "organic"
+								"name", "referral"
 							).put(
 								"title",
 								ResourceBundleUtil.getString(
-									resourceBundle, "organic")
+									resourceBundle, "referral")
 							),
 							JSONUtil.put(
 								"helpMessage",
 								ResourceBundleUtil.getString(
 									resourceBundle,
-									"this-number-refers-to-the-volume-of-" +
-										"people-that-find-your-page-through-" +
-											"paid-keywords")
+									"this-is-the-number-of-page-views-" +
+										"generated-by-people-coming-to-your-" +
+											"page-from-social-sites")
+							).put(
+								"name", "social"
+							).put(
+								"title",
+								ResourceBundleUtil.getString(
+									resourceBundle, "social")
+							),
+							JSONUtil.put(
+								"helpMessage",
+								ResourceBundleUtil.getString(
+									resourceBundle,
+									"this-is-the-number-of-page-views-" +
+										"generated-by-people-arriving-" +
+											"directly-to-your-page")
+							).put(
+								"name", "direct"
+							).put(
+								"title",
+								ResourceBundleUtil.getString(
+									resourceBundle, "direct")
+							),
+							JSONUtil.put(
+								"helpMessage",
+								ResourceBundleUtil.getString(
+									resourceBundle,
+									"this-is-the-number-of-page-views-" +
+										"generated-by-people-that-find-your-" +
+											"page-through-google-adwords")
 							).put(
 								"name", "paid"
 							).put(
 								"title",
 								ResourceBundleUtil.getString(
 									resourceBundle, "paid")
+							),
+							JSONUtil.put(
+								"helpMessage",
+								ResourceBundleUtil.getString(
+									resourceBundle,
+									"this-is-the-number-of-page-views-" +
+										"generated-by-people-coming-from-a-" +
+											"search-engine")
+							).put(
+								"name", "organic"
+							).put(
+								"title",
+								ResourceBundleUtil.getString(
+									resourceBundle, "organic")
 							)
 						).toJSONString(),
 						jsonArray.toJSONString());

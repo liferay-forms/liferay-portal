@@ -17,6 +17,8 @@ package com.liferay.data.engine.rest.client.dto.v2_0;
 import com.liferay.data.engine.rest.client.function.UnsafeSupplier;
 import com.liferay.data.engine.rest.client.serdes.v2_0.DataLayoutRowSerDes;
 
+import java.io.Serializable;
+
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class DataLayoutRow implements Cloneable {
+public class DataLayoutRow implements Cloneable, Serializable {
 
 	public static DataLayoutRow toDTO(String json) {
 		return DataLayoutRowSerDes.toDTO(json);

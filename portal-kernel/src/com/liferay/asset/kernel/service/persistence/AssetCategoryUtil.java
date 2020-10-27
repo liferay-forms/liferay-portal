@@ -1637,46 +1637,46 @@ public class AssetCategoryUtil {
 	}
 
 	/**
-	 * Returns all the asset categories that the user has permission to view where groupId = &#63; and vocabularyId = any &#63;.
+	 * Returns all the asset categories that the user has permission to view where groupId = any &#63; and vocabularyId = any &#63;.
 	 *
-	 * @param groupId the group ID
+	 * @param groupIds the group IDs
 	 * @param vocabularyIds the vocabulary IDs
 	 * @return the matching asset categories that the user has permission to view
 	 */
 	public static List<AssetCategory> filterFindByG_V(
-		long groupId, long[] vocabularyIds) {
+		long[] groupIds, long[] vocabularyIds) {
 
-		return getPersistence().filterFindByG_V(groupId, vocabularyIds);
+		return getPersistence().filterFindByG_V(groupIds, vocabularyIds);
 	}
 
 	/**
-	 * Returns a range of all the asset categories that the user has permission to view where groupId = &#63; and vocabularyId = any &#63;.
+	 * Returns a range of all the asset categories that the user has permission to view where groupId = any &#63; and vocabularyId = any &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetCategoryModelImpl</code>.
 	 * </p>
 	 *
-	 * @param groupId the group ID
+	 * @param groupIds the group IDs
 	 * @param vocabularyIds the vocabulary IDs
 	 * @param start the lower bound of the range of asset categories
 	 * @param end the upper bound of the range of asset categories (not inclusive)
 	 * @return the range of matching asset categories that the user has permission to view
 	 */
 	public static List<AssetCategory> filterFindByG_V(
-		long groupId, long[] vocabularyIds, int start, int end) {
+		long[] groupIds, long[] vocabularyIds, int start, int end) {
 
 		return getPersistence().filterFindByG_V(
-			groupId, vocabularyIds, start, end);
+			groupIds, vocabularyIds, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the asset categories that the user has permission to view where groupId = &#63; and vocabularyId = any &#63;.
+	 * Returns an ordered range of all the asset categories that the user has permission to view where groupId = any &#63; and vocabularyId = any &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetCategoryModelImpl</code>.
 	 * </p>
 	 *
-	 * @param groupId the group ID
+	 * @param groupIds the group IDs
 	 * @param vocabularyIds the vocabulary IDs
 	 * @param start the lower bound of the range of asset categories
 	 * @param end the upper bound of the range of asset categories (not inclusive)
@@ -1684,57 +1684,57 @@ public class AssetCategoryUtil {
 	 * @return the ordered range of matching asset categories that the user has permission to view
 	 */
 	public static List<AssetCategory> filterFindByG_V(
-		long groupId, long[] vocabularyIds, int start, int end,
+		long[] groupIds, long[] vocabularyIds, int start, int end,
 		OrderByComparator<AssetCategory> orderByComparator) {
 
 		return getPersistence().filterFindByG_V(
-			groupId, vocabularyIds, start, end, orderByComparator);
+			groupIds, vocabularyIds, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns all the asset categories where groupId = &#63; and vocabularyId = any &#63;.
+	 * Returns all the asset categories where groupId = any &#63; and vocabularyId = any &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetCategoryModelImpl</code>.
 	 * </p>
 	 *
-	 * @param groupId the group ID
+	 * @param groupIds the group IDs
 	 * @param vocabularyIds the vocabulary IDs
 	 * @return the matching asset categories
 	 */
 	public static List<AssetCategory> findByG_V(
-		long groupId, long[] vocabularyIds) {
+		long[] groupIds, long[] vocabularyIds) {
 
-		return getPersistence().findByG_V(groupId, vocabularyIds);
+		return getPersistence().findByG_V(groupIds, vocabularyIds);
 	}
 
 	/**
-	 * Returns a range of all the asset categories where groupId = &#63; and vocabularyId = any &#63;.
+	 * Returns a range of all the asset categories where groupId = any &#63; and vocabularyId = any &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetCategoryModelImpl</code>.
 	 * </p>
 	 *
-	 * @param groupId the group ID
+	 * @param groupIds the group IDs
 	 * @param vocabularyIds the vocabulary IDs
 	 * @param start the lower bound of the range of asset categories
 	 * @param end the upper bound of the range of asset categories (not inclusive)
 	 * @return the range of matching asset categories
 	 */
 	public static List<AssetCategory> findByG_V(
-		long groupId, long[] vocabularyIds, int start, int end) {
+		long[] groupIds, long[] vocabularyIds, int start, int end) {
 
-		return getPersistence().findByG_V(groupId, vocabularyIds, start, end);
+		return getPersistence().findByG_V(groupIds, vocabularyIds, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the asset categories where groupId = &#63; and vocabularyId = any &#63;.
+	 * Returns an ordered range of all the asset categories where groupId = any &#63; and vocabularyId = any &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetCategoryModelImpl</code>.
 	 * </p>
 	 *
-	 * @param groupId the group ID
+	 * @param groupIds the group IDs
 	 * @param vocabularyIds the vocabulary IDs
 	 * @param start the lower bound of the range of asset categories
 	 * @param end the upper bound of the range of asset categories (not inclusive)
@@ -1742,11 +1742,11 @@ public class AssetCategoryUtil {
 	 * @return the ordered range of matching asset categories
 	 */
 	public static List<AssetCategory> findByG_V(
-		long groupId, long[] vocabularyIds, int start, int end,
+		long[] groupIds, long[] vocabularyIds, int start, int end,
 		OrderByComparator<AssetCategory> orderByComparator) {
 
 		return getPersistence().findByG_V(
-			groupId, vocabularyIds, start, end, orderByComparator);
+			groupIds, vocabularyIds, start, end, orderByComparator);
 	}
 
 	/**
@@ -1765,12 +1765,12 @@ public class AssetCategoryUtil {
 	 * @return the ordered range of matching asset categories
 	 */
 	public static List<AssetCategory> findByG_V(
-		long groupId, long[] vocabularyIds, int start, int end,
+		long[] groupIds, long[] vocabularyIds, int start, int end,
 		OrderByComparator<AssetCategory> orderByComparator,
 		boolean useFinderCache) {
 
 		return getPersistence().findByG_V(
-			groupId, vocabularyIds, start, end, orderByComparator,
+			groupIds, vocabularyIds, start, end, orderByComparator,
 			useFinderCache);
 	}
 
@@ -1796,14 +1796,14 @@ public class AssetCategoryUtil {
 	}
 
 	/**
-	 * Returns the number of asset categories where groupId = &#63; and vocabularyId = any &#63;.
+	 * Returns the number of asset categories where groupId = any &#63; and vocabularyId = any &#63;.
 	 *
-	 * @param groupId the group ID
+	 * @param groupIds the group IDs
 	 * @param vocabularyIds the vocabulary IDs
 	 * @return the number of matching asset categories
 	 */
-	public static int countByG_V(long groupId, long[] vocabularyIds) {
-		return getPersistence().countByG_V(groupId, vocabularyIds);
+	public static int countByG_V(long[] groupIds, long[] vocabularyIds) {
+		return getPersistence().countByG_V(groupIds, vocabularyIds);
 	}
 
 	/**
@@ -1818,14 +1818,14 @@ public class AssetCategoryUtil {
 	}
 
 	/**
-	 * Returns the number of asset categories that the user has permission to view where groupId = &#63; and vocabularyId = any &#63;.
+	 * Returns the number of asset categories that the user has permission to view where groupId = any &#63; and vocabularyId = any &#63;.
 	 *
-	 * @param groupId the group ID
+	 * @param groupIds the group IDs
 	 * @param vocabularyIds the vocabulary IDs
 	 * @return the number of matching asset categories that the user has permission to view
 	 */
-	public static int filterCountByG_V(long groupId, long[] vocabularyIds) {
-		return getPersistence().filterCountByG_V(groupId, vocabularyIds);
+	public static int filterCountByG_V(long[] groupIds, long[] vocabularyIds) {
+		return getPersistence().filterCountByG_V(groupIds, vocabularyIds);
 	}
 
 	/**
@@ -3251,28 +3251,28 @@ public class AssetCategoryUtil {
 	}
 
 	/**
-	 * Returns all the asset categories that the user has permission to view where groupId = &#63; and name LIKE &#63; and vocabularyId = any &#63;.
+	 * Returns all the asset categories that the user has permission to view where groupId = any &#63; and name LIKE &#63; and vocabularyId = any &#63;.
 	 *
-	 * @param groupId the group ID
+	 * @param groupIds the group IDs
 	 * @param name the name
 	 * @param vocabularyIds the vocabulary IDs
 	 * @return the matching asset categories that the user has permission to view
 	 */
 	public static List<AssetCategory> filterFindByG_LikeN_V(
-		long groupId, String name, long[] vocabularyIds) {
+		long[] groupIds, String name, long[] vocabularyIds) {
 
 		return getPersistence().filterFindByG_LikeN_V(
-			groupId, name, vocabularyIds);
+			groupIds, name, vocabularyIds);
 	}
 
 	/**
-	 * Returns a range of all the asset categories that the user has permission to view where groupId = &#63; and name LIKE &#63; and vocabularyId = any &#63;.
+	 * Returns a range of all the asset categories that the user has permission to view where groupId = any &#63; and name LIKE &#63; and vocabularyId = any &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetCategoryModelImpl</code>.
 	 * </p>
 	 *
-	 * @param groupId the group ID
+	 * @param groupIds the group IDs
 	 * @param name the name
 	 * @param vocabularyIds the vocabulary IDs
 	 * @param start the lower bound of the range of asset categories
@@ -3280,20 +3280,21 @@ public class AssetCategoryUtil {
 	 * @return the range of matching asset categories that the user has permission to view
 	 */
 	public static List<AssetCategory> filterFindByG_LikeN_V(
-		long groupId, String name, long[] vocabularyIds, int start, int end) {
+		long[] groupIds, String name, long[] vocabularyIds, int start,
+		int end) {
 
 		return getPersistence().filterFindByG_LikeN_V(
-			groupId, name, vocabularyIds, start, end);
+			groupIds, name, vocabularyIds, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the asset categories that the user has permission to view where groupId = &#63; and name LIKE &#63; and vocabularyId = any &#63;.
+	 * Returns an ordered range of all the asset categories that the user has permission to view where groupId = any &#63; and name LIKE &#63; and vocabularyId = any &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetCategoryModelImpl</code>.
 	 * </p>
 	 *
-	 * @param groupId the group ID
+	 * @param groupIds the group IDs
 	 * @param name the name
 	 * @param vocabularyIds the vocabulary IDs
 	 * @param start the lower bound of the range of asset categories
@@ -3302,39 +3303,39 @@ public class AssetCategoryUtil {
 	 * @return the ordered range of matching asset categories that the user has permission to view
 	 */
 	public static List<AssetCategory> filterFindByG_LikeN_V(
-		long groupId, String name, long[] vocabularyIds, int start, int end,
+		long[] groupIds, String name, long[] vocabularyIds, int start, int end,
 		OrderByComparator<AssetCategory> orderByComparator) {
 
 		return getPersistence().filterFindByG_LikeN_V(
-			groupId, name, vocabularyIds, start, end, orderByComparator);
+			groupIds, name, vocabularyIds, start, end, orderByComparator);
 	}
 
 	/**
-	 * Returns all the asset categories where groupId = &#63; and name LIKE &#63; and vocabularyId = any &#63;.
+	 * Returns all the asset categories where groupId = any &#63; and name LIKE &#63; and vocabularyId = any &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetCategoryModelImpl</code>.
 	 * </p>
 	 *
-	 * @param groupId the group ID
+	 * @param groupIds the group IDs
 	 * @param name the name
 	 * @param vocabularyIds the vocabulary IDs
 	 * @return the matching asset categories
 	 */
 	public static List<AssetCategory> findByG_LikeN_V(
-		long groupId, String name, long[] vocabularyIds) {
+		long[] groupIds, String name, long[] vocabularyIds) {
 
-		return getPersistence().findByG_LikeN_V(groupId, name, vocabularyIds);
+		return getPersistence().findByG_LikeN_V(groupIds, name, vocabularyIds);
 	}
 
 	/**
-	 * Returns a range of all the asset categories where groupId = &#63; and name LIKE &#63; and vocabularyId = any &#63;.
+	 * Returns a range of all the asset categories where groupId = any &#63; and name LIKE &#63; and vocabularyId = any &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetCategoryModelImpl</code>.
 	 * </p>
 	 *
-	 * @param groupId the group ID
+	 * @param groupIds the group IDs
 	 * @param name the name
 	 * @param vocabularyIds the vocabulary IDs
 	 * @param start the lower bound of the range of asset categories
@@ -3342,20 +3343,21 @@ public class AssetCategoryUtil {
 	 * @return the range of matching asset categories
 	 */
 	public static List<AssetCategory> findByG_LikeN_V(
-		long groupId, String name, long[] vocabularyIds, int start, int end) {
+		long[] groupIds, String name, long[] vocabularyIds, int start,
+		int end) {
 
 		return getPersistence().findByG_LikeN_V(
-			groupId, name, vocabularyIds, start, end);
+			groupIds, name, vocabularyIds, start, end);
 	}
 
 	/**
-	 * Returns an ordered range of all the asset categories where groupId = &#63; and name LIKE &#63; and vocabularyId = any &#63;.
+	 * Returns an ordered range of all the asset categories where groupId = any &#63; and name LIKE &#63; and vocabularyId = any &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetCategoryModelImpl</code>.
 	 * </p>
 	 *
-	 * @param groupId the group ID
+	 * @param groupIds the group IDs
 	 * @param name the name
 	 * @param vocabularyIds the vocabulary IDs
 	 * @param start the lower bound of the range of asset categories
@@ -3364,11 +3366,11 @@ public class AssetCategoryUtil {
 	 * @return the ordered range of matching asset categories
 	 */
 	public static List<AssetCategory> findByG_LikeN_V(
-		long groupId, String name, long[] vocabularyIds, int start, int end,
+		long[] groupIds, String name, long[] vocabularyIds, int start, int end,
 		OrderByComparator<AssetCategory> orderByComparator) {
 
 		return getPersistence().findByG_LikeN_V(
-			groupId, name, vocabularyIds, start, end, orderByComparator);
+			groupIds, name, vocabularyIds, start, end, orderByComparator);
 	}
 
 	/**
@@ -3388,12 +3390,12 @@ public class AssetCategoryUtil {
 	 * @return the ordered range of matching asset categories
 	 */
 	public static List<AssetCategory> findByG_LikeN_V(
-		long groupId, String name, long[] vocabularyIds, int start, int end,
+		long[] groupIds, String name, long[] vocabularyIds, int start, int end,
 		OrderByComparator<AssetCategory> orderByComparator,
 		boolean useFinderCache) {
 
 		return getPersistence().findByG_LikeN_V(
-			groupId, name, vocabularyIds, start, end, orderByComparator,
+			groupIds, name, vocabularyIds, start, end, orderByComparator,
 			useFinderCache);
 	}
 
@@ -3425,17 +3427,17 @@ public class AssetCategoryUtil {
 	}
 
 	/**
-	 * Returns the number of asset categories where groupId = &#63; and name LIKE &#63; and vocabularyId = any &#63;.
+	 * Returns the number of asset categories where groupId = any &#63; and name LIKE &#63; and vocabularyId = any &#63;.
 	 *
-	 * @param groupId the group ID
+	 * @param groupIds the group IDs
 	 * @param name the name
 	 * @param vocabularyIds the vocabulary IDs
 	 * @return the number of matching asset categories
 	 */
 	public static int countByG_LikeN_V(
-		long groupId, String name, long[] vocabularyIds) {
+		long[] groupIds, String name, long[] vocabularyIds) {
 
-		return getPersistence().countByG_LikeN_V(groupId, name, vocabularyIds);
+		return getPersistence().countByG_LikeN_V(groupIds, name, vocabularyIds);
 	}
 
 	/**
@@ -3454,18 +3456,18 @@ public class AssetCategoryUtil {
 	}
 
 	/**
-	 * Returns the number of asset categories that the user has permission to view where groupId = &#63; and name LIKE &#63; and vocabularyId = any &#63;.
+	 * Returns the number of asset categories that the user has permission to view where groupId = any &#63; and name LIKE &#63; and vocabularyId = any &#63;.
 	 *
-	 * @param groupId the group ID
+	 * @param groupIds the group IDs
 	 * @param name the name
 	 * @param vocabularyIds the vocabulary IDs
 	 * @return the number of matching asset categories that the user has permission to view
 	 */
 	public static int filterCountByG_LikeN_V(
-		long groupId, String name, long[] vocabularyIds) {
+		long[] groupIds, String name, long[] vocabularyIds) {
 
 		return getPersistence().filterCountByG_LikeN_V(
-			groupId, name, vocabularyIds);
+			groupIds, name, vocabularyIds);
 	}
 
 	/**
@@ -3764,219 +3766,6 @@ public class AssetCategoryUtil {
 	 */
 	public static int countAll() {
 		return getPersistence().countAll();
-	}
-
-	/**
-	 * Returns the primaryKeys of asset entries associated with the asset category.
-	 *
-	 * @param pk the primary key of the asset category
-	 * @return long[] of the primaryKeys of asset entries associated with the asset category
-	 */
-	public static long[] getAssetEntryPrimaryKeys(long pk) {
-		return getPersistence().getAssetEntryPrimaryKeys(pk);
-	}
-
-	/**
-	 * Returns all the asset entries associated with the asset category.
-	 *
-	 * @param pk the primary key of the asset category
-	 * @return the asset entries associated with the asset category
-	 */
-	public static List<com.liferay.asset.kernel.model.AssetEntry>
-		getAssetEntries(long pk) {
-
-		return getPersistence().getAssetEntries(pk);
-	}
-
-	/**
-	 * Returns a range of all the asset entries associated with the asset category.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetCategoryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param pk the primary key of the asset category
-	 * @param start the lower bound of the range of asset categories
-	 * @param end the upper bound of the range of asset categories (not inclusive)
-	 * @return the range of asset entries associated with the asset category
-	 */
-	public static List<com.liferay.asset.kernel.model.AssetEntry>
-		getAssetEntries(long pk, int start, int end) {
-
-		return getPersistence().getAssetEntries(pk, start, end);
-	}
-
-	/**
-	 * Returns an ordered range of all the asset entries associated with the asset category.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AssetCategoryModelImpl</code>.
-	 * </p>
-	 *
-	 * @param pk the primary key of the asset category
-	 * @param start the lower bound of the range of asset categories
-	 * @param end the upper bound of the range of asset categories (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of asset entries associated with the asset category
-	 */
-	public static List<com.liferay.asset.kernel.model.AssetEntry>
-		getAssetEntries(
-			long pk, int start, int end,
-			OrderByComparator<com.liferay.asset.kernel.model.AssetEntry>
-				orderByComparator) {
-
-		return getPersistence().getAssetEntries(
-			pk, start, end, orderByComparator);
-	}
-
-	/**
-	 * Returns the number of asset entries associated with the asset category.
-	 *
-	 * @param pk the primary key of the asset category
-	 * @return the number of asset entries associated with the asset category
-	 */
-	public static int getAssetEntriesSize(long pk) {
-		return getPersistence().getAssetEntriesSize(pk);
-	}
-
-	/**
-	 * Returns <code>true</code> if the asset entry is associated with the asset category.
-	 *
-	 * @param pk the primary key of the asset category
-	 * @param assetEntryPK the primary key of the asset entry
-	 * @return <code>true</code> if the asset entry is associated with the asset category; <code>false</code> otherwise
-	 */
-	public static boolean containsAssetEntry(long pk, long assetEntryPK) {
-		return getPersistence().containsAssetEntry(pk, assetEntryPK);
-	}
-
-	/**
-	 * Returns <code>true</code> if the asset category has any asset entries associated with it.
-	 *
-	 * @param pk the primary key of the asset category to check for associations with asset entries
-	 * @return <code>true</code> if the asset category has any asset entries associated with it; <code>false</code> otherwise
-	 */
-	public static boolean containsAssetEntries(long pk) {
-		return getPersistence().containsAssetEntries(pk);
-	}
-
-	/**
-	 * Adds an association between the asset category and the asset entry. Also notifies the appropriate model listeners and clears the mapping table finder cache.
-	 *
-	 * @param pk the primary key of the asset category
-	 * @param assetEntryPK the primary key of the asset entry
-	 */
-	public static void addAssetEntry(long pk, long assetEntryPK) {
-		getPersistence().addAssetEntry(pk, assetEntryPK);
-	}
-
-	/**
-	 * Adds an association between the asset category and the asset entry. Also notifies the appropriate model listeners and clears the mapping table finder cache.
-	 *
-	 * @param pk the primary key of the asset category
-	 * @param assetEntry the asset entry
-	 */
-	public static void addAssetEntry(
-		long pk, com.liferay.asset.kernel.model.AssetEntry assetEntry) {
-
-		getPersistence().addAssetEntry(pk, assetEntry);
-	}
-
-	/**
-	 * Adds an association between the asset category and the asset entries. Also notifies the appropriate model listeners and clears the mapping table finder cache.
-	 *
-	 * @param pk the primary key of the asset category
-	 * @param assetEntryPKs the primary keys of the asset entries
-	 */
-	public static void addAssetEntries(long pk, long[] assetEntryPKs) {
-		getPersistence().addAssetEntries(pk, assetEntryPKs);
-	}
-
-	/**
-	 * Adds an association between the asset category and the asset entries. Also notifies the appropriate model listeners and clears the mapping table finder cache.
-	 *
-	 * @param pk the primary key of the asset category
-	 * @param assetEntries the asset entries
-	 */
-	public static void addAssetEntries(
-		long pk, List<com.liferay.asset.kernel.model.AssetEntry> assetEntries) {
-
-		getPersistence().addAssetEntries(pk, assetEntries);
-	}
-
-	/**
-	 * Clears all associations between the asset category and its asset entries. Also notifies the appropriate model listeners and clears the mapping table finder cache.
-	 *
-	 * @param pk the primary key of the asset category to clear the associated asset entries from
-	 */
-	public static void clearAssetEntries(long pk) {
-		getPersistence().clearAssetEntries(pk);
-	}
-
-	/**
-	 * Removes the association between the asset category and the asset entry. Also notifies the appropriate model listeners and clears the mapping table finder cache.
-	 *
-	 * @param pk the primary key of the asset category
-	 * @param assetEntryPK the primary key of the asset entry
-	 */
-	public static void removeAssetEntry(long pk, long assetEntryPK) {
-		getPersistence().removeAssetEntry(pk, assetEntryPK);
-	}
-
-	/**
-	 * Removes the association between the asset category and the asset entry. Also notifies the appropriate model listeners and clears the mapping table finder cache.
-	 *
-	 * @param pk the primary key of the asset category
-	 * @param assetEntry the asset entry
-	 */
-	public static void removeAssetEntry(
-		long pk, com.liferay.asset.kernel.model.AssetEntry assetEntry) {
-
-		getPersistence().removeAssetEntry(pk, assetEntry);
-	}
-
-	/**
-	 * Removes the association between the asset category and the asset entries. Also notifies the appropriate model listeners and clears the mapping table finder cache.
-	 *
-	 * @param pk the primary key of the asset category
-	 * @param assetEntryPKs the primary keys of the asset entries
-	 */
-	public static void removeAssetEntries(long pk, long[] assetEntryPKs) {
-		getPersistence().removeAssetEntries(pk, assetEntryPKs);
-	}
-
-	/**
-	 * Removes the association between the asset category and the asset entries. Also notifies the appropriate model listeners and clears the mapping table finder cache.
-	 *
-	 * @param pk the primary key of the asset category
-	 * @param assetEntries the asset entries
-	 */
-	public static void removeAssetEntries(
-		long pk, List<com.liferay.asset.kernel.model.AssetEntry> assetEntries) {
-
-		getPersistence().removeAssetEntries(pk, assetEntries);
-	}
-
-	/**
-	 * Sets the asset entries associated with the asset category, removing and adding associations as necessary. Also notifies the appropriate model listeners and clears the mapping table finder cache.
-	 *
-	 * @param pk the primary key of the asset category
-	 * @param assetEntryPKs the primary keys of the asset entries to be associated with the asset category
-	 */
-	public static void setAssetEntries(long pk, long[] assetEntryPKs) {
-		getPersistence().setAssetEntries(pk, assetEntryPKs);
-	}
-
-	/**
-	 * Sets the asset entries associated with the asset category, removing and adding associations as necessary. Also notifies the appropriate model listeners and clears the mapping table finder cache.
-	 *
-	 * @param pk the primary key of the asset category
-	 * @param assetEntries the asset entries to be associated with the asset category
-	 */
-	public static void setAssetEntries(
-		long pk, List<com.liferay.asset.kernel.model.AssetEntry> assetEntries) {
-
-		getPersistence().setAssetEntries(pk, assetEntries);
 	}
 
 	public static AssetCategoryPersistence getPersistence() {

@@ -26,6 +26,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
@@ -45,7 +47,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @GraphQLName("WorkflowInstanceSubmit")
 @JsonFilter("Liferay.Vulcan")
 @XmlRootElement(name = "WorkflowInstanceSubmit")
-public class WorkflowInstanceSubmit {
+public class WorkflowInstanceSubmit implements Serializable {
 
 	public static WorkflowInstanceSubmit toDTO(String json) {
 		return ObjectMapperUtil.readValue(WorkflowInstanceSubmit.class, json);

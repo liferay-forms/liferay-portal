@@ -17,6 +17,8 @@ package com.liferay.headless.delivery.client.dto.v1_0;
 import com.liferay.headless.delivery.client.function.UnsafeSupplier;
 import com.liferay.headless.delivery.client.serdes.v1_0.FragmentInlineValueSerDes;
 
+import java.io.Serializable;
+
 import java.util.Map;
 import java.util.Objects;
 
@@ -27,7 +29,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class FragmentInlineValue implements Cloneable {
+public class FragmentInlineValue implements Cloneable, Serializable {
 
 	public static FragmentInlineValue toDTO(String json) {
 		return FragmentInlineValueSerDes.toDTO(json);

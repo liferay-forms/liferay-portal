@@ -15,10 +15,17 @@
 package com.liferay.document.library.web.internal.portlet;
 
 import com.liferay.document.library.constants.DLPortletKeys;
+import com.liferay.document.library.web.internal.display.context.util.DLRequestHelper;
 import com.liferay.portal.kernel.model.Release;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.util.Portal;
+
+import java.io.IOException;
 
 import javax.portlet.Portlet;
+import javax.portlet.PortletException;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -47,7 +54,6 @@ import org.osgi.service.component.annotations.Reference;
 		"com.liferay.portlet.scopeable=true",
 		"com.liferay.portlet.struts-path=document_library",
 		"com.liferay.portlet.use-default-template=true",
-		"com.liferay.portlet.webdav-storage-token=document_library",
 		"javax.portlet.display-name=Documents and Media",
 		"javax.portlet.expiration-cache=0",
 		"javax.portlet.init-param.always-display-default-configuration-icons=true",
@@ -65,11 +71,26 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class DLPortlet extends MVCPortlet {
 
+	@Override
+	public void render(
+			RenderRequest renderRequest, RenderResponse renderResponse)
+		throws IOException, PortletException {
+
+		renderRequest.setAttribute(
+			DLRequestHelper.class.getName(),
+			new DLRequestHelper(_portal.getHttpServletRequest(renderRequest)));
+
+		super.render(renderRequest, renderResponse);
+	}
+
 	@Reference(
 		target = "(&(release.bundle.symbolic.name=com.liferay.document.library.web)(&(release.schema.version>=1.0.0)(!(release.schema.version>=2.0.0))))",
 		unbind = "-"
 	)
 	protected void setRelease(Release release) {
 	}
+
+	@Reference
+	private Portal _portal;
 
 }

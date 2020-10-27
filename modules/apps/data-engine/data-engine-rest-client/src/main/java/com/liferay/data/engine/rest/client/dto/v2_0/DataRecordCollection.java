@@ -17,6 +17,8 @@ package com.liferay.data.engine.rest.client.dto.v2_0;
 import com.liferay.data.engine.rest.client.function.UnsafeSupplier;
 import com.liferay.data.engine.rest.client.serdes.v2_0.DataRecordCollectionSerDes;
 
+import java.io.Serializable;
+
 import java.util.Map;
 import java.util.Objects;
 
@@ -27,7 +29,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class DataRecordCollection implements Cloneable {
+public class DataRecordCollection implements Cloneable, Serializable {
 
 	public static DataRecordCollection toDTO(String json) {
 		return DataRecordCollectionSerDes.toDTO(json);

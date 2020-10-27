@@ -95,8 +95,13 @@ public class DefaultUserResolver implements UserResolver {
 		String subjectNameIdentifier = getSubjectNameIdentifier(
 			userResolverSAMLContext);
 
+		SamlSpIdpConnection samlSpIdpConnection =
+			_samlSpIdpConnectionLocalService.getSamlSpIdpConnection(
+				CompanyThreadLocal.getCompanyId(),
+				userResolverSAMLContext.resolvePeerEntityId());
+
 		String subjectNameIdentifierType = getSubjectNameIdentifierType(
-			userResolverSAMLContext);
+			userResolverSAMLContext, samlSpIdpConnection.getNameIdFormat());
 
 		if (_samlProviderConfigurationHelper.isLDAPImportEnabled()) {
 			user = importLdapUser(
@@ -105,8 +110,9 @@ public class DefaultUserResolver implements UserResolver {
 
 		if (user == null) {
 			return importUser(
-				companyId, subjectNameIdentifier, subjectNameIdentifierType,
-				userResolverSAMLContext, serviceContext);
+				companyId, samlSpIdpConnection, subjectNameIdentifier,
+				subjectNameIdentifierType, userResolverSAMLContext,
+				serviceContext);
 		}
 
 		return user;
@@ -149,8 +155,8 @@ public class DefaultUserResolver implements UserResolver {
 	}
 
 	protected User addUser(
-			long companyId, Map<String, List<Serializable>> attributesMap,
-			UserResolverSAMLContext userResolverSAMLContext,
+			long companyId, SamlSpIdpConnection samlSpIdpConnection,
+			Map<String, List<Serializable>> attributesMap,
 			ServiceContext serviceContext)
 		throws PortalException {
 
@@ -159,10 +165,6 @@ public class DefaultUserResolver implements UserResolver {
 				"Adding user with attributes map " +
 					MapUtil.toString(attributesMap));
 		}
-
-		SamlSpIdpConnection samlSpIdpConnection =
-			_samlSpIdpConnectionLocalService.getSamlSpIdpConnection(
-				companyId, userResolverSAMLContext.resolvePeerEntityId());
 
 		Company company = _companyLocalService.getCompany(companyId);
 		String emailAddress = getValueAsString("emailAddress", attributesMap);
@@ -278,15 +280,15 @@ public class DefaultUserResolver implements UserResolver {
 	}
 
 	protected String getSubjectNameIdentifierType(
-		UserResolverSAMLContext userResolverSAMLContext) {
+		UserResolverSAMLContext userResolverSAMLContext,
+		String defaultSubjectNameIdentifierType) {
 
 		String format = userResolverSAMLContext.resolveSubjectNameFormat();
 
 		if (Validator.isNull(format)) {
-			return _SUBJECT_NAME_TYPE_UNSPECIFIED;
+			return defaultSubjectNameIdentifierType;
 		}
-
-		if (format.equals(NameIDType.EMAIL)) {
+		else if (format.equals(NameIDType.EMAIL)) {
 			return _SUBJECT_NAME_TYPE_EMAIL_ADDRESS;
 		}
 
@@ -386,8 +388,8 @@ public class DefaultUserResolver implements UserResolver {
 	}
 
 	protected User importUser(
-			long companyId, String subjectNameIdentifier,
-			String subjectNameIdentifierType,
+			long companyId, SamlSpIdpConnection samlSpIdpConnection,
+			String subjectNameIdentifier, String subjectNameIdentifierType,
 			UserResolverSAMLContext userResolverSAMLContext,
 			ServiceContext serviceContext)
 		throws PortalException {
@@ -410,12 +412,11 @@ public class DefaultUserResolver implements UserResolver {
 				_log.debug("Found user " + user.toString());
 			}
 
-			user = updateUser(companyId, user, attributesMap, serviceContext);
+			user = updateUser(user, attributesMap, serviceContext);
 		}
 		else {
 			user = addUser(
-				companyId, attributesMap, userResolverSAMLContext,
-				serviceContext);
+				companyId, samlSpIdpConnection, attributesMap, serviceContext);
 
 			if (_log.isDebugEnabled()) {
 				_log.debug("Added user " + user.toString());
@@ -426,8 +427,7 @@ public class DefaultUserResolver implements UserResolver {
 	}
 
 	protected User updateUser(
-			long companyId, User user,
-			Map<String, List<Serializable>> attributesMap,
+			User user, Map<String, List<Serializable>> attributesMap,
 			ServiceContext serviceContext)
 		throws PortalException {
 
@@ -535,8 +535,6 @@ public class DefaultUserResolver implements UserResolver {
 		"emailAddress";
 
 	private static final String _SUBJECT_NAME_TYPE_SCREEN_NAME = "screenName";
-
-	private static final String _SUBJECT_NAME_TYPE_UNSPECIFIED = "unspecified";
 
 	private static final String _SUBJECT_NAME_TYPE_UUID = "uuid";
 

@@ -26,6 +26,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
@@ -43,7 +45,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @GraphQLName("AccountUser")
 @JsonFilter("Liferay.Vulcan")
 @XmlRootElement(name = "AccountUser")
-public class AccountUser {
+public class AccountUser implements Serializable {
 
 	public static AccountUser toDTO(String json) {
 		return ObjectMapperUtil.readValue(AccountUser.class, json);

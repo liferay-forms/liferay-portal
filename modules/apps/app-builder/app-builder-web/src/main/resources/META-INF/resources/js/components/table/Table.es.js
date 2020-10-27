@@ -46,7 +46,7 @@ const Table = ({
 }) => {
 	return (
 		<div ref={forwardRef}>
-			<ClayTable hover={false}>
+			<ClayTable className="thead-valign-top" hover={false}>
 				<Head>
 					<Row>
 						{checkable && <Cell headingCell></Cell>}

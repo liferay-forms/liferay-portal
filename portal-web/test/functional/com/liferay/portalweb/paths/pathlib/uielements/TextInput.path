@@ -494,6 +494,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>SELECTOR_INPUT</td>
+	<td>//input[contains(@id,'${key_fieldName}')][contains(@readonly,'readonly')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>SEO_META_TAGS_DESCRIPTION</td>
 	<td>//div[label[contains(.,'Description')]]//input</td>
 	<td></td>

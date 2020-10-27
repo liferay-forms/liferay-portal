@@ -28,6 +28,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
@@ -49,7 +51,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @JsonFilter("Liferay.Vulcan")
 @Schema(requiredProperties = {"collectionReference", "collectionType"})
 @XmlRootElement(name = "CollectionConfig")
-public class CollectionConfig {
+public class CollectionConfig implements Serializable {
 
 	public static CollectionConfig toDTO(String json) {
 		return ObjectMapperUtil.readValue(CollectionConfig.class, json);

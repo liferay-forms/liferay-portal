@@ -836,6 +836,8 @@ definition {
 
 		App.clickPrevious();
 
+		App.clickPrevious();
+
 		App.selectTableView(tableViewName = "My Table View 1");
 
 		App.toggleDeploy(deployOption = "Widget");
@@ -1092,7 +1094,7 @@ definition {
 	@description = "Remove a field added to the Objects Sidebar and make sure is not possible to save an empty form"
 	@priority = "5"
 	test MakeSureIsNotPossibleSaveEmptyFormView {
-		property portal.upstream = "quarantine";
+		property portal.upstream = "true";
 
 		var myFormViewName = "My Form View Title";
 

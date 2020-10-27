@@ -17,6 +17,8 @@ package com.liferay.headless.commerce.admin.pricing.client.dto.v1_0;
 import com.liferay.headless.commerce.admin.pricing.client.function.UnsafeSupplier;
 import com.liferay.headless.commerce.admin.pricing.client.serdes.v1_0.PriceEntrySerDes;
 
+import java.io.Serializable;
+
 import java.math.BigDecimal;
 
 import java.util.Map;
@@ -29,7 +31,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class PriceEntry implements Cloneable {
+public class PriceEntry implements Cloneable, Serializable {
 
 	public static PriceEntry toDTO(String json) {
 		return PriceEntrySerDes.toDTO(json);

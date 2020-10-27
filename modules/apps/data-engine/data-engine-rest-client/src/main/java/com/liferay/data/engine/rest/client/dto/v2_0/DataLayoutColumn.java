@@ -17,6 +17,8 @@ package com.liferay.data.engine.rest.client.dto.v2_0;
 import com.liferay.data.engine.rest.client.function.UnsafeSupplier;
 import com.liferay.data.engine.rest.client.serdes.v2_0.DataLayoutColumnSerDes;
 
+import java.io.Serializable;
+
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class DataLayoutColumn implements Cloneable {
+public class DataLayoutColumn implements Cloneable, Serializable {
 
 	public static DataLayoutColumn toDTO(String json) {
 		return DataLayoutColumnSerDes.toDTO(json);

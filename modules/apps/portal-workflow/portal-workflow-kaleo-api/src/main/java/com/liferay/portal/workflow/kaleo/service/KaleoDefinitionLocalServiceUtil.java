@@ -456,12 +456,34 @@ public class KaleoDefinitionLocalServiceUtil {
 			scope, active, start, end, orderByComparator, serviceContext);
 	}
 
+	public static java.util.List
+		<com.liferay.portal.workflow.kaleo.model.KaleoDefinition>
+			getScopeKaleoDefinitions(
+				String scope, int start, int end,
+				com.liferay.portal.kernel.util.OrderByComparator
+					<com.liferay.portal.workflow.kaleo.model.KaleoDefinition>
+						orderByComparator,
+				com.liferay.portal.kernel.service.ServiceContext
+					serviceContext) {
+
+		return getService().getScopeKaleoDefinitions(
+			scope, start, end, orderByComparator, serviceContext);
+	}
+
 	public static int getScopeKaleoDefinitionsCount(
 		String scope, boolean active,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
 
 		return getService().getScopeKaleoDefinitionsCount(
 			scope, active, serviceContext);
+	}
+
+	public static int getScopeKaleoDefinitionsCount(
+		String scope,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+
+		return getService().getScopeKaleoDefinitionsCount(
+			scope, serviceContext);
 	}
 
 	public static com.liferay.portal.workflow.kaleo.model.KaleoDefinition

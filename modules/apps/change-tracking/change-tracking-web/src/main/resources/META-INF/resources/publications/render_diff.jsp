@@ -22,7 +22,7 @@ CTEntryDiffDisplay ctEntryDiffDisplay = (CTEntryDiffDisplay)request.getAttribute
 
 <div class="publications-diff-table-wrapper">
 	<table class="table table-autofit">
-		<tr class="table-divider">
+		<tr class="publications-diff-no-border-top table-divider">
 			<c:if test="<%= !ctEntryDiffDisplay.isChangeType(CTConstants.CT_CHANGE_TYPE_ADDITION) %>">
 				<td class="publications-diff-td"><%= HtmlUtil.escape(ctEntryDiffDisplay.getLeftTitle()) %></td>
 			</c:if>

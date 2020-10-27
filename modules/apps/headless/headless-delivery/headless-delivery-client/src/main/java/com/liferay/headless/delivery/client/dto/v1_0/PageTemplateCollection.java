@@ -17,6 +17,8 @@ package com.liferay.headless.delivery.client.dto.v1_0;
 import com.liferay.headless.delivery.client.function.UnsafeSupplier;
 import com.liferay.headless.delivery.client.serdes.v1_0.PageTemplateCollectionSerDes;
 
+import java.io.Serializable;
+
 import java.util.Date;
 import java.util.Objects;
 
@@ -27,7 +29,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class PageTemplateCollection implements Cloneable {
+public class PageTemplateCollection implements Cloneable, Serializable {
 
 	public static PageTemplateCollection toDTO(String json) {
 		return PageTemplateCollectionSerDes.toDTO(json);

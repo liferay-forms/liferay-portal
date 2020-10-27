@@ -23,8 +23,11 @@ import EmptyPieChart from './EmptyPieChart';
 import Hint from './Hint';
 
 const COLORS_MAP = {
-	organic: '#7785FF',
+	direct: '#FF73C3',
+	organic: '#4B9FFF',
 	paid: '#FFB46E',
+	referral: '#FF5F5F',
+	social: '#50D2A0',
 };
 
 const PIE_CHART_SIZES = {
@@ -95,20 +98,18 @@ export default function TrafficSources({
 	return (
 		<>
 			<h5 className="mt-3 sheet-subtitle">
-				{Liferay.Language.get('search-engines-traffic')}
+				{Liferay.Language.get('traffic-channels')}
 				<Hint
-					message={Liferay.Language.get(
-						'search-engines-traffic-help'
-					)}
+					message={Liferay.Language.get('traffic-channels-help')}
 					secondary={true}
-					title={Liferay.Language.get('search-engines-traffic')}
+					title={Liferay.Language.get('traffic-channels')}
 				/>
 			</h5>
 
 			{!fullPieChart && !missingTrafficSourceValue && (
 				<div className="mb-3 text-secondary">
 					{Liferay.Language.get(
-						'your-page-has-no-incoming-traffic-from-search-engines-yet'
+						'your-page-has-no-incoming-traffic-from-traffic-channels-yet'
 					)}
 				</div>
 			)}
@@ -138,7 +139,7 @@ export default function TrafficSources({
 											></span>
 										</td>
 										<td
-											className="pie-chart-wrapper--legend--title text-secondary"
+											className="c-py-1 pie-chart-wrapper--legend--title text-secondary"
 											onMouseOut={handleLegendMouseLeave}
 											onMouseOver={() =>
 												handleLegendMouseEnter(
@@ -146,7 +147,9 @@ export default function TrafficSources({
 												)
 											}
 										>
-											{entry.value > 0 ? (
+											{entry.value > 0 &&
+											entry.countryKeywords !==
+												undefined ? (
 												<ClayButton
 													className="font-weight-semi-bold px-0 py-1 text-primary"
 													displayType="link"

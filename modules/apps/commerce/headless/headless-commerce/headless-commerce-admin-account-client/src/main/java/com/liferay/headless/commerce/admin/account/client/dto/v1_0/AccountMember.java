@@ -17,6 +17,8 @@ package com.liferay.headless.commerce.admin.account.client.dto.v1_0;
 import com.liferay.headless.commerce.admin.account.client.function.UnsafeSupplier;
 import com.liferay.headless.commerce.admin.account.client.serdes.v1_0.AccountMemberSerDes;
 
+import java.io.Serializable;
+
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class AccountMember implements Cloneable {
+public class AccountMember implements Cloneable, Serializable {
 
 	public static AccountMember toDTO(String json) {
 		return AccountMemberSerDes.toDTO(json);

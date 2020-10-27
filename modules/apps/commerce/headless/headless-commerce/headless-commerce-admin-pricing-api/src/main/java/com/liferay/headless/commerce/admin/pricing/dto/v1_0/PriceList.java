@@ -26,6 +26,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -52,7 +54,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @JsonFilter("Liferay.Vulcan")
 @Schema(requiredProperties = {"currencyCode", "name"})
 @XmlRootElement(name = "PriceList")
-public class PriceList {
+public class PriceList implements Serializable {
 
 	public static PriceList toDTO(String json) {
 		return ObjectMapperUtil.readValue(PriceList.class, json);

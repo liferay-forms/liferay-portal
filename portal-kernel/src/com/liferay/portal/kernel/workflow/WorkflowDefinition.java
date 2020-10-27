@@ -33,6 +33,10 @@ public interface WorkflowDefinition extends WorkflowModel {
 
 	public String getContent();
 
+	public default Date getCreateDate() {
+		return null;
+	}
+
 	public default String getDescription() {
 		return "";
 	}

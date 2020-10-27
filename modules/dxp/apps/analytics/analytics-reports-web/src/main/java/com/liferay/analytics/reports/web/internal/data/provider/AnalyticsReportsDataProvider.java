@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import com.liferay.analytics.reports.web.internal.client.AsahFaroBackendClient;
+import com.liferay.analytics.reports.web.internal.model.AcquisitionChannel;
 import com.liferay.analytics.reports.web.internal.model.HistoricalMetric;
 import com.liferay.analytics.reports.web.internal.model.TimeRange;
 import com.liferay.analytics.reports.web.internal.model.TimeSpan;
@@ -32,7 +33,15 @@ import com.liferay.portal.kernel.util.Http;
 
 import java.time.format.DateTimeFormatter;
 
+import java.util.AbstractMap;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author David Arques
@@ -45,6 +54,51 @@ public class AnalyticsReportsDataProvider {
 		}
 
 		_asahFaroBackendClient = new AsahFaroBackendClient(http);
+	}
+
+	public Map<String, AcquisitionChannel> getAcquisitionChannels(
+			long companyId, String url)
+		throws PortalException {
+
+		try {
+			String response = _asahFaroBackendClient.doGet(
+				companyId,
+				"api/1.0/pages/acquisition-channels?canonicalURL=" + url +
+					"&interval=D&rangeKey=30");
+
+			TypeFactory typeFactory = _objectMapper.getTypeFactory();
+
+			Map<String, Long> acquisitionChannels = _objectMapper.readValue(
+				response,
+				typeFactory.constructMapType(
+					Map.class, typeFactory.constructType(String.class),
+					typeFactory.constructType(Long.class)));
+
+			Collection<Long> values = acquisitionChannels.values();
+
+			Stream<Long> valuesStream = values.stream();
+
+			Double total = Double.valueOf(valuesStream.reduce(0L, Long::sum));
+
+			Set<Map.Entry<String, Long>> entries =
+				acquisitionChannels.entrySet();
+
+			Stream<Map.Entry<String, Long>> entriesStream = entries.stream();
+
+			return entriesStream.map(
+				entry -> new AbstractMap.SimpleEntry<>(
+					entry.getKey(),
+					new AcquisitionChannel(
+						entry.getKey(), entry.getValue(),
+						(entry.getValue() / total) * 100))
+			).collect(
+				Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)
+			);
+		}
+		catch (Exception exception) {
+			throw new PortalException(
+				"Unable to get acquisition channels", exception);
+		}
 	}
 
 	public HistoricalMetric getHistoricalReadsHistoricalMetric(
@@ -129,7 +183,8 @@ public class AnalyticsReportsDataProvider {
 		}
 	}
 
-	public List<TrafficSource> getTrafficSources(long companyId, String url)
+	public Map<String, TrafficSource> getTrafficSources(
+			long companyId, String url)
 		throws PortalException {
 
 		try {
@@ -138,10 +193,51 @@ public class AnalyticsReportsDataProvider {
 
 			TypeFactory typeFactory = _objectMapper.getTypeFactory();
 
-			return _objectMapper.readValue(
+			List<TrafficSource> trafficSources = _objectMapper.readValue(
 				response,
 				typeFactory.constructCollectionType(
 					List.class, TrafficSource.class));
+
+			Stream<TrafficSource> trafficSourcesStream =
+				trafficSources.stream();
+
+			Map<String, TrafficSource> trafficSourceMap =
+				trafficSourcesStream.map(
+					trafficSource -> new AbstractMap.SimpleEntry<>(
+						trafficSource.getName(), trafficSource)
+				).collect(
+					Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)
+				);
+
+			Map<String, AcquisitionChannel> acquisitionChannels =
+				getAcquisitionChannels(companyId, url);
+
+			Collection<AcquisitionChannel> values =
+				acquisitionChannels.values();
+
+			Stream<AcquisitionChannel> stream = values.stream();
+
+			return stream.map(
+				acquisitionChannel -> Optional.ofNullable(
+					trafficSourceMap.get(acquisitionChannel.getName())
+				).map(
+					trafficSource -> new TrafficSource(
+						trafficSource.getCountrySearchKeywordsList(),
+						acquisitionChannel.getName(),
+						acquisitionChannel.getTrafficAmount(),
+						acquisitionChannel.getTrafficShare())
+				).orElseGet(
+					() -> new TrafficSource(
+						Collections.emptyList(), acquisitionChannel.getName(),
+						acquisitionChannel.getTrafficAmount(),
+						acquisitionChannel.getTrafficShare())
+				)
+			).map(
+				trafficSource -> new AbstractMap.SimpleEntry<>(
+					trafficSource.getName(), trafficSource)
+			).collect(
+				Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)
+			);
 		}
 		catch (Exception exception) {
 			throw new PortalException(

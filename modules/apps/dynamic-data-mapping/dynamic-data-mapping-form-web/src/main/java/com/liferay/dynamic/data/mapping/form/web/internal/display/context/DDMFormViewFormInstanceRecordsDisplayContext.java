@@ -27,6 +27,7 @@ import com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecord;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecordVersion;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
+import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordLocalService;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
@@ -63,7 +64,9 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -131,6 +134,16 @@ public class DDMFormViewFormInstanceRecordsDisplayContext {
 		}
 
 		return availableActions;
+  }
+
+	public int getAvailableLocalesCount() throws Exception {
+		DDMFormInstance ddmFormInstance = getDDMFormInstance();
+
+		DDMForm ddmForm = ddmFormInstance.getDDMForm();
+
+		Set<Locale> availableLocales = ddmForm.getAvailableLocales();
+
+		return availableLocales.size();
 	}
 
 	public String getClearResultsURL() throws PortletException {
@@ -167,8 +180,10 @@ public class DDMFormViewFormInstanceRecordsDisplayContext {
 
 				@Override
 				public String apply(DDMFormFieldValue ddmFormFieldValue) {
+					Value value = ddmFormFieldValue.getValue();
+
 					return ddmFormFieldValueRenderer.render(
-						ddmFormFieldValue, _renderRequest.getLocale());
+						ddmFormFieldValue, value.getDefaultLocale());
 				}
 
 			});
@@ -206,6 +221,14 @@ public class DDMFormViewFormInstanceRecordsDisplayContext {
 
 	public DDMFormInstance getDDMFormInstance() {
 		return _ddmFormInstance;
+	}
+
+	public Locale getDefaultLocale(DDMFormInstanceRecord ddmFormInstanceRecord)
+		throws Exception {
+
+		DDMFormValues ddmFormValues = ddmFormInstanceRecord.getDDMFormValues();
+
+		return ddmFormValues.getDefaultLocale();
 	}
 
 	public String getDisplayStyle() {

@@ -20,6 +20,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.math.BigDecimal;
 
 import java.text.DateFormat;
@@ -92,7 +94,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 	)
 </#if>
 @XmlRootElement(name = "${schemaName}")
-public class ${schemaName} <#if dtoParentClassName?has_content>extends ${dtoParentClassName}</#if> {
+public class ${schemaName} <#if dtoParentClassName?has_content>extends ${dtoParentClassName}</#if> implements Serializable {
 
 	public static ${schemaName} toDTO(String json) {
 		return ObjectMapperUtil.readValue(${schemaName}.class, json);

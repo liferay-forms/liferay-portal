@@ -28,6 +28,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -56,7 +58,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 	description = "Represents a wiki page."
 )
 @XmlRootElement(name = "WikiPage")
-public class WikiPage {
+public class WikiPage implements Serializable {
 
 	public static WikiPage toDTO(String json) {
 		return ObjectMapperUtil.readValue(WikiPage.class, json);

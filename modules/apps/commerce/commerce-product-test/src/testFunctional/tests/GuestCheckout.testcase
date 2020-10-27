@@ -9,6 +9,22 @@ definition {
 		TestCase.setUpPortalInstance();
 
 		User.firstLoginPG();
+
+		PortalSettings.gotoConfiguration(
+			configurationCategory = "User Authentication",
+			configurationName = "General",
+			configurationScope = "Virtual Instance Scope");
+
+		Uncheck(locator1 = "PortalSettingsAuthentication#AUTHENTICATION_GENERAL_REQUIRE_STRANGERS_TO_VERIFY_THEIR_EMAIL_ADDRESS_CHECKBOX");
+
+		PortletEntry.save();
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Search");
+
+		SearchAdministration.executeSearchActions(actionsDescription = "Reindex all search indexes.");
 	}
 
 	tearDown {
@@ -212,8 +228,8 @@ definition {
 			cartItemPriceValues = "24,",
 			cartItemQuantities = "1,",
 			cartItemSKUs = "SPEED55861,",
-			cartSummaryQuantity = "${cartItemQuantity}",
-			cartSummarySubtotal = "${cartItemPriceValue}",
+			cartSummaryQuantity = "1",
+			cartSummarySubtotal = "24",
 			cartSummaryTotal = "${cartSummarySubtotal}");
 
 		Click(locator1 = "CommerceAccelerators#MINI_CART_CLOSE");
@@ -237,7 +253,7 @@ definition {
 			cartItemPriceValues = "24,",
 			cartItemQuantities = "5,",
 			cartItemSKUs = "SPEED55861,",
-			cartSummaryQuantity = "${cartItemQuantity}",
+			cartSummaryQuantity = "5",
 			cartSummarySubtotal = "120",
 			cartSummaryTotal = "${cartSummarySubtotal}");
 
@@ -257,8 +273,8 @@ definition {
 			cartItemPriceValues = "24,",
 			cartItemQuantities = "1,",
 			cartItemSKUs = "SPEED55861,",
-			cartSummaryQuantity = "${cartItemQuantity}",
-			cartSummarySubtotal = "${cartItemPriceValue}",
+			cartSummaryQuantity = "1",
+			cartSummarySubtotal = "24",
 			cartSummaryTotal = "${cartSummarySubtotal}");
 	}
 
@@ -341,8 +357,8 @@ definition {
 			cartItemPriceValues = "24,",
 			cartItemQuantities = "1,",
 			cartItemSKUs = "SPEED55861,",
-			cartSummaryQuantity = "${cartItemQuantity}",
-			cartSummarySubtotal = "${cartItemPriceValue}",
+			cartSummaryQuantity = "1",
+			cartSummarySubtotal = "24",
 			cartSummaryTotal = "${cartSummarySubtotal}");
 
 		Click(locator1 = "CommerceAccelerators#MINI_CART_CLOSE");
@@ -366,7 +382,7 @@ definition {
 			cartItemPriceValues = "15,",
 			cartItemQuantities = "5,",
 			cartItemSKUs = "SPEED55860,",
-			cartSummaryQuantity = "${cartItemQuantity}",
+			cartSummaryQuantity = "5",
 			cartSummarySubtotal = "75",
 			cartSummaryTotal = "${cartSummarySubtotal}");
 
@@ -484,7 +500,7 @@ definition {
 			productName = "U-Joint",
 			productQuantity = "1");
 
-		Refresh();
+		Pause(locator1 = "5000");
 
 		CommerceNavigator.gotoMiniCart();
 
@@ -513,7 +529,7 @@ definition {
 			productName = "U-Joint",
 			productQuantity = "1");
 
-		Refresh();
+		Pause(locator1 = "5000");
 
 		CommerceNavigator.gotoMiniCart();
 
@@ -599,6 +615,8 @@ definition {
 		FrontStore.addInitializerProductToCart(
 			productName = "U-Joint",
 			productQuantity = "1");
+
+		Pause(locator1 = "5000");
 
 		CommerceNavigator.gotoMiniCart();
 
@@ -735,7 +753,7 @@ definition {
 			productName = "U-Joint",
 			productQuantity = "1");
 
-		Refresh();
+		Pause(locator1 = "5000");
 
 		CommerceNavigator.gotoMiniCart();
 
@@ -857,6 +875,8 @@ definition {
 			productName = "U-Joint",
 			productQuantity = "1");
 
+		Pause(locator1 = "5000");
+
 		CommerceNavigator.gotoMiniCart();
 
 		Button.click(button = "Submit");
@@ -898,6 +918,10 @@ definition {
 			totalValue = "39");
 
 		Click(locator1 = "Button#CONTINUE");
+
+		AssertTextEquals(
+			locator1 = "CommerceAccelerators#CHECKOUT_SUCCESS_MESSAGE",
+			value1 = "Your order has been processed but not completed yet.");
 	}
 
 	test GuestCheckoutEnabled {
@@ -942,6 +966,8 @@ definition {
 			productName = "U-Joint",
 			productQuantity = "1");
 
+		Pause(locator1 = "5000");
+
 		CommerceNavigator.gotoMiniCart();
 
 		Button.click(button = "Submit");
@@ -960,6 +986,10 @@ definition {
 			productQuantity = "1",
 			productUnitPrice = "24",
 			shippingMethod = "Standard");
+
+		AssertTextEquals(
+			locator1 = "CommerceAccelerators#CHECKOUT_SUCCESS_MESSAGE",
+			value1 = "Your order has been processed but not completed yet.");
 	}
 
 	test GuestCheckoutWithNoShippableProduct {
@@ -1016,7 +1046,7 @@ definition {
 			productName = "U-Joint",
 			productQuantity = "1");
 
-		Refresh();
+		Pause(locator1 = "5000");
 
 		CommerceNavigator.gotoMiniCart();
 
@@ -1077,6 +1107,8 @@ definition {
 		FrontStore.addInitializerProductToCart(
 			productName = "U-Joint",
 			productQuantity = "1");
+
+		Pause(locator1 = "5000");
 
 		CommerceNavigator.gotoMiniCart();
 
@@ -1158,7 +1190,7 @@ definition {
 			productName = "U-Joint",
 			productQuantity = "1");
 
-		Refresh();
+		Pause(locator1 = "5000");
 
 		CommerceNavigator.gotoMiniCart();
 
@@ -1187,7 +1219,7 @@ definition {
 			productName = "U-Joint",
 			productQuantity = "1");
 
-		Refresh();
+		Pause(locator1 = "5000");
 
 		CommerceNavigator.gotoMiniCart();
 

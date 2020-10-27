@@ -17,6 +17,8 @@ package com.liferay.segments.asah.rest.client.dto.v1_0;
 import com.liferay.segments.asah.rest.client.function.UnsafeSupplier;
 import com.liferay.segments.asah.rest.client.serdes.v1_0.ExperimentSerDes;
 
+import java.io.Serializable;
+
 import java.util.Date;
 import java.util.Objects;
 
@@ -27,7 +29,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class Experiment implements Cloneable {
+public class Experiment implements Cloneable, Serializable {
 
 	public static Experiment toDTO(String json) {
 		return ExperimentSerDes.toDTO(json);

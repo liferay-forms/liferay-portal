@@ -26,6 +26,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -52,7 +54,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @JsonFilter("Liferay.Vulcan")
 @Schema(requiredProperties = {"contentStructureId", "name"})
 @XmlRootElement(name = "ContentTemplate")
-public class ContentTemplate {
+public class ContentTemplate implements Serializable {
 
 	public static ContentTemplate toDTO(String json) {
 		return ObjectMapperUtil.readValue(ContentTemplate.class, json);

@@ -12,7 +12,6 @@
  * details.
  */
 
-import ClayModal from 'clay-modal';
 import {
 	FormSupport,
 	PagesVisitor,
@@ -20,7 +19,7 @@ import {
 	generateName,
 	getRepeatedIndex,
 } from 'dynamic-data-mapping-form-renderer';
-import {openToast} from 'frontend-js-web';
+import {openModal, openToast} from 'frontend-js-web';
 import Component from 'metal-jsx';
 import {Config} from 'metal-state';
 
@@ -324,46 +323,12 @@ class LayoutProvider extends Component {
 						successPageSettings,
 					},
 				}))}
-				<ClayModal
-					body={Liferay.Language.get(
-						'a-rule-is-applied-to-this-field'
-					)}
-					elementClasses={'lfr-ddm-forms-delete-rule'}
-					events={{
-						clickButton: this._handleDeleteFieldModalButtonClicked.bind(
-							this
-						),
-					}}
-					footerButtons={[
-						{
-							alignment: 'right',
-							label: Liferay.Language.get('cancel'),
-							style: 'secondary',
-							type: 'close',
-						},
-						{
-							alignment: 'right',
-							label: Liferay.Language.get('delete'),
-							style: 'primary',
-							type: 'button',
-						},
-					]}
-					ref={'existingRuleModal'}
-					size={'lg'}
-					title={Liferay.Language.get(
-						'delete-field-with-rule-applied'
-					)}
-				/>
 			</span>
 		);
 	}
 
 	_handleDeleteFieldModalButtonClicked(event) {
-		const {activePage, fieldName} = this.refs.existingRuleModal.data;
-
-		if (event.target.classList.contains('btn-primary')) {
-			this.dispatch('fieldDeleted', {activePage, fieldName});
-		}
+		this.setState(handleFieldDeleted(this.props, this.state, event));
 	}
 
 	_fieldActionsValueFn() {
@@ -375,19 +340,7 @@ class LayoutProvider extends Component {
 			},
 			{
 				action: ({activePage, fieldName}) => {
-					const {rules} = this.state;
-
-					if (RulesSupport.findRuleByFieldName(fieldName, rules)) {
-						this.refs.existingRuleModal.data = {
-							activePage,
-							fieldName,
-						};
-
-						this.refs.existingRuleModal.show();
-					}
-					else {
-						this.dispatch('fieldDeleted', {activePage, fieldName});
-					}
+					this.dispatch('fieldDeleted', {activePage, fieldName});
 				},
 				label: Liferay.Language.get('delete'),
 			},
@@ -487,7 +440,36 @@ class LayoutProvider extends Component {
 	}
 
 	_handleFieldDeleted(event) {
-		this.setState(handleFieldDeleted(this.props, this.state, event));
+		const {rules} = this.state;
+
+		if (rules && RulesSupport.findRuleByFieldName(event.fieldName, rules)) {
+			openModal({
+				bodyHTML: Liferay.Language.get(
+					'a-rule-is-applied-to-this-field'
+				),
+				buttons: [
+					{
+						displayType: 'secondary',
+						label: Liferay.Language.get('cancel'),
+						type: 'cancel',
+					},
+					{
+						displayType: 'danger',
+						label: Liferay.Language.get('confirm'),
+						onClick: () => {
+							this._handleDeleteFieldModalButtonClicked(event);
+						},
+						type: 'cancel',
+					},
+				],
+				id: 'ddm-delete-field-with-rule-modal',
+				size: 'md',
+				title: Liferay.Language.get('delete-field-with-rule-applied'),
+			});
+		}
+		else {
+			this.setState(handleFieldDeleted(this.props, this.state, event));
+		}
 	}
 
 	_handleFieldDuplicated(event) {

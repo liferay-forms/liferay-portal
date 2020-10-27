@@ -28,6 +28,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -57,7 +59,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 	description = "Represents content that has fields and is rendered by a template backed by a `ContentStructure`. This is modeled internally as a `JournalArticle`."
 )
 @XmlRootElement(name = "StructuredContent")
-public class StructuredContent {
+public class StructuredContent implements Serializable {
 
 	public static StructuredContent toDTO(String json) {
 		return ObjectMapperUtil.readValue(StructuredContent.class, json);

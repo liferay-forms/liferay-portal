@@ -26,6 +26,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
@@ -45,7 +47,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @GraphQLName("Folder")
 @JsonFilter("Liferay.Vulcan")
 @XmlRootElement(name = "Folder")
-public class Folder {
+public class Folder implements Serializable {
 
 	public static Folder toDTO(String json) {
 		return ObjectMapperUtil.readValue(Folder.class, json);

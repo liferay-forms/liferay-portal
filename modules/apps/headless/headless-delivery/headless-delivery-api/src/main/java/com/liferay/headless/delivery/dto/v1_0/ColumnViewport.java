@@ -26,6 +26,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
@@ -48,7 +50,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @JsonFilter("Liferay.Vulcan")
 @Schema(requiredProperties = {"columnViewportDefinition", "id"})
 @XmlRootElement(name = "ColumnViewport")
-public class ColumnViewport {
+public class ColumnViewport implements Serializable {
 
 	public static ColumnViewport toDTO(String json) {
 		return ObjectMapperUtil.readValue(ColumnViewport.class, json);

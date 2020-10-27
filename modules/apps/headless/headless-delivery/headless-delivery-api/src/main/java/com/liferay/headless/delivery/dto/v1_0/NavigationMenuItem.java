@@ -26,6 +26,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -49,7 +51,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @GraphQLName("NavigationMenuItem")
 @JsonFilter("Liferay.Vulcan")
 @XmlRootElement(name = "NavigationMenuItem")
-public class NavigationMenuItem {
+public class NavigationMenuItem implements Serializable {
 
 	public static NavigationMenuItem toDTO(String json) {
 		return ObjectMapperUtil.readValue(NavigationMenuItem.class, json);

@@ -2952,21 +2952,7 @@ ${tomcat-gc-log}
 
 	<macrodef name="print-search-indices">
 		<sequential>
-			<get-testcase-property property.name="solr.enabled" />
-			<propertycopy from="search.engine[${env.CI_TEST_SUITE}]" name="suite.search.engine" silent="true" />
-
-			<if>
-				<or>
-					<equals arg1="${solr.enabled}" arg2="true" />
-					<equals arg1="${suite.search.engine}" arg2="solr" />
-				</or>
-				<then>
-					<ant antfile="build-test-solr.xml" target="print-solr-indices" />
-				</then>
-				<else>
-					<ant antfile="build-test-elasticsearch7.xml" target="print-elasticsearch-indices" />
-				</else>
-			</if>
+			<ant antfile="build-test-elasticsearch7.xml" target="print-elasticsearch-indices" />
 		</sequential>
 	</macrodef>
 
@@ -3975,22 +3961,6 @@ go</echo>
 				<then>
 					<ant antfile="build-test-elasticsearch7.xml" target="start-elasticsearch" />
 				</then>
-			</if>
-
-			<get-testcase-property property.name="solr.enabled" />
-			<propertycopy from="search.engine[${env.CI_TEST_SUITE}]" name="suite.search.engine" silent="true" />
-
-			<if>
-				<equals arg1="${solr.enabled}" arg2="true" />
-				<then>
-					<ant antfile="build-test-solr.xml" target="start-solr" />
-				</then>
-				<elseif>
-					<equals arg1="${suite.search.engine}" arg2="solr" />
-					<then>
-						<ant antfile="build-test-solr.xml" target="set-up-solr" />
-					</then>
-				</elseif>
 			</if>
 
 			<get-testcase-property property.name="delete.sidecar.bundle" />
@@ -5267,18 +5237,6 @@ org.apache.catalina.startup.ClassLoaderFactory.level=INFO]]>
 					</if>
 				</then>
 			</if>
-
-			<get-testcase-property property.name="solr.enabled" />
-
-			<if>
-				<or>
-					<contains string="${env.CI_TEST_SUITE}" substring="solr" />
-					<equals arg1="${solr.enabled}" arg2="true" />
-				</or>
-				<then>
-					<ant antfile="build-test-solr.xml" target="stop-solr-core" />
-				</then>
-			</if>
 		</sequential>
 	</macrodef>
 
@@ -5490,17 +5448,7 @@ war.path=${app.server.portal.dir}/</echo>
 					</or>
 				</and>
 				<then>
-					<get-commerce-license-product-name />
-
-					<wait-for-app-server-log-message log.message="${commerce.license.product.name} license validation passed" />
-
-					<wait-for-app-server-log-message log.message="License registered for ${commerce.license.product.name}" />
-
-					<get-portal-license-product-name />
-
-					<wait-for-app-server-log-message log.message="${portal.license.product.name} license validation passed" />
-
-					<wait-for-app-server-log-message log.message="License registered for ${portal.license.product.name}" />
+					<wait-for-license-activation />
 				</then>
 			</if>
 		</sequential>
@@ -5687,6 +5635,22 @@ war.path=${app.server.portal.dir}/</echo>
 					<fail message="${timed.out.message}${line.separator}${jstack.output}" />
 				</then>
 			</if>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="wait-for-license-activation">
+		<sequential>
+			<get-commerce-license-product-name />
+
+			<wait-for-app-server-log-message log.message="${commerce.license.product.name} license validation passed" />
+
+			<wait-for-app-server-log-message log.message="License registered for ${commerce.license.product.name}" />
+
+			<get-portal-license-product-name />
+
+			<wait-for-app-server-log-message log.message="${portal.license.product.name} license validation passed" />
+
+			<wait-for-app-server-log-message log.message="License registered for ${portal.license.product.name}" />
 		</sequential>
 	</macrodef>
 
@@ -5997,6 +5961,21 @@ alter database lportal set read_committed_snapshot on;
 go]]></replacevalue>
 								</replacefilter>
 							</replace>
+
+							<if>
+								<isset property="databases.size" />
+								<then>
+									<echo append="true" file="create.sql">
+create database lportal${databases.size};
+go
+
+alter database lportal${databases.size} set allow_snapshot_isolation on;
+go
+
+alter database lportal${databases.size} set read_committed_snapshot on;
+go</echo>
+								</then>
+							</if>
 						</then>
 					</elseif>
 					<elseif>
@@ -6581,6 +6560,17 @@ go</echo>
 						</replace>
 					</else>
 				</if>
+			</then>
+		</if>
+	</target>
+
+	<target name="create-hidden-osgi-file">
+		<get-testcase-property property.name="create.osgi.hidden.file" />
+
+		<if>
+			<isset property="create.osgi.hidden.file" />
+			<then>
+				<touch file="${liferay.home}/osgi/configs/.keep" />
 			</then>
 		</if>
 	</target>
@@ -12675,6 +12665,8 @@ module.framework.properties.blacklist.portal.profile.names=${blacklist.portal.pr
 		<antcall target="prepare-ip-address-update" />
 
 		<antcall target="check-inet-address" />
+
+		<antcall target="create-hidden-osgi-file" />
 
 		<get-testcase-property property.name="database.jndi.enabled" />
 

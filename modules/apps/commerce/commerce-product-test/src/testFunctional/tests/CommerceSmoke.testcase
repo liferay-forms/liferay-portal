@@ -9,6 +9,13 @@ definition {
 		TestCase.setUpPortalInstance();
 
 		User.firstLoginPG();
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Search");
+
+		SearchAdministration.executeSearchActions(actionsDescription = "Reindex all search indexes.");
 	}
 
 	tearDown {
@@ -20,15 +27,17 @@ definition {
 		else {
 			Navigator.openURL();
 
-			CommerceConfiguration.commerceAdminTearDown();
-
-			CommerceConfiguration.commerceInitializersTearDown();
-
 			CommerceNavigator.gotoPortlet(
 				category = "Product Management",
 				portlet = "Products");
 
-			CommerceNavigator.gotoCommercePortletNavItem(navItem = "Specifications");
+			while (IsElementPresent(locator1 = "CommerceEntry#BODY_VERTICAL_ELLIPSIS") && (maxIterations = "50")) {
+				CommerceEntry.deleteCommerceEntry();
+			}
+
+			CommerceNavigator.gotoPortlet(
+				category = "Product Management",
+				portlet = "Specifications");
 
 			while (IsElementNotPresent(locator1 = "CommerceNavigation#EMPTY_SEARCH_CONTAINER")) {
 				PortletEntry.deleteViaMenuItem(rowEntry = "");
@@ -50,9 +59,7 @@ definition {
 
 		CommerceNavigator.gotoPortlet(
 			category = "Product Management",
-			portlet = "Products");
-
-		CommerceNavigator.gotoCommercePortletNavItem(navItem = "Specifications");
+			portlet = "Specifications");
 
 		CommerceEntry.createNewSpecificationLabels(
 			specificationDescription = "Specification-1 Description",
@@ -63,10 +70,8 @@ definition {
 			specificationTitle = "specification-1");
 
 		CommerceNavigator.gotoPortlet(
-			category = "Product Mangement",
-			portlet = "Products");
-
-		CommerceNavigator.gotoCommercePortletNavItem(navItem = "Specifications");
+			category = "Product Management",
+			portlet = "Specifications");
 
 		CommerceNavigator.gotoCommercePortletNavItem(navItem = "Specification Groups");
 

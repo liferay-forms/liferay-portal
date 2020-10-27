@@ -23,7 +23,6 @@ create table Address (
 	uuid_ VARCHAR(75) null,
 	externalReferenceCode VARCHAR(75) null,
 	addressId LONG not null primary key,
-	groupId LONG,
 	companyId LONG,
 	userId LONG,
 	userName VARCHAR(75) null,
@@ -109,15 +108,6 @@ create table AssetCategory (
 	vocabularyId LONG,
 	lastPublishDate DATE null,
 	primary key (categoryId, ctCollectionId)
-);
-
-create table AssetEntries_AssetCategories (
-	companyId LONG not null,
-	categoryId LONG not null,
-	entryId LONG not null,
-	ctCollectionId LONG default 0 not null,
-	ctChangeType BOOLEAN,
-	primary key (categoryId, entryId, ctCollectionId)
 );
 
 create table AssetEntries_AssetTags (

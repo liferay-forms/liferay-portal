@@ -17,6 +17,8 @@ package com.liferay.bulk.rest.client.dto.v1_0;
 import com.liferay.bulk.rest.client.function.UnsafeSupplier;
 import com.liferay.bulk.rest.client.serdes.v1_0.TaxonomyVocabularySerDes;
 
+import java.io.Serializable;
+
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class TaxonomyVocabulary implements Cloneable {
+public class TaxonomyVocabulary implements Cloneable, Serializable {
 
 	public static TaxonomyVocabulary toDTO(String json) {
 		return TaxonomyVocabularySerDes.toDTO(json);

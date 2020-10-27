@@ -26,6 +26,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -53,7 +55,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 	description = "Represents a set of users that meet certain criteria. Segments may be used to create customized experiences for users."
 )
 @XmlRootElement(name = "Segment")
-public class Segment {
+public class Segment implements Serializable {
 
 	public static Segment toDTO(String json) {
 		return ObjectMapperUtil.readValue(Segment.class, json);

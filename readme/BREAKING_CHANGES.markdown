@@ -151,3 +151,72 @@ This change was made to align with [Adobe dropping support for Flash](https://ww
 in December 31, 2020 and browsers removing Flash support in upcoming versions.
 
 ---------------------------------------
+
+### Refactor Clamd integration to use Clamd remote service and remove portal
+properties configuration for AntivirusScanner selection and hook support for
+AntivirusScanner registration in favor of AntivirusScanner OSGi integration.
+
+- **Date:** 2020-Oct-21
+- **JIRA Ticket:** [LPS-122280](https://issues.liferay.com/browse/LPS-122280)
+
+#### What changed?
+
+The portal impl version of Clamd integration has been pulled out as an OSGi
+service to use Clamd remote service.
+The portal properties configuration for AntivirusScanner implementation
+selection and hook support for AntivirusScanner implementation registration has
+been removed in favor of the AntivirusScanner OSGi integration.
+
+#### Who is affected?
+
+This affects people that were using the portal impl version of Clamd integration
+and people that were providing their own AntivirusScanner implementation by hook.
+
+#### How should I update my code?
+
+If you were using the portal impl version of Clamd integration, you need to go
+to Control Panel -> System Settings -> Security -> category.antivirus to
+configure the new Clamd remote service.
+
+If you were providing your own AntivirusScanner implementation by hook, you need
+to update your implementation as an OSGi service with a service ranking higher
+than Clamd remote service AntivirusScanner implementation which is default to 0.
+
+#### Why was this change made?
+
+This change was made to better support container environment and unify the api
+to do OSGi integration.
+
+---------------------------------------
+
+### The AssetEntries_AssetCategories table and its corresponding code have been removed from the portal
+- **Date:** 2020-Oct-16
+- **JIRA Ticket:** [LPS-89065](https://issues.liferay.com/browse/LPS-89065)
+
+#### What changed?
+
+AssetEntries_AssetCategories and its corresponding code have been removed from
+the portal. In 7.2, this mapping table and the corresponding interface were
+replaced by the table AssetEntryAssetCategoryRel and the service
+AssetEntryAssetCategoryRelLocalService.
+
+#### Who is affected?
+
+This affects any content or code that relies on calling the old interfaces for
+the AssetEntries_AssetCategories relationship, through the
+AssetEntryLocalService and AssetCategoryLocalService.
+
+#### How should I update my code?
+
+Use the new methods in AssetEntryAssetCategoryRelLocalService to retrieve the
+same data as before. The method signatures haven't changed; they have just been
+relocated to a different service.
+
+#### Why was this change made?
+
+This change was made due to changes resulting from [LPS-76488](https://issues.liferay.com/browse/LPS-76488),
+which let developers control the order of a list of assets for a given category.
+The breaking changes regarding the service replacement were notified on
+2019-Sep-11, this would be the final step to removing the table.
+
+---------------------------------------

@@ -105,6 +105,8 @@ public class KaleoWorkflowModelConverterImpl
 		}
 
 		defaultWorkflowDefinition.setContent(content);
+		defaultWorkflowDefinition.setCreateDate(
+			kaleoDefinition.getCreateDate());
 		defaultWorkflowDefinition.setDescription(
 			kaleoDefinition.getDescription());
 		defaultWorkflowDefinition.setModifiedDate(
@@ -171,7 +173,8 @@ public class KaleoWorkflowModelConverterImpl
 		}
 
 		defaultWorkflowDefinition.setContent(content);
-
+		defaultWorkflowDefinition.setCreateDate(
+			kaleoDefinitionVersion.getCreateDate());
 		defaultWorkflowDefinition.setDescription(
 			kaleoDefinitionVersion.getDescription());
 		defaultWorkflowDefinition.setModifiedDate(

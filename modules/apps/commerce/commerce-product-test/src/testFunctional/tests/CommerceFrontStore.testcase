@@ -11,6 +11,13 @@ definition {
 		User.firstLoginPG();
 
 		CommerceConfiguration.commerceStoreFrontSetUp();
+
+		CommerceNavigator.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Search");
+
+		SearchAdministration.executeSearchActions(actionsDescription = "Reindex all search indexes.");
 	}
 
 	tearDown {
@@ -20,20 +27,21 @@ definition {
 			PortalInstances.tearDownCP();
 		}
 		else {
-			CommerceConfiguration.commerceStoreFrontTearDown();
+			CommerceConfiguration.commerceAdminTearDown();
+
+			User.logoutPG();
 		}
 	}
 
 	test ViewStoreFrontSimpleProduct {
 		property portal.acceptance = "quarantine";
+		property test.name.skip.portal.instance = "CommerceFrontStore#ViewStoreFrontSimpleProduct";
 
 		CommerceNavigator.gotoPortlet(
 			category = "Product Management",
-			portlet = "Products");
+			portlet = "Options");
 
 		echo("Creating new Option complete with Values...");
-
-		CommerceNavigator.gotoCommercePortletNavItem(navItem = "Options");
 
 		Pause(locator1 = "2000");
 
@@ -46,7 +54,9 @@ definition {
 
 		echo("Creating new Product...");
 
-		CommerceNavigator.gotoCommercePortletNavItem(navItem = "Products");
+		CommerceNavigator.gotoPortlet(
+			category = "Product Management",
+			portlet = "Options");
 
 		CPCommerceCatalog.newProductsEntry(
 			productName = "Simple T-Shirt",
@@ -56,7 +66,9 @@ definition {
 
 		CommerceEntry.gotoMenuTab(menuTab = "Options");
 
-		CommerceRelations.assignSingleRelationToProductsEntry(entryName = "Color");
+		CommerceRelations.assignSingleRelationToProductsEntry(
+			entryName = "Color",
+			title = "Add Options");
 
 		echo("Creating SKUs...");
 
@@ -66,7 +78,7 @@ definition {
 
 		echo("Adding Product Images...");
 
-		CommerceEntry.gotoMenuTab(menuTab = "Images");
+		CommerceEntry.gotoMenuTab(menuTab = "Media");
 
 		CommerceProductImages.addProductImages(optionValuesList = "Black,Blue,White");
 

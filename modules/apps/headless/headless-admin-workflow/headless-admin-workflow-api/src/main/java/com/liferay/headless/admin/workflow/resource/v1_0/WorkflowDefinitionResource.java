@@ -49,7 +49,7 @@ public interface WorkflowDefinitionResource {
 	}
 
 	public Page<WorkflowDefinition> getWorkflowDefinitionsPage(
-			Pagination pagination)
+			Boolean active, Pagination pagination)
 		throws Exception;
 
 	public WorkflowDefinition getWorkflowDefinitionByName(String name)

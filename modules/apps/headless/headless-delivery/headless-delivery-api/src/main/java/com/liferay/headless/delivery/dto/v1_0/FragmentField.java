@@ -26,6 +26,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
@@ -45,7 +47,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @GraphQLName("FragmentField")
 @JsonFilter("Liferay.Vulcan")
 @XmlRootElement(name = "FragmentField")
-public class FragmentField {
+public class FragmentField implements Serializable {
 
 	public static FragmentField toDTO(String json) {
 		return ObjectMapperUtil.readValue(FragmentField.class, json);

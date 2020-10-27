@@ -186,7 +186,7 @@ exports[`ListTableViews renders 1`] = `
         class="table-responsive"
       >
         <table
-          class="table table-autofit table-list"
+          class="table table-autofit table-list thead-valign-top"
         >
           <thead>
             <tr

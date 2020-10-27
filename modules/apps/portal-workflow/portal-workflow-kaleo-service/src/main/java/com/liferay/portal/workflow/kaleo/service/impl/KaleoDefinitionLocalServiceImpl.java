@@ -323,11 +323,30 @@ public class KaleoDefinitionLocalServiceImpl
 	}
 
 	@Override
+	public List<KaleoDefinition> getScopeKaleoDefinitions(
+		String scope, int start, int end,
+		OrderByComparator<KaleoDefinition> orderByComparator,
+		ServiceContext serviceContext) {
+
+		return kaleoDefinitionPersistence.findByC_S(
+			serviceContext.getCompanyId(), scope, start, end,
+			orderByComparator);
+	}
+
+	@Override
 	public int getScopeKaleoDefinitionsCount(
 		String scope, boolean active, ServiceContext serviceContext) {
 
 		return kaleoDefinitionPersistence.countByC_S_A(
 			serviceContext.getCompanyId(), scope, active);
+	}
+
+	@Override
+	public int getScopeKaleoDefinitionsCount(
+		String scope, ServiceContext serviceContext) {
+
+		return kaleoDefinitionPersistence.countByC_S(
+			serviceContext.getCompanyId(), scope);
 	}
 
 	@Override

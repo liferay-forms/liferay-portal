@@ -25,6 +25,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>LINK_TO_PAGE_SELECT_BUTTON</td>
+	<td>//button[contains(@id,'selectLayoutButton')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>PAGE_TYPE_DESCRIPTION</td>
 	<td>//p[contains(@class,'text')]</td>
 	<td></td>
@@ -42,11 +47,6 @@
 <tr>
 	<td>PAGE_TYPE_PANEL_CHECKBOX_INPUT</td>
 	<td>//input[@type="hidden"][contains(@id,'panelSelectedPortlets')][contains(@value,'${key_componentOrPortletName}')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>PAGE_TYPE_EMBEDDED_URL_FIELD</td>
-	<td>//input[contains(@id,'urlEmbedded')]</td>
 	<td></td>
 </tr>
 <tr>

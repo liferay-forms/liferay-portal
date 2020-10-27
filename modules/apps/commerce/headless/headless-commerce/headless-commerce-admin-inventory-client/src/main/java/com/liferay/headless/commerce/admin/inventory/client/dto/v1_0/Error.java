@@ -17,6 +17,8 @@ package com.liferay.headless.commerce.admin.inventory.client.dto.v1_0;
 import com.liferay.headless.commerce.admin.inventory.client.function.UnsafeSupplier;
 import com.liferay.headless.commerce.admin.inventory.client.serdes.v1_0.ErrorSerDes;
 
+import java.io.Serializable;
+
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class Error implements Cloneable {
+public class Error implements Cloneable, Serializable {
 
 	public static Error toDTO(String json) {
 		return ErrorSerDes.toDTO(json);

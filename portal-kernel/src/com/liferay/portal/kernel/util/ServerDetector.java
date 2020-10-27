@@ -273,7 +273,10 @@ public class ServerDetector {
 	static {
 		_serverType = _detectServerType();
 
-		if (System.getProperty("external-properties") == null) {
+		if (!GetterUtil.getBoolean(
+				System.getProperty("server.detector.quiet")) &&
+			(System.getProperty("external-properties") == null)) {
+
 			if (_log.isInfoEnabled()) {
 				_log.info(
 					"Detected server " +

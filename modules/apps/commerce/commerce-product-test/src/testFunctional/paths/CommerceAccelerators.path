@@ -98,6 +98,11 @@
 	<td>//div/button[contains(.,'Sort By')]</td>
 	<td></td>
 </tr>
+<tr>
+	<td>ACCOUNT_MANAGEMENT_ROLE_TABLE_NAME</td>
+	<td>//div[contains(@class,'table-responsive')]</td>
+	<td></td>
+</tr>
 <!--SPEEDWELL-->
 <tr>
 	<td>SPEEDWELL_ACCOUNT_DASHBOARD_ITEM</td>
@@ -141,8 +146,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>CHECKOUT_SHIPPING_OPTION_RADIO</td>
-	<td>//label[contains(.,'${key_radioOption}')]/input[@type='radio']</td>
+	<td>CHECKOUT_SUCCESS_MESSAGE</td>
+	<td>//div[@class='success-message']</td>
 	<td></td>
 </tr>
 <tr>

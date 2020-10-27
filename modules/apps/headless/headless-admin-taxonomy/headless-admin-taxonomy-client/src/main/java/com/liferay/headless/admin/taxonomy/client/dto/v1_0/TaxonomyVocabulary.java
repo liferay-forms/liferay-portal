@@ -17,6 +17,8 @@ package com.liferay.headless.admin.taxonomy.client.dto.v1_0;
 import com.liferay.headless.admin.taxonomy.client.function.UnsafeSupplier;
 import com.liferay.headless.admin.taxonomy.client.serdes.v1_0.TaxonomyVocabularySerDes;
 
+import java.io.Serializable;
+
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
@@ -28,7 +30,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class TaxonomyVocabulary implements Cloneable {
+public class TaxonomyVocabulary implements Cloneable, Serializable {
 
 	public static TaxonomyVocabulary toDTO(String json) {
 		return TaxonomyVocabularySerDes.toDTO(json);

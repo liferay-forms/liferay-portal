@@ -16,14 +16,23 @@
 
 <%@ include file="/publications/init.jsp" %>
 
-<clay:container-fluid>
-	<div class="publications-view-entry-wrapper">
+<%
+ViewEntryDisplayContext<?> viewEntryDisplayContext = (ViewEntryDisplayContext<?>)request.getAttribute(CTWebKeys.VIEW_ENTRY_DISPLAY_CONTEXT);
+%>
 
-		<%
-		ViewEntryDisplayContext viewEntryDisplayContext = (ViewEntryDisplayContext)request.getAttribute(CTWebKeys.VIEW_ENTRY_DISPLAY_CONTEXT);
+<div class="publications-diff-table-wrapper">
+	<table class="table table-autofit">
+		<tr class="publications-diff-no-border-top table-divider">
+			<td class="publications-diff-td"><%= HtmlUtil.escape(viewEntryDisplayContext.getDividerTitle(resourceBundle)) %></td>
+		</tr>
+		<tr>
+			<td class="publications-diff-td">
 
-		viewEntryDisplayContext.renderEntry(request, response);
-		%>
+				<%
+				viewEntryDisplayContext.renderEntry(request, response);
+				%>
 
-	</div>
-</clay:container-fluid>
+			</td>
+		</tr>
+	</table>
+</div>

@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 
 import java.util.List;
 import java.util.Locale;
@@ -114,19 +115,38 @@ public class TrafficSource {
 	public JSONObject toJSONObject(
 		String helpMessage, Locale locale, String title) {
 
-		return JSONUtil.put(
-			"countryKeywords", _getCountryKeywordsJSONArray(locale)
-		).put(
+		JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
+
+		if (!ListUtil.isEmpty(_countrySearchKeywordsList)) {
+			jsonObject.put(
+				"countryKeywords", _getCountryKeywordsJSONArray(locale));
+		}
+
+		jsonObject.put(
 			"helpMessage", helpMessage
 		).put(
 			"name", getName()
-		).put(
-			"share", getTrafficShare()
-		).put(
-			"title", title
-		).put(
-			"value", Math.toIntExact(getTrafficAmount())
 		);
+
+		if (_trafficShare > 0) {
+			jsonObject.put("share", String.format("%.2f", _trafficShare));
+		}
+
+		jsonObject.put("title", title);
+
+		if (_trafficAmount > 0) {
+			jsonObject.put("value", Math.toIntExact(_trafficAmount));
+		}
+
+		return jsonObject;
+	}
+
+	@Override
+	public String toString() {
+		JSONObject jsonObject = toJSONObject(
+			null, LocaleUtil.getDefault(), _name);
+
+		return jsonObject.toJSONString();
 	}
 
 	private JSONArray _getCountryKeywordsJSONArray(Locale locale) {

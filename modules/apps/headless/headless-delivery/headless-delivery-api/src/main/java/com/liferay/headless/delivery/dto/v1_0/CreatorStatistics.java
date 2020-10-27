@@ -26,6 +26,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -47,7 +49,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @GraphQLName("CreatorStatistics")
 @JsonFilter("Liferay.Vulcan")
 @XmlRootElement(name = "CreatorStatistics")
-public class CreatorStatistics {
+public class CreatorStatistics implements Serializable {
 
 	public static CreatorStatistics toDTO(String json) {
 		return ObjectMapperUtil.readValue(CreatorStatistics.class, json);

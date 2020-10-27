@@ -26,6 +26,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
@@ -48,7 +50,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @JsonFilter("Liferay.Vulcan")
 @Schema(requiredProperties = {"channelId", "priceListId"})
 @XmlRootElement(name = "PriceListChannel")
-public class PriceListChannel {
+public class PriceListChannel implements Serializable {
 
 	public static PriceListChannel toDTO(String json) {
 		return ObjectMapperUtil.readValue(PriceListChannel.class, json);

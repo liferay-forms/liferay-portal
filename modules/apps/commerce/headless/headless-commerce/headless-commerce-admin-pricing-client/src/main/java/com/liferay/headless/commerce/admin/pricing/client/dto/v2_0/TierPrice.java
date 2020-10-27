@@ -17,6 +17,8 @@ package com.liferay.headless.commerce.admin.pricing.client.dto.v2_0;
 import com.liferay.headless.commerce.admin.pricing.client.function.UnsafeSupplier;
 import com.liferay.headless.commerce.admin.pricing.client.serdes.v2_0.TierPriceSerDes;
 
+import java.io.Serializable;
+
 import java.math.BigDecimal;
 
 import java.util.Date;
@@ -30,7 +32,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class TierPrice implements Cloneable {
+public class TierPrice implements Cloneable, Serializable {
 
 	public static TierPrice toDTO(String json) {
 		return TierPriceSerDes.toDTO(json);

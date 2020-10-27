@@ -24,6 +24,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>CONTENT_CONTAINER</td>
+	<td>//div[contains(@class,'container-view')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>SIDEBAR</td>
 	<td>//div[contains(@class,'contextual-sidebar-visible')]</td>
 	<td></td>
@@ -41,6 +46,11 @@
 <tr>
 	<td>FEATURED_IMAGE_URL_INPUT</td>
 	<td>//div[contains(@class,'input-String-wrapper')]/input[contains(@id,'URL')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SELECT_ANY</td>
+	<td>//button[contains(@id,'${key_filedName}')]/span[contains(.,'Select')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -71,6 +81,11 @@
 <tr>
 	<td>SELECTED_TEMPLATE</td>
 	<td>//input[contains(@id,'TemplateName')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>TEXT_INPUT_FIELD</td>
+	<td>//div[label[normalize-space(text())='${key_fieldLabel}']]//input[@type='text']</td>
 	<td></td>
 </tr>
 <tr>

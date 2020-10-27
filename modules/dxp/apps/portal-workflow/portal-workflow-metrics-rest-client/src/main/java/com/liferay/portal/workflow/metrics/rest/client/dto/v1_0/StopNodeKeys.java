@@ -17,6 +17,8 @@ package com.liferay.portal.workflow.metrics.rest.client.dto.v1_0;
 import com.liferay.portal.workflow.metrics.rest.client.function.UnsafeSupplier;
 import com.liferay.portal.workflow.metrics.rest.client.serdes.v1_0.StopNodeKeysSerDes;
 
+import java.io.Serializable;
+
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class StopNodeKeys implements Cloneable {
+public class StopNodeKeys implements Cloneable, Serializable {
 
 	public static StopNodeKeys toDTO(String json) {
 		return StopNodeKeysSerDes.toDTO(json);

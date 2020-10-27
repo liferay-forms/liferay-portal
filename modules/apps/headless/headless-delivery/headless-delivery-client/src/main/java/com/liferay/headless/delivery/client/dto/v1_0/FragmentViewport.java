@@ -17,6 +17,8 @@ package com.liferay.headless.delivery.client.dto.v1_0;
 import com.liferay.headless.delivery.client.function.UnsafeSupplier;
 import com.liferay.headless.delivery.client.serdes.v1_0.FragmentViewportSerDes;
 
+import java.io.Serializable;
+
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class FragmentViewport implements Cloneable {
+public class FragmentViewport implements Cloneable, Serializable {
 
 	public static FragmentViewport toDTO(String json) {
 		return FragmentViewportSerDes.toDTO(json);

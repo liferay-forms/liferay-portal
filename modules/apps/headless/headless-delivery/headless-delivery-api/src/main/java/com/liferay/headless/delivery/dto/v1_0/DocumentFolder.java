@@ -28,6 +28,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -56,7 +58,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 	description = "Represents a document folder that can contain documents and other folders."
 )
 @XmlRootElement(name = "DocumentFolder")
-public class DocumentFolder {
+public class DocumentFolder implements Serializable {
 
 	public static DocumentFolder toDTO(String json) {
 		return ObjectMapperUtil.readValue(DocumentFolder.class, json);

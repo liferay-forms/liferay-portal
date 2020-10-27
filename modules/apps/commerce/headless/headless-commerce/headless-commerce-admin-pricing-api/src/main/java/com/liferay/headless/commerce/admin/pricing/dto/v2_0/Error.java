@@ -26,6 +26,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
@@ -49,7 +51,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 	requiredProperties = {"errorCode", "errorDescription", "message", "status"}
 )
 @XmlRootElement(name = "Error")
-public class Error {
+public class Error implements Serializable {
 
 	public static Error toDTO(String json) {
 		return ObjectMapperUtil.readValue(Error.class, json);

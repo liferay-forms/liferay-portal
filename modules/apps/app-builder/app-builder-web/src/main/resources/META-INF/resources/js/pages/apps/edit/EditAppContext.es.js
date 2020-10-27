@@ -25,6 +25,7 @@ export const UPDATE_DATA_LAYOUT_ID = 'UPDATE_DATA_LAYOUT_ID';
 export const UPDATE_DATA_LIST_VIEW_ID = 'UPDATE_DATA_LIST_VIEW_ID';
 export const UPDATE_NAME = 'UPDATE_NAME';
 export const UPDATE_SETTINGS_SCOPE = 'UPDATE_SETTINGS_SCOPE';
+export const UPDATE_WORKFLOW_PROCESS_ID = 'UPDATE_WORKFLOW_PROCESS_ID';
 
 const uppdateAppDeployment = (state, appDeploymentType, appDeployment) => ({
 	...state,
@@ -159,6 +160,16 @@ const reducer = (state, action) => {
 			};
 
 			return uppdateAppDeployment(state, PRODUCT_MENU, newAppDeployment);
+		}
+		case UPDATE_WORKFLOW_PROCESS_ID: {
+			return {
+				...state,
+				app: {
+					...state.app,
+					workflowDefinitionName: action.id,
+					workflowDefinitionVersion: action.version,
+				},
+			};
 		}
 		default: {
 			return state;

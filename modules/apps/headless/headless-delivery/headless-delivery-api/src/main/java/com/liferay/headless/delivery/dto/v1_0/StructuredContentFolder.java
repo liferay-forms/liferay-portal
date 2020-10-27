@@ -28,6 +28,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -56,7 +58,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 	description = "Represents a folder that can be used to organize structured content."
 )
 @XmlRootElement(name = "StructuredContentFolder")
-public class StructuredContentFolder {
+public class StructuredContentFolder implements Serializable {
 
 	public static StructuredContentFolder toDTO(String json) {
 		return ObjectMapperUtil.readValue(StructuredContentFolder.class, json);

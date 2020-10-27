@@ -17,6 +17,8 @@ package com.liferay.headless.form.client.dto.v1_0;
 import com.liferay.headless.form.client.function.UnsafeSupplier;
 import com.liferay.headless.form.client.serdes.v1_0.FormPageContextSerDes;
 
+import java.io.Serializable;
+
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class FormPageContext implements Cloneable {
+public class FormPageContext implements Cloneable, Serializable {
 
 	public static FormPageContext toDTO(String json) {
 		return FormPageContextSerDes.toDTO(json);

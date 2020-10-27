@@ -10,7 +10,7 @@
 <tbody>
 	<tr>
 	<td>ANY_MENU_ITEM</td>
-	<td>//div[contains(@class,'show')]//a[contains(.,'${key_menuItem}')]</td>
+	<td>//div[contains(@class,'show')]//button[contains(.,'${key_menuItem}')] | //div[contains(@class,'show')]//a[contains(.,'${key_menuItem}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -94,6 +94,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>DISCOUNT_AMOUNT</td>
+	<td>//div/input[contains(@id,'amount')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>DISCOUNT_LEVEL_1_FIELD</td>
 	<td>//div/input[contains(@id,'level1')]</td>
 	<td></td>
@@ -165,7 +170,7 @@
 </tr>
 <tr>
 	<td>OPTIONS_SELECT_LIST</td>
-	<td>//div[@class='dropdown-menu']//..//a[contains(., '${key_selectValue}')]</td>
+	<td>//div[contains(@class,'dropdown-menu')]//button[contains(.,'${key_selectValue}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -211,6 +216,11 @@
 <tr>
 	<td>PUBLISHED_CHECKBOX</td>
 	<td>//input[contains(@id,'published') and (@type='checkbox')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>RADIO_BUTTON</td>
+	<td>//label[contains(.,'${key_radioOption}')]/input[@type='radio']</td>
 	<td></td>
 </tr>
 <tr>
@@ -275,7 +285,12 @@
 </tr>
 <tr>
 	<td>FIX_ISSUE_BUTTON</td>
-	<td>//tr/td[contains(.,'${key_fixIssueButtonName}')]/..//td[@class='dataset-item-actions-wrapper']/a</td>
+	<td>//tr/td[contains(.,'${key_fixIssueButtonName}')]/..//td[@class='data-set-item-actions-wrapper' or contains(@class,'entry-action-column')]/*</td>
+	<td></td>
+</tr>
+<tr>
+	<td>FIX_ISSUE_BUTTON_N</td>
+	<td>//tr[contains (@data-qa-id,'row')]//td/button[contains (@id,'fixIssueButton${key_buttonRowNumber}')and contains(@class,'${key_buttonStatus}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -390,7 +405,7 @@
 </tr>
 <tr>
 	<td>ENTRY_NAME_BODY_VERTICAL_ELLIPSIS</td>
-	<td>//div[@class='dataset-display-wrapper' or @class='searchcontainer-content']//a[text()='${key_entryName}']/../../following-sibling::td//button</td>
+	<td>//div[@class='data-set-display-wrapper' or @class='searchcontainer-content']//a[text()='${key_entryName}']/../../following-sibling::td//button</td>
 	<td></td>
 </tr>
 <tr>
@@ -399,8 +414,13 @@
     <td></td>
 </tr>
 <tr>
-	<td>CHANNEL_PAYMENT_METHOD_NAME</td>
-	<td>//div/h4[contains(.,'Payment Methods')]/..//button[contains(.,'${key_paymentMethod}')]</td>
+	<td>TABLE_ENTRY_NAME</td>
+	<td>//div[contains(.,'${key_table}')]//div[@class='data-set-display-wrapper' or @class='searchcontainer-content']//a[contains(.,'${key_entryName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>TABLE_ENTRY_EDIT_BUTTON</td>
+	<td>//div[contains(.,'${key_table}')]//div[@class='data-set-display-wrapper']//*[contains(.,'${key_entryName}')]/../../td/a[contains(.,'Edit')]</td>
 	<td></td>
 </tr>
 <!--CATALOGS-->
@@ -427,12 +447,17 @@
 </tr>
 <tr>
 	<td>ADD_RELATION_FIELD_SELECT</td>
-	<td>//div[h4[contains(.,'${key_title}')]]//input[@type='text']/../../../..//button[contains(.,'Select')]</td>
+	<td>//div[h4[contains(.,'${key_title}')]]//td[p[text()='${key_entryName}']]/..//button[contains(.,'Select')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>TABLE_LIST_TITLE</td>
 	<td>//div[contains(@class,'table-list-title')]/a[contains(.,'${key_entryName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ADD_RELATION_CLEAN_INPUT_BUTTON</td>
+	<td>//div[h4[contains(.,'${key_title}')]]//span</td>
 	<td></td>
 </tr>
 <!--IFRAME-->
@@ -444,13 +469,13 @@
 <!--PRICE-->
 <tr>
 	<td>INPUT_PRICE</td>
-	<td>//div[label[(text() = ' Price ' )]]//input[@type='text']</td>
+	<td>//div/label[contains(.,'Price') and not(contains(.,'Promo'))]/..//input</td>
 	<td></td>
 </tr>
 <!--IMAGES-->
 <tr>
 	<td>IMAGES_PLUS_BUTTON</td>
-	<td>//div[(@class = 'card d-flex')]/h4[contains(.,'Images')]//..//button[contains(@class,'btn-primary')]</td>
+	<td>//h4[contains(.,'Images')]//..//button[contains(@class,'btn-primary')]</td>
 	<td></td>
 </tr>
 <!--PRODUCT-->
@@ -467,6 +492,42 @@
 <tr>
 	<td>PRODUCT_FULL_DESCRIPTION</td>
 	<td>//div/label[@class='control-label' and contains(.,'${key_customFieldName}')]/..//p</td>
+	<td></td>
+</tr>
+<!--OPTION-->
+<tr>
+	<td>DELETE_OPTION_BUTTON</td>
+	<td>//h4[contains(.,'Option')]//..//button[contains(.,'Delete')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>FILTER_DROPDOWN_MENU</td>
+	<td>//div[contains(@class,'filters')]/button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>FILTER_SELECT_CATEGORY</td>
+	<td>//div[contains(@class,'dropdown-menu show')]//button[contains(.,'${key_categoryFilter}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>FILTER_SELECT_FILTER</td>
+	<td>//div[contains(@class,'data-set-filter')]//div[contains(.,'${key_filterItem}') and @class='custom-control custom-${key_inputType}']//input</td>
+	<td></td>
+</tr>
+<tr>
+	<td>FILTER_INPUT_TYPE</td>
+	<td>//div[contains(@class,'data-set-filter')]//div[contains(@class,'${key_inputType}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>FILTER_BACK_ARROW</td>
+	<td>//div[contains(@class,'dropdown-menu show')]//button[*[name()='svg'][contains(@class,'lexicon-icon-angle-left')]]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>HEALTH_CHECK_ICON_CHECK_N</td>
+	<td>//div[contains(@class,'commerce-health-status-check-row-icon-check${key_value}')][not(contains(@class,'hide'))]</td>
 	<td></td>
 </tr>
 </tbody>

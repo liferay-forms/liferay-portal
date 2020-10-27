@@ -17,6 +17,8 @@ package com.liferay.bulk.rest.client.dto.v1_0;
 import com.liferay.bulk.rest.client.function.UnsafeSupplier;
 import com.liferay.bulk.rest.client.serdes.v1_0.TaxonomyCategorySerDes;
 
+import java.io.Serializable;
+
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class TaxonomyCategory implements Cloneable {
+public class TaxonomyCategory implements Cloneable, Serializable {
 
 	public static TaxonomyCategory toDTO(String json) {
 		return TaxonomyCategorySerDes.toDTO(json);

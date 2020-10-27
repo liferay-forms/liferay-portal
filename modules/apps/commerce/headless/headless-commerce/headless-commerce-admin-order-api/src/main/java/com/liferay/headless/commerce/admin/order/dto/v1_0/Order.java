@@ -26,6 +26,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.math.BigDecimal;
 
 import java.text.DateFormat;
@@ -55,7 +57,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @JsonFilter("Liferay.Vulcan")
 @Schema(requiredProperties = {"channelId", "currencyCode"})
 @XmlRootElement(name = "Order")
-public class Order {
+public class Order implements Serializable {
 
 	public static Order toDTO(String json) {
 		return ObjectMapperUtil.readValue(Order.class, json);

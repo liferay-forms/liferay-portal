@@ -334,8 +334,18 @@ public interface KaleoDefinitionLocalService
 		ServiceContext serviceContext);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<KaleoDefinition> getScopeKaleoDefinitions(
+		String scope, int start, int end,
+		OrderByComparator<KaleoDefinition> orderByComparator,
+		ServiceContext serviceContext);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getScopeKaleoDefinitionsCount(
 		String scope, boolean active, ServiceContext serviceContext);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getScopeKaleoDefinitionsCount(
+		String scope, ServiceContext serviceContext);
 
 	public KaleoDefinition updatedKaleoDefinition(
 			long kaleoDefinitionId, String title, String description,

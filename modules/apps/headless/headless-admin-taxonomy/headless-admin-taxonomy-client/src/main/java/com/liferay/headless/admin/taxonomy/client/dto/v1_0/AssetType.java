@@ -17,6 +17,8 @@ package com.liferay.headless.admin.taxonomy.client.dto.v1_0;
 import com.liferay.headless.admin.taxonomy.client.function.UnsafeSupplier;
 import com.liferay.headless.admin.taxonomy.client.serdes.v1_0.AssetTypeSerDes;
 
+import java.io.Serializable;
+
 import java.util.Objects;
 
 import javax.annotation.Generated;
@@ -26,7 +28,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class AssetType implements Cloneable {
+public class AssetType implements Cloneable, Serializable {
 
 	public static AssetType toDTO(String json) {
 		return AssetTypeSerDes.toDTO(json);

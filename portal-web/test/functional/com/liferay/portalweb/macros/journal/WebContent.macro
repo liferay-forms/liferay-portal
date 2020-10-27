@@ -581,7 +581,6 @@ definition {
 					imageFileName = "${webContentImage}",
 					navTab = "Documents and Media");
 			}
-
 			else {
 				ItemSelector.uploadFile(
 					navTab = "Web Content Images",
@@ -598,9 +597,16 @@ definition {
 		if (isSet(webContentImageUnderDocumentsAndMedia)) {
 			Click(locator1 = "WCEditWebContent#IMAGE_FIELD_SELECT");
 
-			ItemSelector.uploadFile(
-				navTab = "Documents and Media",
-				uploadFileName = "${webContentImageUnderDocumentsAndMedia}");
+			if (isSet(imageFileName)) {
+				ItemSelector.selectDMImage(
+					imageFileName = "${imageFileName}",
+					navTab = "Documents and Media");
+			}
+			else {
+				ItemSelector.uploadFile(
+					navTab = "Documents and Media",
+					uploadFileName = "${webContentImageUnderDocumentsAndMedia}");
+			}
 		}
 
 		if (isSet(webContentInteger)) {
@@ -807,6 +813,20 @@ definition {
 		AssertTextEquals(
 			locator1 = "Message#ERROR_3",
 			value1 = "${webContentTitle} is not approved.");
+	}
+
+	macro clickMarginOfContentContainer {
+		var elementHeight = selenium.getElementHeight("WCEditWebContent#CONTENT_CONTAINER");
+		var offSetY = MathUtil.product("50","${elementHeight}");
+		var offSetY = MathUtil.quotient("${offSetY}","100");
+
+		var elementWidth = selenium.getElementWidth("WCEditWebContent#CONTENT_CONTAINER");
+		var offSetX = MathUtil.product("2","${elementWidth}");
+		var offSetX = MathUtil.quotient("${offSetX}","100");
+
+		Click.clickAt(
+			locator1 = "WCEditWebContent#CONTENT_CONTAINER",
+			value1 = "${offSetX},${offSetY}");
 	}
 
 	macro copyCP {
@@ -1433,7 +1453,12 @@ definition {
 
 		Pause(locator1 = "3000");
 
-		LexiconCard.clickCardWithConfirmation(card = "${templateName}");
+		if (isSet(confirm)) {
+			LexiconCard.clickCard(card = "${templateName}");
+		}
+		else {
+			LexiconCard.clickCardWithConfirmation(card = "${templateName}");
+		}
 
 		IFrame.selectTopFrame();
 
@@ -2062,6 +2087,12 @@ definition {
 			key_relatedAssetTitle = "${relatedAssetTitle}",
 			locator1 = "AssetRelatedAssets#ASSET_TITLE",
 			value1 = "${relatedAssetTitle}");
+	}
+
+	macro viewRepeatedField {
+		AssertElementPresent(locator1 = "xpath=(//div[@data-fieldname='${fieldName}'][1]//a[contains(@class,'ddm-repeatable-add-button')]/../div//input)");
+
+		AssertElementPresent(locator1 = "xpath=(//div[@data-fieldname='${fieldName}'][2]//a[contains(@class,'ddm-repeatable-add-button')]/../div//input)");
 	}
 
 	macro viewRTLLayout {

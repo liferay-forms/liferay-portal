@@ -26,6 +26,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -47,7 +49,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @GraphQLName("WorkflowTaskAssignToRole")
 @JsonFilter("Liferay.Vulcan")
 @XmlRootElement(name = "WorkflowTaskAssignToRole")
-public class WorkflowTaskAssignToRole {
+public class WorkflowTaskAssignToRole implements Serializable {
 
 	public static WorkflowTaskAssignToRole toDTO(String json) {
 		return ObjectMapperUtil.readValue(WorkflowTaskAssignToRole.class, json);

@@ -26,6 +26,8 @@ import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.Serializable;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -49,7 +51,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @GraphQLName("PageTemplateCollection")
 @JsonFilter("Liferay.Vulcan")
 @XmlRootElement(name = "PageTemplateCollection")
-public class PageTemplateCollection {
+public class PageTemplateCollection implements Serializable {
 
 	public static PageTemplateCollection toDTO(String json) {
 		return ObjectMapperUtil.readValue(PageTemplateCollection.class, json);
