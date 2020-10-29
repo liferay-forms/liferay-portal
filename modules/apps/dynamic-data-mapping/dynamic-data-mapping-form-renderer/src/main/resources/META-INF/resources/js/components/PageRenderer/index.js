@@ -12,6 +12,7 @@
  * details.
  */
 
+import ClayIcon from '@clayui/icon';
 import core from 'metal';
 import React from 'react';
 
@@ -167,6 +168,7 @@ const Renderer = ({
 	submitLabel,
 	view,
 	viewMode,
+	portletNamespace,
 }) => {
 	const empty = isEmptyPage(defaultPage);
 	const page = normalizePage(defaultPage, editingLanguageId);
@@ -183,6 +185,16 @@ const Renderer = ({
 	const Header =
 		PAGE_HEADER_COMPONENT_TYPE[page.headerRenderer] ||
 		Components.PageHeader;
+
+	const hasRequiredIconDescription =
+		!portletNamespace.includes('Admin') &&
+		page.rows.filter(
+			(x) =>
+				x &&
+				x.columns[0] &&
+				x.columns[0].fields[0] &&
+				x.columns[0].fields[0].required
+		).length > 0;
 
 	return (
 		<Components.Container
@@ -215,6 +227,19 @@ const Renderer = ({
 				page={page}
 				pageIndex={pageIndex}
 			>
+				{hasRequiredIconDescription && (
+					<p aria-hidden="true" className="text-secondary">
+						{Liferay.Language.get(
+							'required-icon-fields-description-first'
+						)}
+						<span className="c-mr-1 reference-mark">
+							<ClayIcon symbol="asterisk" />
+						</span>
+						{Liferay.Language.get(
+							'required-icon-fields-description-second'
+						)}
+					</p>
+				)}
 				<Layout
 					components={Components}
 					editable={editable}
