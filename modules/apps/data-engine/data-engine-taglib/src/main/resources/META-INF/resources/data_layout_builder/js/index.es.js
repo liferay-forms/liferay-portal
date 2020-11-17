@@ -18,6 +18,7 @@ import DataLayoutBuilderContextProvider from './AppContextProvider.es';
 import * as DataLayoutBuilderActions from './actions.es';
 import FieldType from './components/field-types/FieldType.es';
 import FieldTypeList from './components/field-types/FieldTypeList.es';
+import RuleListReactAdapter from './components/rule-builder/RuleList/RuleListReactAdapter.es';
 import SearchInput, {
 	SearchInputWithForm,
 } from './components/search-input/SearchInput.es';
@@ -42,6 +43,7 @@ export {
 	DragTypes,
 	FieldType,
 	FieldTypeList,
+	RuleListReactAdapter,
 	SearchInput,
 	saveDataDefinition,
 	SearchInputWithForm,
