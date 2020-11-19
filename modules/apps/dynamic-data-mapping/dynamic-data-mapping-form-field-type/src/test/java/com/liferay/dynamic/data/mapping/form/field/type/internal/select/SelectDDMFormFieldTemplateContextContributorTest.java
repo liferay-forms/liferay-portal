@@ -153,7 +153,45 @@ public class SelectDDMFormFieldTemplateContextContributorTest
 			DDMFormFieldOptionsTestUtil.createDDMFormFieldOptions();
 
 		List<Map<String, String>> actualOptions = _getActualOptions(
-			ddmFormFieldOptions, LocaleUtil.US);
+			new DDMFormField("field", "select"), ddmFormFieldOptions,
+			LocaleUtil.US);
+
+		Assert.assertEquals(expectedOptions, actualOptions);
+	}
+
+	@Test
+	public void testGetOptionsAlphabeticallyOrdered() {
+		List<Map<String, String>> expectedOptions = new ArrayList<>();
+
+		expectedOptions.add(
+			DDMFormFieldOptionsTestUtil.createOption(
+				"Label 3", "Reference 3", "value 3"));
+		expectedOptions.add(
+			DDMFormFieldOptionsTestUtil.createOption(
+				"Label 2", "Reference 2", "value 2"));
+		expectedOptions.add(
+			DDMFormFieldOptionsTestUtil.createOption(
+				"Label 1", "Reference 1", "value 1"));
+
+		DDMFormField ddmFormField = new DDMFormField("field", "select");
+
+		ddmFormField.setProperty("alphabeticalOrder", "true");
+
+		DDMFormFieldOptions ddmFormFieldOptions =
+			DDMFormFieldOptionsTestUtil.createDDMFormFieldOptions();
+
+		List<Map<String, String>> actualOptions = _getActualOptions(
+			ddmFormField, ddmFormFieldOptions, LocaleUtil.US);
+
+		Assert.assertNotEquals(expectedOptions, actualOptions);
+
+		expectedOptions.sort(
+			(map1, map2) -> {
+				String label1 = map1.get("label");
+				String label2 = map2.get("label");
+
+				return label1.compareTo(label2);
+			});
 
 		Assert.assertEquals(expectedOptions, actualOptions);
 	}
@@ -315,13 +353,14 @@ public class SelectDDMFormFieldTemplateContextContributorTest
 	}
 
 	private List<Map<String, String>> _getActualOptions(
-		DDMFormFieldOptions ddmFormFieldOptions, Locale locale) {
+		DDMFormField ddmFormField, DDMFormFieldOptions ddmFormFieldOptions,
+		Locale locale) {
 
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext =
 			new DDMFormFieldRenderingContext();
 
 		return _selectDDMFormFieldTemplateContextContributor.getOptions(
-			new DDMFormField("field", "select"), ddmFormFieldOptions, locale,
+			ddmFormField, ddmFormFieldOptions, locale,
 			ddmFormFieldRenderingContext);
 	}
 
