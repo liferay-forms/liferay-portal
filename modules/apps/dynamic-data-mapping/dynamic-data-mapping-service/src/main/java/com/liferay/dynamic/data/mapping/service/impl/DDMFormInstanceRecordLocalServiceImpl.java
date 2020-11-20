@@ -72,6 +72,7 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 
@@ -117,7 +118,10 @@ public class DDMFormInstanceRecordLocalServiceImpl
 		DDMFormInstanceRecord ddmFormInstanceRecord =
 			ddmFormInstanceRecordPersistence.create(recordId);
 
-		ddmFormInstanceRecord.setUuid(serviceContext.getUuid());
+		if (Validator.isNotNull(serviceContext.getUuid())) {
+			ddmFormInstanceRecord.setUuid(serviceContext.getUuid());
+		}
+
 		ddmFormInstanceRecord.setGroupId(groupId);
 		ddmFormInstanceRecord.setCompanyId(user.getCompanyId());
 		ddmFormInstanceRecord.setUserId(user.getUserId());
