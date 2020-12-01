@@ -18,6 +18,7 @@ import React, {useContext} from 'react';
 
 import {DND_ORIGIN_TYPE, useDrop} from '../../hooks/useDrop.es';
 import {ParentFieldContext} from '../Field/ParentFieldContext.es';
+import Actions, {useActions} from './Actions.es';
 
 export const Container = ({
 	activePage,
@@ -51,6 +52,7 @@ export const Column = ({
 	rowIndex,
 }) => {
 	const parentField = useContext(ParentFieldContext);
+	const {activeField, hoveredField} = useActions();
 	const {drop, overTarget} = useDrop({
 		columnIndex: index,
 		fieldName: column.fields[0]?.fieldName,
@@ -77,60 +79,13 @@ export const Column = ({
 		'data-ddm-field-row': rowIndex,
 	};
 
-	const renderFields = () => {
-		const firstField = column.fields[0];
-		const rootParentField = parentField.root ?? firstField;
-		const isFieldSetOrGroup = firstField.type === 'fieldset';
-		const isFieldSet = isFieldSetOrGroup && firstField.ddmStructureId;
-
-		return (
-			<div
-				className={classnames('ddm-field-container ddm-target h-100', {
-					'active-drop-child':
-						isFieldSetOrGroup &&
-						overTarget &&
-						!rootParentField.ddmStructureId,
-					'ddm-fieldset': isFieldSet,
-					'fields-group': isFieldSetOrGroup,
-					selected: firstField.selected,
-					'target-over targetOver':
-						!rootParentField.ddmStructureId && overTarget,
-				})}
-				data-field-name={firstField.fieldName}
-			>
-				<div
-					className={classnames(
-						'ddm-resize-handle ddm-resize-handle-left',
-						{hide: !(firstField.hovered || firstField.selected)}
-					)}
-					{...addr}
-				/>
-
-				<div
-					className={classnames('ddm-drag', {
-						'py-0': isFieldSetOrGroup,
-					})}
-					ref={
-						allowNestedFields && !rootParentField.ddmStructureId
-							? drop
-							: undefined
-					}
-				>
-					{column.fields.map((field, index) =>
-						children({field, index})
-					)}
-				</div>
-
-				<div
-					className={classnames(
-						'ddm-resize-handle ddm-resize-handle-right',
-						{hide: !(firstField.hovered || firstField.selected)}
-					)}
-					{...addr}
-				/>
-			</div>
-		);
-	};
+	const firstField = column.fields[0];
+	const rootParentField = parentField.root ?? firstField;
+	const isFieldSetOrGroup = firstField.type === 'fieldset';
+	const isFieldSet = isFieldSetOrGroup && firstField.ddmStructureId;
+	const isFieldSelected =
+		firstField.fieldName === activeField ||
+		firstField.fieldName === hoveredField;
 
 	return (
 		<ClayLayout.Col
@@ -139,7 +94,69 @@ export const Column = ({
 			key={index}
 			md={column.size}
 		>
-			{column.fields.length > 0 && renderFields()}
+			{column.fields.length > 0 && (
+				<Actions
+					activePage={activePage}
+					expanded={isFieldSelected}
+					field={firstField}
+				>
+					<div
+						className={classnames(
+							'ddm-field-container ddm-target h-100',
+							{
+								'active-drop-child':
+									isFieldSetOrGroup &&
+									overTarget &&
+									!rootParentField.ddmStructureId,
+								'ddm-fieldset': isFieldSet,
+								'fields-group': isFieldSetOrGroup,
+								hovered: firstField.fieldName === hoveredField,
+								selected: firstField.fieldName === activeField,
+								'target-over targetOver':
+									!rootParentField.ddmStructureId &&
+									overTarget,
+							}
+						)}
+						data-field-name={firstField.fieldName}
+					>
+						<div
+							className={classnames(
+								'ddm-resize-handle ddm-resize-handle-left',
+								{
+									hide: !isFieldSelected,
+								}
+							)}
+							{...addr}
+						/>
+
+						<div
+							className={classnames('ddm-drag', {
+								'py-0': isFieldSetOrGroup,
+							})}
+							ref={
+								allowNestedFields &&
+								!rootParentField.ddmStructureId
+									? drop
+									: undefined
+							}
+						>
+							{column.fields.map((field, index) =>
+								children({field, index})
+							)}
+						</div>
+
+						<div
+							className={classnames(
+								'ddm-resize-handle ddm-resize-handle-right',
+								{
+									hide: !isFieldSelected,
+								}
+							)}
+							{...addr}
+						/>
+					</div>
+				</Actions>
+			)}
 		</ClayLayout.Col>
 	);
 };
