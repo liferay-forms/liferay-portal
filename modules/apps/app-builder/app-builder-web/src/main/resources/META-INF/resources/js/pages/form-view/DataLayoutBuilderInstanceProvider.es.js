@@ -110,7 +110,7 @@ export default ({children, dataLayoutBuilder}) => {
 			fieldActions,
 		};
 
-		provider.getEvents().fieldHovered(hoveredField);
+		provider.setState({fieldHovered: hoveredField});
 	}, [
 		allowNestedFields,
 		dataLayoutBuilder,
