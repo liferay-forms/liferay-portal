@@ -79,13 +79,13 @@ public class UpgradeDDMFormInstanceReport extends UpgradeProcess {
 		sb1.append("DDMFormInstanceRecordVersion.storageId inner join ");
 		sb1.append("DDMFormInstanceRecord on ");
 		sb1.append("DDMFormInstanceRecord.formInstanceRecordId = ");
-		sb1.append("DDMFormInstanceRecordVersion.formInstanceRecordId join ");
-		sb1.append("DDMFormInstanceVersion on ");
+		sb1.append("DDMFormInstanceRecordVersion.formInstanceRecordId inner ");
+		sb1.append("join DDMFormInstanceVersion on ");
 		sb1.append("DDMFormInstanceVersion.formInstanceId = ");
 		sb1.append("DDMFormInstanceRecordVersion.formInstanceId and ");
 		sb1.append("DDMFormInstanceVersion.version = ");
-		sb1.append("DDMFormInstanceRecordVersion.formInstanceVersion join ");
-		sb1.append("DDMStructureVersion on ");
+		sb1.append("DDMFormInstanceRecordVersion.formInstanceVersion inner ");
+		sb1.append("join DDMStructureVersion on ");
 		sb1.append("DDMStructureVersion.structureVersionId = ");
 		sb1.append("DDMFormInstanceVersion.structureVersionId where ");
 		sb1.append("DDMFormInstanceRecord.version = ");
