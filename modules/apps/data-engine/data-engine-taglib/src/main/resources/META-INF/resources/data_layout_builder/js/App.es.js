@@ -83,11 +83,18 @@ const AppContent = ({
 					dataLayoutBuilder={dataLayoutBuilder}
 				>
 					<MultiPanelSidebar
+						createPlugin={(panel, open, panelID) => {
+							return {
+								dispatch,
+								panel,
+								sidebarOpen: open,
+								sidebarPanelId: panelID,
+							};
+						}}
 						panels={panels}
 						sidebarPanels={sidebarPanels}
 						variant={sidebarVariant}
 					/>
-
 					<DragLayer />
 				</DataLayoutBuilderContextProvider>
 			)}
