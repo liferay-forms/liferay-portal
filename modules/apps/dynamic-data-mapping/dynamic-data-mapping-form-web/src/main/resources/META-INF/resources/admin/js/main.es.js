@@ -16,7 +16,7 @@ import ClayModal from 'clay-modal';
 import {FormsRuleBuilder} from 'data-engine-taglib';
 import {FormBuilderBase} from 'dynamic-data-mapping-form-builder/js/components/FormBuilder/FormBuilder.es';
 import withEditablePageHeader from 'dynamic-data-mapping-form-builder/js/components/FormBuilder/withEditablePageHeader.es';
-import withMoveableFields from 'dynamic-data-mapping-form-builder/js/components/FormBuilder/withMoveableFields.es';
+// import withMoveableFields from 'dynamic-data-mapping-form-builder/js/components/FormBuilder/withMoveableFields.es';
 import withMultiplePages from 'dynamic-data-mapping-form-builder/js/components/FormBuilder/withMultiplePages.es';
 import LayoutProvider from 'dynamic-data-mapping-form-builder/js/components/LayoutProvider/LayoutProvider.es';
 import Sidebar from 'dynamic-data-mapping-form-builder/js/components/Sidebar/Sidebar.es';
@@ -735,7 +735,7 @@ class Form extends Component {
 	}
 
 	_createFormBuilder() {
-		const composeList = [withMoveableFields, withMultiplePages];
+		const composeList = [withMultiplePages];
 
 		if (this.isFormBuilderView()) {
 			composeList.push(withEditablePageHeader);
