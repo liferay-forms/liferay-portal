@@ -14,6 +14,7 @@
 
 const PUBLIC_EVENTS = {
 	CHANGE_ACTIVE_PAGE: 'activePageUpdated',
+	COLUMN_RESIZED: 'columnResized',
 	FIELD_BLUR: 'fieldBlurred',
 	FIELD_CHANGE: 'fieldEdited',
 	FIELD_CLICKED: 'fieldClicked',

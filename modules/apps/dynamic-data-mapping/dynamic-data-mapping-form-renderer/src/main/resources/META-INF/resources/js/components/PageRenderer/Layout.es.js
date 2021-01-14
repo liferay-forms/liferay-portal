@@ -48,7 +48,7 @@ export const Layout = ({components, editable, rows}) => {
 		>
 			{({index: rowIndex, row}) => (
 				<Components.Row key={rowIndex} row={row}>
-					{({column, index}) => (
+					{({column, index, rowRef}) => (
 						<Components.Column
 							activePage={activePage}
 							allowNestedFields={allowNestedFields}
@@ -57,7 +57,9 @@ export const Layout = ({components, editable, rows}) => {
 							index={index}
 							key={index}
 							pageIndex={pageIndex}
+							row={row}
 							rowIndex={rowIndex}
+							rowRef={rowRef}
 						>
 							{(fieldProps) => (
 								<Field

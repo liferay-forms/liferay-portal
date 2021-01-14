@@ -14,14 +14,19 @@
 
 import ClayLayout from '@clayui/layout';
 import classNames from 'classnames';
-import React, {useContext, useRef} from 'react';
+import {useEventListener} from 'frontend-js-react-web';
+import React, {useContext, useRef, useState} from 'react';
 
+import {EVENT_TYPES} from '../../actions/eventTypes.es';
 import {DND_ORIGIN_TYPE, useDrop} from '../../hooks/useDrop.es';
+import {useForm} from '../../hooks/useForm.es';
 import {hasFieldSet} from '../../util/fields.es';
 import {Actions, ActionsControls, useActions} from '../Actions.es';
 import {ParentFieldContext} from '../Field/ParentFieldContext.es';
 import {Placeholder} from '../Placeholder.es';
 import * as DefaultVariant from './DefaultVariant.es';
+
+const MAX_COLUMNS = 12;
 
 export const Column = ({
 	activePage,
@@ -29,19 +34,22 @@ export const Column = ({
 	children,
 	column,
 	editable,
-	index,
+	index: columnIndex,
 	pageIndex,
 	rowIndex,
+	rowRef,
 }) => {
 	const parentField = useContext(ParentFieldContext);
 
 	const actionsRef = useRef(null);
 	const columnRef = useRef(null);
 
+	const [resizing, setResizing] = useState(false);
+
 	const [{activeId, hoveredId}] = useActions();
 
 	const {drop, overTarget} = useDrop({
-		columnIndex: index,
+		columnIndex,
 		fieldName: column.fields[0]?.fieldName,
 		origin: DND_ORIGIN_TYPE.FIELD,
 		pageIndex,
@@ -52,7 +60,7 @@ export const Column = ({
 	if (editable && column.fields.length === 0 && activePage === pageIndex) {
 		return (
 			<Placeholder
-				columnIndex={index}
+				columnIndex={columnIndex}
 				pageIndex={pageIndex}
 				rowIndex={rowIndex}
 				size={column.size}
@@ -68,7 +76,7 @@ export const Column = ({
 		firstField.fieldName === activeId || firstField.fieldName === hoveredId;
 
 	const addr = {
-		'data-ddm-field-column': index,
+		'data-ddm-field-column': columnIndex,
 		'data-ddm-field-page': pageIndex,
 		'data-ddm-field-row': rowIndex,
 	};
@@ -91,13 +99,14 @@ export const Column = ({
 						isFieldSetOrGroup &&
 						overTarget &&
 						!rootParentField.ddmStructureId,
+					dragging: resizing,
 					hovered: editable && firstField.fieldName === hoveredId,
 					selected: editable && firstField.fieldName === activeId,
 					'target-over targetOver':
 						!rootParentField.ddmStructureId && overTarget,
 				})}
 				column={column}
-				index={index}
+				index={columnIndex}
 				pageIndex={pageIndex}
 				ref={columnRef}
 				rowIndex={rowIndex}
@@ -112,46 +121,155 @@ export const Column = ({
 					/>
 				)}
 
-				<div
-					className={classNames(
-						'ddm-resize-handle ddm-resize-handle-left',
-						{
-							hide: !isFieldSelected || !editable,
-						}
-					)}
+				<ResizableColumn
 					{...addr}
-				/>
-
-				<div
-					className={classNames('ddm-drag', {
-						'py-0': isFieldSetOrGroup,
-					})}
-					ref={
-						allowNestedFields && !rootParentField.ddmStructureId
-							? drop
-							: undefined
-					}
+					allowNestedFields={allowNestedFields}
+					columnIndex={columnIndex}
+					drop={drop}
+					editable={editable}
+					isFieldSelected={isFieldSelected}
+					isFieldSetOrGroup={isFieldSetOrGroup}
+					onResizing={(resizing) => setResizing(resizing)}
+					pageIndex={pageIndex}
+					rootParentField={rootParentField}
+					rowIndex={rowIndex}
+					rowRef={rowRef}
 				>
 					{column.fields.map((field, index) =>
-						children({field, index})
+						children({
+							field,
+							index,
+							loc: {
+								columnIndex,
+								pageIndex,
+								rowIndex,
+							},
+						})
 					)}
-				</div>
-
-				<div
-					className={classNames(
-						'ddm-resize-handle ddm-resize-handle-right',
-						{
-							hide: !isFieldSelected || !editable,
-						}
-					)}
-					{...addr}
-				/>
+				</ResizableColumn>
 			</DefaultVariant.Column>
 		</ActionsControls>
 	);
 };
 
 Column.displayName = 'EditorVariant.Column';
+
+const DIRECTIONS = {
+	LEFT: 'left',
+	RIGHT: 'right',
+};
+
+const ResizableColumn = ({
+	allowNestedFields,
+	children,
+	columnIndex,
+	drop,
+	editable,
+	isFieldSelected,
+	isFieldSetOrGroup,
+	onResizing,
+	pageIndex,
+	rootParentField,
+	rowIndex,
+	rowRef,
+}) => {
+	const {loc = []} = useContext(ParentFieldContext);
+
+	const resizeInfo = useRef();
+
+	const dispatch = useForm();
+
+	const handleMouseDown = (event, direction) => {
+		event.preventDefault();
+		event.stopPropagation();
+
+		onResizing(true);
+
+		resizeInfo.current = {
+			direction,
+		};
+	};
+
+	const handleMouseMove = (event) => {
+		if (resizeInfo.current) {
+			let column = Math.floor(
+				((event.clientX -
+					rowRef.current?.getBoundingClientRect().left) *
+					(MAX_COLUMNS * 10)) /
+					rowRef.current?.clientWidth /
+					10
+			);
+
+			if (column > MAX_COLUMNS - 1) {
+				column = MAX_COLUMNS - 1;
+			}
+
+			if (column >= 0) {
+				const {direction} = resizeInfo.current;
+
+				dispatch({
+					payload: {
+						column,
+						direction,
+						loc: [...loc, {columnIndex, pageIndex, rowIndex}],
+					},
+					type: EVENT_TYPES.COLUMN_RESIZED,
+				});
+			}
+		}
+	};
+
+	useEventListener('mousemove', handleMouseMove, false, document.body);
+
+	useEventListener(
+		'mouseup',
+		() => {
+			onResizing(false);
+			resizeInfo.current = null;
+		},
+		false,
+		document.body
+	);
+
+	return (
+		<>
+			<div
+				className={classNames(
+					'ddm-resize-handle ddm-resize-handle-left',
+					{
+						hide: !isFieldSelected || !editable,
+					}
+				)}
+				onMouseDown={(event) => handleMouseDown(event, DIRECTIONS.LEFT)}
+			/>
+
+			<div
+				className={classNames('ddm-drag', {
+					'py-0': isFieldSetOrGroup,
+				})}
+				ref={
+					allowNestedFields && !rootParentField.ddmStructureId
+						? drop
+						: undefined
+				}
+			>
+				{children}
+			</div>
+
+			<div
+				className={classNames(
+					'ddm-resize-handle ddm-resize-handle-right',
+					{
+						hide: !isFieldSelected || !editable,
+					}
+				)}
+				onMouseDown={(event) =>
+					handleMouseDown(event, DIRECTIONS.RIGHT)
+				}
+			/>
+		</>
+	);
+};
 
 export const Page = ({
 	activePage,
@@ -241,3 +359,17 @@ export const Rows = ({children, editable, pageIndex, rows}) => {
 };
 
 Rows.displayName = 'EditorVariant.Rows';
+
+export const Row = ({children, index, row}) => {
+	const rowRef = useRef(null);
+
+	return (
+		<div className="position-relative row" key={index} ref={rowRef}>
+			{row.columns.map((column, index) =>
+				children({column, index, rowRef})
+			)}
+		</div>
+	);
+};
+
+Row.displayName = 'EditorVariant.Row';
