@@ -63,6 +63,7 @@ export const DataEngineFieldsSidebar = ({title}) => {
 			config={config}
 			customFields={customFields}
 			dataLayout={dataLayout}
+			dataLayoutBuilder={dataLayoutBuilder}
 			defaultLanguageId={dataLayoutBuilder.props.defaultLanguageId}
 			dispatchEvent={(type, payload) => {
 				if (

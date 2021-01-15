@@ -12,12 +12,14 @@
  * details.
  */
 
+import './MultiPanelSidebar.scss';
 import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {ClayTooltipProvider} from '@clayui/tooltip';
 import classNames from 'classnames';
 import {useIsMounted, useStateSafe} from 'frontend-js-react-web';
+import {getConnectedReactComponentAdapter} from 'dynamic-data-mapping-form-renderer';
 import React, {useRef, useState} from 'react';
 
 import useLoad from '../../hooks/useLoad.es';
@@ -328,3 +330,81 @@ class ErrorBoundary extends React.Component {
 		}
 	}
 }
+
+const FormsMultiPanelMock = {
+	"panels": [
+			[
+				"fields",
+			],
+		],
+	"sidebarPanels": {
+			"fields": {
+				"isLink": false,
+				"sidebarPanelId": "fields",
+				"icon": "forms",
+				"label": "Builder",
+				"pluginEntryPoint": "data-engine-taglib@3.0.0/data_layout_builder/js/plugins/forms-field-sidebar/index.es"
+			},
+		},
+	"sidebarVariant": "light"
+	};
+
+const MultiPanelSidebarFormsProxy = React.forwardRef(
+	(
+		{
+			activePage,
+			dataProviderInstanceParameterSettingsURL,
+			dataProviderInstancesURL,
+			defaultLanguageId,
+			editingLanguageId,
+			fieldTypes,
+			focusedField,
+			functionsMetadata,
+			functionsURL,
+			instance,
+			pages,
+			rules
+		}
+	) => (
+		<FormsSidebarPluginContext.Provider
+			value={{
+				activePage,
+				dataProviderInstanceParameterSettingsURL,
+				dataProviderInstancesURL,
+				defaultLanguageId,
+				dispatch: (type, payload) => {
+					instance.context.dispatch(type, payload)
+				},
+				editingLanguageId,
+				fieldTypes,
+				focusedField,
+				focusedCustomObjectField: {},
+				functionsMetadata,
+				functionsURL,
+				pages,
+				rules
+			}}
+			>
+				<MultiPanelSidebar
+					createPlugin={({
+						panel,
+						sidebarOpen,
+						sidebarPanelId,
+					}) => ({
+						panel,
+						sidebarOpen,
+						sidebarPanelId,
+					})}
+					panels={FormsMultiPanelMock.panels}
+					sidebarPanels={FormsMultiPanelMock.sidebarPanels}
+					variant={FormsMultiPanelMock.sidebarVariant}
+				/>
+		</FormsSidebarPluginContext.Provider>
+	)
+);
+
+export const FormsSidebarPluginContext = React.createContext({});
+
+MultiPanelSidebarFormsProxy.displayName = 'MultiPanelSidebarFormsProxy';
+
+export const ReactMultiPanelSidebarAdapter = getConnectedReactComponentAdapter(MultiPanelSidebarFormsProxy);

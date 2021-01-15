@@ -30,6 +30,7 @@ import * as DragTypes from './drag-and-drop/dragTypes.es';
 import withDragAndDropContext from './drag-and-drop/withDragAndDropContext.es';
 import * as DataDefinitionUtils from './utils/dataDefinition.es';
 import * as DataLayoutVisitor from './utils/dataLayoutVisitor.es';
+import {ReactMultiPanelSidebarAdapter} from './components/sidebar/MultiPanelSidebar.es';
 
 export {
 	DataDefinitionUtils,
@@ -43,6 +44,7 @@ export {
 	DragTypes,
 	FieldType,
 	FieldTypeList,
+	ReactMultiPanelSidebarAdapter,
 	SearchInput,
 	SearchInputWithForm,
 	Sidebar,

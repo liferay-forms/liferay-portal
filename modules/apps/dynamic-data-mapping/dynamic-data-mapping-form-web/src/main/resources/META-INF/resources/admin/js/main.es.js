@@ -13,7 +13,7 @@
  */
 
 import ClayModal from 'clay-modal';
-import {FormsRuleBuilder} from 'data-engine-taglib';
+import {FormsRuleBuilder, ReactMultiPanelSidebarAdapter} from 'data-engine-taglib';
 import {FormBuilderBase} from 'dynamic-data-mapping-form-builder/js/components/FormBuilder/FormBuilder.es';
 import withEditablePageHeader from 'dynamic-data-mapping-form-builder/js/components/FormBuilder/withEditablePageHeader.es';
 import withMoveableFields from 'dynamic-data-mapping-form-builder/js/components/FormBuilder/withMoveableFields.es';
@@ -454,7 +454,7 @@ class Form extends Component {
 	}
 
 	openSidebar() {
-		this.refs.sidebar.open();
+
 	}
 
 	preventCopyAndPaste(event, limit) {
@@ -505,7 +505,7 @@ class Form extends Component {
 			spritemap,
 			view,
 		} = this.props;
-		const {saveButtonLabel} = this.state;
+		const {pages, saveButtonLabel} = this.state;
 
 		const storeProps = {
 			...this.props,
@@ -555,7 +555,21 @@ class Form extends Component {
 						}
 					/>
 
-					<Sidebar
+					<ReactMultiPanelSidebarAdapter
+						dataProviderInstanceParameterSettingsURL={
+							dataProviderInstanceParameterSettingsURL
+						}
+						dataProviderInstancesURL={dataProviderInstancesURL}
+						defaultLanguageId={defaultLanguageId}
+						editingLanguageId={editingLanguageId}
+						fieldTypes={fieldTypes}
+						pages={pages}
+						rules={rules}
+						functionsMetadata={functionsMetadata}
+						functionsURL={functionsURL}
+					/>
+
+					{/* <Sidebar
 						defaultLanguageId={defaultLanguageId}
 						editingLanguageId={editingLanguageId}
 						fieldSetDefinitionURL={fieldSetDefinitionURL}
@@ -567,7 +581,7 @@ class Form extends Component {
 						visible={
 							!this.isShowRuleBuilder() && !this.isShowReport()
 						}
-					/>
+					/> */}
 				</LayoutProviderTag>
 
 				<div class="container container-fluid-1280">
