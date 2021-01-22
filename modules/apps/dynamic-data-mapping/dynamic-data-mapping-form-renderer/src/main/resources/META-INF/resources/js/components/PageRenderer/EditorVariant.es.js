@@ -16,12 +16,17 @@ import ClayLayout from '@clayui/layout';
 import classNames from 'classnames';
 import React, {useContext, useRef} from 'react';
 
+import {EVENT_TYPES} from '../../actions/eventTypes.es';
+import {useDrag} from '../../hooks/useDrag.es';
 import {DND_ORIGIN_TYPE, useDrop} from '../../hooks/useDrop.es';
+import {useForm} from '../../hooks/useForm.es';
 import {hasFieldSet} from '../../util/fields.es';
 import {Actions, ActionsControls, useActions} from '../Actions.es';
 import {ParentFieldContext} from '../Field/ParentFieldContext.es';
 import {Placeholder} from '../Placeholder.es';
 import * as DefaultVariant from './DefaultVariant.es';
+
+const DRAG_FIELD_TYPE = 'fieldType';
 
 export const Column = ({
 	activePage,
@@ -33,6 +38,8 @@ export const Column = ({
 	pageIndex,
 	rowIndex,
 }) => {
+	const ref = useRef(null);
+
 	const parentField = useContext(ParentFieldContext);
 
 	const actionsRef = useRef(null);
@@ -40,14 +47,46 @@ export const Column = ({
 
 	const [{activeId, hoveredId}] = useActions();
 
-	const {drop, overTarget} = useDrop({
-		columnIndex: index,
-		fieldName: column.fields[0]?.fieldName,
-		origin: DND_ORIGIN_TYPE.FIELD,
-		pageIndex,
-		parentField,
-		rowIndex,
-	});
+	const dispatch = useForm();
+
+	const handleDrop = ({item, monitor, sourceItem}) => {
+		Boolean(allowNestedFields);
+
+		// if (allowNestedFields && !rootParentField.ddmStructureId) {
+		// 	return;
+		// }
+
+		// source vem do item
+		// target vem do destructuring do useDrop
+
+		// Used by DataLayoutBuilder's Sidebar for handling drop action
+		// typeof item.pageIndex !== 'number' because this value differs from the item gave by useDrag's Sidebar
+
+		// if (
+		// 	item.type === DRAG_FIELD_TYPE &&
+		// 	typeof item.pageIndex !== 'number'
+		// ) {
+		// 	dispatch({
+		// 		payload: {item, monitor, sourceItem},
+		// 		type: EVENT_TYPES.FIELD_DROP,
+		// 	});
+		// }
+		
+		dispatch({
+			payload: {
+				sourceFieldName: item.data.fieldName,
+				sourceFieldPage: item.pageIndex,
+				targetFieldName: sourceItem.fieldName,
+				targetIndexes: {
+					columnIndex: sourceItem.columnIndex,
+					pageIndex: sourceItem.pageIndex,
+					rowIndex: sourceItem.rowIndex,
+				},
+				targetParentFieldName: sourceItem.parentField.fieldName,
+			},
+			type: EVENT_TYPES.FIELD_MOVED,
+		});
+	};
 
 	if (editable && column.fields.length === 0 && activePage === pageIndex) {
 		return (
@@ -66,6 +105,24 @@ export const Column = ({
 	const isFieldSet = hasFieldSet(firstField);
 	const isFieldSelected =
 		firstField.fieldName === activeId || firstField.fieldName === hoveredId;
+
+	const {canDrop, drop, overTarget} = useDrop(
+		{
+			columnIndex: index,
+			fieldName: firstField.fieldName,
+			origin: DND_ORIGIN_TYPE.FIELD,
+			pageIndex,
+			parentField,
+			rowIndex,
+		},
+		handleDrop
+	);
+
+	const {drag} = useDrag({
+		item: firstField,
+		pageIndex,
+		type: DRAG_FIELD_TYPE,
+	});
 
 	const addr = {
 		'data-ddm-field-column': index,
@@ -93,6 +150,7 @@ export const Column = ({
 						!rootParentField.ddmStructureId,
 					hovered: editable && firstField.fieldName === hoveredId,
 					selected: editable && firstField.fieldName === activeId,
+					'target-droppable': canDrop,
 					'target-over targetOver':
 						!rootParentField.ddmStructureId && overTarget,
 				})}
@@ -126,11 +184,7 @@ export const Column = ({
 					className={classNames('ddm-drag', {
 						'py-0': isFieldSetOrGroup,
 					})}
-					ref={
-						allowNestedFields && !rootParentField.ddmStructureId
-							? drop
-							: undefined
-					}
+					ref={drag(drop(ref))}
 				>
 					{column.fields.map((field, index) =>
 						children({field, index})
@@ -163,12 +217,55 @@ export const Page = ({
 	invalidFormMessage,
 	pageIndex,
 }) => {
-	const {canDrop, drop, overTarget} = useDrop({
-		columnIndex: 0,
-		origin: DND_ORIGIN_TYPE.EMPTY,
-		pageIndex,
-		rowIndex: 0,
-	});
+	const dispatch = useForm();
+
+	const handleDrop = ({item, monitor, sourceItem}) => {
+
+		// if (allowNestedFields && !rootParentField.ddmStructureId) {
+		// 	return;
+		// }
+
+		// source vem do item
+		// target vem do destructuring do useDrop
+
+		// Used by DataLayoutBuilder's Sidebar for handling drop action
+		// typeof item.pageIndex !== 'number' because this value differs from the item gave by useDrag's Sidebar
+
+		// if (
+		// 	item.type === DRAG_FIELD_TYPE &&
+		// 	typeof item.pageIndex !== 'number'
+		// ) {
+		// 	dispatch({
+		// 		payload: {item, monitor, sourceItem},
+		// 		type: EVENT_TYPES.FIELD_DROP,
+		// 	});
+		// }
+		
+		dispatch({
+			payload: {
+				sourceFieldName: item.data.fieldName,
+				sourceFieldPage: item.pageIndex,
+				targetFieldName: sourceItem.fieldName,
+				targetIndexes: {
+					columnIndex: sourceItem.columnIndex,
+					pageIndex: sourceItem.pageIndex,
+					rowIndex: sourceItem.rowIndex,
+				},
+				targetParentFieldName: sourceItem.parentField.fieldName,
+			},
+			type: EVENT_TYPES.FIELD_MOVED,
+		});
+	};
+
+	const {canDrop, drop, overTarget} = useDrop(
+		{
+			columnIndex: 0,
+			origin: DND_ORIGIN_TYPE.EMPTY,
+			pageIndex,
+			rowIndex: 0,
+		},
+		handleDrop
+	);
 
 	return (
 		<DefaultVariant.Page

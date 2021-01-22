@@ -16,7 +16,9 @@ import ClayLayout from '@clayui/layout';
 import classnames from 'classnames';
 import React, {useContext} from 'react';
 
+import {EVENT_TYPES} from '../actions/eventTypes.es';
 import {DND_ORIGIN_TYPE, useDrop} from '../hooks/useDrop.es';
+import {useForm} from '../hooks/useForm.es';
 import {ParentFieldContext} from './Field/ParentFieldContext.es';
 
 export const Placeholder = ({
@@ -27,13 +29,58 @@ export const Placeholder = ({
 	size,
 }) => {
 	const parentField = useContext(ParentFieldContext);
-	const {drop, overTarget} = useDrop({
-		columnIndex: columnIndex ?? 0,
-		origin: DND_ORIGIN_TYPE.EMPTY,
-		pageIndex,
-		parentField,
-		rowIndex,
-	});
+	const dispatch = useForm();
+
+	const handleDrop = ({item, monitor, sourceItem}) => {
+
+		// if (allowNestedFields && !rootParentField.ddmStructureId) {
+		// 	return;
+		// }
+
+		// source vem do item
+		// target vem do destructuring do useDrop
+
+		// Used by DataLayoutBuilder's Sidebar for handling drop action
+		// typeof item.pageIndex !== 'number' because this value differs from the item gave by useDrag's Sidebar
+
+		// if (
+		// 	item.type === DRAG_FIELD_TYPE &&
+		// 	typeof item.pageIndex !== 'number'
+		// ) {
+		// 	dispatch({
+		// 		payload: {item, monitor, sourceItem},
+		// 		type: EVENT_TYPES.FIELD_DROP,
+		// 	});
+		// }
+		
+		dispatch({
+			payload: {
+				sourceFieldName: item.data.fieldName,
+				sourceFieldPage: item.pageIndex,
+				targetFieldName: sourceItem.fieldName,
+				targetIndexes: {
+					columnIndex: sourceItem.columnIndex,
+					pageIndex: sourceItem.pageIndex,
+					rowIndex: sourceItem.rowIndex,
+				},
+				targetParentFieldName: sourceItem.parentField.fieldName,
+			},
+			type: EVENT_TYPES.FIELD_MOVED,
+		});
+	};
+
+	// We cannot pass `fieldName` due to `firstField` it's
+	// not defined when rendering the Placeholder component
+	const {drop, overTarget} = useDrop(
+		{
+			columnIndex: columnIndex ?? 0,
+			origin: DND_ORIGIN_TYPE.EMPTY,
+			pageIndex,
+			parentField,
+			rowIndex,
+		},
+		handleDrop
+	);
 
 	const Content = (
 		<ClayLayout.Col

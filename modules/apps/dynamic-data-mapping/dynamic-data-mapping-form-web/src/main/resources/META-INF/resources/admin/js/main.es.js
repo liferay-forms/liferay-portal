@@ -722,7 +722,6 @@ class Form extends Component {
 
 	_createFormBuilder() {
 		const composeList = [
-			withMoveableFields,
 			withMultiplePages,
 			withResizeableColumns,
 		];

@@ -12,7 +12,18 @@
  * details.
  */
 
-export const DRAG_DATA_DEFINITION_FIELD = 'dataDefinitionField';
-// Field from Sidebar
-export const DRAG_FIELD_TYPE = 'fieldType';
-export const DRAG_FIELDSET = 'fieldset';
+import {useDrag as useDndDrag} from 'react-dnd';
+
+export const useDrag = ({item, pageIndex, type}) => {
+	const [, drag] = useDndDrag({
+		item: {
+			data: item,
+			pageIndex,
+			type,
+		},
+	});
+
+	return {
+		drag,
+	};
+};

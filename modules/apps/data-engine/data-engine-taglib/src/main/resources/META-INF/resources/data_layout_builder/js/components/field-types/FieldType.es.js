@@ -35,7 +35,7 @@ const ICONS = {
 	select: 'list',
 };
 
-export default (props) => {
+const FieldType = (props) => {
 	const {
 		actions,
 		active,
@@ -185,3 +185,7 @@ export default (props) => {
 		</ClayLayout.ContentRow>
 	);
 };
+
+FieldType.displayName = 'FieldType';
+
+export default FieldType;

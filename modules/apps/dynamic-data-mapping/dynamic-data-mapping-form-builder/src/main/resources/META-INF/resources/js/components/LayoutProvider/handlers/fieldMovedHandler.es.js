@@ -113,7 +113,7 @@ export default (props, state, event) => {
 	const visitor = new PagesVisitor(addedState.pages);
 
 	const pages = visitor.mapFields((field) => {
-		if (field.type != 'grid' && field.rows) {
+		if (field.type !== 'grid' && field.rows) {
 			return updateField(
 				props,
 				field,

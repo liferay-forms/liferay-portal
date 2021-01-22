@@ -14,12 +14,16 @@
 
 import {useDrop as useDndDrop} from 'react-dnd';
 
-import {EVENT_TYPES} from '../actions/eventTypes.es';
-import {useForm} from '../hooks/useForm.es';
 import {usePage} from './usePage.es';
 
+// TODO - IMPORT FROM DATA-ENGINE-TAGLIB
+
+export const DRAG_FIELD_TYPE = 'fieldType';
+export const DRAG_FIELDSET = 'fieldset';
+export const DRAG_DATA_DEFINITION_FIELD = 'dataDefinitionField';
+
 const defaultSpec = {
-	accept: [],
+	accept: [DRAG_FIELD_TYPE, DRAG_FIELDSET, DRAG_DATA_DEFINITION_FIELD],
 };
 
 export const DND_ORIGIN_TYPE = {
@@ -27,23 +31,27 @@ export const DND_ORIGIN_TYPE = {
 	FIELD: 'field',
 };
 
-export const useDrop = (sourceItem) => {
+export const useDrop = (sourceItem, onDrop) => {
 	const {dnd} = usePage();
-	const dispatch = useForm();
-
 	const spec = dnd ?? defaultSpec;
 
 	const [{canDrop, overTarget}, drop] = useDndDrop({
 		...spec,
 		collect: (monitor) => ({
 			canDrop: monitor.canDrop(),
-			overTarget: monitor.isOver(),
+			overTarget: monitor.isOver({shallow: true}),
 		}),
-		drop: (item, monitor) =>
-			dispatch({
-				payload: {item, monitor, sourceItem},
-				type: EVENT_TYPES.FIELD_DROP,
-			}),
+		drop: (item, monitor) => {
+			if (!item || !item.data || monitor.didDrop()) {
+				return;
+			}
+
+			if (onDrop) {
+				return onDrop({item, monitor, sourceItem});
+			}
+
+			throw new Error('onDrop callback is not defined');
+		},
 	});
 
 	return {
