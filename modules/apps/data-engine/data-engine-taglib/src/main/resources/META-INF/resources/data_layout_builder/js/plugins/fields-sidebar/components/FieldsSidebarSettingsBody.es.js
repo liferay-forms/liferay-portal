@@ -22,7 +22,6 @@ import {
 import React, {useContext, useEffect, useMemo, useState} from 'react';
 
 import AppContext from '../../../AppContext.es';
-import DataLayoutBuilderContext from '../../../data-layout-builder/DataLayoutBuilderContext.es';
 import {getFilteredSettingsContext} from '../../../utils/settingsForm.es';
 
 function getSettingsContext(
@@ -160,6 +159,7 @@ export default function ({
 					activePage,
 					builderRules: dataRules,
 					defaultLanguageId,
+					displayable: true,
 					editable: true,
 					editingLanguageId,
 					spritemap,

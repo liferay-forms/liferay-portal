@@ -120,6 +120,7 @@ export const FieldsSidebar = ({
 	fieldTypes,
 	focusedCustomObjectField,
 	focusedField,
+	getFieldSet,
 	hasFocusedCustomObjectField,
 	onClick,
 	onDoubleClick,
@@ -170,6 +171,7 @@ export const FieldsSidebar = ({
 					<FieldsSidebarBody
 						allowFieldSets={config.allowFieldSets}
 						fieldTypes={fieldTypes}
+						getFieldSet={getFieldSet}
 						keywords={keywords}
 						onDoubleClick={onDoubleClick}
 						setKeywords={setKeywords}

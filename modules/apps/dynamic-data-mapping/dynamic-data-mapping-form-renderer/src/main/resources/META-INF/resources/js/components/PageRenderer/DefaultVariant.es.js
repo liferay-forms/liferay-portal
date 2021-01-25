@@ -120,7 +120,7 @@ export const Page = ({
 			</span>
 		)}
 
-		{activePage === pageIndex && Header}
+		{Header}
 
 		{children}
 	</div>

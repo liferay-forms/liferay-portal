@@ -33,49 +33,49 @@ export const getDropHandler = ({dataDefinition, dataLayoutBuilder}) => {
 		}
 
 		switch (type) {
-			case DRAG_FIELD_TYPE: {
-				if (
-					parentField &&
-					parentField.nestedFields &&
-					parentField.type !== 'fieldset'
-				) {
-					throw new Error(
-						Liferay.Language.get(
-							'you-cannot-drop-new-fields-to-a-deprecated-field-group'
-						)
-					);
-				}
+			// case DRAG_FIELD_TYPE: {
+			// 	if (
+			// 		parentField &&
+			// 		parentField.nestedFields &&
+			// 		parentField.type !== 'fieldset'
+			// 	) {
+			// 		throw new Error(
+			// 			Liferay.Language.get(
+			// 				'you-cannot-drop-new-fields-to-a-deprecated-field-group'
+			// 			)
+			// 		);
+			// 	}
 
-				const payload = dropLayoutBuilderField({
-					dataLayoutBuilder,
-					fieldName,
-					fieldTypeName: data.name,
-					indexes,
-					parentFieldName: parentField?.fieldName,
-				});
+			// 	const payload = dropLayoutBuilderField({
+			// 		dataLayoutBuilder,
+			// 		fieldName,
+			// 		fieldTypeName: data.name,
+			// 		indexes,
+			// 		parentFieldName: parentField?.fieldName,
+			// 	});
 
-				dataLayoutBuilder.dispatch(
-					origin === 'empty' ? 'fieldAdded' : 'sectionAdded',
-					payload
-				);
-				break;
-			}
-			case DRAG_DATA_DEFINITION_FIELD: {
-				const payload = dropCustomObjectField({
-					dataDefinition,
-					dataDefinitionFieldName: data.name,
-					dataLayoutBuilder,
-					fieldName,
-					indexes,
-					parentFieldName: parentField?.fieldName,
-				});
+			// 	dataLayoutBuilder.dispatch(
+			// 		origin === 'empty' ? 'fieldAdded' : 'sectionAdded',
+			// 		payload
+			// 	);
+			// 	break;
+			// }
+			// case DRAG_DATA_DEFINITION_FIELD: {
+			// 	const payload = dropCustomObjectField({
+			// 		dataDefinition,
+			// 		dataDefinitionFieldName: data.name,
+			// 		dataLayoutBuilder,
+			// 		fieldName,
+			// 		indexes,
+			// 		parentFieldName: parentField?.fieldName,
+			// 	});
 
-				dataLayoutBuilder.dispatch(
-					origin === 'empty' ? 'fieldAdded' : 'sectionAdded',
-					payload
-				);
-				break;
-			}
+			// 	dataLayoutBuilder.dispatch(
+			// 		origin === 'empty' ? 'fieldAdded' : 'sectionAdded',
+			// 		payload
+			// 	);
+			// 	break;
+			// }
 			case DRAG_FIELDSET:
 				dataLayoutBuilder.dispatch(
 					'fieldSetAdded',

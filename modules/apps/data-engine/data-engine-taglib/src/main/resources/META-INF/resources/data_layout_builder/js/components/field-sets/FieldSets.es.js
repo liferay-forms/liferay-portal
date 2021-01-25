@@ -27,6 +27,7 @@ import {getPluralMessage} from './../../utils/lang.es';
 import FieldSetModal from './FieldSetModal.es';
 import useDeleteFieldSet from './actions/useDeleteFieldSet.es';
 import usePropagateFieldSet from './actions/usePropagateFieldSet.es';
+import {normalizeDataLayoutRows} from '../../utils/normalizers.es';
 
 function getSortedFieldsets(fieldsets) {
 	return fieldsets.sort((a, b) => {
@@ -129,6 +130,12 @@ export default function FieldSets({keywords}) {
 	const deleteFieldSet = useDeleteFieldSet({dataLayoutBuilder});
 	const propagateFieldSet = usePropagateFieldSet();
 
+	const getFieldSet = (fieldSet) => {
+		return dataLayoutBuilder.getFieldSetDDMForm(fieldSet, {
+			availableLanguageIds: dataDefinition.availableLanguageIds
+		})
+	}
+
 	const onDoubleClick = ({fieldSet: {name: fieldName}, fieldSet}) => {
 		const {activePage, pages} = dataLayoutBuilder.getStore();
 
@@ -164,6 +171,11 @@ export default function FieldSets({keywords}) {
 								fieldSet.defaultLanguageId,
 								fieldSet.name
 							);
+
+							const dataLayoutPages = (
+								fieldSet.defaultDataLayout ||
+								dataLayoutBuilder.getDefaultDataLayout(fieldSet)
+							).dataLayoutPages;
 
 							return (
 								<FieldType
@@ -215,11 +227,12 @@ export default function FieldSets({keywords}) {
 										)
 									}
 									dragType={DRAG_FIELDSET}
-									fieldSet={fieldSet}
+									fieldSet={getFieldSet(fieldSet)}
 									icon="forms"
 									key={fieldSet.dataDefinitionKey}
 									label={fieldSetName}
 									onDoubleClick={onDoubleClick}
+									rows={fieldSet.id && normalizeDataLayoutRows(dataLayoutPages)}
 								/>
 							);
 						})}

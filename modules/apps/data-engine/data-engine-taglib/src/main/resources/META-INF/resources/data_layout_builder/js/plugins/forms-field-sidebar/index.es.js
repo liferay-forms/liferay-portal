@@ -14,7 +14,7 @@
 
 import React from 'react';
 
-import { Component } from '../PluginContext.es';
+import {Component} from '../PluginContext.es';
 import {FormsFieldSidebar} from './components/FormsFieldSidebar.es';
 
 /**
@@ -22,18 +22,18 @@ import {FormsFieldSidebar} from './components/FormsFieldSidebar.es';
  */
 
 export default class {
-    constructor({ app, panel }) {
-        this.Component = Component(app);
-        this.title = panel.label;
-    }
+	constructor({app, panel}) {
+		this.Component = Component(app);
+		this.title = panel.label;
+	}
 
-    renderSidebar() {
-        const { Component } = this;
+	renderSidebar() {
+		const {Component} = this;
 
-        return (
-            <Component>
-                <FormsFieldSidebar title={this.title} />
-            </Component>
-        );
-    }
+		return (
+			<Component>
+				<FormsFieldSidebar title={this.title} />
+			</Component>
+		);
+	}
 }
