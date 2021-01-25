@@ -83,7 +83,7 @@ class FormBuilderBase extends Component {
 	render() {
 		const {
 			activePage,
-			allowNestedFields,
+			allowNestedFields = true,
 			dnd,
 			editingLanguageId,
 			fieldActions,

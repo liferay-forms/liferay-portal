@@ -49,7 +49,7 @@ export const Column = ({
 
 	const dispatch = useForm();
 
-	const handleDrop = ({item, monitor, sourceItem}) => {
+	const handleDrop = ({item, sourceItem}) => {
 		Boolean(allowNestedFields);
 
 		// if (allowNestedFields && !rootParentField.ddmStructureId) {
@@ -71,7 +71,7 @@ export const Column = ({
 		// 		type: EVENT_TYPES.FIELD_DROP,
 		// 	});
 		// }
-		
+
 		dispatch({
 			payload: {
 				sourceFieldName: item.data.fieldName,
@@ -88,6 +88,26 @@ export const Column = ({
 		});
 	};
 
+	const firstField = column.fields[0];
+
+	const {canDrop, drop, overTarget} = useDrop(
+		{
+			columnIndex: index,
+			fieldName: firstField?.fieldName,
+			origin: DND_ORIGIN_TYPE.FIELD,
+			pageIndex,
+			parentField,
+			rowIndex,
+		},
+		handleDrop
+	);
+
+	const {drag} = useDrag({
+		item: firstField ?? undefined,
+		pageIndex,
+		type: DRAG_FIELD_TYPE,
+	});
+
 	if (editable && column.fields.length === 0 && activePage === pageIndex) {
 		return (
 			<Placeholder
@@ -99,30 +119,12 @@ export const Column = ({
 		);
 	}
 
-	const firstField = column.fields[0];
 	const rootParentField = parentField.root ?? firstField;
 	const isFieldSetOrGroup = firstField.type === 'fieldset';
 	const isFieldSet = hasFieldSet(firstField);
+	const isParentFieldSet = hasFieldSet(rootParentField);
 	const isFieldSelected =
 		firstField.fieldName === activeId || firstField.fieldName === hoveredId;
-
-	const {canDrop, drop, overTarget} = useDrop(
-		{
-			columnIndex: index,
-			fieldName: firstField.fieldName,
-			origin: DND_ORIGIN_TYPE.FIELD,
-			pageIndex,
-			parentField,
-			rowIndex,
-		},
-		handleDrop
-	);
-
-	const {drag} = useDrag({
-		item: firstField,
-		pageIndex,
-		type: DRAG_FIELD_TYPE,
-	});
 
 	const addr = {
 		'data-ddm-field-column': index,
@@ -184,7 +186,11 @@ export const Column = ({
 					className={classNames('ddm-drag', {
 						'py-0': isFieldSetOrGroup,
 					})}
-					ref={drag(drop(ref))}
+					ref={
+						!allowNestedFields && isParentFieldSet && rootParentField.ddmStructureId
+							? undefined
+							: drag(drop(ref))
+					}
 				>
 					{column.fields.map((field, index) =>
 						children({field, index})
@@ -219,7 +225,7 @@ export const Page = ({
 }) => {
 	const dispatch = useForm();
 
-	const handleDrop = ({item, monitor, sourceItem}) => {
+	const handleDrop = ({item, sourceItem}) => {
 
 		// if (allowNestedFields && !rootParentField.ddmStructureId) {
 		// 	return;
@@ -240,7 +246,7 @@ export const Page = ({
 		// 		type: EVENT_TYPES.FIELD_DROP,
 		// 	});
 		// }
-		
+
 		dispatch({
 			payload: {
 				sourceFieldName: item.data.fieldName,
@@ -262,6 +268,7 @@ export const Page = ({
 			columnIndex: 0,
 			origin: DND_ORIGIN_TYPE.EMPTY,
 			pageIndex,
+			parentField: {},
 			rowIndex: 0,
 		},
 		handleDrop

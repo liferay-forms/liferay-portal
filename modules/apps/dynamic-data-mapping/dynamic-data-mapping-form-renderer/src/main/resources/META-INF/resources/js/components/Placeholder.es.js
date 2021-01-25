@@ -31,7 +31,7 @@ export const Placeholder = ({
 	const parentField = useContext(ParentFieldContext);
 	const dispatch = useForm();
 
-	const handleDrop = ({item, monitor, sourceItem}) => {
+	const handleDrop = ({item, sourceItem}) => {
 
 		// if (allowNestedFields && !rootParentField.ddmStructureId) {
 		// 	return;
@@ -52,7 +52,7 @@ export const Placeholder = ({
 		// 		type: EVENT_TYPES.FIELD_DROP,
 		// 	});
 		// }
-		
+
 		dispatch({
 			payload: {
 				sourceFieldName: item.data.fieldName,
@@ -71,6 +71,7 @@ export const Placeholder = ({
 
 	// We cannot pass `fieldName` due to `firstField` it's
 	// not defined when rendering the Placeholder component
+
 	const {drop, overTarget} = useDrop(
 		{
 			columnIndex: columnIndex ?? 0,
