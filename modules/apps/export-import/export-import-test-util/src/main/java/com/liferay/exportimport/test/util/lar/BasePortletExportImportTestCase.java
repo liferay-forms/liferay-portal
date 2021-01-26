@@ -390,7 +390,7 @@ public abstract class BasePortletExportImportTestCase
 						TYPE_PUBLISH_PORTLET_LOCAL,
 					settingsMap);
 
-		ExportImportThreadLocal.setPortletStagingInProcess(true);
+		ExportImportThreadLocal.setPortletExportInProcess(true);
 
 		ExportImportLifecycleManagerUtil.fireExportImportLifecycleEvent(
 			ExportImportLifecycleConstants.
@@ -447,7 +447,7 @@ public abstract class BasePortletExportImportTestCase
 				exportImportConfiguration);
 		}
 		finally {
-			ExportImportThreadLocal.setPortletStagingInProcess(false);
+			ExportImportThreadLocal.setPortletExportInProcess(false);
 		}
 	}
 

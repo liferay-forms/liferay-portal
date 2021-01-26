@@ -126,12 +126,16 @@ public class DDMFormExportImportPortletPreferencesProcessor
 			return portletPreferences;
 		}
 
+		if (ExportImportThreadLocal.isStagingInProcess() &&
+			!(group.isStagingGroup() || group.isCompanyStagingGroup())) {
+
+			return portletPreferences;
+		}
+
 		DDMFormInstance ddmFormInstance =
 			_ddmFormInstanceLocalService.fetchFormInstance(formInstanceId);
 
-		if ((ddmFormInstance != null) &&
-			(group.isStagingGroup() || group.isCompanyStagingGroup())) {
-
+		if (ddmFormInstance != null) {
 			StagedModelDataHandlerUtil.exportReferenceStagedModel(
 				portletDataContext, portletId, ddmFormInstance);
 		}
