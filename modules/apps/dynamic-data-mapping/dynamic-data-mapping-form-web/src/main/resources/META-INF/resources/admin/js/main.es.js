@@ -13,7 +13,10 @@
  */
 
 import ClayModal from 'clay-modal';
-import {FormsRuleBuilder} from 'data-engine-taglib';
+import {
+	FormsRuleBuilder,
+	ReactMultiPanelSidebarAdapter,
+} from 'data-engine-taglib';
 import {FormBuilderBase} from 'dynamic-data-mapping-form-builder/js/components/FormBuilder/FormBuilder.es';
 import withEditablePageHeader from 'dynamic-data-mapping-form-builder/js/components/FormBuilder/withEditablePageHeader.es';
 import withMoveableFields from 'dynamic-data-mapping-form-builder/js/components/FormBuilder/withMoveableFields.es';
@@ -454,7 +457,9 @@ class Form extends Component {
 	}
 
 	openSidebar() {
-		this.refs.sidebar.open();
+		if (!this.props.newReactForm) {
+			this.refs.sidebar.open();
+		}
 	}
 
 	preventCopyAndPaste(event, limit) {
@@ -497,6 +502,7 @@ class Form extends Component {
 			groupId,
 			localizedName,
 			namespace,
+			newReactForm,
 			published,
 			redirectURL,
 			rolesURL,
@@ -505,7 +511,7 @@ class Form extends Component {
 			spritemap,
 			view,
 		} = this.props;
-		const {saveButtonLabel} = this.state;
+		const {pages, saveButtonLabel, sidebarOpen} = this.state;
 
 		const storeProps = {
 			...this.props,
@@ -554,26 +560,46 @@ class Form extends Component {
 						portletNamespace={namespace}
 						ref="formBuilder"
 						rules={formattedRules}
+						sidebarOpen={sidebarOpen}
 						spritemap={spritemap}
 						view={view}
 						visible={
 							!this.isShowRuleBuilder() && !this.isShowReport()
 						}
 					/>
-
-					<Sidebar
-						defaultLanguageId={defaultLanguageId}
-						editingLanguageId={editingLanguageId}
-						fieldSetDefinitionURL={fieldSetDefinitionURL}
-						fieldSets={fieldSets}
-						fieldTypes={fieldTypes}
-						portletNamespace={namespace}
-						ref="sidebar"
-						spritemap={spritemap}
-						visible={
-							!this.isShowRuleBuilder() && !this.isShowReport()
-						}
-					/>
+					{newReactForm ? (
+						<ReactMultiPanelSidebarAdapter
+							dataProviderInstanceParameterSettingsURL={
+								dataProviderInstanceParameterSettingsURL
+							}
+							dataProviderInstancesURL={dataProviderInstancesURL}
+							defaultLanguageId={defaultLanguageId}
+							editingLanguageId={editingLanguageId}
+							fieldTypes={fieldTypes}
+							functionsMetadata={functionsMetadata}
+							functionsURL={functionsURL}
+							onChange={(sidebarOpen) =>
+								this.setState({sidebarOpen})
+							}
+							pages={pages}
+							rules={rules}
+						/>
+					) : (
+						<Sidebar
+							defaultLanguageId={defaultLanguageId}
+							editingLanguageId={editingLanguageId}
+							fieldSetDefinitionURL={fieldSetDefinitionURL}
+							fieldSets={fieldSets}
+							fieldTypes={fieldTypes}
+							portletNamespace={namespace}
+							ref="sidebar"
+							spritemap={spritemap}
+							visible={
+								!this.isShowRuleBuilder() &&
+								!this.isShowReport()
+							}
+						/>
+					)}
 				</LayoutProviderTag>
 
 				<div class="container container-fluid-1280">
@@ -1367,6 +1393,15 @@ Form.PROPS = {
 	namespace: Config.string().required(),
 
 	/**
+	 * @default undefined
+	 * @instance
+	 * @memberof Form
+	 * @type {bool}
+	 */
+
+	newReactForm: Config.bool().value(true),
+
+	/**
 	 * Whether the form is published or not
 	 * @default false
 	 * @instance
@@ -1489,6 +1524,15 @@ Form.STATE = {
 	 */
 
 	saveButtonLabel: Config.string().valueFn('_saveButtonLabelValueFn'),
+
+	/**
+	 * @default true
+	 * @instance
+	 * @memberof Form
+	 * @type {!bool}
+	 */
+
+	sidebarOpen: Config.bool().value(true),
 };
 
 export default Form;
