@@ -12,6 +12,8 @@
  * details.
  */
 
+import './FieldType.scss';
+
 import ClayIcon from '@clayui/icon';
 import ClayLayout from '@clayui/layout';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
@@ -35,7 +37,7 @@ const ICONS = {
 	select: 'list',
 };
 
-export default (props) => {
+const FieldType = (props) => {
 	const {
 		actions,
 		active,
@@ -182,3 +184,6 @@ export default (props) => {
 		</ClayLayout.ContentRow>
 	);
 };
+
+FieldType.displayName = 'FieldType';
+export default FieldType;
