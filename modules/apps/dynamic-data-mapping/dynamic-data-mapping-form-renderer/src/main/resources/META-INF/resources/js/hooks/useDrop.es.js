@@ -12,7 +12,9 @@
  * details.
  */
 
+import {DataConverter} from 'data-engine-taglib';
 import {useDrop as useDndDrop} from 'react-dnd';
+
 import {EVENT_TYPES} from '../actions/eventTypes.es';
 import {useForm} from '../hooks/useForm.es';
 import {usePage} from './usePage.es';
@@ -49,12 +51,8 @@ export const useDrop = ({
 			if (monitor.didDrop()) {
 				return;
 			}
-
-			const dataDefinitionField = item.data.getDataDefinitionField(
-				item.data.name
-			);
-			const {label} = dataDefinitionField;
-
+			let dataDefinitionField;
+			let label;
 			switch (item.type) {
 				case 'fieldType':
 					dispatch({
@@ -78,6 +76,10 @@ export const useDrop = ({
 					});
 					break;
 				case 'dataDefinitionField':
+					dataDefinitionField = item.data.getDataDefinitionField(
+						item.data.name
+					);
+					const {customProperties: {fieldType, label}, editingLanguageId, settingsContext} = dataDefinitionField;
 					dispatch({
 						payload: {
 							data: {
@@ -87,15 +89,12 @@ export const useDrop = ({
 							fieldType: {
 								...fieldTypesMetadata.find(({name}) => {
 									return (
-										name === dataDefinitionField.fieldType
+										name === fieldType
 									);
 								}),
 								editable: true,
-								label:
-									label[item.data.editingLanguageId] ||
-									label[themeDisplay.getLanguageId()],
-								settingsContext:
-									dataDefinitionField.settingsContext,
+								label: label[editingLanguageId ?? themeDisplay.getLanguageId()],
+								settingsContext,
 							},
 							indexes: {columnIndex, pageIndex, rowIndex},
 							skipFieldNameGeneration: true,
@@ -114,12 +113,18 @@ export const useDrop = ({
 							defaultLanguageId:
 								item.data.fieldSet.defaultLanguageId,
 							fieldName,
-							fieldSet: item.data.fieldSet,
+							// fieldSet: item.data.fieldSet, // TODO: remove it
 							indexes: {columnIndex, pageIndex, rowIndex},
 							parentFieldName: parentField?.fieldName,
 							properties: item.data.properties,
-							rows: item.data.rows,
+							// rows: item.data.rows, // TODO: remove it
 							useFieldName: item.data.useFieldName,
+							...DataConverter.getDataDefinitionFieldSet({
+								fieldSet: item.data.fieldSet,
+								// TODO: missing params
+								// editingLanguageId,
+								// fieldTypes,
+							}),
 						},
 						type: EVENT_TYPES.FIELD_SET_ADD,
 					});
