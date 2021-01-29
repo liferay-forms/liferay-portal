@@ -18,6 +18,7 @@ import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluator;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormTemplateContextFactory;
+import com.liferay.dynamic.data.mapping.form.renderer.internal.configuration.DDMFormSidebarConfigurationActivator;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
@@ -26,12 +27,14 @@ import com.liferay.dynamic.data.mapping.service.DDMDataProviderInstanceService;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLayoutLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.util.DDM;
+import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.AggregateResourceBundle;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -164,6 +167,17 @@ public class DDMFormTemplateContextFactoryImpl
 		templateContext.put(
 			"evaluatorURL", getDDMFormContextProviderServletURL());
 		templateContext.put("groupId", ddmFormRenderingContext.getGroupId());
+
+		boolean dataEngineSidebar =
+			_ddmFormSidebarConfigurationActivator.isDataEngineSidebar();
+
+		templateContext.put("dataEngineSidebar", dataEngineSidebar);
+
+		if (dataEngineSidebar) {
+			templateContext.put(
+				"sidebarPanels", _getSidebarPanels(resourceBundle));
+		}
+
 		templateContext.put(
 			"pages", getPages(ddmForm, ddmFormLayout, ddmFormRenderingContext));
 		templateContext.put(
@@ -343,6 +357,28 @@ public class DDMFormTemplateContextFactoryImpl
 		);
 	}
 
+	private Map<String, Object> _getSidebarPanels(
+		ResourceBundle resourceBundle) {
+
+		return LinkedHashMapBuilder.<String, Object>put(
+			"fields",
+			HashMapBuilder.<String, Object>put(
+				"icon", "forms"
+			).put(
+				"isLink", false
+			).put(
+				"label", LanguageUtil.get(resourceBundle, "builder")
+			).put(
+				"pluginEntryPoint",
+				_npmResolver.resolveModuleName(
+					"data-engine-taglib/data_layout_builder/js/plugins" +
+						"/forms-field-sidebar/index.es")
+			).put(
+				"sidebarPanelId", "fields"
+			).build()
+		).build();
+	}
+
 	@Reference
 	private DDM _ddm;
 
@@ -360,6 +396,10 @@ public class DDMFormTemplateContextFactoryImpl
 	@Reference
 	private DDMFormFieldTypeServicesTracker _ddmFormFieldTypeServicesTracker;
 
+	@Reference
+	private DDMFormSidebarConfigurationActivator
+		_ddmFormSidebarConfigurationActivator;
+
 	private final DDMFormTemplateContextFactoryHelper
 		_ddmFormTemplateContextFactoryHelper =
 			new DDMFormTemplateContextFactoryHelper();
@@ -372,6 +412,9 @@ public class DDMFormTemplateContextFactoryImpl
 
 	@Reference
 	private JSONFactory _jsonFactory;
+
+	@Reference
+	private NPMResolver _npmResolver;
 
 	@Reference
 	private Portal _portal;
