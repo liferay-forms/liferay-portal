@@ -16,7 +16,6 @@ import ClayModal from 'clay-modal';
 import {FormsRuleBuilder} from 'data-engine-taglib';
 import {FormBuilderBase} from 'dynamic-data-mapping-form-builder/js/components/FormBuilder/FormBuilder.es';
 import withEditablePageHeader from 'dynamic-data-mapping-form-builder/js/components/FormBuilder/withEditablePageHeader.es';
-import withMoveableFields from 'dynamic-data-mapping-form-builder/js/components/FormBuilder/withMoveableFields.es';
 import withMultiplePages from 'dynamic-data-mapping-form-builder/js/components/FormBuilder/withMultiplePages.es';
 import withResizeableColumns from 'dynamic-data-mapping-form-builder/js/components/FormBuilder/withResizeableColumns.es';
 import LayoutProvider from 'dynamic-data-mapping-form-builder/js/components/LayoutProvider/LayoutProvider.es';
@@ -454,7 +453,9 @@ class Form extends Component {
 	}
 
 	openSidebar() {
-		this.refs.sidebar.open();
+		if (!this.props.newReactForm) {
+			this.refs.sidebar.open();
+		}
 	}
 
 	preventCopyAndPaste(event, limit) {
@@ -554,20 +555,39 @@ class Form extends Component {
 							!this.isShowRuleBuilder() && !this.isShowReport()
 						}
 					/>
-
-					<Sidebar
-						defaultLanguageId={defaultLanguageId}
-						editingLanguageId={editingLanguageId}
-						fieldSetDefinitionURL={fieldSetDefinitionURL}
-						fieldSets={fieldSets}
-						fieldTypes={fieldTypes}
-						portletNamespace={namespace}
-						ref="sidebar"
-						spritemap={spritemap}
-						visible={
-							!this.isShowRuleBuilder() && !this.isShowReport()
-						}
-					/>
+					{newReactForm ? (
+						<ReactMultiPanelSidebarAdapter
+							dataProviderInstanceParameterSettingsURL={
+								dataProviderInstanceParameterSettingsURL
+							}
+							dataProviderInstancesURL={dataProviderInstancesURL}
+							defaultLanguageId={defaultLanguageId}
+							editingLanguageId={editingLanguageId}
+							fieldTypes={fieldTypes}
+							functionsMetadata={functionsMetadata}
+							functionsURL={functionsURL}
+							onChange={(sidebarOpen) =>
+								this.setState({sidebarOpen})
+							}
+							pages={pages}
+							rules={rules}
+						/>
+					) : (
+						<Sidebar
+							defaultLanguageId={defaultLanguageId}
+							editingLanguageId={editingLanguageId}
+							fieldSetDefinitionURL={fieldSetDefinitionURL}
+							fieldSets={fieldSets}
+							fieldTypes={fieldTypes}
+							portletNamespace={namespace}
+							ref="sidebar"
+							spritemap={spritemap}
+							visible={
+								!this.isShowRuleBuilder() &&
+								!this.isShowReport()
+							}
+						/>
+					)}
 				</LayoutProviderTag>
 
 				<div class="container container-fluid-1280">
@@ -721,11 +741,7 @@ class Form extends Component {
 	}
 
 	_createFormBuilder() {
-		const composeList = [
-			withMoveableFields,
-			withMultiplePages,
-			withResizeableColumns,
-		];
+		const composeList = [withMultiplePages, withResizeableColumns];
 
 		if (this.isFormBuilderView()) {
 			composeList.push(withEditablePageHeader);
