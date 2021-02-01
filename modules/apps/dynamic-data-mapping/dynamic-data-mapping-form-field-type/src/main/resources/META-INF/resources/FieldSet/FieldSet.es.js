@@ -73,8 +73,8 @@ const FieldSet = ({
 	const {page} = usePage();
 	const repeatedIndex = useMemo(() => getRepeatedIndex(name), [name]);
 
-	const findFieldInsidePage = (fields) =>
-		fields?.find((field) => {
+	const findFieldInsidePage = (fields = []) =>
+		fields.find((field) => {
 			if (!belongsToFieldSet) {
 				belongsToFieldSet = !!field.ddmStructureId;
 			}

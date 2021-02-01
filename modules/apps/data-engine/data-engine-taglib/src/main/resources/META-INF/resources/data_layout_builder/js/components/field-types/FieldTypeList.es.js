@@ -35,6 +35,7 @@ export default ({
 	deleteLabel,
 	emptyState,
 	fieldTypes,
+	getDataDefinitionField,
 	keywords,
 	onClick,
 	onDelete,
@@ -77,6 +78,7 @@ export default ({
 						...fieldType,
 						className: `${fieldType.className} field-type-header`,
 					}}
+					getDataDefinitionField={getDataDefinitionField}
 					onClick={(props) => {
 						setExpanded(!expanded);
 
@@ -107,6 +109,7 @@ export default ({
 											...nestedFieldType,
 											disabled: fieldType.disabled,
 										}}
+										getDataDefinitionField={getDataDefinitionField}
 										key={`${nestedFieldType.name}_${index}`}
 									/>
 								)
@@ -121,6 +124,7 @@ export default ({
 			<FieldTypeWrapper
 				deleteLabel={deleteLabel}
 				fieldType={fieldType}
+				getDataDefinitionField={getDataDefinitionField}
 				key={index}
 				onClick={handleOnClick}
 				onDelete={onDelete}
