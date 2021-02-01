@@ -12,38 +12,210 @@
  * details.
  */
 
+import {DragTypes} from 'data-engine-taglib';
 import {useDrop as useDndDrop} from 'react-dnd';
 
 import {EVENT_TYPES} from '../actions/eventTypes.es';
 import {useForm} from '../hooks/useForm.es';
 import {usePage} from './usePage.es';
 
-const defaultSpec = {
-	accept: [],
-};
-
 export const DND_ORIGIN_TYPE = {
 	EMPTY: 'empty',
 	FIELD: 'field',
 };
 
-export const useDrop = (sourceItem) => {
-	const {dnd} = usePage();
+export const useDrop = ({
+	columnIndex,
+	fieldName,
+	origin,
+	pageIndex,
+	parentField,
+	rowIndex,
+}) => {
+	const {fieldTypesMetadata} = usePage();
 	const dispatch = useForm();
 
-	const spec = dnd ?? defaultSpec;
-
 	const [{canDrop, overTarget}, drop] = useDndDrop({
-		...spec,
+		accept: [
+			DragTypes.DRAG_FIELD_TYPE_ADD,
+			DragTypes.DRAG_DATA_DEFINITION_FIELD_MOVE,
+			DragTypes.DRAG_FIELD_TYPE_MOVE,
+			DragTypes.DRAG_FIELDSET_MOVE,
+			DragTypes.DRAG_DATA_DEFINITION_FIELD_ADD,
+			DragTypes.DRAG_FIELD_TYPE_ADD,
+			DragTypes.DRAG_FIELDSET_ADD,
+		],
 		collect: (monitor) => ({
 			canDrop: monitor.canDrop(),
-			overTarget: monitor.isOver(),
+			overTarget: monitor.isOver({shallow: true}),
 		}),
-		drop: (item, monitor) =>
-			dispatch({
-				payload: {item, monitor, sourceItem},
-				type: EVENT_TYPES.FIELD_DROP,
-			}),
+		drop: (item, monitor) => {
+			if (monitor.didDrop()) {
+				return;
+			}
+
+			// const dataDefinitionField = item.data.getDataDefinitionField(
+			// 	item.data.name
+			// );
+
+			// const {label} = dataDefinitionField;
+
+			switch (item.type) {
+				case DragTypes.DRAG_FIELD_TYPE_ADD:
+					dispatch({
+						payload: {
+							data: {
+								fieldName,
+								parentFieldName: parentField?.fieldName,
+							},
+							fieldType: {
+								...fieldTypesMetadata.find(({name}) => {
+									return name === item.data.name;
+								}),
+								editable: true,
+							},
+							indexes: {columnIndex, pageIndex, rowIndex},
+						},
+						type:
+							origin === DND_ORIGIN_TYPE.EMPTY
+								? EVENT_TYPES.FIELD_ADD
+								: EVENT_TYPES.SECTION_ADD,
+					});
+					break;
+
+				case DragTypes.DRAG_FIELD_TYPE_MOVE:
+					dispatch({
+						payload: {
+							sourceFieldName: item.data.fieldName,
+							sourceFieldPage: item.pageIndex,
+							targetFieldName: fieldName,
+							targetIndexes: {
+								columnIndex,
+								pageIndex,
+								rowIndex,
+							},
+							targetParentFieldName: parentField.fieldName,
+						},
+						type: EVENT_TYPES.FIELD_MOVED,
+					});
+					break;
+				case DragTypes.DRAG_FIELDSET_ADD:
+					dispatch({
+						payload: {
+							availableLanguageIds:
+								item.data.fieldSet.availableLanguageIds,
+							defaultLanguageId:
+								item.data.fieldSet.defaultLanguageId,
+							fieldName,
+							fieldSet: item.data.fieldSet,
+							indexes: {columnIndex, pageIndex, rowIndex},
+							parentFieldName: parentField?.fieldName,
+							properties: item.data.properties,
+							rows: item.data.rows,
+							useFieldName: item.data.useFieldName,
+						},
+						type: EVENT_TYPES.FIELD_SET_ADD,
+					});
+					break;
+				case DragTypes.DRAG_FIELDSET_MOVE:
+					dispatch({
+						payload: {
+							sourceFieldName: item.data.fieldName,
+							sourceFieldPage: item.pageIndex,
+							targetFieldName: fieldName,
+							targetIndexes: {
+								columnIndex,
+								pageIndex,
+								rowIndex,
+							},
+							targetParentFieldName: parentField.fieldName,
+						},
+						type: EVENT_TYPES.FIELD_SET_ADD,
+					});
+					break;
+
+				// case DragTypes.DRAG_DATA_DEFINITION_FIELD_ADD:
+				// 	dispatch({
+				// 		payload: {
+				// 			data: {
+				// 				fieldName,
+				// 				parentFieldName: parentField?.fieldName,
+				// 			},
+				// 			fieldType: {
+				// 				...fieldTypesMetadata.find(({name}) => {
+				// 					return (
+				// 						name === dataDefinitionField.fieldType
+				// 					);
+				// 				}),
+				// 				editable: true,
+				// 				label:
+				// 					label[item.data.editingLanguageId] ||
+				// 					label[themeDisplay.getLanguageId()],
+				// 				settingsContext:
+				// 					dataDefinitionField.settingsContext,
+				// 			},
+				// 			indexes: {columnIndex, pageIndex, rowIndex},
+				// 			skipFieldNameGeneration: true,
+				// 		},
+				// 		type:
+				// 			origin === DND_ORIGIN_TYPE.EMPTY
+				// 				? EVENT_TYPES.FIELD_ADD
+				// 				: EVENT_TYPES.SECTION_ADD,
+				// 	});
+				// 	break;
+
+				// case DragTypes.DRAG_DATA_DEFINITION_FIELD_MOVE:
+				// 	dispatch({
+				// 		payload: {
+				// 			data: {
+				// 				fieldName,
+				// 				parentFieldName: parentField?.fieldName,
+				// 			},
+				// 			fieldType: {
+				// 				...fieldTypesMetadata.find(({name}) => {
+				// 					return (
+				// 						name === dataDefinitionField.fieldType
+				// 					);
+				// 				}),
+				// 				editable: true,
+				// 				label:
+				// 					label[item.data.editingLanguageId] ||
+				// 					label[themeDisplay.getLanguageId()],
+				// 				settingsContext:
+				// 					dataDefinitionField.settingsContext,
+				// 			},
+				// 			indexes: {columnIndex, pageIndex, rowIndex},
+				// 			skipFieldNameGeneration: true,
+				// 		},
+				// 		type:
+				// 			origin === DND_ORIGIN_TYPE.EMPTY
+				// 				? EVENT_TYPES.FIELD_ADD
+				// 				: EVENT_TYPES.SECTION_ADD,
+				// 	});
+				// 	break;
+
+				default:
+					break;
+			}
+
+			// dispatch({
+			// 	payload: {
+			// 		data: {
+			// 			fieldName,
+			// 			parentFieldName: parentField?.fieldName ,
+			// 		},
+			// 		fieldType: {
+			// 			...fieldTypesMetadata.find(({name}) => {
+			// 				return name === item.data.name;
+			// 			}),
+			// 			editable: true,
+			// 		},
+			// 		indexes: {columnIndex, pageIndex, rowIndex},
+			// 	},
+			// 	type: origin === DND_ORIGIN_TYPE.EMPTY ? EVENT_TYPES.FIELD_ADD : EVENT_TYPES.SECTION_ADD,
+			// });
+
+		},
 	});
 
 	return {

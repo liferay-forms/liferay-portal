@@ -24,6 +24,7 @@ const PUBLIC_EVENTS = {
 	FIELD_EVALUATION_ERROR: 'evaluationError',
 	FIELD_FOCUS: 'fieldFocused',
 	FIELD_HOVERED: 'fieldHovered',
+	FIELD_MOVED: 'fieldMoved',
 	FIELD_REMOVED: 'fieldRemoved',
 	FIELD_REPEATED: 'fieldRepeated',
 	PAGE_ADDED: 'pageAdded',

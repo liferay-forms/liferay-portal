@@ -20,11 +20,6 @@ import FormBuilderWithLayoutProvider, {
 import {PagesVisitor} from 'dynamic-data-mapping-form-renderer';
 import React from 'react';
 
-import {
-	DRAG_DATA_DEFINITION_FIELD,
-	DRAG_FIELDSET,
-	DRAG_FIELD_TYPE,
-} from '../drag-and-drop/dragTypes.es';
 import {getDataDefinitionField} from '../utils/dataDefinition.es';
 import generateDataDefinitionFieldName from '../utils/generateDataDefinitionFieldName.es';
 import {
@@ -68,13 +63,6 @@ class DataLayoutBuilder extends React.Component {
 				},
 				formBuilderProps: {
 					allowNestedFields: config.allowNestedFields,
-					dnd: {
-						accept: [
-							DRAG_DATA_DEFINITION_FIELD,
-							DRAG_FIELDSET,
-							DRAG_FIELD_TYPE,
-						],
-					},
 					fieldTypes,
 					portletNamespace,
 					ref: 'builder',

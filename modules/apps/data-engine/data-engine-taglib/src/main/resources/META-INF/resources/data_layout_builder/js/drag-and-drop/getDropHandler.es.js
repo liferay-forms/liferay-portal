@@ -17,11 +17,7 @@ import {
 	dropFieldSet,
 	dropLayoutBuilderField,
 } from '../actions.es';
-import {
-	DRAG_DATA_DEFINITION_FIELD,
-	DRAG_FIELDSET,
-	DRAG_FIELD_TYPE,
-} from './dragTypes.es';
+import {DRAG_FIELDSET_ADD} from './dragTypes.es';
 
 export const getDropHandler = ({dataDefinition, dataLayoutBuilder}) => {
 	return ({item, monitor, sourceItem}) => {
@@ -45,6 +41,19 @@ export const getDropHandler = ({dataDefinition, dataLayoutBuilder}) => {
 						)
 					);
 				}
+
+			// case DRAG_FIELD_TYPE: {
+			// 	if (
+			// 		parentField &&
+			// 		parentField.nestedFields &&
+			// 		parentField.type !== 'fieldset'
+			// 	) {
+			// 		throw new Error(
+			// 			Liferay.Language.get(
+			// 				'you-cannot-drop-new-fields-to-a-deprecated-field-group'
+			// 			)
+			// 		);
+			// 	}
 
 				const payload = dropLayoutBuilderField({
 					dataLayoutBuilder,
@@ -77,6 +86,14 @@ export const getDropHandler = ({dataDefinition, dataLayoutBuilder}) => {
 				break;
 			}
 			case DRAG_FIELDSET:
+			// 	dataLayoutBuilder.dispatch(
+			// 		origin === 'empty' ? 'fieldAdded' : 'sectionAdded',
+			// 		payload
+			// 	);
+			// 	break;
+			// }
+
+			case DRAG_FIELDSET_ADD:
 				dataLayoutBuilder.dispatch(
 					'fieldSetAdded',
 					dropFieldSet({

@@ -102,7 +102,6 @@ export const Column = forwardRef(
 Column.displayName = 'DefaultVariant.Column';
 
 export const Page = ({
-	activePage,
 	children,
 	forceAriaUpdate,
 	header: Header,
