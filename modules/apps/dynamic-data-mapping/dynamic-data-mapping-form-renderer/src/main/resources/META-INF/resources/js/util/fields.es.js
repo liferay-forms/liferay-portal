@@ -51,4 +51,4 @@ export function normalizeFieldName(fieldName) {
 }
 
 export const hasFieldSet = (field) =>
-	field && field.type === 'fieldset' && field.ddmStructureId;
+	!!(field && field.type === 'fieldset' && field.ddmStructureId);
