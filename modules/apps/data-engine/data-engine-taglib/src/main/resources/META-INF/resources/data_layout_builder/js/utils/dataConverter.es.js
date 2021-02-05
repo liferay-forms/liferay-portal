@@ -12,20 +12,39 @@
  * details.
  */
 
-import { PagesVisitor } from 'dynamic-data-mapping-form-renderer';
-import { normalizeDataLayout, normalizeDataLayoutRows } from './normalizers.es';
+import {FieldSupport} from 'dynamic-data-mapping-form-builder';
+import {PagesVisitor} from 'dynamic-data-mapping-form-renderer';
 
-export function getDataDefinitionFieldSet({editingLanguageId, fieldSet, fieldTypes,}) {
+import {getDataDefinitionField as getDataDefinitionFieldUtils} from './dataDefinition.es';
+import {
+	normalizeDataDefinition,
+	normalizeDataLayout,
+	normalizeDataLayoutRows,
+} from './normalizers.es';
+
+export function getDataDefinitionFieldSet({
+	allowInvalidAvailableLocalesForProperty,
+	availableLanguageIds,
+	defaultLanguageId,
+	editingLanguageId,
+	fieldSet,
+	fieldTypes,
+}) {
 	const dataLayoutPages = (
 		fieldSet.defaultDataLayout || getDefaultDataLayout(fieldSet)
 	).dataLayoutPages;
 
+	if (!availableLanguageIds.includes(defaultLanguageId)) {
+		availableLanguageIds = [...availableLanguageIds, defaultLanguageId];
+	}
+
 	return {
+
 		// Converts a FieldSet from data-engine to form-builder definition
+
 		fieldSet: getFieldSetDDMForm({
-			dataDefinition: {
-				availableLanguageIds,
-			},
+			allowInvalidAvailableLocalesForProperty,
+			availableLanguageIds,
 			editingLanguageId,
 			fieldSet,
 			fieldTypes,
@@ -39,9 +58,13 @@ export function getDataDefinitionFieldSet({editingLanguageId, fieldSet, fieldTyp
 export function getDDMFormField({
 	dataDefinition,
 	editingLanguageId = themeDisplay.getDefaultLanguageId(),
+	fieldName,
 	fieldTypes,
 }) {
-	const dataDefinitionField = getDataDefinitionField({field});
+	const dataDefinitionField = getDataDefinitionFieldUtils(
+		dataDefinition,
+		fieldName
+	);
 
 	if (dataDefinitionField.fieldType === 'ddm-text-html') {
 		dataDefinitionField.fieldType = 'rich_text';
@@ -76,7 +99,13 @@ export function getDDMFormField({
 
 	if (ddmFormField.nestedFields.length > 0) {
 		ddmFormField.nestedFields = ddmFormField.nestedFields.map(
-			() => getDDMFormField(dataDefinition)
+			(nestedField) =>
+				getDDMFormField({
+					dataDefinition,
+					editingLanguageId,
+					fieldName: nestedField.name,
+					fieldTypes,
+				})
 		);
 	}
 
@@ -96,21 +125,22 @@ export function getDDMFormFieldSettingsContext(
 	editingLanguageId = themeDisplay.getDefaultLanguageId(),
 	defaultLanguageId = themeDisplay.getDefaultLanguageId()
 ) {
-    const {settingsContext} = fieldTypes.find(({name}) => {
-        return name === dataDefinitionField.fieldType;
-    });
-    const visitor = new PagesVisitor(settingsContext.pages);
+	const settingsContext = _getSettingsContext(
+		dataDefinitionField.fieldType,
+		fieldTypes
+	);
+	const visitor = new PagesVisitor(settingsContext.pages);
 
-    return {
-        ...settingsContext,
-        pages: visitor.mapFields((field) => {
-            const {fieldName, localizable} = field;
-            const propertyValue = _getDataDefinitionFieldPropertyValue(
-                dataDefinitionField,
-                _fromDDMFormToDataDefinitionPropertyName(fieldName)
-            );
+	return {
+		...settingsContext,
+		pages: visitor.mapFields((field) => {
+			const {fieldName, localizable} = field;
+			const propertyValue = _getDataDefinitionFieldPropertyValue(
+				dataDefinitionField,
+				_fromDDMFormToDataDefinitionPropertyName(fieldName)
+			);
 
-            let value = propertyValue || field.value;
+			let value = propertyValue || field.value;
 
 			if (localizable && propertyValue && fieldName !== 'label') {
 				value =
@@ -118,36 +148,36 @@ export function getDDMFormFieldSettingsContext(
 					propertyValue[defaultLanguageId];
 			}
 
-            let localizedValue = {};
+			let localizedValue = {};
 
-            if (localizable) {
-                localizedValue = {...propertyValue};
-            }
+			if (localizable) {
+				localizedValue = {...propertyValue};
+			}
 
-            if (Object.keys(localizedValue).length == 0) {
-                localizedValue = {[defaultLanguageId]: ''};
-            }
+			if (Object.keys(localizedValue).length == 0) {
+				localizedValue = {[defaultLanguageId]: ''};
+			}
 
-            let options = field.options;
+			let options = field.options;
 
-            if (
-                field.type === 'select' &&
-                field.fieldName === 'predefinedValue'
-            ) {
-                options =
-                    dataDefinitionField.customProperties.options[
-                        editingLanguageId
-                    ];
-            }
+			if (
+				field.type === 'select' &&
+				field.fieldName === 'predefinedValue'
+			) {
+				options =
+					dataDefinitionField.customProperties.options[
+						editingLanguageId
+					];
+			}
 
-            return {
-                ...field,
-                localizedValue,
-                options,
-                value,
-            };
-        }),
-    };
+			return {
+				...field,
+				localizedValue,
+				options,
+				value,
+			};
+		}),
+	};
 }
 
 export function getDefaultDataLayout(dataDefinition) {
@@ -169,11 +199,11 @@ export function getDefaultDataLayout(dataDefinition) {
 	};
 }
 
-export function getDataDefinitionField({field}) {
-	const  {nestedFields, settingsContext} = field;
-	const nestedDataDefinitionFields = nestedFields?.map((field) =>
-		getDataDefinitionField({field})
-	) ?? [];
+export function getDataDefinitionField({nestedFields, settingsContext}) {
+	const nestedDataDefinitionFields =
+		nestedFields?.map(
+			(field) => getDataDefinitionField(field) // {nestedFields, settingsContext}
+		) ?? [];
 	const fieldConfig = {
 		customProperties: {},
 		nestedDataDefinitionFields,
@@ -181,13 +211,7 @@ export function getDataDefinitionField({field}) {
 	const settingsContextVisitor = new PagesVisitor(settingsContext.pages);
 
 	settingsContextVisitor.mapFields(
-		({
-			dataType,
-			fieldName,
-			localizable,
-			localizedValue = {},
-			value,
-		}) => {
+		({dataType, fieldName, localizable, localizedValue = {}, value}) => {
 			if (fieldName === 'predefinedValue') {
 				fieldName = 'defaultValue';
 			}
@@ -210,9 +234,7 @@ export function getDataDefinitionField({field}) {
 				);
 
 				if (_isCustomProperty(fieldName)) {
-					fieldConfig.customProperties[
-						fieldName
-					] = formattedValue;
+					fieldConfig.customProperties[fieldName] = formattedValue;
 				}
 				else {
 					fieldConfig[fieldName] = formattedValue;
@@ -227,7 +249,7 @@ export function getDataDefinitionField({field}) {
 
 export function getFieldSetDDMForm({
 	allowInvalidAvailableLocalesForProperty,
-	dataDefinition,
+	availableLanguageIds,
 	editingLanguageId,
 	fieldSet,
 	fieldTypes,
@@ -235,14 +257,8 @@ export function getFieldSetDDMForm({
 	const {defaultDataLayout, defaultLanguageId} = fieldSet;
 
 	let newDataDefinition = {
+		availableLanguageIds,
 		...fieldSet,
-		availableLanguageIds: [
-			...new Set([
-				...dataDefinition.availableLanguageIds,
-				...fieldSet.availableLanguageIds,
-			]),
-		],
-		defaultLanguageId: fieldSet.defaultLanguageId,
 	};
 
 	if (!allowInvalidAvailableLocalesForProperty) {
@@ -277,7 +293,6 @@ function _fromDDMFormToDataDefinitionPropertyName(propertyName) {
 
 	return map[propertyName] || propertyName;
 }
-
 
 function _getDataDefinitionFieldFormattedValue(dataType, value) {
 	if (dataType === 'json' && typeof value !== 'string') {
@@ -317,10 +332,11 @@ function _getDDMForm({
 			rows: dataLayoutPage.dataLayoutRows.map((dataLayoutRow) => ({
 				columns: dataLayoutRow.dataLayoutColumns.map(
 					({columnSize, fieldNames}) => ({
-						fields: fieldNames.map(() =>
+						fields: fieldNames.map((fieldName) =>
 							getDDMFormField({
 								dataDefinition,
 								editingLanguageId,
+								fieldName,
 								fieldTypes,
 							})
 						),
@@ -333,8 +349,16 @@ function _getDDMForm({
 	};
 }
 
+function _getSettingsContext(fieldType, fieldTypes) {
+	const {settingsContext} = fieldTypes.find(({name}) => {
+		return name === fieldType;
+	});
+
+	return settingsContext;
+}
+
 function _isCustomProperty(name) {
-	return [
+	return ![
 		'defaultValue',
 		'fieldType',
 		'indexable',

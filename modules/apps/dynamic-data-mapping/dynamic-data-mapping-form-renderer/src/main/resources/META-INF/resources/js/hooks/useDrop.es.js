@@ -36,7 +36,12 @@ export const useDrop = ({
 	parentField,
 	rowIndex,
 }) => {
-	const {dnd, fieldTypesMetadata} = usePage();
+	const {
+		allowInvalidAvailableLocalesForProperty,
+		dnd,
+		editingLanguageId: testEditingLanguageId,
+		fieldTypesMetadata
+	} = usePage(); // TODO: change testEditingLanguageId name
 	const dispatch = useForm();
 
 	const spec = dnd ?? defaultSpec;
@@ -79,7 +84,7 @@ export const useDrop = ({
 					dataDefinitionField = item.data.getDataDefinitionField(
 						item.data.name
 					);
-					const {customProperties: {fieldType, label}, editingLanguageId, settingsContext} = dataDefinitionField;
+					const {editingLanguageId, fieldType, label, settingsContext} = dataDefinitionField;
 					dispatch({
 						payload: {
 							data: {
@@ -106,24 +111,31 @@ export const useDrop = ({
 					});
 					break;
 				case 'fieldset':
+					const {
+						fieldSet,
+						fieldSet: {availableLanguageIds, defaultLanguageId},
+						properties,
+						rows,
+						useFieldName
+					} = item.data;
 					dispatch({
 						payload: {
-							availableLanguageIds:
-								item.data.fieldSet.availableLanguageIds,
-							defaultLanguageId:
-								item.data.fieldSet.defaultLanguageId,
+							availableLanguageIds,
+							defaultLanguageId,
 							fieldName,
-							// fieldSet: item.data.fieldSet, // TODO: remove it
+							// fieldSet,
 							indexes: {columnIndex, pageIndex, rowIndex},
 							parentFieldName: parentField?.fieldName,
-							properties: item.data.properties,
-							// rows: item.data.rows, // TODO: remove it
-							useFieldName: item.data.useFieldName,
+							properties,
+							// rows: fieldSet.pages[0].rows,
+							useFieldName,
 							...DataConverter.getDataDefinitionFieldSet({
-								fieldSet: item.data.fieldSet,
-								// TODO: missing params
-								// editingLanguageId,
-								// fieldTypes,
+								allowInvalidAvailableLocalesForProperty,
+								availableLanguageIds,
+								defaultLanguageId,
+								editingLanguageId: testEditingLanguageId,
+								fieldSet,
+								fieldTypes: fieldTypesMetadata
 							}),
 						},
 						type: EVENT_TYPES.FIELD_SET_ADD,

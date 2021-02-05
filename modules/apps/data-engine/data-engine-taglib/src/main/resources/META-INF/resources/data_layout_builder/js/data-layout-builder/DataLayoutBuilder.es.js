@@ -15,19 +15,20 @@
 import ClayLayout from '@clayui/layout';
 import classNames from 'classnames';
 import FormBuilderWithLayoutProvider from 'dynamic-data-mapping-form-builder';
-import { PagesVisitor } from 'dynamic-data-mapping-form-renderer';
+import {PagesVisitor} from 'dynamic-data-mapping-form-renderer';
 import React from 'react';
+
 import {
 	DRAG_DATA_DEFINITION_FIELD,
 	DRAG_FIELDSET,
-	DRAG_FIELD_TYPE
+	DRAG_FIELD_TYPE,
 } from '../drag-and-drop/dragTypes.es';
 import {
-	getDataDefinitionField,
 	getDDMFormField,
 	getDDMFormFieldSettingsContext,
+	getDataDefinitionField,
 	getDefaultDataLayout,
-	getFieldSetDDMForm
+	getFieldSetDDMForm,
 } from '../utils/dataConverter.es';
 import generateDataDefinitionFieldName from '../utils/generateDataDefinitionFieldName.es';
 import EventEmitter from './EventEmitter.es';
@@ -48,7 +49,8 @@ class DataLayoutBuilder extends React.Component {
 
 	componentDidMount() {
 		const {
-			config,
+			config: {allowMultiplePages, allowNestedFields, allowSuccessPage},
+			contentTypeConfig: {allowInvalidAvailableLocalesForProperty},
 			dataLayoutBuilderId,
 			fieldTypes,
 			portletNamespace,
@@ -66,7 +68,8 @@ class DataLayoutBuilder extends React.Component {
 					},
 				},
 				formBuilderProps: {
-					allowNestedFields: config.allowNestedFields,
+					allowInvalidAvailableLocalesForProperty,
+					allowNestedFields,
 					dnd: {
 						accept: [
 							DRAG_DATA_DEFINITION_FIELD,
@@ -80,8 +83,8 @@ class DataLayoutBuilder extends React.Component {
 				},
 				layoutProviderProps: {
 					...this.props,
-					allowMultiplePages: config.allowMultiplePages,
-					allowSuccessPage: config.allowSuccessPage,
+					allowMultiplePages,
+					allowSuccessPage,
 					context,
 					defaultLanguageId:
 						context.defaultLanguageId ||
@@ -171,7 +174,7 @@ class DataLayoutBuilder extends React.Component {
 		const pagesVisitor = new PagesVisitor(pages);
 
 		const newPages = pagesVisitor.mapFields((field) => {
-			fieldDefinitions.push(getDataDefinitionField({field}));
+			fieldDefinitions.push(getDataDefinitionField(field));
 
 			return field.fieldName;
 		}, false);
@@ -222,11 +225,11 @@ class DataLayoutBuilder extends React.Component {
 	}
 
 	getDataDefinitionField(field) {
-		return getDataDefinitionField({field});
+		return getDataDefinitionField(field);
 	}
 
 	/**
-	 * @deprecated in favor of DataConverter.getDDMFormFieldSettingsContext()
+	 * @deprecated As of Athanasius (7.3.x), replaced by DataConverter.getDDMFormFieldSettingsContext()
 	 */
 	getDDMFormFieldSettingsContext(dataDefinitionField, defaultLanguageId) {
 		const {fieldTypes} = this.props;
@@ -241,9 +244,9 @@ class DataLayoutBuilder extends React.Component {
 	}
 
 	/**
-	 * @deprecated in favor of DataConverter.getDDMFormField()
+	 * @deprecated As of Athanasius (7.3.x), replaced by DataConverter.getDDMFormField()
 	 */
-	getDDMFormField(dataDefinition) {
+	getDDMFormField(dataDefinition, fieldName) {
 		const {
 			editingLanguageId = themeDisplay.getDefaultLanguageId(),
 			fieldTypes,
@@ -252,21 +255,22 @@ class DataLayoutBuilder extends React.Component {
 		return getDDMFormField({
 			dataDefinition,
 			editingLanguageId,
+			fieldName,
 			fieldTypes,
 		});
 	}
 
 	/**
-	 * @deprecated in favor of DataConverter.getDefaultDataLayout()
+	 * @deprecated As of Athanasius (7.3.x), replaced by DataConverter.getDefaultDataLayout()
 	 */
 	getDefaultDataLayout(dataDefinition) {
 		return getDefaultDataLayout(dataDefinition);
 	}
 
 	/**
-	 * @deprecated in favor of DataConverter.getFieldSetDDMForm()
+	 * @deprecated As of Athanasius (7.3.x), replaced by DataConverter.getFieldSetDDMForm()
 	 */
-	getFieldSetDDMForm(fieldSet, dataDefinition) {
+	getFieldSetDDMForm({availableLanguageIds, fieldSet}) {
 		const {
 			contentTypeConfig: {allowInvalidAvailableLocalesForProperty},
 			editingLanguageId,
@@ -275,7 +279,7 @@ class DataLayoutBuilder extends React.Component {
 
 		return getFieldSetDDMForm({
 			allowInvalidAvailableLocalesForProperty,
-			dataDefinition,
+			availableLanguageIds,
 			editingLanguageId,
 			fieldSet,
 			fieldTypes,
@@ -557,5 +561,4 @@ class DataLayoutBuilder extends React.Component {
 }
 
 export default DataLayoutBuilder;
-export { DataLayoutBuilder };
-
+export {DataLayoutBuilder};

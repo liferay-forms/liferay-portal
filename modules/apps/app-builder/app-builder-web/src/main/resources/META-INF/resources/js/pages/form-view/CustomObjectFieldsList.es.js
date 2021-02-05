@@ -164,7 +164,7 @@ const getFieldTypes = ({
 	};
 
 	fields.forEach((fieldType) => {
-		setDefinitionField(fieldType.customProperties);
+		setDefinitionField(fieldType);
 	});
 
 	return [customDataDefinitionFields, nativeDataDefinitionFields];
@@ -275,12 +275,12 @@ const CustomObjectFieldsList = ({keywords}) => {
 
 	const getDataDefinitionField = (fieldName) => {
 		const dataDefinitionField = dataDefinition.dataDefinitionFields.find(
-			(field) => field.fieldReference === fieldName
+			(field) => field.name === fieldName
 		);
 
 		// TODO: convert params to a single object
 		const settingsContext = DataConverter.getDDMFormFieldSettingsContext(
-			dataDefinitionField.customProperties,
+			dataDefinitionField,
 			fieldTypes,
 			editingLanguageId,
 		);

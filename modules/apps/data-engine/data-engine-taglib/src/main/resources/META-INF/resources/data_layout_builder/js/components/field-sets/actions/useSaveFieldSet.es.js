@@ -104,7 +104,7 @@ export default ({
 									value: dataDefinitionFields.map(({name}) =>
 										dataLayoutBuilder.getDDMFormField(
 											childrenState.dataDefinition,
-											name // TODO: Remove unused param
+											name
 										)
 									),
 								},
