@@ -417,7 +417,7 @@ class DataLayoutBuilder extends React.Component {
 		if (Object.keys(focusedField).length) {
 			layoutProvider
 				.getEvents()
-				.fieldClicked({activePage: 0, ...focusedField});
+				.fieldClicked({activePage: 0, field: focusedField});
 		}
 	}
 
