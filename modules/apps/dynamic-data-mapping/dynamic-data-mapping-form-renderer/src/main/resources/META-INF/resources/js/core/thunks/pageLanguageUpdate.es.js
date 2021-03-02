@@ -15,8 +15,8 @@
 import {PagesVisitor} from 'dynamic-data-mapping-form-renderer';
 import {fetch} from 'frontend-js-web';
 
+import setDataRecord from '../../util/setDataRecord.es';
 import {EVENT_TYPES} from '../actions/eventTypes.es';
-import setDataRecord from '../util/setDataRecord.es';
 
 const formatFieldValue = ({dataType, symbols, value}) => {
 	if (dataType === 'double') {
