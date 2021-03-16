@@ -51,6 +51,8 @@ const RichText = ({
 		}
 	}, [editingLanguageId, editorRef]);
 
+	const editorName = name.replaceAll('$', '_');
+
 	return (
 		<FieldBase
 			{...otherProps}
@@ -64,7 +66,7 @@ const RichText = ({
 				contents={currentValue}
 				data={currentValue}
 				editorConfig={editorConfig}
-				name={name}
+				name={editorName}
 				onChange={(data) => {
 					if (currentValue !== data) {
 						setCurrentValue(data);
