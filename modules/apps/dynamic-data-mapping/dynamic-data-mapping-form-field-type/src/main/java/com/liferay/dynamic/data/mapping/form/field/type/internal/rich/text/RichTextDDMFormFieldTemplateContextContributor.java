@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.editor.configuration.EditorConfigurationFactory
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.Map;
@@ -81,7 +82,8 @@ public class RichTextDDMFormFieldTemplateContextContributor
 					"liferay-ui:input-editor:allowBrowseDocuments", true
 				).put(
 					"liferay-ui:input-editor:name",
-					ddmFormFieldRenderingContext.getName()
+					StringUtil.replace(
+						ddmFormFieldRenderingContext.getName(), '$', '_')
 				).build(),
 				(ThemeDisplay)httpServletRequest.getAttribute(
 					WebKeys.THEME_DISPLAY),
