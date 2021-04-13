@@ -12,42 +12,24 @@
  * details.
  */
 
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import DataLayoutBuilderInstanceProvider from './DataLayoutBuilderInstanceProvider.es';
 import FormViewContext from './FormViewContext.es';
 
 export default ({children, dataLayoutBuilder}) => {
-	const {
-		appContext: [appState],
-	} = dataLayoutBuilder.props;
-	const [state, setState] = useState(appState);
+	const [state, setState] = useState(dataLayoutBuilder.current.state);
 
 	useEffect(() => {
-		const callback = () => {
-			const {
-				appContext: [state],
-			} = dataLayoutBuilder.props;
-			setState(state);
-		};
-
-		dataLayoutBuilder.on('contextUpdated', callback);
-
-		return () =>
-			dataLayoutBuilder.removeEventListener('contextUpdated', callback);
+		dataLayoutBuilder.onReference(() => {
+			setState(dataLayoutBuilder.current.state);
+		});
 	}, [dataLayoutBuilder]);
 
-	const dispatch = useCallback(
-		(action) => {
-			const [, dispatch] = dataLayoutBuilder.props.appContext;
-
-			dispatch?.(action);
-		},
-		[dataLayoutBuilder]
-	);
-
 	return (
-		<FormViewContext.Provider value={[state, dispatch]}>
+		<FormViewContext.Provider
+			value={[state, dataLayoutBuilder.current.dispatch]}
+		>
 			<DataLayoutBuilderInstanceProvider
 				dataLayoutBuilder={dataLayoutBuilder}
 			>
