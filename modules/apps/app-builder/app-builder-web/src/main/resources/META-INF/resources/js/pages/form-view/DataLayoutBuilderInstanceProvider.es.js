@@ -24,20 +24,11 @@ import useDuplicateField from './useDuplicateField.es';
 import useSaveAsFieldset from './useSaveAsFieldset.es';
 
 export default ({children, dataLayoutBuilder}) => {
-	const [
-		{
-			config: {allowNestedFields},
-			dataDefinition,
-			dataLayout,
-			editingLanguageId,
-			focusedCustomObjectField,
-			focusedField,
-			hoveredField,
-		},
-		dispatch,
-	] = useContext(FormViewContext);
-	const {defaultLanguageId, id: dataDefinitionLoaded} = dataDefinition;
-	const {id: dataLayoutLoaded} = dataLayout;
+	const [{focusedField, hoveredField}, dispatch] = useContext(
+		FormViewContext
+	);
+
+	const {allowNestedFields} = dataLayoutBuilder.current.config;
 
 	const deleteDefinitionField = useDeleteDefinitionField({dataLayoutBuilder});
 	const deleteDefinitionFieldModal = useDeleteDefinitionFieldModal(
@@ -47,26 +38,6 @@ export default ({children, dataLayoutBuilder}) => {
 	);
 	const duplicateField = useDuplicateField({dataLayoutBuilder});
 	const saveAsFieldset = useSaveAsFieldset({dataLayoutBuilder});
-
-	useEffect(() => {
-		dataLayoutBuilder.onEditingLanguageIdChange({
-			defaultLanguageId,
-			editingLanguageId,
-		});
-	}, [dataLayoutBuilder, defaultLanguageId, editingLanguageId]);
-
-	useEffect(() => {
-		if (Object.keys(focusedCustomObjectField).length > 0) {
-			const dataDefinitionField = focusedCustomObjectField;
-
-			dispatch({
-				payload: {dataDefinitionField},
-				type:
-					DataLayoutBuilderActions.UPDATE_FOCUSED_CUSTOM_OBJECT_FIELD,
-			});
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [dispatch, defaultLanguageId, editingLanguageId]);
 
 	useEffect(() => {
 		const duplicateAction = {
@@ -157,20 +128,9 @@ export default ({children, dataLayoutBuilder}) => {
 		});
 	}, [dispatch]);
 
-	useEffect(() => {
-		if (dataDefinitionLoaded && dataLayoutLoaded) {
-			dispatch({type: DataLayoutBuilderActions.UPDATE_PAGES});
-		}
-	}, [dispatch, dataDefinitionLoaded, dataLayoutLoaded]);
-
-	const dataLayoutBuilderDispatch = (...args) =>
-		dataLayoutBuilder.formBuilderWithLayoutProvider.refs.layoutProvider?.dispatch?.(
-			...args
-		);
-
 	return (
 		<DataLayoutBuilderContext.Provider
-			value={[dataLayoutBuilder, dataLayoutBuilderDispatch]}
+			value={[dataLayoutBuilder, dataLayoutBuilder.current.dispatch]}
 		>
 			{children}
 		</DataLayoutBuilderContext.Provider>
