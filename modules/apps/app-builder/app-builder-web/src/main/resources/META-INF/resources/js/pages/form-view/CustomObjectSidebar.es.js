@@ -39,14 +39,12 @@ import DataLayoutBuilderContext from './DataLayoutBuilderInstanceContext.es';
 import FormViewContext from './FormViewContext.es';
 
 const DropDown = () => {
-	const [
-		{
-			config: {allowNestedFields},
-			fieldTypes,
-		},
-		dispatch,
-	] = useContext(FormViewContext);
+	const [, dispatch] = useContext(FormViewContext);
+	const [dataLayoutBuilder] = useContext(DataLayoutBuilderContext);
+
 	const [active, setActive] = useState(false);
+
+	const {allowNestedFields, fieldTypes} = dataLayoutBuilder.current.config;
 
 	const onClickFieldType = (fieldTypeName) => {
 		setActive(false);
@@ -214,21 +212,17 @@ const CustomObjectSidebar = () => {
 	const [
 		{
 			dataDefinition: {dataDefinitionFields, id},
-			focusedCustomObjectField,
+			focusedField,
 		},
 		dispatch,
 	] = useContext(FormViewContext);
+
 	const [searchText, setSearchText] = useState('');
-	const [dataLayoutBuilder] = useContext(DataLayoutBuilderContext);
 	const sidebarRef = useRef();
 
 	useKeyDown(() => {
-		if (Object.keys(focusedCustomObjectField).length > 0) {
-			dispatch({
-				payload: {dataDefinitionField: {}},
-				type:
-					DataLayoutBuilderActions.UPDATE_FOCUSED_CUSTOM_OBJECT_FIELD,
-			});
+		if (Object.keys(focusedField).length > 0) {
+			dispatch({type: 'sidebar_field_blur'});
 		}
 	}, 27);
 
@@ -246,22 +240,14 @@ const CustomObjectSidebar = () => {
 					'#ddm-actionable-fields-container'
 				)
 			) {
-				dispatch({
-					payload: {dataDefinitionField: {}},
-					type:
-						DataLayoutBuilderActions.UPDATE_FOCUSED_CUSTOM_OBJECT_FIELD,
-				});
-
-				dataLayoutBuilder.formBuilderWithLayoutProvider.refs.layoutProvider?.dispatch?.(
-					'sidebarFieldBlurred'
-				);
+				dispatch({type: 'sidebar_field_blur'});
 			}
 		};
 
 		window.addEventListener('click', eventHandler);
 
 		return () => window.removeEventListener('click', eventHandler);
-	}, [dataLayoutBuilder, dispatch]);
+	}, [dispatch]);
 
 	const empty = dataDefinitionFields.length === 0;
 
