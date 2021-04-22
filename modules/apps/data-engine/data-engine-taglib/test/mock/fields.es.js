@@ -16,6 +16,7 @@ export const FIELDS = [
 	{
 		dataType: 'string',
 		fieldName: 'date',
+		fieldReference: 'date',
 		label: 'date',
 		name: 'date',
 		options: [],
@@ -28,6 +29,7 @@ export const FIELDS = [
 	{
 		dataType: 'string',
 		fieldName: 'text',
+		fieldReference: 'text',
 		label: 'text',
 		name: 'text',
 		options: [],
@@ -40,6 +42,7 @@ export const FIELDS = [
 	{
 		dataType: 'string',
 		fieldName: 'select',
+		fieldReference: 'select',
 		label: 'select',
 		name: 'select',
 		options: [],
@@ -52,6 +55,7 @@ export const FIELDS = [
 	{
 		dataType: 'string',
 		fieldName: 'grid',
+		fieldReference: 'grid',
 		label: 'grid',
 		name: 'grid',
 		options: [],
@@ -64,6 +68,7 @@ export const FIELDS = [
 	{
 		dataType: 'image',
 		fieldName: 'image',
+		fieldReference: 'image',
 		label: 'image',
 		name: 'image',
 		options: [],
@@ -76,6 +81,7 @@ export const FIELDS = [
 	{
 		dataType: 'string',
 		fieldName: 'radio',
+		fieldReference: 'radio',
 		label: 'radio',
 		name: 'radio',
 		options: [],
@@ -88,6 +94,7 @@ export const FIELDS = [
 	{
 		dataType: 'string',
 		fieldName: 'color',
+		fieldReference: 'color',
 		label: 'color',
 		name: 'color',
 		options: [],
@@ -100,6 +107,7 @@ export const FIELDS = [
 	{
 		dataType: 'string',
 		fieldName: 'rich_text',
+		fieldReference: 'rich_text',
 		label: 'rich_text',
 		name: 'rich_text',
 		options: [],
@@ -112,6 +120,7 @@ export const FIELDS = [
 	{
 		dataType: 'string',
 		fieldName: 'checkboxMultiple',
+		fieldReference: 'checkboxMultiple',
 		label: 'checkboxMultiple',
 		name: 'checkboxMultiple',
 		options: [],
@@ -124,6 +133,7 @@ export const FIELDS = [
 	{
 		dataType: 'integer',
 		fieldName: 'integer',
+		fieldReference: 'integer',
 		label: 'integer',
 		name: 'integer',
 		options: [],
@@ -136,6 +146,7 @@ export const FIELDS = [
 	{
 		dataType: 'double',
 		fieldName: 'double',
+		fieldReference: 'double',
 		label: 'double',
 		name: 'double',
 		options: [],
@@ -148,6 +159,7 @@ export const FIELDS = [
 	{
 		dataType: 'document_library',
 		fieldName: 'document_library',
+		fieldReference: 'document_library',
 		label: 'document_library',
 		name: 'document_library',
 		options: [],

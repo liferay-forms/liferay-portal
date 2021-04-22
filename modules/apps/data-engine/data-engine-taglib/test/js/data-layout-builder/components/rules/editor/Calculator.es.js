@@ -25,6 +25,7 @@ const fieldsNonRepeatable = [
 	{
 		dataType: 'integer',
 		fieldName: 'number1',
+		fieldReference: 'number1',
 		label: 'number1',
 		name: 'number1',
 		options: [],
@@ -39,6 +40,7 @@ const fields = [
 	{
 		dataType: 'integer',
 		fieldName: 'number1',
+		fieldReference: 'number1',
 		label: 'number1',
 		name: 'number1',
 		options: [],
@@ -50,6 +52,7 @@ const fields = [
 	{
 		dataType: 'integer',
 		fieldName: 'number2',
+		fieldReference: 'number2',
 		label: 'number2',
 		name: 'number2',
 		options: [],
@@ -61,6 +64,7 @@ const fields = [
 	{
 		dataType: 'integer',
 		fieldName: 'total',
+		fieldReference: 'total',
 		label: 'total',
 		name: 'total',
 		options: [],
