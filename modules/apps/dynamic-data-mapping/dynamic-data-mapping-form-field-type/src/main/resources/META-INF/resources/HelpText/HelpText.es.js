@@ -13,6 +13,7 @@
  */
 
 import ClayForm from '@clayui/form';
+import ClayButton from '@clayui/button';
 import {usePrevious} from '@liferay/frontend-js-react-web';
 import React, {useEffect, useState} from 'react';
 
@@ -23,7 +24,7 @@ import Text from '../Text/Text.es';
 import {subWords} from '../util/strings.es';
 import {getSelectedValidation, transformData} from './transform.es';
 
-const Validation = ({
+const HelpText = ({
 	dataType,
 	defaultLanguageId,
 	editingLanguageId,
@@ -53,12 +54,12 @@ const Validation = ({
 		selectedValidation: initialSelectedValidation,
 	});
 
-	const DynamicComponent =
-		selectedValidation &&
-		selectedValidation.parameterMessage &&
-		dataType === 'string'
-			? Text
-			: Numeric;
+	// const DynamicComponent =
+	// 	selectedValidation &&
+	// 	selectedValidation.parameterMessage &&
+	// 	dataType === 'string'
+	// 		? Text
+	// 		: Numeric;
 
 	const handleChange = (key, newValue) => {
 		setState((prevState) => {
@@ -72,9 +73,9 @@ const Validation = ({
 			if (newState.enableHelpText) {
 				expression = {
 					name: newState.selectedValidation.name,
-					value: subWords(newState.selectedValidation.template, {
-						name: validation.fieldName,
-					}),
+					// value: subWords(newState.selectedValidation.template, {
+					// 	name: validation.fieldName,
+					// }),
 				};
 			}
 
@@ -97,7 +98,7 @@ const Validation = ({
 		});
 	};
 
-	const transformSelectedValidation = getSelectedValidation(validations);
+	// const transformSelectedValidation = getSelectedValidation(validations);
 
 	const prevEditingLanguageId = usePrevious(editingLanguageId);
 
@@ -121,8 +122,18 @@ const Validation = ({
 		}
 	}, [defaultLanguageId, editingLanguageId, prevEditingLanguageId, value]);
 
-	const Paragraph = ({name = 'Test', text = 'Paragraph test', showLabel = false, ...otherProps}) => (
-		<FieldBase {...otherProps} name={name} text={text} showLabel={showLabel}>
+	/* const Paragraph = ({
+		name = 'Test',
+		showLabel = false,
+		text = 'Paragraph test',
+		...otherProps
+	}) => (
+		<FieldBase
+			{...otherProps}
+			name={name}
+			showLabel={showLabel}
+			text={text}
+		>
 			<div
 				className="form-group liferay-ddm-form-field-paragraph"
 				data-field-name={name}
@@ -135,6 +146,60 @@ const Validation = ({
 				/>
 			</div>
 		</FieldBase>
+	);*/
+
+	const helpText = (
+	<>		
+		<p>
+			<kbd class="c-kbd">
+				<kbd class="c-kbd c-kbd-light">9</kbd>
+				<text class="c-kbd-separator"> User must enter a numeric digit (0-9)</text>
+			</kbd>
+		</p>
+		<p>
+			<kbd class="c-kbd">
+				<kbd class="c-kbd c-kbd-light">0</kbd>
+				<text class="c-kbd-separator"> User may enter a numeric digit (0-9)</text>
+			</kbd>
+		</p>
+		<p>
+			<kbd class="c-kbd">
+				<kbd class="c-kbd c-kbd-light">ABC</kbd>
+				<text class="c-kbd-separator"> Any input mask character</text>
+			</kbd>
+		</p>
+		<p>
+			<kbd class="c-kbd">
+				<kbd class="c-kbd c-kbd-light">Space</kbd>
+				<kbd class="c-kbd c-kbd-light">-</kbd>
+				<kbd class="c-kbd c-kbd-light">/</kbd>
+				<kbd class="c-kbd c-kbd-light">:</kbd>
+				<kbd class="c-kbd c-kbd-light">,</kbd>
+				<kbd class="c-kbd c-kbd-light">.</kbd>
+				<text class="c-kbd-separator"> Separators</text>
+			</kbd>
+		</p>
+		<p>
+			<kbd class="c-kbd">
+				<kbd class="c-kbd c-kbd-light">(</kbd>
+				<kbd class="c-kbd c-kbd-light">)</kbd>
+				<kbd class="c-kbd c-kbd-light">[</kbd>
+				<kbd class="c-kbd c-kbd-light">]</kbd>
+				<kbd class="c-kbd c-kbd-light">[</kbd>
+				<kbd class="c-kbd c-kbd-light">]</kbd>
+				<text class="c-kbd-separator"> Group separators</text>
+			</kbd>
+		</p>
+		<p>
+			<kbd class="c-kbd">
+				<kbd class="c-kbd c-kbd-light">#</kbd>
+				<kbd class="c-kbd c-kbd-light">$</kbd>
+				<kbd class="c-kbd c-kbd-light">%</kbd>
+				<kbd class="c-kbd c-kbd-light">+</kbd>
+				<text class="c-kbd-separator"> Prefix and suffix symbols</text>
+			</kbd>
+		</p>
+	</>
 	);
 
 	return (
@@ -143,7 +208,7 @@ const Validation = ({
 				disabled={readOnly}
 				label={label}
 				name="enableHelpText"
-				onChange={(event, value) =>
+				onChange={(event, value) => 
 					handleChange('enableHelpText', value)
 				}
 				showAsSwitcher
@@ -152,9 +217,23 @@ const Validation = ({
 				visible={visible}
 			/>
 
-			{enableHelpText && Paragraph}
-			
-			{enableHelpText && (
+			<ClayButton
+				displayType="secondary"
+				outline="false"
+				disabled={readOnly}
+				name="enableHelpText"
+				onClick={(event, value) => 
+					handleChange('enableHelpText', value)
+				}
+				small
+				title={Liferay.Language.get('remove')}
+				type="button"
+			>show more
+			</ClayButton>
+
+			{enableHelpText && helpText}
+
+			{/*enableHelpText && (
 				<>
 					<Select
 						disableEmptyOption
@@ -203,7 +282,7 @@ const Validation = ({
 						visible={visible}
 					/>
 				</>
-			)}
+					)*/}
 		</ClayForm.Group>
 	);
 };
@@ -232,7 +311,7 @@ const Main = ({
 	});
 
 	return (
-		<Validation
+		<HelpText
 			{...data}
 			defaultLanguageId={defaultLanguageId}
 			editingLanguageId={editingLanguageId}

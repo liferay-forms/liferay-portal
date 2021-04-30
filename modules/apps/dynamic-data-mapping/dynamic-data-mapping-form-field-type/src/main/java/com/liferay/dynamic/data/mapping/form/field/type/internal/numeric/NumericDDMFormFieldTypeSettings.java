@@ -30,12 +30,13 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
  */
 @DDMForm(
 	rules = {
-		@DDMFormRule(
+		/*@DDMFormRule(
 			actions = {
-				"setValue('characterOptions', FALSE)", "setVisible('characterOptions', FALSE)"
+				"setValue('characterOptions', FALSE)",
+				"setVisible('characterOptions', FALSE)"
 			},
 			condition = "equals(getValue('dataType'), 'double')"
-		),
+		),*/
 		@DDMFormRule(
 			actions = {
 				"setValue('inputMask', FALSE)", "setVisible('inputMask', FALSE)"
@@ -52,7 +53,7 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 				"setVisible('direction', getValue('requireConfirmation'))",
 				"setVisible('inputMaskFormat', getValue('inputMask'))",
 				"setVisible('characterOptions', getValue('inputMask'))",
-				"setVisible('characterOptionsText', getValue('characterOptions'))",
+				//"setVisible('characterOptionsText', getValue('characterOptions'))",
 				"setVisible('tooltip', false)"
 			},
 			condition = "TRUE"
@@ -95,7 +96,7 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 								"confirmationLabel", "confirmationErrorMessage",
 								"validation", "tooltip", "inputMask",
 								"inputMaskFormat", "characterOptions",
-								"characterOptionsText"
+								//"characterOptionsText"
 							}
 						)
 					}
@@ -106,6 +107,26 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 )
 public interface NumericDDMFormFieldTypeSettings
 	extends DefaultDDMFormFieldTypeSettings {
+
+	@DDMFormField(
+		dataType = "numeric",
+		label = "%character-options", properties = "showAsSwitcher=true",
+		type = "help_text"
+	)
+	public boolean characterOptions();
+
+	/*@DDMFormField(
+		dataType = "numeric", label = "%validation", type = "help_text"
+	)
+	@Override
+	public DDMFormFieldValidation characterOptions();*/
+
+	/*@DDMFormField(
+		dataType = "string", label = "%format",
+		properties = "text=%<a>HTML Test</a>", required = false,
+		type = "paragraph"
+	)
+	public LocalizedValue characterOptionsText();*/
 
 	@DDMFormField(
 		dataType = "string", label = "%error-message",
@@ -138,7 +159,7 @@ public interface NumericDDMFormFieldTypeSettings
 
 	@DDMFormField(
 		label = "%input-mask", properties = "showAsSwitcher=true",
-		visibilityExpression = "FALSE"
+		visibilityExpression = "TRUE"
 	)
 	public boolean inputMask();
 
@@ -155,19 +176,6 @@ public interface NumericDDMFormFieldTypeSettings
 		validationExpression = "match(inputMaskFormat, '^$|^(?=.*[09])([^1-8]+)$')"
 	)
 	public LocalizedValue inputMaskFormat();
-
-	@DDMFormField(label = "%character-options", properties = "showAsSwitcher=true")
-	public boolean characterOptions();
-
-	@DDMFormField(
-		dataType = "string", label = "%format",
-		properties = {
-			"text=%<a>HTML Test</a>"
-		},
-		required = false,
-		type = "paragraph"
-	)
-	public LocalizedValue characterOptionsText();
 
 	@DDMFormField(
 		dataType = "string", label = "%placeholder-text",
