@@ -37,6 +37,8 @@ public class DDMFormFieldTypeConstants {
 
 	public static final String GRID = "grid";
 
+	public static final String HELP_TEXT = "help_text";
+
 	public static final String IMAGE = "image";
 
 	public static final String KEY_VALUE = "key_value";
