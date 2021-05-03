@@ -25,7 +25,6 @@ const HelpText = ({
 	dataType,
 	defaultLanguageId,
 	editingLanguageId,
-	enableHelpTextOld: initialenableHelpTextOld,
 	errorMessage: initialErrorMessage,
 	label,
 	localizationMode,
@@ -41,10 +40,9 @@ const HelpText = ({
 	visible,
 }) => {
 	const [
-		{enableHelpTextOld, errorMessage, parameter, selectedValidation},
+		{errorMessage, parameter, selectedValidation},
 		setState,
 	] = useState({
-		enableHelpTextOld: initialenableHelpTextOld,
 		errorMessage: initialErrorMessage,
 		parameter: initialParameter,
 		selectedValidation: initialSelectedValidation
@@ -58,43 +56,6 @@ const HelpText = ({
 	// 	dataType === 'string'
 	// 		? Text
 	// 		: Numeric;
-
-	const handleChange = (key, newValue) => {
-		setState((prevState) => {
-			const newState = {
-				...prevState,
-				[key]: newValue,
-			};
-
-			let expression = {};
-
-			if (newState.enableHelpTextOld) {
-				expression = {
-					name: newState.selectedValidation.name,
-					// value: subWords(newState.selectedValidation.template, {
-					// 	name: validation.fieldName,
-					// }),
-				};
-			}
-
-			onChange({
-				enableHelpTextOld: newState.enableHelpTextOld,
-				errorMessage: {
-					...value.errorMessage,
-					[editingLanguageId]: newState.errorMessage,
-				},
-				expression,
-				parameter: {
-					...value.parameter,
-					[editingLanguageId]: !value.expression
-						? parameterMessage
-						: newState.parameter,
-				},
-			});
-
-			return newState;
-		});
-	};
 
 	// const transformSelectedValidation = getSelectedValidation(validations);
 
@@ -125,7 +86,7 @@ const HelpText = ({
 		<p>
 			<kbd class="c-kbd">
 				<kbd class="c-kbd c-kbd-light">9</kbd>
-				<text class="c-kbd-separator"> User must enter a numeric digit (0-9)</text>
+				<text > User must enter a numeric digit (0-9)</text>
 			</kbd>
 		</p>
 		<p>
@@ -157,8 +118,8 @@ const HelpText = ({
 				<kbd class="c-kbd c-kbd-light">)</kbd>
 				<kbd class="c-kbd c-kbd-light">[</kbd>
 				<kbd class="c-kbd c-kbd-light">]</kbd>
-				<kbd class="c-kbd c-kbd-light">[</kbd>
-				<kbd class="c-kbd c-kbd-light">]</kbd>
+				<kbd class="c-kbd c-kbd-light">&#x7B;</kbd>
+				<kbd class="c-kbd c-kbd-light">&#x7D;</kbd>
 				<text class="c-kbd-separator"> Group separators</text>
 			</kbd>
 		</p>
