@@ -17,9 +17,6 @@ import ClayButton from '@clayui/button';
 import {usePrevious} from '@liferay/frontend-js-react-web';
 import React, {useEffect, useState} from 'react';
 
-import Checkbox from '../Checkbox/Checkbox.es';
-import Numeric from '../Numeric/Numeric.es';
-import Select from '../Select/Select.es';
 import Text from '../Text/Text.es';
 import {subWords} from '../util/strings.es';
 import {getSelectedValidation, transformData} from './transform.es';
@@ -28,7 +25,7 @@ const HelpText = ({
 	dataType,
 	defaultLanguageId,
 	editingLanguageId,
-	enableHelpText: initialEnableHelpText,
+	enableHelpTextOld: initialenableHelpTextOld,
 	errorMessage: initialErrorMessage,
 	label,
 	localizationMode,
@@ -39,20 +36,21 @@ const HelpText = ({
 	readOnly,
 	selectedValidation: initialSelectedValidation,
 	spritemap,
-	validation,
 	validations,
 	value,
 	visible,
 }) => {
 	const [
-		{enableHelpText, errorMessage, parameter, selectedValidation},
+		{enableHelpTextOld, errorMessage, parameter, selectedValidation},
 		setState,
 	] = useState({
-		enableHelpText: initialEnableHelpText,
+		enableHelpTextOld: initialenableHelpTextOld,
 		errorMessage: initialErrorMessage,
 		parameter: initialParameter,
-		selectedValidation: initialSelectedValidation,
+		selectedValidation: initialSelectedValidation
 	});
+
+	const [enableHelpText, setEnableHelpText] = useState(false);
 
 	// const DynamicComponent =
 	// 	selectedValidation &&
@@ -70,7 +68,7 @@ const HelpText = ({
 
 			let expression = {};
 
-			if (newState.enableHelpText) {
+			if (newState.enableHelpTextOld) {
 				expression = {
 					name: newState.selectedValidation.name,
 					// value: subWords(newState.selectedValidation.template, {
@@ -80,7 +78,7 @@ const HelpText = ({
 			}
 
 			onChange({
-				enableHelpText: newState.enableHelpText,
+				enableHelpTextOld: newState.enableHelpTextOld,
 				errorMessage: {
 					...value.errorMessage,
 					[editingLanguageId]: newState.errorMessage,
@@ -121,32 +119,6 @@ const HelpText = ({
 			});
 		}
 	}, [defaultLanguageId, editingLanguageId, prevEditingLanguageId, value]);
-
-	/* const Paragraph = ({
-		name = 'Test',
-		showLabel = false,
-		text = 'Paragraph test',
-		...otherProps
-	}) => (
-		<FieldBase
-			{...otherProps}
-			name={name}
-			showLabel={showLabel}
-			text={text}
-		>
-			<div
-				className="form-group liferay-ddm-form-field-paragraph"
-				data-field-name={name}
-			>
-				<div
-					className="liferay-ddm-form-field-paragraph-text"
-					dangerouslySetInnerHTML={{
-						__html: text,
-					}}
-				/>
-			</div>
-		</FieldBase>
-	);*/
 
 	const helpText = (
 	<>		
@@ -204,85 +176,19 @@ const HelpText = ({
 
 	return (
 		<ClayForm.Group className="lfr-ddm-form-field-validation">
-			<Checkbox
-				disabled={readOnly}
-				label={label}
-				name="enableHelpText"
-				onChange={(event, value) => 
-					handleChange('enableHelpText', value)
-				}
-				showAsSwitcher
-				spritemap={spritemap}
-				value={enableHelpText}
-				visible={visible}
-			/>
 
 			<ClayButton
 				displayType="secondary"
 				outline="false"
 				disabled={readOnly}
 				name="enableHelpText"
-				onClick={(event, value) => 
-					handleChange('enableHelpText', value)
-				}
-				small
-				title={Liferay.Language.get('remove')}
+				onClick={() => setEnableHelpText(!enableHelpText)}
 				type="button"
 			>show more
 			</ClayButton>
 
 			{enableHelpText && helpText}
 
-			{/*enableHelpText && (
-				<>
-					<Select
-						disableEmptyOption
-						label={Liferay.Language.get('if-input')}
-						name="selectedValidation"
-						onChange={(event, value) =>
-							handleChange(
-								'selectedValidation',
-								transformSelectedValidation(value)
-							)
-						}
-						options={validations}
-						placeholder={Liferay.Language.get('choose-an-option')}
-						readOnly={readOnly || localizationMode}
-						spritemap={spritemap}
-						value={[selectedValidation.name]}
-						visible={visible}
-					/>
-					{selectedValidation.parameterMessage && (
-						<DynamicComponent
-							dataType={dataType}
-							label={Liferay.Language.get('the-value')}
-							name={`${name}_parameter`}
-							onChange={(event) =>
-								handleChange('parameter', event.target.value)
-							}
-							placeholder={selectedValidation.parameterMessage}
-							readOnly={readOnly}
-							required={false}
-							spritemap={spritemap}
-							value={parameter}
-							visible={visible}
-						/>
-					)}
-					<Text
-						label={Liferay.Language.get('show-error-message')}
-						name={`${name}_errorMessage`}
-						onChange={(event) =>
-							handleChange('errorMessage', event.target.value)
-						}
-						placeholder={Liferay.Language.get('show-error-message')}
-						readOnly={readOnly}
-						required={false}
-						spritemap={spritemap}
-						value={errorMessage}
-						visible={visible}
-					/>
-				</>
-					)*/}
 		</ClayForm.Group>
 	);
 };
