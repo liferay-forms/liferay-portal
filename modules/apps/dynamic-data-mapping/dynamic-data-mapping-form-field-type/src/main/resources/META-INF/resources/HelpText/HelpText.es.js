@@ -14,6 +14,7 @@
 
 import ClayForm from '@clayui/form';
 import ClayButton from '@clayui/button';
+import classNames from 'classnames';
 import {usePrevious} from '@liferay/frontend-js-react-web';
 import React, {useEffect, useState} from 'react';
 
@@ -22,33 +23,43 @@ import {subWords} from '../util/strings.es';
 import {getSelectedValidation, transformData} from './transform.es';
 
 const HelpText = ({
-	dataType,
 	defaultLanguageId,
+	displayErrors,
 	editingLanguageId,
+	//enableHelpText: initialEnableHelpText,
 	errorMessage: initialErrorMessage,
 	label,
-	localizationMode,
 	name,
-	onChange,
 	parameter: initialParameter,
-	parameterMessage,
 	readOnly,
+	required,
+	repeatable,
+	showLabel = true,
 	selectedValidation: initialSelectedValidation,
-	spritemap,
-	validations,
+	style,
+	tooltip,
+	valid,
 	value,
-	visible,
+	visible
 }) => {
 	const [
-		{errorMessage, parameter, selectedValidation},
+		{ errorMessage, parameter, selectedValidation},
 		setState,
 	] = useState({
+		// enableHelpText: initialEnableHelpText,
 		errorMessage: initialErrorMessage,
 		parameter: initialParameter,
 		selectedValidation: initialSelectedValidation
 	});
+	
+	const renderLabel =
+	(label && showLabel) || required || tooltip || repeatable;
+
+	const fieldDetailsId = name + '_fieldDetails';
 
 	const [enableHelpText, setEnableHelpText] = useState(false);
+
+	const hasError = displayErrors && errorMessage && !valid;
 
 	// const DynamicComponent =
 	// 	selectedValidation &&
@@ -136,6 +147,35 @@ const HelpText = ({
 	);
 
 	return (
+		<>
+		<div
+			aria-labelledby={!renderLabel ? fieldDetailsId : null}
+			className={classNames('form-group', {
+				'has-error': hasError,
+				hide: !visible,
+			})}
+			data-field-name={name}
+			style={style}
+			tabIndex={!renderLabel ? 0 : null}
+		></div>
+
+		{renderLabel && (
+						<>
+							<label
+								aria-describedby={fieldDetailsId}
+								className={classNames({
+									'ddm-empty': !showLabel && !required,
+									'ddm-label': showLabel || required,
+								})}
+								tabIndex="0"
+							>
+								{label && showLabel && label}
+
+							</label>
+						</>
+						)
+			}
+
 		<ClayForm.Group className="lfr-ddm-form-field-validation">
 
 			<ClayButton
@@ -151,6 +191,7 @@ const HelpText = ({
 			{enableHelpText && helpText}
 
 		</ClayForm.Group>
+		</>
 	);
 };
 
@@ -163,8 +204,7 @@ const Main = ({
 	onChange,
 	readOnly,
 	spritemap,
-	validation,
-	validations: initialValidations,
+	enableHelpText,
 	value = {},
 	visible,
 }) => {
@@ -172,8 +212,6 @@ const Main = ({
 		defaultLanguageId,
 		editingLanguageId,
 		initialDataType,
-		initialValidations,
-		validation,
 		value,
 	});
 
@@ -187,7 +225,7 @@ const Main = ({
 			onChange={(value) => onChange({}, value)}
 			readOnly={readOnly}
 			spritemap={spritemap}
-			validation={validation}
+			enableHelpText={enableHelpText}
 			value={value}
 			visible={visible}
 		/>

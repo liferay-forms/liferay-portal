@@ -109,8 +109,8 @@ public interface NumericDDMFormFieldTypeSettings
 	extends DefaultDDMFormFieldTypeSettings {
 
 	@DDMFormField(
-		dataType = "numeric",
-		label = "%character-options", properties = "showAsSwitcher=true",
+		dataType = "numeric", label = "%character-options", 
+		properties = {"showAsSwitcher=true", "enableHelpText=false"},
 		type = "help_text"
 	)
 	public boolean characterOptions();
