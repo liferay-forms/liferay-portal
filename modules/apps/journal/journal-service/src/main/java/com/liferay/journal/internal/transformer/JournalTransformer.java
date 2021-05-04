@@ -64,6 +64,8 @@ import com.liferay.taglib.servlet.PipingServletResponse;
 
 import java.io.IOException;
 
+import java.text.DecimalFormat;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -253,6 +255,27 @@ public class JournalTransformer {
 							templateNodes, -1));
 
 					for (TemplateNode templateNode : templateNodes) {
+						if (Objects.equals(
+								templateNode.getType(),
+								DDMFormFieldTypeConstants.NUMERIC)) {
+
+							String numberValue = templateNode.getData();
+
+							DecimalFormat decimalFormat =
+								(DecimalFormat)DecimalFormat.getInstance(
+									locale);
+
+							decimalFormat.setGroupingUsed(false);
+							decimalFormat.setMaximumFractionDigits(
+								Integer.MAX_VALUE);
+							decimalFormat.setParseBigDecimal(true);
+
+							String formattedNumberValue = decimalFormat.format(
+								Double.valueOf(numberValue));
+
+							templateNode.put("data", formattedNumberValue);
+						}
+
 						template.put(templateNode.getName(), templateNode);
 					}
 
