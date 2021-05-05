@@ -758,6 +758,7 @@ definition {
 	}
 
 	@description = "This test ensures translations on a structure with a fieldset on a fieldgroup persists."
+	@ignore = "true"
 	@priority = "5"
 	test TranslateStructureWithFieldsetAndNested {
 		property portal.acceptance = "true";
