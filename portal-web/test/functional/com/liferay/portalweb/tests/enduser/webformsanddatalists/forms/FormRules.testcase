@@ -1004,7 +1004,9 @@ definition {
 
 		FormsAdminNavigator.gotoFormBuilder();
 
-		AssertVisible(key_tabName = "Builder",locator1 = "Form#ADD_FIELD_NEW");
+		AssertVisible(
+			key_tabName = "Builder",
+			locator1 = "Form#ADD_FIELD_NEW");
 
 		FormsAdminNavigator.gotoRules();
 
