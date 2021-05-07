@@ -35,6 +35,7 @@ definition {
 		}
 	}
 
+	@ignore = "true"
 	@priority = "5"
 	test AddElementSetsWithTranslation {
 		property portal.acceptance = "true";
@@ -524,6 +525,7 @@ definition {
 	}
 
 	@description = "This is a use case for LPS-73274."
+	@ignore = "true"
 	@priority = "4"
 	test AddFormWithDuplicateTextFields {
 		property portal.acceptance = "true";
@@ -1228,6 +1230,7 @@ definition {
 	}
 
 	@description = "This is a use case for LPS-60520."
+	@ignore = "true"
 	@priority = "4"
 	test DeleteDateFieldAndViewEntries {
 		property portal.acceptance = "true";
@@ -1397,6 +1400,7 @@ definition {
 	}
 
 	@description = "This is a use case for LPS-74997."
+	@ignore = "true"
 	@priority = "4"
 	test DeleteSelectFromListOptionAndViewEntries {
 		property portal.acceptance = "true";
@@ -2010,6 +2014,7 @@ definition {
 	}
 
 	@description = "This is a use case for LPS-78697."
+	@ignore = "true"
 	@priority = "4"
 	test EditTranslatedGridField {
 		property portal.acceptance = "true";
@@ -2627,6 +2632,7 @@ definition {
 		// TODO LPS-130503 ShouldHaveAtLeastOneField pending implementation
 	}
 
+	@ignore = "true"
 	@priority = "5"
 	test SubmitFormAfterEditingFields {
 		property portal.acceptance = "true";
@@ -3194,6 +3200,7 @@ definition {
 	}
 
 	@description = "This is a use case for LPS-64798."
+	@ignore = "true"
 	@priority = "5"
 	test SubmitFormWithAllFieldTypesAndThreePages {
 		property portal.acceptance = "true";
@@ -5180,6 +5187,7 @@ definition {
 	}
 
 	@description = "This is a use case for LPS-70560."
+	@ignore = "true"
 	@priority = "4"
 	test ViewFieldValidationIsNotBypassedWhenNextButtonIsHitTwice {
 		property portal.acceptance = "true";
@@ -5268,6 +5276,7 @@ definition {
 	}
 
 	@description = "This is a use case for LPS-66513."
+	@ignore = "true"
 	@priority = "3"
 	test ViewFormWithMultipleSelectionFieldAsASwitcherAndHideLabel {
 		property portal.acceptance = "true";

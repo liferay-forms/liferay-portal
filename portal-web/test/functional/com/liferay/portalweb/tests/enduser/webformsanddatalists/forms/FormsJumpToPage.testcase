@@ -162,6 +162,7 @@ definition {
 	}
 
 	@description = "This is a use case for LPS-69372."
+	@ignore = "true"
 	@priority = "5"
 	test ViewPagesAfterJump {
 		property portal.acceptance = "true";
@@ -477,6 +478,7 @@ definition {
 	}
 
 	@description = "This is a use case for LPS-68227."
+	@ignore = "true"
 	@priority = "3"
 	test ViewRuleAfterOptionValueEdit {
 		property portal.acceptance = "true";
