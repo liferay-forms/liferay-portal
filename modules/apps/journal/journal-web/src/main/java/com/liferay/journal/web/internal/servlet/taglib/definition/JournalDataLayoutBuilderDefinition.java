@@ -56,8 +56,8 @@ public class JournalDataLayoutBuilderDefinition
 	@Override
 	public String[] getUnimplementedProperties() {
 		return new String[] {
-			"allowGuestUsers", "fieldNamespace", "readOnly", "validation",
-			"visibilityExpression"
+			"allowGuestUsers", "fieldNamespace", "requireConfirmation",
+			"readOnly", "validation", "visibilityExpression"
 		};
 	}
 
