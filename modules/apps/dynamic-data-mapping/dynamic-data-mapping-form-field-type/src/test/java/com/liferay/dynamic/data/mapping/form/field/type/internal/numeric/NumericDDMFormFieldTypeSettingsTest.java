@@ -191,7 +191,7 @@ public class NumericDDMFormFieldTypeSettingsTest
 
 		actions = ddmFormRule1.getActions();
 
-		Assert.assertEquals(actions.toString(), 8, actions.size());
+		Assert.assertEquals(actions.toString(), 9, actions.size());
 
 		Assert.assertTrue(
 			actions.toString(),
