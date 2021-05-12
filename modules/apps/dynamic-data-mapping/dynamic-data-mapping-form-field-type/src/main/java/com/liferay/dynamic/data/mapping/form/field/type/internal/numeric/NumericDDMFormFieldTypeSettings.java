@@ -30,13 +30,6 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
  */
 @DDMForm(
 	rules = {
-		/*@DDMFormRule(
-			actions = {
-				"setValue('characterOptions', FALSE)",
-				"setVisible('characterOptions', FALSE)"
-			},
-			condition = "equals(getValue('dataType'), 'double')"
-		),*/
 		@DDMFormRule(
 			actions = {
 				"setValue('inputMask', FALSE)", "setVisible('inputMask', FALSE)"
@@ -48,12 +41,11 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 				"setDataType('predefinedValue', getValue('dataType'))",
 				"setValidationDataType('validation', getValue('dataType'))",
 				"setValidationFieldName('validation', getValue('name'))",
+				"setVisible('characterOptions', getValue('inputMask'))",
 				"setVisible('confirmationErrorMessage', getValue('requireConfirmation'))",
 				"setVisible('confirmationLabel', getValue('requireConfirmation'))",
 				"setVisible('direction', getValue('requireConfirmation'))",
 				"setVisible('inputMaskFormat', getValue('inputMask'))",
-				"setVisible('characterOptions', getValue('inputMask'))",
-				//"setVisible('characterOptionsText', getValue('characterOptions'))",
 				"setVisible('tooltip', false)"
 			},
 			condition = "TRUE"
@@ -95,8 +87,7 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 								"requireConfirmation", "direction",
 								"confirmationLabel", "confirmationErrorMessage",
 								"validation", "tooltip", "inputMask",
-								"inputMaskFormat", "characterOptions",
-								//"characterOptionsText"
+								"inputMaskFormat", "characterOptions"
 							}
 						)
 					}
@@ -109,24 +100,9 @@ public interface NumericDDMFormFieldTypeSettings
 	extends DefaultDDMFormFieldTypeSettings {
 
 	@DDMFormField(
-		dataType = "numeric", label = "%character-options", 
-		properties = {"showAsSwitcher=true", "enableHelpText=false"},
-		type = "help_text"
+		dataType = "numeric", label = "%character-options", type = "help_text"
 	)
 	public boolean characterOptions();
-
-	/*@DDMFormField(
-		dataType = "numeric", label = "%validation", type = "help_text"
-	)
-	@Override
-	public DDMFormFieldValidation characterOptions();*/
-
-	/*@DDMFormField(
-		dataType = "string", label = "%format",
-		properties = "text=%<a>HTML Test</a>", required = false,
-		type = "paragraph"
-	)
-	public LocalizedValue characterOptionsText();*/
 
 	@DDMFormField(
 		dataType = "string", label = "%error-message",
