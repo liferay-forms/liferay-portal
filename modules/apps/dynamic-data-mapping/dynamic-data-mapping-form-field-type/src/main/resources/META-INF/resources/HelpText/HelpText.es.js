@@ -12,63 +12,47 @@
  * details.
  */
 
-import ClayForm from '@clayui/form';
 import ClayButton from '@clayui/button';
-import classNames from 'classnames';
 import {usePrevious} from '@liferay/frontend-js-react-web';
+import classNames from 'classnames';
 import React, {useEffect, useState} from 'react';
 
-import Text from '../Text/Text.es';
-import {subWords} from '../util/strings.es';
-import {getSelectedValidation, transformData} from './transform.es';
+import {transformData} from './transform.es';
 
 const HelpText = ({
 	defaultLanguageId,
 	displayErrors,
 	editingLanguageId,
-	//enableHelpText: initialEnableHelpText,
 	errorMessage: initialErrorMessage,
 	label,
 	name,
 	parameter: initialParameter,
 	readOnly,
-	required,
 	repeatable,
-	showLabel = true,
+	required,
 	selectedValidation: initialSelectedValidation,
+	showLabel = true,
 	style,
 	tooltip,
 	valid,
 	value,
-	visible
+	visible,
 }) => {
-	const [
-		{ errorMessage, parameter, selectedValidation},
-		setState,
-	] = useState({
-		// enableHelpText: initialEnableHelpText,
+	const [{errorMessage}, setState] = useState({
 		errorMessage: initialErrorMessage,
 		parameter: initialParameter,
-		selectedValidation: initialSelectedValidation
+		selectedValidation: initialSelectedValidation,
 	});
-	
+
 	const renderLabel =
-	(label && showLabel) || required || tooltip || repeatable;
+		(label && showLabel) || required || tooltip || repeatable;
 
 	const fieldDetailsId = name + '_fieldDetails';
 
 	const [enableHelpText, setEnableHelpText] = useState(false);
+	const [showHideButton, setShowHideButton] = useState('Show more');
 
 	const hasError = displayErrors && errorMessage && !valid;
-
-	// const DynamicComponent =
-	// 	selectedValidation &&
-	// 	selectedValidation.parameterMessage &&
-	// 	dataType === 'string'
-	// 		? Text
-	// 		: Numeric;
-
-	// const transformSelectedValidation = getSelectedValidation(validations);
 
 	const prevEditingLanguageId = usePrevious(editingLanguageId);
 
@@ -93,61 +77,99 @@ const HelpText = ({
 	}, [defaultLanguageId, editingLanguageId, prevEditingLanguageId, value]);
 
 	const helpText = (
-	<>		
-		<p>
-			<kbd class="c-kbd">
-				<kbd class="c-kbd c-kbd-light">9</kbd>
-				<text > User must enter a numeric digit (0-9)</text>
-			</kbd>
-		</p>
-		<p>
-			<kbd class="c-kbd">
-				<kbd class="c-kbd c-kbd-light">0</kbd>
-				<text class="c-kbd-separator"> User may enter a numeric digit (0-9)</text>
-			</kbd>
-		</p>
-		<p>
-			<kbd class="c-kbd">
-				<kbd class="c-kbd c-kbd-light">ABC</kbd>
-				<text class="c-kbd-separator"> Any input mask character</text>
-			</kbd>
-		</p>
-		<p>
-			<kbd class="c-kbd">
-				<kbd class="c-kbd c-kbd-light">Space</kbd>
-				<kbd class="c-kbd c-kbd-light">-</kbd>
-				<kbd class="c-kbd c-kbd-light">/</kbd>
-				<kbd class="c-kbd c-kbd-light">:</kbd>
-				<kbd class="c-kbd c-kbd-light">,</kbd>
-				<kbd class="c-kbd c-kbd-light">.</kbd>
-				<text class="c-kbd-separator"> Separators</text>
-			</kbd>
-		</p>
-		<p>
-			<kbd class="c-kbd">
-				<kbd class="c-kbd c-kbd-light">(</kbd>
-				<kbd class="c-kbd c-kbd-light">)</kbd>
-				<kbd class="c-kbd c-kbd-light">[</kbd>
-				<kbd class="c-kbd c-kbd-light">]</kbd>
-				<kbd class="c-kbd c-kbd-light">&#x7B;</kbd>
-				<kbd class="c-kbd c-kbd-light">&#x7D;</kbd>
-				<text class="c-kbd-separator"> Group separators</text>
-			</kbd>
-		</p>
-		<p>
-			<kbd class="c-kbd">
-				<kbd class="c-kbd c-kbd-light">#</kbd>
-				<kbd class="c-kbd c-kbd-light">$</kbd>
-				<kbd class="c-kbd c-kbd-light">%</kbd>
-				<kbd class="c-kbd c-kbd-light">+</kbd>
-				<text class="c-kbd-separator"> Prefix and suffix symbols</text>
-			</kbd>
-		</p>
-	</>
+		<div className="lfr-ddm-help-text-content">
+			<div className="lfr-ddm-help-text-line">
+				<kbd className="c-kbd">
+					<kbd className="c-kbd c-kbd-light">9</kbd>
+					<span className="c-kbd-separator"> </span>
+					<span className="c-kbd-separator">
+						{' '}
+						{Liferay.Language.get(
+							'user-must-enter-a-numeric-digit'
+						)}
+					</span>
+				</kbd>
+			</div>
+			<div className="lfr-ddm-help-text-line">
+				<kbd className="c-kbd">
+					<kbd className="c-kbd c-kbd-light">0</kbd>
+					<span className="c-kbd-separator"> </span>
+					<span className="c-kbd-separator">
+						{' '}
+						{Liferay.Language.get('user-may-enter-a-numeric-digit')}
+					</span>
+				</kbd>
+			</div>
+			<div className="lfr-ddm-help-text-line">
+				<kbd className="c-kbd">
+					<kbd className="c-kbd c-kbd-light">ABC</kbd>
+					<span className="c-kbd-separator"> </span>
+					<span className="c-kbd-separator">
+						{' '}
+						{Liferay.Language.get('any-input-mask-character')}
+					</span>
+				</kbd>
+			</div>
+			<div className="lfr-ddm-help-text-line">
+				<kbd className="c-kbd">
+					<kbd className="c-kbd c-kbd-light">Space</kbd>
+					<span className="c-kbd-separator"> </span>
+					<kbd className="c-kbd c-kbd-light">-</kbd>
+					<span className="c-kbd-separator"> </span>
+					<kbd className="c-kbd c-kbd-light">/</kbd>
+					<span className="c-kbd-separator"> </span>
+					<kbd className="c-kbd c-kbd-light">:</kbd>
+					<span className="c-kbd-separator"> </span>
+					<kbd className="c-kbd c-kbd-light">,</kbd>
+					<span className="c-kbd-separator"> </span>
+					<kbd className="c-kbd c-kbd-light">.</kbd>
+					<span className="c-kbd-separator"> </span>
+					<span className="c-kbd-separator">
+						{' '}
+						{Liferay.Language.get('separators')}
+					</span>
+				</kbd>
+			</div>
+			<div className="lfr-ddm-help-text-line">
+				<kbd className="c-kbd">
+					<kbd className="c-kbd c-kbd-light">(</kbd>
+					<span className="c-kbd-separator"> </span>
+					<kbd className="c-kbd c-kbd-light">)</kbd>
+					<span className="c-kbd-separator"> </span>
+					<kbd className="c-kbd c-kbd-light">[</kbd>
+					<span className="c-kbd-separator"> </span>
+					<kbd className="c-kbd c-kbd-light">]</kbd>
+					<span className="c-kbd-separator"> </span>
+					<kbd className="c-kbd c-kbd-light">&#x7B;</kbd>
+					<span className="c-kbd-separator"> </span>
+					<kbd className="c-kbd c-kbd-light">&#x7D;</kbd>
+					<span className="c-kbd-separator"> </span>
+					<span className="c-kbd-separator">
+						{' '}
+						{Liferay.Language.get('group-separators')}
+					</span>
+				</kbd>
+			</div>
+			<div className="lfr-ddm-help-text-line">
+				<kbd className="c-kbd">
+					<kbd className="c-kbd c-kbd-light">#</kbd>
+					<span className="c-kbd-separator"> </span>
+					<kbd className="c-kbd c-kbd-light">$</kbd>
+					<span className="c-kbd-separator"> </span>
+					<kbd className="c-kbd c-kbd-light">%</kbd>
+					<span className="c-kbd-separator"> </span>
+					<kbd className="c-kbd c-kbd-light">+</kbd>
+					<span className="c-kbd-separator"> </span>
+					<span className="c-kbd-separator">
+						{' '}
+						{Liferay.Language.get('prefix-and-suffix-symbols')}
+					</span>
+				</kbd>
+			</div>
+		</div>
 	);
 
 	return (
-		<>
 		<div
 			aria-labelledby={!renderLabel ? fieldDetailsId : null}
 			className={classNames('form-group', {
@@ -157,41 +179,45 @@ const HelpText = ({
 			data-field-name={name}
 			style={style}
 			tabIndex={!renderLabel ? 0 : null}
-		></div>
-
-		{renderLabel && (
+		>
+			<div className="lfr-ddm-help-text-flex-container">
+				<div className="lfr-ddm-help-text-flex-element">
+					{renderLabel && (
 						<>
 							<label
 								aria-describedby={fieldDetailsId}
-								className={classNames({
-									'ddm-empty': !showLabel && !required,
-									'ddm-label': showLabel || required,
-								})}
+								className={classNames(
+									'lfr-ddm-help-text-label'
+								)}
 								tabIndex="0"
 							>
 								{label && showLabel && label}
-
 							</label>
 						</>
-						)
-			}
-
-		<ClayForm.Group className="lfr-ddm-form-field-validation">
-
-			<ClayButton
-				displayType="secondary"
-				outline="false"
-				disabled={readOnly}
-				name="enableHelpText"
-				onClick={() => setEnableHelpText(!enableHelpText)}
-				type="button"
-			>show more
-			</ClayButton>
+					)}
+				</div>
+				<div className="lfr-ddm-help-text-flex-element">
+					<ClayButton
+						borderless={true}
+						className="lfr-ddm-help-text-button"
+						disabled={readOnly}
+						displayType="secondary"
+						name="enableHelpText"
+						onClick={() => {
+							setEnableHelpText(!enableHelpText),
+								setShowHideButton(
+									!enableHelpText ? 'Show less' : 'Show more'
+								);
+						}}
+						type="button"
+					>
+						{showHideButton}
+					</ClayButton>
+				</div>
+			</div>
 
 			{enableHelpText && helpText}
-
-		</ClayForm.Group>
-		</>
+		</div>
 	);
 };
 
@@ -204,7 +230,6 @@ const Main = ({
 	onChange,
 	readOnly,
 	spritemap,
-	enableHelpText,
 	value = {},
 	visible,
 }) => {
@@ -225,7 +250,6 @@ const Main = ({
 			onChange={(value) => onChange({}, value)}
 			readOnly={readOnly}
 			spritemap={spritemap}
-			enableHelpText={enableHelpText}
 			value={value}
 			visible={visible}
 		/>
