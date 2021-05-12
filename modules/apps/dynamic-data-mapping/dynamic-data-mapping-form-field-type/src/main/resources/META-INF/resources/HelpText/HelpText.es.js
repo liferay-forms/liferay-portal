@@ -20,61 +20,15 @@ import React, {useEffect, useState} from 'react';
 import {transformData} from './transform.es';
 
 const HelpText = ({
-	defaultLanguageId,
-	displayErrors,
-	editingLanguageId,
 	errorMessage: initialErrorMessage,
 	label,
-	name,
 	parameter: initialParameter,
 	readOnly,
-	repeatable,
-	required,
 	selectedValidation: initialSelectedValidation,
-	showLabel = true,
-	style,
-	tooltip,
-	valid,
-	value,
-	visible,
 }) => {
-	const [{errorMessage}, setState] = useState({
-		errorMessage: initialErrorMessage,
-		parameter: initialParameter,
-		selectedValidation: initialSelectedValidation,
-	});
-
-	const renderLabel =
-		(label && showLabel) || required || tooltip || repeatable;
-
-	const fieldDetailsId = name + '_fieldDetails';
 
 	const [enableHelpText, setEnableHelpText] = useState(false);
 	const [showHideButton, setShowHideButton] = useState('Show more');
-
-	const hasError = displayErrors && errorMessage && !valid;
-
-	const prevEditingLanguageId = usePrevious(editingLanguageId);
-
-	useEffect(() => {
-		if (prevEditingLanguageId !== editingLanguageId) {
-			setState((prevState) => {
-				const {errorMessage = {}, parameter = {}} = value;
-
-				return {
-					...prevState,
-					errorMessage:
-						errorMessage[editingLanguageId] !== undefined
-							? errorMessage[editingLanguageId]
-							: errorMessage[defaultLanguageId],
-					parameter:
-						parameter[editingLanguageId] !== undefined
-							? parameter[editingLanguageId]
-							: parameter[defaultLanguageId],
-				};
-			});
-		}
-	}, [defaultLanguageId, editingLanguageId, prevEditingLanguageId, value]);
 
 	const helpText = (
 		<div className="lfr-ddm-help-text-content">
@@ -83,7 +37,6 @@ const HelpText = ({
 					<kbd className="c-kbd c-kbd-light">9</kbd>
 					<span className="c-kbd-separator"> </span>
 					<span className="c-kbd-separator">
-						{' '}
 						{Liferay.Language.get(
 							'user-must-enter-a-numeric-digit'
 						)}
@@ -95,7 +48,6 @@ const HelpText = ({
 					<kbd className="c-kbd c-kbd-light">0</kbd>
 					<span className="c-kbd-separator"> </span>
 					<span className="c-kbd-separator">
-						{' '}
 						{Liferay.Language.get('user-may-enter-a-numeric-digit')}
 					</span>
 				</kbd>
@@ -105,7 +57,6 @@ const HelpText = ({
 					<kbd className="c-kbd c-kbd-light">ABC</kbd>
 					<span className="c-kbd-separator"> </span>
 					<span className="c-kbd-separator">
-						{' '}
 						{Liferay.Language.get('any-input-mask-character')}
 					</span>
 				</kbd>
@@ -125,7 +76,6 @@ const HelpText = ({
 					<kbd className="c-kbd c-kbd-light">.</kbd>
 					<span className="c-kbd-separator"> </span>
 					<span className="c-kbd-separator">
-						{' '}
 						{Liferay.Language.get('separators')}
 					</span>
 				</kbd>
@@ -145,7 +95,6 @@ const HelpText = ({
 					<kbd className="c-kbd c-kbd-light">&#x7D;</kbd>
 					<span className="c-kbd-separator"> </span>
 					<span className="c-kbd-separator">
-						{' '}
 						{Liferay.Language.get('group-separators')}
 					</span>
 				</kbd>
@@ -161,7 +110,6 @@ const HelpText = ({
 					<kbd className="c-kbd c-kbd-light">+</kbd>
 					<span className="c-kbd-separator"> </span>
 					<span className="c-kbd-separator">
-						{' '}
 						{Liferay.Language.get('prefix-and-suffix-symbols')}
 					</span>
 				</kbd>
@@ -170,31 +118,15 @@ const HelpText = ({
 	);
 
 	return (
-		<div
-			aria-labelledby={!renderLabel ? fieldDetailsId : null}
-			className={classNames('form-group', {
-				'has-error': hasError,
-				hide: !visible,
-			})}
-			data-field-name={name}
-			style={style}
-			tabIndex={!renderLabel ? 0 : null}
-		>
+		<div>
 			<div className="lfr-ddm-help-text-flex-container">
 				<div className="lfr-ddm-help-text-flex-element">
-					{renderLabel && (
-						<>
-							<label
-								aria-describedby={fieldDetailsId}
-								className={classNames(
-									'lfr-ddm-help-text-label'
-								)}
-								tabIndex="0"
-							>
-								{label && showLabel && label}
-							</label>
-						</>
-					)}
+					<label
+						className="lfr-ddm-help-text-label"
+						tabIndex="0"
+					>
+						{label}
+					</label>
 				</div>
 				<div className="lfr-ddm-help-text-flex-element">
 					<ClayButton
@@ -204,10 +136,10 @@ const HelpText = ({
 						displayType="secondary"
 						name="enableHelpText"
 						onClick={() => {
-							setEnableHelpText(!enableHelpText),
-								setShowHideButton(
-									!enableHelpText ? 'Show less' : 'Show more'
-								);
+							setEnableHelpText(!enableHelpText);
+							setShowHideButton(
+								!enableHelpText ? 'Show less' : 'Show more'
+							);
 						}}
 						type="button"
 					>
