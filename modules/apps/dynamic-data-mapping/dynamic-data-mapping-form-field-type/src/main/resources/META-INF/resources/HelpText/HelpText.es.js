@@ -18,7 +18,7 @@ import React, {useState} from 'react';
 
 const HelpText = ({label, visible}) => {
 	const [enableHelpText, setEnableHelpText] = useState(false);
-	const [showHideButton, setShowHideButton] = useState('Show more');
+	const [showHideButton, setShowHideButton] = useState(Liferay.Language.get('show-more'));
 
 	const helpText = (
 		<div className="lfr-ddm-help-text-content">
@@ -124,7 +124,7 @@ const HelpText = ({label, visible}) => {
 						onClick={() => {
 							setEnableHelpText(!enableHelpText);
 							setShowHideButton(
-								!enableHelpText ? 'Show less' : 'Show more'
+								!enableHelpText ? Liferay.Language.get('show-less') : Liferay.Language.get('show-more')
 							);
 						}}
 						type="button"
