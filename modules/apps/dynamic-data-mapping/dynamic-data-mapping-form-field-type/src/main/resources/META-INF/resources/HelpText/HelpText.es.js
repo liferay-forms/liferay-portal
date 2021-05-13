@@ -13,20 +13,10 @@
  */
 
 import ClayButton from '@clayui/button';
-import {usePrevious} from '@liferay/frontend-js-react-web';
 import classNames from 'classnames';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 
-import {transformData} from './transform.es';
-
-const HelpText = ({
-	errorMessage: initialErrorMessage,
-	label,
-	parameter: initialParameter,
-	readOnly,
-	selectedValidation: initialSelectedValidation,
-}) => {
-
+const HelpText = ({label, visible}) => {
 	const [enableHelpText, setEnableHelpText] = useState(false);
 	const [showHideButton, setShowHideButton] = useState('Show more');
 
@@ -118,13 +108,10 @@ const HelpText = ({
 	);
 
 	return (
-		<div>
+		<div className={classNames('form-group', {hide: !visible})}>
 			<div className="lfr-ddm-help-text-flex-container">
 				<div className="lfr-ddm-help-text-flex-element">
-					<label
-						className="lfr-ddm-help-text-label"
-						tabIndex="0"
-					>
+					<label className="lfr-ddm-help-text-label" tabIndex="0">
 						{label}
 					</label>
 				</div>
@@ -132,7 +119,6 @@ const HelpText = ({
 					<ClayButton
 						borderless={true}
 						className="lfr-ddm-help-text-button"
-						disabled={readOnly}
 						displayType="secondary"
 						name="enableHelpText"
 						onClick={() => {
@@ -153,39 +139,8 @@ const HelpText = ({
 	);
 };
 
-const Main = ({
-	dataType: initialDataType,
-	defaultLanguageId,
-	editingLanguageId,
-	label,
-	name,
-	onChange,
-	readOnly,
-	spritemap,
-	value = {},
-	visible,
-}) => {
-	const data = transformData({
-		defaultLanguageId,
-		editingLanguageId,
-		initialDataType,
-		value,
-	});
-
-	return (
-		<HelpText
-			{...data}
-			defaultLanguageId={defaultLanguageId}
-			editingLanguageId={editingLanguageId}
-			label={label}
-			name={name}
-			onChange={(value) => onChange({}, value)}
-			readOnly={readOnly}
-			spritemap={spritemap}
-			value={value}
-			visible={visible}
-		/>
-	);
+const Main = ({label, visible}) => {
+	return <HelpText label={label} visible={visible} />;
 };
 
 export default Main;

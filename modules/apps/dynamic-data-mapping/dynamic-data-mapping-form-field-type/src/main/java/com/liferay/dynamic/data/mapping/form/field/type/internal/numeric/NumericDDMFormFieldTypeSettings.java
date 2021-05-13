@@ -99,9 +99,7 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 public interface NumericDDMFormFieldTypeSettings
 	extends DefaultDDMFormFieldTypeSettings {
 
-	@DDMFormField(
-		label = "%character-options", type = "help_text"
-	)
+	@DDMFormField(label = "%character-options", type = "help_text")
 	public boolean characterOptions();
 
 	@DDMFormField(
