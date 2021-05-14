@@ -261,8 +261,6 @@ definition {
 			key_fieldName = "",
 			key_fieldValue = "Paragraph1234",
 			locator1 = "Translation#TARGET_LANGUAGE_FIELD");
-
-			
 	}
 
 	@description = "Verify that text in the Body Text can be Bolded, Italicized and Underlined"
