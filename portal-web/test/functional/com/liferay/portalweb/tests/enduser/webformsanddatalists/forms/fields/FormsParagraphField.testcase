@@ -222,12 +222,47 @@ definition {
 	}
 
 	@description = "Verify that the Field Reference can be Edited"
-	@ignore = "true"
 	@priority = "5"
 	test FieldReferenceCanBeEdited {
+		property forms.functional = "true";
 		property portal.acceptance = "false";
 
-		// TODO LPS-131227 FieldReferenceCanBeEdited pending implementation
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Forms");
+
+		FormsAdminNavigator.gotoAddForm();
+
+		Form.editName(formName = "Form 1");
+
+		Form.gotoAddField(
+			fieldPositionNumber = "0",
+			fieldType = "Paragraph");
+
+		FormFields.editParagraphBody(content = "Test");
+
+		Form.gotoAdvancedTab();
+
+		Form.editFieldReferenceMetal(fieldValue = "Paragraph1234");
+
+		Form.save();
+
+		FormsAdminNavigator.gotoBack();
+
+		FormsAdminNavigator.gotoEditFormByName(formName = "Form 1");
+
+		Click(
+			key_name = "Paragraph",
+			locator1 = "FormFields#FIELD_TARGET_LABEL");
+
+		Form.gotoAdvancedTab();
+
+		AssertElementPresent(
+			key_fieldName = "",
+			key_fieldValue = "Paragraph1234",
+			locator1 = "Translation#TARGET_LANGUAGE_FIELD");
+
+			
 	}
 
 	@description = "Verify that text in the Body Text can be Bolded, Italicized and Underlined"
