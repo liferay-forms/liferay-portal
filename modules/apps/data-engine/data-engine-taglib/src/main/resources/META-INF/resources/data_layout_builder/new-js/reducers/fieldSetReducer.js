@@ -23,6 +23,19 @@ import {getDDMFormField} from '../../js/utils/dataConverter.es';
 import {normalizeDataLayoutRows} from '../../js/utils/normalizers.es';
 import {EVENT_TYPES} from '../eventTypes';
 
+const setLabels = (editingLanguageId, nestedField) => {
+	if (nestedField === []) {
+		return [];
+	}
+
+	return nestedField.map((field) => {
+		field.label = field.label[editingLanguageId] || field.label;
+		field.nestedFields = setLabels(editingLanguageId, field.nestedFields);
+
+		return field;
+	});
+};
+
 export default (state, action, config) => {
 	switch (action.type) {
 		case EVENT_TYPES.FIELD_SET.UPDATE_LIST: {
@@ -113,12 +126,17 @@ export default (state, action, config) => {
 				);
 			}
 
-			const newField = SettingsContext.updateField(
+			let newField = SettingsContext.updateField(
 				props,
 				fieldSetField,
 				'label',
 				fieldSet.localizedTitle
 			);
+
+			newField = {
+				...newField,
+				nestedFields: setLabels(editingLanguageId, nestedFields),
+			};
 
 			return FieldSupport.addField({
 				defaultLanguageId,
@@ -167,7 +185,7 @@ export default (state, action, config) => {
 
 				const updatedFieldSetDefinition = {
 					...field,
-					nestedFields,
+					nestedFields: setLabels(editingLanguageId, nestedFields),
 					rows,
 				};
 
