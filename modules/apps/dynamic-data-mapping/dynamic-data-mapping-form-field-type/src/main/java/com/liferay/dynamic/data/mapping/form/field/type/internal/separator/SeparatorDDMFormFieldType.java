@@ -33,7 +33,7 @@ import org.osgi.service.component.annotations.Component;
 		"ddm.form.field.type.group=basic", "ddm.form.field.type.icon=separator",
 		"ddm.form.field.type.label=separator-field-type-label",
 		"ddm.form.field.type.name=" + DDMFormFieldTypeConstants.SEPARATOR,
-		"ddm.form.field.type.scope=forms"
+		"ddm.form.field.type.scope=forms,journal,document-library"
 	},
 	service = DDMFormFieldType.class
 )
