@@ -50,7 +50,8 @@ page import="com.liferay.portal.kernel.view.count.ViewCountManagerUtil" %><%@
 page import="com.liferay.taglib.util.PortalIncludeUtil" %>
 
 <%@ page import="java.util.Collections" %>
-
+<%@ page import="com.liferay.portal.kernel.util.SetUtil" %>
+<%@ page import="java.util.Arrays" %>
 <%
 DLConfiguration dlConfiguration = ConfigurationProviderUtil.getSystemConfiguration(DLConfiguration.class);
 DLRequestHelper dlRequestHelper = new DLRequestHelper(request);

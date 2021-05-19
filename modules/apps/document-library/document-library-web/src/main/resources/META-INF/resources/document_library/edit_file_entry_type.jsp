@@ -97,6 +97,7 @@ renderResponse.setTitle((fileEntryType == null) ? LanguageUtil.get(request, "new
 				dataLayoutInputId="dataLayout"
 				groupId="<%= scopeGroupId %>"
 				namespace="<%= liferayPortletResponse.getNamespace() %>"
+				scopes='<%= SetUtil.fromCollection(Arrays.asList("document-library")) %>'
 			/>
 		</clay:container-fluid>
 	</div>

@@ -15,7 +15,7 @@
 --%>
 
 <%@ include file="/init.jsp" %>
-
+<%@ page import="com.liferay.portal.kernel.util.SetUtil" %>
 <%
 String redirect = ParamUtil.getString(request, "redirect");
 
@@ -101,6 +101,7 @@ renderResponse.setTitle(title);
 					groupId="<%= groupId %>"
 					localizable="<%= true %>"
 					namespace="<%= liferayPortletResponse.getNamespace() %>"
+					scopes='<%= SetUtil.fromCollection(Arrays.asList("document-library")) %>'
 				/>
 			</clay:container-fluid>
 		</div>
