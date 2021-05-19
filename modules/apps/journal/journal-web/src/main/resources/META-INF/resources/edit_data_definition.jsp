@@ -114,6 +114,7 @@ editDDMStructureURL.setParameter("ddmStructureId", String.valueOf(ddmStructureId
 						groupId="<%= groupId %>"
 						namespace="<%= liferayPortletResponse.getNamespace() %>"
 						singlePage="<%= true %>"
+						scopes='<%= SetUtil.fromCollection(Arrays.asList("journal")) %>'
 					/>
 				</div>
 			</div>

@@ -219,7 +219,8 @@ page import="javax.portlet.PortletRequest" %><%@
 page import="javax.portlet.PortletURL" %><%@
 page import="javax.portlet.ResourceURL" %><%@
 page import="javax.portlet.WindowState" %>
-
+<%@ page import="com.liferay.portal.kernel.util.SetUtil" %>
+<%@ page import="java.util.Arrays" %>
 <liferay-frontend:defineObjects />
 
 <liferay-theme:defineObjects />
