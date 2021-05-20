@@ -590,7 +590,7 @@ public class CommerceAccountLocalServiceImpl
 
 		validate(
 			serviceContext.getCompanyId(), accountEntry.getAccountEntryId(),
-			name, accountEntry.getExternalReferenceCode());
+			name, externalReferenceCode);
 
 		accountEntry = accountEntryLocalService.updateAccountEntry(
 			accountEntry.getAccountEntryId(),
