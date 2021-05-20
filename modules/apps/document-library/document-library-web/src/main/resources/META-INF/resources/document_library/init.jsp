@@ -46,12 +46,12 @@ page import="com.liferay.portal.kernel.lock.Lock" %><%@
 page import="com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil" %><%@
 page import="com.liferay.portal.kernel.repository.model.RepositoryEntry" %><%@
 page import="com.liferay.portal.kernel.util.LocaleUtil" %><%@
+page import="com.liferay.portal.kernel.util.SetUtil" %><%@
 page import="com.liferay.portal.kernel.view.count.ViewCountManagerUtil" %><%@
 page import="com.liferay.taglib.util.PortalIncludeUtil" %>
 
 <%@ page import="java.util.Collections" %>
-<%@ page import="com.liferay.portal.kernel.util.SetUtil" %>
-<%@ page import="java.util.Arrays" %>
+
 <%
 DLConfiguration dlConfiguration = ConfigurationProviderUtil.getSystemConfiguration(DLConfiguration.class);
 DLRequestHelper dlRequestHelper = new DLRequestHelper(request);

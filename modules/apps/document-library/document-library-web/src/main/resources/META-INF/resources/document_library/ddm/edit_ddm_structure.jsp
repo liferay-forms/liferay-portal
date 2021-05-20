@@ -14,8 +14,8 @@
  */
 --%>
 
-<%@ include file="/init.jsp" %>
-<%@ page import="com.liferay.portal.kernel.util.SetUtil" %>
+<%@ include file="/document_library/init.jsp" %>
+
 <%
 String redirect = ParamUtil.getString(request, "redirect");
 
