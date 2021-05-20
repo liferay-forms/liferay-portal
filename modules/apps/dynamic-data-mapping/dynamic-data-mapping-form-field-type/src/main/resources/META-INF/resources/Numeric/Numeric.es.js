@@ -201,6 +201,7 @@ const Main = ({
 	defaultLanguageId,
 	editingLanguageId,
 	id,
+	inputMaskFormat,
 	localizable,
 	localizedValue = {},
 	name,
@@ -230,6 +231,7 @@ const Main = ({
 				disabled={readOnly}
 				editingLanguageId={editingLanguageId}
 				id={id}
+				inputMaskFormat={inputMaskFormat}
 				localizable={localizable}
 				localizedValue={localizedValue}
 				name={name}

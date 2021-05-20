@@ -70,6 +70,18 @@ public class NumericDDMFormFieldTemplateContextContributor
 		).put(
 			"direction", ddmFormField.getProperty("direction")
 		).put(
+			"inputMaskFormat",
+			() -> {
+				if (!GetterUtil.getBoolean(
+						ddmFormField.getProperty("inputMask"))) {
+
+					return StringPool.BLANK;
+				}
+
+				return DDMFormFieldTypeUtil.getPropertyValue(
+					ddmFormField, locale, "inputMaskFormat");
+			}
+		).put(
 			"placeholder",
 			DDMFormFieldTypeUtil.getPropertyValue(
 				ddmFormField, locale, "placeholder")
