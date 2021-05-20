@@ -54,6 +54,7 @@
     <td></td>
 </tr>
 <tr>
+<<<<<<< HEAD
     <td>PAGE_DESCRIPTION_FIELD</td>
     <td>//div/input[contains(concat(' ',normalize-space(@class),' '),'form-builder-page-header-description')][@placeholder="Add a short description for this page."]</td>
     <td></td>
@@ -63,6 +64,12 @@
     <td>//div[contains(concat(' ',normalize-space(@class),' '),' form-group')]/label[contains(text(),'${key_fieldName}')]</td>
     <td></td>
 </tr>
+=======
+    <td>PLACEHOLDER_TEXT_FIELD</td>
+    <td>//div[contains(@class,'form-group')]//input[contains(@placeholder,'${key_value}')]</td>
+    <td></td>
+</tr> 
+>>>>>>> bb016087 (LPS-131342 Adding PlaceholderTextCanBeAdded Test)
 <tr>
     <td>PREVIEW_FORM_BUTTON</td>
     <td>//button[contains(.,'Preview') and not (contains(@class,'disabled'))]</td>
@@ -467,7 +474,7 @@
     <td></td>
     <td></td>
 </tr>
-<!--DATA_PROVIDER_PERMISSIONS_PARAMETER-->
+<!--DATA_PROVIDER_PERMISSIONS_PARAMETER-->  
 <tr>
     <td>DATA_PROVIDER_PERMISSIONS_PARAMETER_PANEL</td>
     <td>//div[contains(@id,'dataProviderPermissions')]//a[contains(@class,'collapse-icon')]</td>
