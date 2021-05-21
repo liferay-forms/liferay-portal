@@ -17,6 +17,9 @@ package com.liferay.dynamic.data.mapping.internal.io.exporter;
 import com.liferay.dynamic.data.mapping.io.exporter.DDMFormInstanceRecordWriter;
 import com.liferay.dynamic.data.mapping.io.exporter.DDMFormInstanceRecordWriterRequest;
 import com.liferay.dynamic.data.mapping.io.exporter.DDMFormInstanceRecordWriterResponse;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portlet.documentlibrary.service.impl.DLAppLocalServiceImpl;
 
 import java.io.ByteArrayOutputStream;
 
@@ -123,6 +126,16 @@ public class DDMFormInstanceRecordXLSWriter
 		int cellIndex = 0;
 
 		for (String value : values) {
+			if (value.length() > TOTAL_NUMBER_OF_CHARACTERS_THAT_A_CELL_CAN_CONTAIN) {
+				value = value.substring(0, TOTAL_NUMBER_OF_CHARACTERS_THAT_A_CELL_CAN_CONTAIN - 1);
+
+				if (_log.isDebugEnabled()) {
+					_log.debug("Cell " + rowIndex + "," + (cellIndex + 2) + " value trimmed to " + 
+						TOTAL_NUMBER_OF_CHARACTERS_THAT_A_CELL_CAN_CONTAIN +
+						" characters");
+				}
+			}
+
 			Cell cell = row.createCell(cellIndex++, CellType.STRING);
 
 			cell.setCellStyle(cellStyle);
@@ -134,4 +147,8 @@ public class DDMFormInstanceRecordXLSWriter
 		return new HSSFWorkbook();
 	}
 
+	private static final Log _log = LogFactoryUtil.getLog(
+		DDMFormInstanceRecordXLSWriter.class);
+	
+	private static int TOTAL_NUMBER_OF_CHARACTERS_THAT_A_CELL_CAN_CONTAIN = 32767; 
 }
