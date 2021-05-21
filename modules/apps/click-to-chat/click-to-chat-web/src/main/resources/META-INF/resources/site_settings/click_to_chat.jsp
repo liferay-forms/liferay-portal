@@ -49,18 +49,13 @@ ClickToChatConfiguration clickToChatConfiguration = (ClickToChatConfiguration)re
 		}
 		%>
 
-		<aui:input checked="<%= clickToChatEnabled %>" disabled="<%= disabled %>" inlineLabel="right" label='<%= LanguageUtil.get(resourceBundle, "enable-click-to-chat") %>' labelCssClass="simple-toggle-switch" name="TypeSettingsProperties--clickToChatEnabled--" onchange='<%= liferayPortletResponse.getNamespace() + "onChangeClickToChatEnabled(event);" %>' type="toggle-switch" value="<%= clickToChatEnabled %>" />
+		<aui:input checked="<%= clickToChatEnabled %>" disabled="<%= disabled %>" inlineLabel="right" label='<%= LanguageUtil.get(resourceBundle, "enable-click-to-chat") %>' labelCssClass="simple-toggle-switch" name="enabled" type="toggle-switch" value="<%= clickToChatEnabled %>" />
 	</div>
 </div>
 
 <div class="form-group row">
 	<div class="col-md-6">
-
-		<%
-		String clickToChatChatProviderId = GetterUtil.getString(request.getAttribute(ClickToChatWebKeys.CLICK_TO_CHAT_CHAT_PROVIDER_ID));
-		%>
-
-		<aui:select label="chat-provider" name="TypeSettingsProperties--clickToChatChatProviderId--" onchange='<%= liferayPortletResponse.getNamespace() + "onChangeClickToChatChatProviderId(event);" %>' value="<%= clickToChatChatProviderId %>">
+		<aui:select disabled="<%= disabled %>" label="chat-provider" name="chatProviderId" onchange='<%= liferayPortletResponse.getNamespace() + "onChangeClickToChatChatProviderId(event);" %>' value="<%= GetterUtil.getString(request.getAttribute(ClickToChatWebKeys.CLICK_TO_CHAT_CHAT_PROVIDER_ID)) %>">
 			<aui:option label="" value="" />
 
 			<%
@@ -79,11 +74,11 @@ ClickToChatConfiguration clickToChatConfiguration = (ClickToChatConfiguration)re
 		boolean clickToChatGuestUsersAllowed = GetterUtil.getBoolean(request.getAttribute(ClickToChatWebKeys.CLICK_TO_CHAT_GUEST_USERS_ALLOWED));
 		%>
 
-		<aui:input checked="<%= clickToChatGuestUsersAllowed %>" inlineLabel="right" label='<%= LanguageUtil.get(resourceBundle, "guest-users-allowed") %>' labelCssClass="simple-toggle-switch" name="TypeSettingsProperties--clickToChatGuestUsersAllowed--" type="toggle-switch" value="<%= clickToChatGuestUsersAllowed %>" />
+		<aui:input checked="<%= clickToChatGuestUsersAllowed %>" disabled="<%= disabled %>" inlineLabel="right" label='<%= LanguageUtil.get(resourceBundle, "guest-users-allowed") %>' labelCssClass="simple-toggle-switch" name="guestUsersAllowed" type="toggle-switch" value="<%= clickToChatGuestUsersAllowed %>" />
 	</div>
 
 	<div class="col-md-6">
-		<aui:input label="chat-provider-account-id" name="TypeSettingsProperties--clickToChatChatProviderAccountId--" type="text" value="<%= GetterUtil.getString(request.getAttribute(ClickToChatWebKeys.CLICK_TO_CHAT_CHAT_PROVIDER_ACCOUNT_ID)) %>" />
+		<aui:input disabled="<%= disabled %>" label="chat-provider-account-id" name="chatProviderAccountId" type="text" value="<%= GetterUtil.getString(request.getAttribute(ClickToChatWebKeys.CLICK_TO_CHAT_CHAT_PROVIDER_ACCOUNT_ID)) %>" />
 
 		<%
 		for (String curClickToChatChatProviderId : ClickToChatConstants.CLICK_TO_CHAT_CHAT_PROVIDER_IDS) {
@@ -106,7 +101,7 @@ ClickToChatConfiguration clickToChatConfiguration = (ClickToChatConfiguration)re
 <script>
 	function <portlet:namespace />hideUnselectedClickToChatProviderLearnMessages() {
 		var clickToChatChatProviderIdElement = document.getElementById(
-			'<portlet:namespace />clickToChatChatProviderId'
+			'<portlet:namespace />chatProviderId'
 		);
 
 		var clickToChatProviderIdOptions = clickToChatChatProviderIdElement.querySelectorAll(
@@ -129,38 +124,6 @@ ClickToChatConfiguration clickToChatConfiguration = (ClickToChatConfiguration)re
 		);
 	}
 
-	function <portlet:namespace />onChangeClickToChatEnabled() {
-		var clickToChatChatProviderAccountIdElement = document.getElementById(
-			'<portlet:namespace />clickToChatChatProviderAccountId'
-		);
-		var clickToChatEnabledElement = document.getElementById(
-			'<portlet:namespace />clickToChatEnabled'
-		);
-
-		Liferay.Util.toggleDisabled(
-			clickToChatChatProviderAccountIdElement,
-			!clickToChatEnabledElement.checked
-		);
-
-		var clickToChatChatProviderIdElement = document.getElementById(
-			'<portlet:namespace />clickToChatChatProviderId'
-		);
-
-		Liferay.Util.toggleDisabled(
-			clickToChatChatProviderIdElement,
-			!clickToChatEnabledElement.checked
-		);
-
-		var clickToChatGuestUsersAllowedElement = document.getElementById(
-			'<portlet:namespace />clickToChatGuestUsersAllowed'
-		);
-
-		Liferay.Util.toggleDisabled(
-			clickToChatGuestUsersAllowedElement,
-			!clickToChatEnabledElement.checked
-		);
-	}
-
 	function <portlet:namespace />toggleClickToChatChatProviderLearnMessage(
 		clickToChatChatProviderAccountId,
 		visible
@@ -180,39 +143,4 @@ ClickToChatConfiguration clickToChatConfiguration = (ClickToChatConfiguration)re
 			clickToChatChatProviderLearnMessageElement.classList.add('hide');
 		}
 	}
-
-	function <portlet:namespace />toggleClickToChatChatProviders() {
-		var clickToChatEnabledElement = document.getElementById(
-			'<portlet:namespace />clickToChatEnabled'
-		);
-
-		if (<%= disabled %> || !clickToChatEnabledElement.checked) {
-			var clickToChatChatProviderAccountIdElement = document.getElementById(
-				'<portlet:namespace />clickToChatChatProviderAccountId'
-			);
-
-			Liferay.Util.toggleDisabled(
-				clickToChatChatProviderAccountIdElement,
-				true
-			);
-
-			var clickToChatChatProviderIdElement = document.getElementById(
-				'<portlet:namespace />clickToChatChatProviderId'
-			);
-
-			Liferay.Util.toggleDisabled(clickToChatChatProviderIdElement, true);
-
-			var clickToChatGuestUsersAllowedElement = document.getElementById(
-				'<portlet:namespace />clickToChatGuestUsersAllowed'
-			);
-
-			Liferay.Util.toggleDisabled(clickToChatGuestUsersAllowedElement, true);
-		}
-	}
-
-	<portlet:namespace />toggleClickToChatChatProviderLearnMessage(
-		'<%= clickToChatChatProviderId %>',
-		true
-	);
-	<portlet:namespace />toggleClickToChatChatProviders();
 </script>
