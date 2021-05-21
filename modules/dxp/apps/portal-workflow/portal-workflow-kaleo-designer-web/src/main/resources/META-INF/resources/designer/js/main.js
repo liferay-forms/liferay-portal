@@ -230,6 +230,19 @@ AUI.add(
 				_onDestroyPortlet() {
 					var instance = this;
 
+					const baseCellEditor = document.querySelector(
+						'.basecelleditor'
+					);
+
+					if (baseCellEditor) {
+						while (baseCellEditor.hasChildNodes()) {
+							baseCellEditor.removeChild(
+								baseCellEditor.lastChild
+							);
+						}
+						baseCellEditor.remove();
+					}
+
 					instance.destroy(true);
 				},
 
@@ -484,10 +497,24 @@ AUI.add(
 						if (
 							baseCellEditorPopup &&
 							!baseCellEditorPopup.contains(event.target) &&
-							event.code === 'Enter'
+							event.key === 'Enter'
 						) {
 							baseCellEditorPopup.classList.add(
-								'actions-cell-editor-hidden'
+								'base-cell-editor-hidden'
+							);
+						}
+
+						const scriptEditorPopup = document.querySelector(
+							'.script-cell-editor'
+						);
+
+						if (
+							scriptEditorPopup &&
+							!scriptEditorPopup.contains(event.target) &&
+							event.key === 'Enter'
+						) {
+							scriptEditorPopup.classList.add(
+								'script-cell-editor-hidden'
 							);
 						}
 					});
