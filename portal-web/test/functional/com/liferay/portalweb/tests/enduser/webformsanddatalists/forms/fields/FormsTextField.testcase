@@ -136,9 +136,8 @@ definition {
 		FormFields.selectSelectOption(
 			fieldName = "If Input",
 			selectOption = "Is not email");
-		
-		FormFields.viewTextFieldNotPresent(
-       		fieldLabel = "The Value");
+
+		FormFields.viewTextFieldNotPresent(fieldLabel = "The Value");
 
 		FormFields.editText(
 			fieldName = "errorMessage",
@@ -159,7 +158,7 @@ definition {
 		FormFields.editText(
 			fieldName = "Text",
 			fieldValue = "test@liferay.com");
-		
+
 		FormPortlet.waitForValidationErrorNotPresent(validationErrorMessage = "Test Error");
 
 		Button.clickSubmitButton();
@@ -167,7 +166,6 @@ definition {
 		FormPortlet.viewSuccessPage(
 			successPageDescription = "Your information was successfully received. Thank you for filling out the form.",
 			successPageTitle = "Thank you.");
-			
 	}
 
 	@description = "Verify that the "Is Not URL" option can be used to validate a Text Field"
