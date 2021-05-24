@@ -245,7 +245,7 @@ public class MessageBoardMessageResourceImpl
 		MBThread mbThread = _mbThreadLocalService.getMBThread(
 			messageBoardThreadId);
 
-		HashMap<String, Map<String, String>> actions =
+		Map<String, Map<String, String>> actions =
 			HashMapBuilder.<String, Map<String, String>>put(
 				"create",
 				addAction(
