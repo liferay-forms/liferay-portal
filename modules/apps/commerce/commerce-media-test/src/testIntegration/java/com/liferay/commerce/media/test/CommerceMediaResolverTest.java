@@ -59,6 +59,7 @@ import java.util.Date;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -67,7 +68,6 @@ import org.junit.runner.RunWith;
 /**
  * @author Alessio Antonio Rendina
  */
-@DataGuard(scope = DataGuard.Scope.METHOD)
 @RunWith(Arquillian.class)
 public class CommerceMediaResolverTest {
 
@@ -78,12 +78,15 @@ public class CommerceMediaResolverTest {
 			new LiferayIntegrationTestRule(),
 			PermissionCheckerMethodTestRule.INSTANCE);
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeClass
+	public static void setUpClass() throws Exception {
 		_company = CompanyTestUtil.addCompany();
 
 		_user = UserTestUtil.addUser(_company);
+	}
 
+	@Before
+	public void setUp() throws Exception {
 		_group = GroupTestUtil.addGroup(
 			_company.getCompanyId(), _user.getUserId(), 0);
 
@@ -206,8 +209,7 @@ public class CommerceMediaResolverTest {
 	@Inject
 	private CommerceMediaResolver _commerceMediaResolver;
 
-	@DeleteAfterTestRun
-	private Company _company;
+	private static Company _company;
 
 	@Inject
 	private CPAttachmentFileEntryLocalService
@@ -216,7 +218,6 @@ public class CommerceMediaResolverTest {
 	private Group _group;
 	private ServiceContext _serviceContext;
 
-	@DeleteAfterTestRun
-	private User _user;
+	private static User _user;
 
 }
