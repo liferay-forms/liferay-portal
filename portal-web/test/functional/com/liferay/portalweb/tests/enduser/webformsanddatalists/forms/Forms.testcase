@@ -731,10 +731,6 @@ definition {
 		AssertElementPresent(
 			key_fieldName = "Text",
 			locator1 = "Form#PAGE_FIELD_LABEL");
-
-
-
-			
 	}
 
 	@description = "Verify that a Form can be published from an autosaved draft"
@@ -792,6 +788,7 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-130996 CanBeCreatedWithMultiplePages pending implementation
+
 	}
 
 	@description = "Verify that a Form can be deleted"
