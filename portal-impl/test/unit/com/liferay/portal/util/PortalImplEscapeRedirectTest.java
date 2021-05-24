@@ -141,8 +141,8 @@ public class PortalImplEscapeRedirectTest {
 
 	@Test
 	public void testEscapeRedirectWithIPs() throws Exception {
-		setPropsValuesValue("DNS_SECURITY_ADDRESS_TIMEOUT_SECONDS", 2);
-		setPropsValuesValue("DNS_SECURITY_THREAD_LIMIT", 10);
+		ReflectionTestUtil.setFieldValue("DNS_SECURITY_ADDRESS_TIMEOUT_SECONDS", 2);
+		ReflectionTestUtil.setFieldValue("DNS_SECURITY_THREAD_LIMIT", 10);
 
 		_redirectURLSettingsImpl.allowedIPs = new String[] {
 			"127.0.0.1", "SERVER_IP"
@@ -198,8 +198,8 @@ public class PortalImplEscapeRedirectTest {
 				_portalImpl.escapeRedirect("http://prefix.127.0.0.1"));
 		}
 		finally {
-			setPropsValuesValue("DNS_SECURITY_THREAD_LIMIT", 10);
-			setPropsValuesValue("DNS_SECURITY_ADDRESS_TIMEOUT_SECONDS", 2);
+			ReflectionTestUtil.setFieldValue("DNS_SECURITY_THREAD_LIMIT", 10);
+			ReflectionTestUtil.setFieldValue("DNS_SECURITY_ADDRESS_TIMEOUT_SECONDS", 2);
 		}
 	}
 
@@ -257,12 +257,6 @@ public class PortalImplEscapeRedirectTest {
 			_portalImpl.escapeRedirect("http://test.liferay.com.suffix"));
 		Assert.assertNull(
 			_portalImpl.escapeRedirect("http://prefixtest.liferay.com"));
-	}
-
-	protected void setPropsValuesValue(String name, Object value)
-		throws Exception {
-
-		ReflectionTestUtil.setFieldValue(PropsValues.class, name, value);
 	}
 
 	private RedirectURLSettings _originalRedirectURLSettings;
