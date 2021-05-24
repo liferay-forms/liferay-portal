@@ -61,12 +61,12 @@ public class CPMediaImpl implements CPMedia {
 			ThemeDisplay themeDisplay)
 		throws PortalException {
 
-		FileEntry fileEntry = cpAttachmentFileEntry.getFileEntry();
-
 		_downloadUrl = CommerceMediaResolverUtil.getDownloadURL(
 			commerceAccountId,
 			cpAttachmentFileEntry.getCPAttachmentFileEntryId());
 		_id = cpAttachmentFileEntry.getCPAttachmentFileEntryId();
+
+		FileEntry fileEntry = cpAttachmentFileEntry.getFileEntry();
 
 		if (fileEntry == null) {
 			_mimeType = StringPool.BLANK;
