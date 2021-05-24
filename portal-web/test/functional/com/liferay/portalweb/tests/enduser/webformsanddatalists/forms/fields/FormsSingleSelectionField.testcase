@@ -8,7 +8,7 @@ definition {
 
 	setUp {
 		TestCase.setUpPortalInstance();
-
+		
 		User.firstLoginPG();
 	}
 
@@ -497,13 +497,51 @@ definition {
 	}
 
 	@description = "Verify that options can be rearranged"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test OptionsCanBeRearranged {
 		property forms.functional = "true";
 		property portal.acceptance = "false";
 
-		// TODO LPS-132207 OptionsCanBeRearranged pending implementation
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Forms");
+
+		FormsAdminNavigator.gotoAddForm();
+
+		Form.editName(formName = "Form 1");
+
+		Form.gotoAddField(
+			fieldPositionNumber = "0",
+			fieldType = "Single Selection");
+
+		FormFields.editOptionsRow(
+			optionName = "Option1",
+			optionValue = "Option 1",
+			rowNumber = "1");
+
+		FormFields.editOptionsRow(
+			optionName = "Option2",
+			optionValue = "Option 2",
+			rowNumber = "2");
+
+		FormFields.moveGridOptionsRow(
+			key_gridField = "",
+			key_rowNumber1 = "2",
+			key_rowNumber2 = "1");
+
+		Form.save();
+
+		FormsAdminNavigator.gotoBack();
+
+		FormsAdminNavigator.gotoEditFormByName(formName = "Form 1");
+
+		AssertElementPresent(
+			key_optionLabel = "Option 2",
+			key_position = "1",
+			locator1 = "FormFields#SELECT_ASSERT_RADIO_OPTION_ORDER");
+
+
+
 	}
 
 	@description = "Verify that an option can be selected as a Predefined Value"
