@@ -66,6 +66,10 @@ public class AttachmentDTOConverter
 
 		String portalURL = company.getPortalURL(0);
 
+		String downloadURL = _commerceMediaResolver.getDownloadURL(
+			CommerceAccountConstants.ACCOUNT_ID_GUEST,
+			cpAttachmentFileEntry.getCPAttachmentFileEntryId());
+
 		return new Attachment() {
 			{
 				displayDate = cpAttachmentFileEntry.getDisplayDate();
@@ -75,13 +79,7 @@ public class AttachmentDTOConverter
 				id = cpAttachmentFileEntry.getCPAttachmentFileEntryId();
 				options = _getAttachmentOptions(cpAttachmentFileEntry);
 				priority = cpAttachmentFileEntry.getPriority();
-
-				String downloadUrl = _commerceMediaResolver.getDownloadURL(
-					CommerceAccountConstants.ACCOUNT_ID_GUEST,
-					cpAttachmentFileEntry.getCPAttachmentFileEntryId());
-
-				src = portalURL + downloadUrl;
-
+				src = portalURL + downloadURL;
 				title = LanguageUtils.getLanguageIdMap(
 					cpAttachmentFileEntry.getTitleMap());
 				type = cpAttachmentFileEntry.getType();
