@@ -74,10 +74,10 @@ public class PortalImplEscapeRedirectTest {
 
 	@Test
 	public void testEscapeRedirectWithDomains() throws Exception {
-		_redirectURLSettingsImpl.securityMode = "domain";
 		_redirectURLSettingsImpl.allowedDomains = new String[] {
 			"google.com", "localhost"
 		};
+		_redirectURLSettingsImpl.securityMode = "domain";
 
 		// Relative path
 
@@ -141,13 +141,13 @@ public class PortalImplEscapeRedirectTest {
 
 	@Test
 	public void testEscapeRedirectWithIPs() throws Exception {
-		setPropsValuesValue("DNS_SECURITY_THREAD_LIMIT", 10);
 		setPropsValuesValue("DNS_SECURITY_ADDRESS_TIMEOUT_SECONDS", 2);
+		setPropsValuesValue("DNS_SECURITY_THREAD_LIMIT", 10);
 
-		_redirectURLSettingsImpl.securityMode = "ip";
 		_redirectURLSettingsImpl.allowedIPs = new String[] {
 			"127.0.0.1", "SERVER_IP"
 		};
+		_redirectURLSettingsImpl.securityMode = "ip";
 
 		try {
 
@@ -205,10 +205,10 @@ public class PortalImplEscapeRedirectTest {
 
 	@Test
 	public void testEscapeRedirectWithSubdomains() throws Exception {
-		_redirectURLSettingsImpl.securityMode = "domain";
 		_redirectURLSettingsImpl.allowedDomains = new String[] {
 			"*.test.liferay.com", "google.com"
 		};
+		_redirectURLSettingsImpl.securityMode = "domain";
 
 		// Relative path
 
