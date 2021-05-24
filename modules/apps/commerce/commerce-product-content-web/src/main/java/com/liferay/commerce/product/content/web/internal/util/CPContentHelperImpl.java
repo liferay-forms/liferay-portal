@@ -159,13 +159,13 @@ public class CPContentHelperImpl implements CPContentHelper {
 			long cpDefinitionId, ThemeDisplay themeDisplay)
 		throws PortalException {
 
+		long commerceAccountId = 0;
+
 		HttpServletRequest httpServletRequest = themeDisplay.getRequest();
 
 		CommerceContext commerceContext =
 			(CommerceContext)httpServletRequest.getAttribute(
 				CommerceWebKeys.COMMERCE_CONTEXT);
-
-		long commerceAccountId = 0;
 
 		CommerceAccount commerceAccount = commerceContext.getCommerceAccount();
 
