@@ -730,7 +730,7 @@ public class CPDefinitionIndexer extends BaseIndexer<CPDefinition> {
 		else {
 			document.addKeyword(
 				CPField.DEFAULT_IMAGE_FILE_URL,
-				_commerceMediaResolver.getUrl(
+				_commerceMediaResolver.getURL(
 					CommerceAccountConstants.ACCOUNT_ID_GUEST,
 					cpAttachmentFileEntryId, false, false, false));
 		}

@@ -63,7 +63,7 @@ public class CPMediaImpl implements CPMedia {
 
 		FileEntry fileEntry = cpAttachmentFileEntry.getFileEntry();
 
-		_downloadUrl = CommerceMediaResolverUtil.getDownloadUrl(
+		_downloadUrl = CommerceMediaResolverUtil.getDownloadURL(
 			commerceAccountId,
 			cpAttachmentFileEntry.getCPAttachmentFileEntryId());
 		_id = cpAttachmentFileEntry.getCPAttachmentFileEntryId();
@@ -75,11 +75,11 @@ public class CPMediaImpl implements CPMedia {
 			_mimeType = fileEntry.getMimeType();
 		}
 
-		_url = CommerceMediaResolverUtil.getUrl(
+		_url = CommerceMediaResolverUtil.getURL(
 			commerceAccountId,
 			cpAttachmentFileEntry.getCPAttachmentFileEntryId());
 		_title = cpAttachmentFileEntry.getTitle(themeDisplay.getLanguageId());
-		_thumbnailUrl = CommerceMediaResolverUtil.getThumbnailUrl(
+		_thumbnailUrl = CommerceMediaResolverUtil.getThumbnailURL(
 			commerceAccountId,
 			cpAttachmentFileEntry.getCPAttachmentFileEntryId());
 	}

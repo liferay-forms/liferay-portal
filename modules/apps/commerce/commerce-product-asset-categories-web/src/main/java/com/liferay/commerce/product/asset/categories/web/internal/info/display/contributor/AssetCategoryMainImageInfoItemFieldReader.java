@@ -88,7 +88,7 @@ public class AssetCategoryMainImageInfoItemFieldReader
 			CPAttachmentFileEntry cpAttachmentFileEntry =
 				cpAttachmentFileEntries.get(0);
 
-			return CommerceMediaResolverUtil.getUrl(
+			return CommerceMediaResolverUtil.getURL(
 				CommerceAccountConstants.ACCOUNT_ID_GUEST,
 				cpAttachmentFileEntry.getCPAttachmentFileEntryId());
 		}

@@ -76,7 +76,7 @@ public class AttachmentDTOConverter
 				options = _getAttachmentOptions(cpAttachmentFileEntry);
 				priority = cpAttachmentFileEntry.getPriority();
 
-				String downloadUrl = _commerceMediaResolver.getDownloadUrl(
+				String downloadUrl = _commerceMediaResolver.getDownloadURL(
 					CommerceAccountConstants.ACCOUNT_ID_GUEST,
 					cpAttachmentFileEntry.getCPAttachmentFileEntryId());
 

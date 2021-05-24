@@ -118,7 +118,7 @@ public class CPCategoryContentDisplayContext {
 			commerceAccountId = commerceAccount.getCommerceAccountId();
 		}
 
-		return _commerceMediaResolver.getUrl(
+		return _commerceMediaResolver.getURL(
 			commerceAccountId,
 			cpAttachmentFileEntry.getCPAttachmentFileEntryId());
 	}

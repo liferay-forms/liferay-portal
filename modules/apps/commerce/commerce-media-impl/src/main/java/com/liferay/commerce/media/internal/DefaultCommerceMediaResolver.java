@@ -67,7 +67,7 @@ public class DefaultCommerceMediaResolver implements CommerceMediaResolver {
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 *             #getDownloadUrl(long, long)}}
+	 *             #getDownloadURL(long, long)}}
 	 */
 	@Deprecated
 	@Override
@@ -78,11 +78,11 @@ public class DefaultCommerceMediaResolver implements CommerceMediaResolver {
 	}
 
 	@Override
-	public String getDownloadUrl(
+	public String getDownloadURL(
 			long commerceAccountId, long cpAttachmentFileEntryId)
 		throws PortalException {
 
-		return getUrl(commerceAccountId, cpAttachmentFileEntryId, true, false);
+		return getURL(commerceAccountId, cpAttachmentFileEntryId, true, false);
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class DefaultCommerceMediaResolver implements CommerceMediaResolver {
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 *             #getThumbnailUrl(long, long)}}
+	 *             #getThumbnailURL(long, long)}}
 	 */
 	@Deprecated
 	@Override
@@ -109,16 +109,16 @@ public class DefaultCommerceMediaResolver implements CommerceMediaResolver {
 	}
 
 	@Override
-	public String getThumbnailUrl(
+	public String getThumbnailURL(
 			long commerceAccountId, long cpAttachmentFileEntryId)
 		throws PortalException {
 
-		return getUrl(commerceAccountId, cpAttachmentFileEntryId, false, true);
+		return getURL(commerceAccountId, cpAttachmentFileEntryId, false, true);
 	}
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 *             #getUrl(long, long)}}
+	 *             #getURL(long, long)}}
 	 */
 	@Deprecated
 	@Override
@@ -128,7 +128,7 @@ public class DefaultCommerceMediaResolver implements CommerceMediaResolver {
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 *             #getUrl(long, long, boolean, boolean)}}
+	 *             #getURL(long, long, boolean, boolean)}}
 	 */
 	@Deprecated
 	@Override
@@ -141,7 +141,7 @@ public class DefaultCommerceMediaResolver implements CommerceMediaResolver {
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 *             #getUrl(long, long, boolean, boolean, boolean)}}
+	 *             #getURL(long, long, boolean, boolean, boolean)}}
 	 */
 	@Deprecated
 	@Override
@@ -154,25 +154,25 @@ public class DefaultCommerceMediaResolver implements CommerceMediaResolver {
 	}
 
 	@Override
-	public String getUrl(long commerceAccountId, long cpAttachmentFileEntryId)
+	public String getURL(long commerceAccountId, long cpAttachmentFileEntryId)
 		throws PortalException {
 
-		return getUrl(commerceAccountId, cpAttachmentFileEntryId, false, false);
+		return getURL(commerceAccountId, cpAttachmentFileEntryId, false, false);
 	}
 
 	@Override
-	public String getUrl(
+	public String getURL(
 			long commerceAccountId, long cpAttachmentFileEntryId,
 			boolean download, boolean thumbnail)
 		throws PortalException {
 
-		return getUrl(
+		return getURL(
 			commerceAccountId, cpAttachmentFileEntryId, download, thumbnail,
 			true);
 	}
 
 	@Override
-	public String getUrl(
+	public String getURL(
 			long commerceAccountId, long cpAttachmentFileEntryId,
 			boolean download, boolean thumbnail, boolean secure)
 		throws PortalException {

@@ -108,7 +108,7 @@ public class CommerceProductAttachmentDataSetDataProvider
 					cpAttachmentFileEntryId,
 					new ImageField(
 						title, "rounded", "lg",
-						CommerceMediaResolverUtil.getThumbnailUrl(
+						CommerceMediaResolverUtil.getThumbnailURL(
 							CommerceAccountConstants.ACCOUNT_ID_GUEST,
 							cpAttachmentFileEntryId)),
 					HtmlUtil.escape(title),

@@ -178,7 +178,7 @@ public class CommerceMediaResolverTest {
 				RandomTestUtil.randomLocaleStringMap(), null, 0D,
 				CPAttachmentFileEntryConstants.TYPE_IMAGE, _serviceContext);
 
-		String url = _commerceMediaResolver.getUrl(
+		String url = _commerceMediaResolver.getURL(
 			_commerceAccount.getCommerceAccountId(),
 			cpAttachmentFileEntry.getCPAttachmentFileEntryId());
 

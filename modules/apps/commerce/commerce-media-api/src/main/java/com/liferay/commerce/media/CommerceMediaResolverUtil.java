@@ -46,14 +46,14 @@ public class CommerceMediaResolverUtil {
 		return commerceMediaResolver.getDownloadUrl(cpAttachmentFileEntryId);
 	}
 
-	public static String getDownloadUrl(
+	public static String getDownloadURL(
 			long commerceAccountId, long cpAttachmentFileEntryId)
 		throws PortalException {
 
 		CommerceMediaResolver commerceMediaResolver =
 			_serviceTracker.getService();
 
-		return commerceMediaResolver.getDownloadUrl(
+		return commerceMediaResolver.getDownloadURL(
 			commerceAccountId, cpAttachmentFileEntryId);
 	}
 
@@ -75,14 +75,14 @@ public class CommerceMediaResolverUtil {
 		return commerceMediaResolver.getThumbnailUrl(cpAttachmentFileEntryId);
 	}
 
-	public static String getThumbnailUrl(
+	public static String getThumbnailURL(
 			long commerceAccountId, long cpAttachmentFileEntryId)
 		throws PortalException {
 
 		CommerceMediaResolver commerceMediaResolver =
 			_serviceTracker.getService();
 
-		return commerceMediaResolver.getThumbnailUrl(
+		return commerceMediaResolver.getThumbnailURL(
 			commerceAccountId, cpAttachmentFileEntryId);
 	}
 
@@ -95,14 +95,14 @@ public class CommerceMediaResolverUtil {
 		return commerceMediaResolver.getUrl(cpAttachmentFileEntryId);
 	}
 
-	public static String getUrl(
+	public static String getURL(
 			long commerceAccountId, long cpAttachmentFileEntryId)
 		throws PortalException {
 
 		CommerceMediaResolver commerceMediaResolver =
 			_serviceTracker.getService();
 
-		return commerceMediaResolver.getUrl(
+		return commerceMediaResolver.getURL(
 			commerceAccountId, cpAttachmentFileEntryId);
 	}
 

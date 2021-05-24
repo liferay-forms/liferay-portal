@@ -393,7 +393,7 @@ public class CPInstanceHelperImpl implements CPInstanceHelper {
 		CPAttachmentFileEntry cpAttachmentFileEntry =
 			cpAttachmentFileEntries.get(0);
 
-		return _commerceMediaResolver.getThumbnailUrl(
+		return _commerceMediaResolver.getThumbnailURL(
 			CommerceAccountConstants.ACCOUNT_ID_GUEST,
 			cpAttachmentFileEntry.getCPAttachmentFileEntryId());
 	}

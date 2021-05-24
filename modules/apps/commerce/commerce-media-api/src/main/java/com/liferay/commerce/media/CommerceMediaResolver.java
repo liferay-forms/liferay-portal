@@ -34,13 +34,13 @@ public interface CommerceMediaResolver {
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 *             #getDownloadUrl(long, long)}}
+	 *             #getDownloadURL(long, long)}}
 	 */
 	@Deprecated
 	public String getDownloadUrl(long cpAttachmentFileEntryId)
 		throws PortalException;
 
-	public String getDownloadUrl(
+	public String getDownloadURL(
 			long commerceAccountId, long cpAttachmentFileEntryId)
 		throws PortalException;
 
@@ -53,26 +53,26 @@ public interface CommerceMediaResolver {
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 *             #getThumbnailUrl(long, long)}}
+	 *             #getThumbnailURL(long, long)}}
 	 */
 	@Deprecated
 	public String getThumbnailUrl(long cpAttachmentFileEntryId)
 		throws PortalException;
 
-	public String getThumbnailUrl(
+	public String getThumbnailURL(
 			long commerceAccountId, long cpAttachmentFileEntryId)
 		throws PortalException;
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 *             #getUrl(long, long)}}
+	 *             #getURL(long, long)}}
 	 */
 	@Deprecated
 	public String getUrl(long cpAttachmentFileEntryId) throws PortalException;
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 *             #getUrl(long, long, boolean, boolean)}}
+	 *             #getURL(long, long, boolean, boolean)}}
 	 */
 	@Deprecated
 	public String getUrl(
@@ -81,7 +81,7 @@ public interface CommerceMediaResolver {
 
 	/**
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link
-	 *             #getUrl(long, long, boolean, boolean, boolean)}}
+	 *             #getURL(long, long, boolean, boolean, boolean)}}
 	 */
 	@Deprecated
 	public String getUrl(
@@ -89,15 +89,15 @@ public interface CommerceMediaResolver {
 			boolean secure)
 		throws PortalException;
 
-	public String getUrl(long commerceAccountId, long cpAttachmentFileEntryId)
+	public String getURL(long commerceAccountId, long cpAttachmentFileEntryId)
 		throws PortalException;
 
-	public String getUrl(
+	public String getURL(
 			long commerceAccountId, long cpAttachmentFileEntryId,
 			boolean download, boolean thumbnail)
 		throws PortalException;
 
-	public String getUrl(
+	public String getURL(
 			long commerceAccountId, long cpAttachmentFileEntryId,
 			boolean download, boolean thumbnail, boolean secure)
 		throws PortalException;
