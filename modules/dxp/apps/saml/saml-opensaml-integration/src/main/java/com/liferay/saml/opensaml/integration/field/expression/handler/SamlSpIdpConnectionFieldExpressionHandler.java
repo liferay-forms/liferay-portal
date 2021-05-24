@@ -26,6 +26,7 @@ public interface SamlSpIdpConnectionFieldExpressionHandler
 
 	@Override
 	public void bindProcessorContext(
-		SamlSpIdpConnectionProcessorContext processorContext);
+		SamlSpIdpConnectionProcessorContext
+			samlSpIdpConnectionProcessorContext);
 
 }

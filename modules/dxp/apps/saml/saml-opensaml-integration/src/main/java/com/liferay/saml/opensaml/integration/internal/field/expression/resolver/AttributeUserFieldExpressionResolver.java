@@ -69,14 +69,14 @@ public class AttributeUserFieldExpressionResolver
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(
-				"Matching against user identifier expression: \"" +
-					userFieldExpression + "\"");
+				"Matching against user field expression " +
+					userFieldExpression);
 		}
 
 		if (!incomingAttributeValues.containsKey(userFieldExpression)) {
 			throw new Exception(
-				"No SAML attribute value mapped/received for \"" +
-					userIdentifierExpression + "\"");
+				"No SAML attribute value mapped for user field expression " +
+					userFieldExpression);
 		}
 
 		return userFieldExpression;
