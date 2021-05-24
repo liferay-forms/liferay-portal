@@ -95,7 +95,7 @@ definition {
 			fieldValue = "Text Label");
 
 		Form.closeSidebar();
-		
+
 		Form.gotoAddField(
 			fieldPositionNumber = "1",
 			fieldType = "Numeric");
@@ -109,7 +109,7 @@ definition {
 		FormFields.editText(
 			fieldName = "Text",
 			fieldValue = "Test Text");
-		
+
 		FormFields.editText(
 			fieldName = "Numeric",
 			fieldValue = "5");
@@ -121,7 +121,7 @@ definition {
 			successPageTitle = "Thank you.");
 
 		Navigator.openSpecificURL(url = "http://localhost:8080");
-		
+
 		ProductMenu.gotoPortlet(
 			category = "Content &amp; Data",
 			portlet = "Forms");
@@ -129,7 +129,7 @@ definition {
 		FormsAdminNavigator.gotoViewEntries();
 
 		FormsAdmin.viewFormTableHeader(fieldHeader = "Text Label");
-		
+
 		FormsAdmin.viewFormTableHeader(fieldHeader = "Numeric");
 
 		FormsAdmin.viewFormTableBody(fieldBody = "Test Text");
@@ -137,9 +137,8 @@ definition {
 		FormsAdmin.viewFormTableBody(fieldBody = "5");
 
 		FormsAdmin.viewFormTableBody(fieldBody = "Approved");
-		
-		FormsAdmin.viewFormTableBody(fieldBody = "Test Test");
 
+		FormsAdmin.viewFormTableBody(fieldBody = "Test Test");
 	}
 
 	@description = "Verify that the correct number of Entries are displayed"

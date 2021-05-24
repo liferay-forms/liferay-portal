@@ -199,6 +199,14 @@ definition {
 		AssertElementPresent(locator1 = "Icon#ROW_VERTICAL_ELLIPSIS");
 	}
 
+	macro viewFormTableBody {
+		var key_fieldBody = "${fieldBody}";
+
+		AssertTextEquals(
+			locator1 = "FormsAdmin#FORM_ENTRY_TABLE_BODY",
+			value1 = "${fieldBody}");
+	}
+
 	macro viewFormTableEntry {
 		var key_fieldLabel = "${fieldLabel}";
 		var key_fieldValue = "${fieldValue}";
@@ -208,13 +216,11 @@ definition {
 			value1 = "${fieldValue}");
 	}
 
-	macro viewFormTableBody {
-		var key_fieldBody = "${fieldBody}";
-		
-		AssertTextEquals(
-			locator1 = "FormsAdmin#FORM_ENTRY_TABLE_BODY",
-			value1 = "${fieldBody}");
-			
+	macro viewFormTableEntryNotPresent {
+		var key_fieldLabel = "${fieldLabel}";
+		var key_fieldValue = "${fieldValue}";
+
+		AssertElementNotPresent(locator1 = "FormsAdmin#FORM_ENTRY_TABLE_ENTRY");
 	}
 
 	macro viewFormTableHeader {
@@ -223,15 +229,6 @@ definition {
 		AssertTextEquals(
 			locator1 = "FormsAdmin#FORM_ENTRY_TABLE_HEADER",
 			value1 = "${fieldHeader}");
-
-	}
-
-
-	macro viewFormTableEntryNotPresent {
-		var key_fieldLabel = "${fieldLabel}";
-		var key_fieldValue = "${fieldValue}";
-
-		AssertElementNotPresent(locator1 = "FormsAdmin#FORM_ENTRY_TABLE_ENTRY");
 	}
 
 	macro viewImageTableEntry {
