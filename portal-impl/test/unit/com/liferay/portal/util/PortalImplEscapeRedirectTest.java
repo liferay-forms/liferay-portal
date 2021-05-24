@@ -141,7 +141,8 @@ public class PortalImplEscapeRedirectTest {
 
 	@Test
 	public void testEscapeRedirectWithIPs() throws Exception {
-		ReflectionTestUtil.setFieldValue("DNS_SECURITY_ADDRESS_TIMEOUT_SECONDS", 2);
+		ReflectionTestUtil.setFieldValue(
+			"DNS_SECURITY_ADDRESS_TIMEOUT_SECONDS", 2);
 		ReflectionTestUtil.setFieldValue("DNS_SECURITY_THREAD_LIMIT", 10);
 
 		_redirectURLSettingsImpl.allowedIPs = new String[] {
@@ -199,7 +200,8 @@ public class PortalImplEscapeRedirectTest {
 		}
 		finally {
 			ReflectionTestUtil.setFieldValue("DNS_SECURITY_THREAD_LIMIT", 10);
-			ReflectionTestUtil.setFieldValue("DNS_SECURITY_ADDRESS_TIMEOUT_SECONDS", 2);
+			ReflectionTestUtil.setFieldValue(
+				"DNS_SECURITY_ADDRESS_TIMEOUT_SECONDS", 2);
 		}
 	}
 
