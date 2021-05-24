@@ -30,7 +30,7 @@
 </tr>
 <tr>
 	<td>CHECK_INPUT_ENABLED</td>
-	<td>//input[contains(@id, 'clickToChatEnabled') and @checked]</td>
+	<td>//input[contains(@id, 'SiteSettingsPortlet_enabled') and @checked]</td>
 	<td></td>
 </tr>
 <tr>
