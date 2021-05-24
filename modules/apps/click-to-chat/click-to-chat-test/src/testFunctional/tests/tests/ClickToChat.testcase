@@ -22,6 +22,7 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-129049. Verify Hubspot provider errors message"
 	@priority = "4"
 	test CheckHubspotErrorMessage {
 		ApplicationsMenu.gotoPortlet(
@@ -69,6 +70,7 @@ definition {
 		Alert.viewErrorMessage(errorMessage = "This app hasn't been granted all required scopes to make this call");
 	}
 
+	@description = "This is a test for LPS-129049. Verify Chatwoot provider can be enabled and disabled"
 	@priority = "5"
 	test EnableAndDisableChatwoot {
 		ApplicationsMenu.gotoPortlet(
@@ -112,6 +114,7 @@ definition {
 		AssertElementNotPresent(locator1 = "Providers#CHAT_CHATWOOT");
 	}
 
+	@description = "This is a test for LPS-129049. Verify Crisp provider can be enabled and disabled"
 	@ignore = "true"
 	@priority = "5"
 	test EnableAndDisableCrisp {
@@ -156,6 +159,7 @@ definition {
 		AssertElementNotPresent(locator1 = "Providers#CHAT_CRISP");
 	}
 
+	@description = "This is a test for LPS-129049. Verify Hubspot provider can be enabled and disabled"
 	@priority = "5"
 	test EnableAndDisableHubspot {
 		ApplicationsMenu.gotoPortlet(
@@ -199,6 +203,7 @@ definition {
 		AssertElementNotPresent(locator1 = "Providers#CHAT_HUBSPOT");
 	}
 
+	@description = "This is a test for LPS-129049. Verify JivoChat provider can be enabled and disabled"
 	@priority = "5"
 	test EnableAndDisableJivoChat {
 		property portal.acceptance = "true";
@@ -244,6 +249,7 @@ definition {
 		AssertElementNotPresent(locator1 = "Providers#CHAT_JIVOCHAT");
 	}
 
+	@description = "This is a test for LPS-129049. Verify LiveChat provider can be enabled and disabled"
 	@ignore = "true"
 	@priority = "5"
 	test EnableAndDisableLiveChat {
@@ -288,6 +294,7 @@ definition {
 		AssertElementNotPresent(locator1 = "Providers#CHAT_LIVECHAT");
 	}
 
+	@description = "This is a test for LPS-129049. Verify LivePerson provider can be enabled and disabled"
 	@priority = "5"
 	test EnableAndDisableLivePerson {
 		property portal.acceptance = "true";
@@ -333,6 +340,7 @@ definition {
 		AssertElementNotPresent(locator1 = "Providers#CHAT_LIVEPERSON");
 	}
 
+	@description = "This is a test for LPS-129049. Verify Smartsupp provider can be enabled and disabled"
 	@priority = "5"
 	test EnableAndDisableSmartsupp {
 		ApplicationsMenu.gotoPortlet(
@@ -376,6 +384,7 @@ definition {
 		AssertElementNotPresent(locator1 = "Providers#CHAT_SMARTSUPP");
 	}
 
+	@description = "This is a test for LPS-129049. Verify TawkTo provider can be enabled and disabled"
 	@priority = "5"
 	test EnableAndDisableTawkTo {
 		ApplicationsMenu.gotoPortlet(
@@ -419,6 +428,7 @@ definition {
 		AssertElementNotPresent(locator1 = "Providers#CHAT_TAWKTO");
 	}
 
+	@description = "This is a test for LPS-129049. Verify Tidio provider can be enabled and disabled"
 	@ignore = "true"
 	@priority = "5"
 	test EnableAndDisableTidio {
@@ -463,6 +473,7 @@ definition {
 		AssertElementNotPresent(locator1 = "Providers#CHAT_TIDIO");
 	}
 
+	@description = "This is a test for LPS-129049. Verify Tolvnow provider can be enabled and disabled"
 	@priority = "5"
 	test EnableAndDisableTolvnow {
 		ApplicationsMenu.gotoPortlet(
@@ -506,6 +517,7 @@ definition {
 		AssertElementNotPresent(locator1 = "Providers#CHAT_TOLVNOW");
 	}
 
+	@description = "This is a test for LPS-129049. Verify Zendesk provider can be enabled and disabled"
 	@priority = "5"
 	test EnableAndDisableZendesk {
 		ApplicationsMenu.gotoPortlet(
@@ -549,6 +561,7 @@ definition {
 		AssertElementNotPresent(locator1 = "Providers#CHAT_ZENDESK");
 	}
 
+	@description = "This is a test for LPS-129049. Verify if it is possible to hide the chat provider"
 	@priority = "4"
 	test HideChatProvider {
 		ApplicationsMenu.gotoPortlet(
@@ -571,5 +584,70 @@ definition {
 
 		AssertNotVisible(locator1 = "ClickToChatConfiguration#CHAT_PROVIDER_ACCOUNT_ID");
 	}
+
+	@description = "This is a test for LPS-132716. Verify if the data persists in Site Settings after choosing the strategy 'Always Inherit' in Instance Settings"
+	@priority = "5"
+	test CheckStrategyAlwaysInheritPersistence {
+		ApplicationsMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "Instance Settings");
+
+		SystemSettings.gotoConfiguration(
+			configurationCategory = "Click to Chat",
+			configurationName = "Click to Chat Configuration",
+			configurationScope = "Virtual Instance Scope");
+
+		FormFields.enableCheckbox(fieldName = "enabled");
+
+		Select(
+			locator1 = "ClickToChatConfiguration#SITE_SETTINGS_STRATEGY",
+			value1 = "Always Inherit");
+
+		Select(
+			locator1 = "ClickToChatConfiguration#CHAT_PROVIDER_ID",
+			value1 = "Zendesk");
+
+		var clickToChatZendeskPassword = PropsUtil.get("click.to.chat.zendesk.password");
+
+		Type(
+			locator1 = "ClickToChatConfiguration#CHAT_PROVIDER_ACCOUNT_ID",
+			value1 = "${clickToChatZendeskPassword}");
+
+		SystemSettings.saveConfiguration();
+
+		Refresh();
+
+		AssertElementPresent(locator1 = "Providers#CHAT_ZENDESK");
+
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Configuration",
+			portlet = "Site Settings");
+
+		Click(
+			key_itemName = "Click to Chat",
+			locator1 = "ListGroupItem#ITEM_TEXT");
+
+		var siteSettingsStrategy = "Always Inherit";
+		var chatProvider = "zendesk";
+		var chatProviderId = "${clickToChatZendeskPassword}";
+
+		AssertElementPresent(
+				siteSettingsStrategy = "${siteSettingsStrategy}",
+				locator1 = "ClickToChatConfiguration#SITE_SETTINGS_STRATEGY_CHOOSEN");
+
+		AssertElementPresent(locator1 = "ClickToChatConfiguration#CHECK_INPUT_ENABLED");
+
+		AssertElementPresent(
+				chatProvider = "${chatProvider}",
+				locator1 = "ClickToChatConfiguration#SITE_SETTINGS_STRATEGY_CHOOSEN");
+
+		AssertElementPresent(
+				chatProviderId = "${chatProviderId}",
+				locator1 = "ClickToChatConfiguration#CHECK_CHAT_PROVIDER_ID");	
+
+	}	
 
 }
