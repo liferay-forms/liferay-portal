@@ -75,11 +75,11 @@ public class CPMediaImpl implements CPMedia {
 			_mimeType = fileEntry.getMimeType();
 		}
 
-		_url = CommerceMediaResolverUtil.getURL(
+		_thumbnailUrl = CommerceMediaResolverUtil.getThumbnailURL(
 			commerceAccountId,
 			cpAttachmentFileEntry.getCPAttachmentFileEntryId());
 		_title = cpAttachmentFileEntry.getTitle(themeDisplay.getLanguageId());
-		_thumbnailUrl = CommerceMediaResolverUtil.getThumbnailURL(
+		_url = CommerceMediaResolverUtil.getURL(
 			commerceAccountId,
 			cpAttachmentFileEntry.getCPAttachmentFileEntryId());
 	}
