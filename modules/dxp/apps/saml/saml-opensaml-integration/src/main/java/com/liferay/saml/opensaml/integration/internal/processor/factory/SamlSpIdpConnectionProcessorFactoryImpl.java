@@ -58,11 +58,11 @@ public class SamlSpIdpConnectionProcessorFactoryImpl
 		implements SamlSpIdpConnectionProcessor {
 
 		public SamlSpIdpConnectionProcessorImpl(
-			SamlSpIdpConnection model,
+			SamlSpIdpConnection samlSpIdpConnection,
 			SamlSpIdpConnectionFieldExpressionHandlerRegistry
 				fieldExpressionHandlerRegistry) {
 
-			super(model, fieldExpressionHandlerRegistry);
+			super(samlSpIdpConnection, fieldExpressionHandlerRegistry);
 		}
 
 		@Override
@@ -91,10 +91,10 @@ public class SamlSpIdpConnectionProcessorFactoryImpl
 			@Override
 			public void handleFileItemArray(
 				String fieldExpression,
-				UnsafeBiConsumer<T, FileItem[], ?> consumer) {
+				UnsafeBiConsumer<T, FileItem[], ?> unsafeBiConsumer) {
 
 				handleUnsafeObjectArray(
-					fieldExpression, FileItem.class, consumer);
+					fieldExpression, FileItem.class, unsafeBiConsumer);
 			}
 
 		}
