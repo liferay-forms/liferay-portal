@@ -161,9 +161,9 @@ public class AccountUserResourceImpl
 		ServiceContext serviceContext = new ServiceContext();
 
 		serviceContext.setCompanyId(contextCompany.getCompanyId());
-		serviceContext.setUserId(contextUser.getUserId());
 		serviceContext.setLanguageId(
 			contextAcceptLanguage.getPreferredLanguageId());
+		serviceContext.setUserId(contextUser.getUserId());
 
 		_accountEntryUserRelService.addAccountEntryUserRelByEmailAddress(
 			accountId, emailAddress, new long[0], null, serviceContext);
