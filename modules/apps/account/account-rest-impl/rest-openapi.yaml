@@ -523,7 +523,7 @@ paths:
                         application/xml: { }
                     description:
                         ""
-            tags: [ "AccountUser" ]
+            tags: ["AccountUser"]
         post:
             # @review
             description:
@@ -547,7 +547,7 @@ paths:
                         application/xml: { }
                     description:
                         ""
-            tags: [ "AccountUser" ]
+            tags: ["AccountUser"]
     "/accounts/{accountId}":
         delete:
             # @review
@@ -908,7 +908,7 @@ paths:
                         application/xml: { }
                     description:
                         ""
-            tags: [ "AccountUser" ]
+            tags: ["AccountUser"]
         post:
             description:
                 Assigns a user to an account by their email address
@@ -932,4 +932,4 @@ paths:
                         application/xml: { }
                     description:
                         ""
-            tags: [ "AccountUser" ]
+            tags: ["AccountUser"]
