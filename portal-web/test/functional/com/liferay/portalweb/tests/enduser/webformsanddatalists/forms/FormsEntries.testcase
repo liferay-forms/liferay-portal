@@ -143,7 +143,6 @@ definition {
 			fieldLabel = "Text",
 			fieldName = "Text",
 			fieldValue = "Test Text");
-		
 	}
 
 	@description = "Verify that Entries Previews display the correct information"
