@@ -30,7 +30,7 @@ String runNowButton = "runNowButton" + row.getRowId();
 
 <span aria-hidden="true" class="<%= "hide icon-spinner icon-spin dispatch-check-row-icon-spinner" + row.getRowId() %>"></span>
 
-<c:if test="<%= DispatchTriggerPermission.contains(permissionChecker, dispatchTrigger, ActionKeys.UPDATE) && (dispatchTriggerMetadata.isEmpty() || dispatchTriggerMetadata.isDispatchTaskExecutorReady()) %>">
+<c:if test="<%= DispatchTriggerPermission.contains(permissionChecker, dispatchTrigger, ActionKeys.UPDATE) && (dispatchTriggerMetadata.isDispatchTaskExecutorReady() || dispatchTriggerMetadata.isEmpty()) %>">
 	<aui:button name="<%= runNowButton %>" value="run-now" />
 </c:if>
 
