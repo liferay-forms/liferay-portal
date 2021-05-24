@@ -8,7 +8,7 @@ definition {
 
 	setUp {
 		TestCase.setUpPortalInstance();
-		
+
 		User.firstLoginPG();
 	}
 
@@ -539,9 +539,6 @@ definition {
 			key_optionLabel = "Option 2",
 			key_position = "1",
 			locator1 = "FormFields#SELECT_ASSERT_RADIO_OPTION_ORDER");
-
-
-
 	}
 
 	@description = "Verify that an option can be selected as a Predefined Value"
