@@ -501,6 +501,7 @@ paths:
             tags: ["AccountUser"]
     "/accounts/by-externalReferenceCode/{externalReferenceCode}/account-users/by-emailAddress/{emailAddress}":
         delete:
+            # @review
             description:
                 Removes a user from an account by external reference code by their email address
             operationId: deleteAccountUserByExternalReferenceCodeByEmailAddress
@@ -524,6 +525,7 @@ paths:
                         ""
             tags: [ "AccountUser" ]
         post:
+            # @review
             description:
                 Assigns a user to an account by external reference code by their email address
             operationId: postAccountUserByExternalReferenceCodeByEmailAddress
