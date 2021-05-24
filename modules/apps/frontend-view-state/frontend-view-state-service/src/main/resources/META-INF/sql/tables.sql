@@ -22,7 +22,6 @@ create table FVSCustomEntry (
 	userName VARCHAR(75) null,
 	createDate DATE null,
 	modifiedDate DATE null,
-	entityId VARCHAR(200) null,
 	fvsEntryId LONG,
 	name VARCHAR(200) null
 );

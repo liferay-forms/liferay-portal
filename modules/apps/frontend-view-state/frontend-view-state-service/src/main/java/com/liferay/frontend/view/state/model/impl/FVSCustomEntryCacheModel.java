@@ -77,7 +77,7 @@ public class FVSCustomEntryCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(23);
+		StringBundler sb = new StringBundler(21);
 
 		sb.append("{mvccVersion=");
 		sb.append(mvccVersion);
@@ -95,8 +95,6 @@ public class FVSCustomEntryCacheModel
 		sb.append(createDate);
 		sb.append(", modifiedDate=");
 		sb.append(modifiedDate);
-		sb.append(", entityId=");
-		sb.append(entityId);
 		sb.append(", fvsEntryId=");
 		sb.append(fvsEntryId);
 		sb.append(", name=");
@@ -144,13 +142,6 @@ public class FVSCustomEntryCacheModel
 			fvsCustomEntryImpl.setModifiedDate(new Date(modifiedDate));
 		}
 
-		if (entityId == null) {
-			fvsCustomEntryImpl.setEntityId("");
-		}
-		else {
-			fvsCustomEntryImpl.setEntityId(entityId);
-		}
-
 		fvsCustomEntryImpl.setFvsEntryId(fvsEntryId);
 
 		if (name == null) {
@@ -178,7 +169,6 @@ public class FVSCustomEntryCacheModel
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
-		entityId = objectInput.readUTF();
 
 		fvsEntryId = objectInput.readLong();
 		name = objectInput.readUTF();
@@ -211,13 +201,6 @@ public class FVSCustomEntryCacheModel
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
 
-		if (entityId == null) {
-			objectOutput.writeUTF("");
-		}
-		else {
-			objectOutput.writeUTF(entityId);
-		}
-
 		objectOutput.writeLong(fvsEntryId);
 
 		if (name == null) {
@@ -236,7 +219,6 @@ public class FVSCustomEntryCacheModel
 	public String userName;
 	public long createDate;
 	public long modifiedDate;
-	public String entityId;
 	public long fvsEntryId;
 	public String name;
 

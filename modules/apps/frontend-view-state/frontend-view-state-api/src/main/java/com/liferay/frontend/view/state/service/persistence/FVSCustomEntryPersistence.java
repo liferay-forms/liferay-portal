@@ -340,64 +340,6 @@ public interface FVSCustomEntryPersistence
 	public int countByUuid_C(String uuid, long companyId);
 
 	/**
-	 * Returns the fvs custom entry where userId = &#63; and entityId = &#63; and name = &#63; or throws a <code>NoSuchCustomEntryException</code> if it could not be found.
-	 *
-	 * @param userId the user ID
-	 * @param entityId the entity ID
-	 * @param name the name
-	 * @return the matching fvs custom entry
-	 * @throws NoSuchCustomEntryException if a matching fvs custom entry could not be found
-	 */
-	public FVSCustomEntry findByU_EI_N(
-			long userId, String entityId, String name)
-		throws NoSuchCustomEntryException;
-
-	/**
-	 * Returns the fvs custom entry where userId = &#63; and entityId = &#63; and name = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	 *
-	 * @param userId the user ID
-	 * @param entityId the entity ID
-	 * @param name the name
-	 * @return the matching fvs custom entry, or <code>null</code> if a matching fvs custom entry could not be found
-	 */
-	public FVSCustomEntry fetchByU_EI_N(
-		long userId, String entityId, String name);
-
-	/**
-	 * Returns the fvs custom entry where userId = &#63; and entityId = &#63; and name = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
-	 *
-	 * @param userId the user ID
-	 * @param entityId the entity ID
-	 * @param name the name
-	 * @param useFinderCache whether to use the finder cache
-	 * @return the matching fvs custom entry, or <code>null</code> if a matching fvs custom entry could not be found
-	 */
-	public FVSCustomEntry fetchByU_EI_N(
-		long userId, String entityId, String name, boolean useFinderCache);
-
-	/**
-	 * Removes the fvs custom entry where userId = &#63; and entityId = &#63; and name = &#63; from the database.
-	 *
-	 * @param userId the user ID
-	 * @param entityId the entity ID
-	 * @param name the name
-	 * @return the fvs custom entry that was removed
-	 */
-	public FVSCustomEntry removeByU_EI_N(
-			long userId, String entityId, String name)
-		throws NoSuchCustomEntryException;
-
-	/**
-	 * Returns the number of fvs custom entries where userId = &#63; and entityId = &#63; and name = &#63;.
-	 *
-	 * @param userId the user ID
-	 * @param entityId the entity ID
-	 * @param name the name
-	 * @return the number of matching fvs custom entries
-	 */
-	public int countByU_EI_N(long userId, String entityId, String name);
-
-	/**
 	 * Caches the fvs custom entry in the entity cache if it is enabled.
 	 *
 	 * @param fvsCustomEntry the fvs custom entry

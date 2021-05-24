@@ -206,21 +206,6 @@ public interface FVSCustomEntryModel
 	public void setModifiedDate(Date modifiedDate);
 
 	/**
-	 * Returns the entity ID of this fvs custom entry.
-	 *
-	 * @return the entity ID of this fvs custom entry
-	 */
-	@AutoEscape
-	public String getEntityId();
-
-	/**
-	 * Sets the entity ID of this fvs custom entry.
-	 *
-	 * @param entityId the entity ID of this fvs custom entry
-	 */
-	public void setEntityId(String entityId);
-
-	/**
 	 * Returns the fvs entry ID of this fvs custom entry.
 	 *
 	 * @return the fvs entry ID of this fvs custom entry

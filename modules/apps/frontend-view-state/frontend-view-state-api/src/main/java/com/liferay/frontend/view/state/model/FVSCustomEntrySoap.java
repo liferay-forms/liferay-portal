@@ -41,7 +41,6 @@ public class FVSCustomEntrySoap implements Serializable {
 		soapModel.setUserName(model.getUserName());
 		soapModel.setCreateDate(model.getCreateDate());
 		soapModel.setModifiedDate(model.getModifiedDate());
-		soapModel.setEntityId(model.getEntityId());
 		soapModel.setFvsEntryId(model.getFvsEntryId());
 		soapModel.setName(model.getName());
 
@@ -166,14 +165,6 @@ public class FVSCustomEntrySoap implements Serializable {
 		_modifiedDate = modifiedDate;
 	}
 
-	public String getEntityId() {
-		return _entityId;
-	}
-
-	public void setEntityId(String entityId) {
-		_entityId = entityId;
-	}
-
 	public long getFvsEntryId() {
 		return _fvsEntryId;
 	}
@@ -198,7 +189,6 @@ public class FVSCustomEntrySoap implements Serializable {
 	private String _userName;
 	private Date _createDate;
 	private Date _modifiedDate;
-	private String _entityId;
 	private long _fvsEntryId;
 	private String _name;
 

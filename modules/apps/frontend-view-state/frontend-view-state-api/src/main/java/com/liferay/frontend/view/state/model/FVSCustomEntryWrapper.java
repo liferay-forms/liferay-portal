@@ -51,7 +51,6 @@ public class FVSCustomEntryWrapper
 		attributes.put("userName", getUserName());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
-		attributes.put("entityId", getEntityId());
 		attributes.put("fvsEntryId", getFvsEntryId());
 		attributes.put("name", getName());
 
@@ -108,12 +107,6 @@ public class FVSCustomEntryWrapper
 			setModifiedDate(modifiedDate);
 		}
 
-		String entityId = (String)attributes.get("entityId");
-
-		if (entityId != null) {
-			setEntityId(entityId);
-		}
-
 		Long fvsEntryId = (Long)attributes.get("fvsEntryId");
 
 		if (fvsEntryId != null) {
@@ -165,16 +158,6 @@ public class FVSCustomEntryWrapper
 	@Override
 	public Date getCreateDate() {
 		return model.getCreateDate();
-	}
-
-	/**
-	 * Returns the entity ID of this fvs custom entry.
-	 *
-	 * @return the entity ID of this fvs custom entry
-	 */
-	@Override
-	public String getEntityId() {
-		return model.getEntityId();
 	}
 
 	/**
@@ -320,16 +303,6 @@ public class FVSCustomEntryWrapper
 	@Override
 	public void setCreateDate(Date createDate) {
 		model.setCreateDate(createDate);
-	}
-
-	/**
-	 * Sets the entity ID of this fvs custom entry.
-	 *
-	 * @param entityId the entity ID of this fvs custom entry
-	 */
-	@Override
-	public void setEntityId(String entityId) {
-		model.setEntityId(entityId);
 	}
 
 	/**

@@ -26,8 +26,6 @@ import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.Session;
-import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.transaction.Propagation;
@@ -139,8 +137,6 @@ public class FVSCustomEntryPersistenceTest {
 
 		newFVSCustomEntry.setModifiedDate(RandomTestUtil.nextDate());
 
-		newFVSCustomEntry.setEntityId(RandomTestUtil.randomString());
-
 		newFVSCustomEntry.setFvsEntryId(RandomTestUtil.nextLong());
 
 		newFVSCustomEntry.setName(RandomTestUtil.randomString());
@@ -173,9 +169,6 @@ public class FVSCustomEntryPersistenceTest {
 			Time.getShortTimestamp(existingFVSCustomEntry.getModifiedDate()),
 			Time.getShortTimestamp(newFVSCustomEntry.getModifiedDate()));
 		Assert.assertEquals(
-			existingFVSCustomEntry.getEntityId(),
-			newFVSCustomEntry.getEntityId());
-		Assert.assertEquals(
 			existingFVSCustomEntry.getFvsEntryId(),
 			newFVSCustomEntry.getFvsEntryId());
 		Assert.assertEquals(
@@ -198,15 +191,6 @@ public class FVSCustomEntryPersistenceTest {
 		_persistence.countByUuid_C("null", 0L);
 
 		_persistence.countByUuid_C((String)null, 0L);
-	}
-
-	@Test
-	public void testCountByU_EI_N() throws Exception {
-		_persistence.countByU_EI_N(RandomTestUtil.nextLong(), "", "");
-
-		_persistence.countByU_EI_N(0L, "null", "null");
-
-		_persistence.countByU_EI_N(0L, (String)null, (String)null);
 	}
 
 	@Test
@@ -237,7 +221,7 @@ public class FVSCustomEntryPersistenceTest {
 			"FVSCustomEntry", "mvccVersion", true, "uuid", true,
 			"fvsCustomEntryId", true, "companyId", true, "userId", true,
 			"userName", true, "createDate", true, "modifiedDate", true,
-			"entityId", true, "fvsEntryId", true, "name", true);
+			"fvsEntryId", true, "name", true);
 	}
 
 	@Test
@@ -454,74 +438,6 @@ public class FVSCustomEntryPersistenceTest {
 		Assert.assertEquals(0, result.size());
 	}
 
-	@Test
-	public void testResetOriginalValues() throws Exception {
-		FVSCustomEntry newFVSCustomEntry = addFVSCustomEntry();
-
-		_persistence.clearCache();
-
-		_assertOriginalValues(
-			_persistence.findByPrimaryKey(newFVSCustomEntry.getPrimaryKey()));
-	}
-
-	@Test
-	public void testResetOriginalValuesWithDynamicQueryLoadFromDatabase()
-		throws Exception {
-
-		_testResetOriginalValuesWithDynamicQuery(true);
-	}
-
-	@Test
-	public void testResetOriginalValuesWithDynamicQueryLoadFromSession()
-		throws Exception {
-
-		_testResetOriginalValuesWithDynamicQuery(false);
-	}
-
-	private void _testResetOriginalValuesWithDynamicQuery(boolean clearSession)
-		throws Exception {
-
-		FVSCustomEntry newFVSCustomEntry = addFVSCustomEntry();
-
-		if (clearSession) {
-			Session session = _persistence.openSession();
-
-			session.flush();
-
-			session.clear();
-		}
-
-		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(
-			FVSCustomEntry.class, _dynamicQueryClassLoader);
-
-		dynamicQuery.add(
-			RestrictionsFactoryUtil.eq(
-				"fvsCustomEntryId", newFVSCustomEntry.getFvsCustomEntryId()));
-
-		List<FVSCustomEntry> result = _persistence.findWithDynamicQuery(
-			dynamicQuery);
-
-		_assertOriginalValues(result.get(0));
-	}
-
-	private void _assertOriginalValues(FVSCustomEntry fvsCustomEntry) {
-		Assert.assertEquals(
-			Long.valueOf(fvsCustomEntry.getUserId()),
-			ReflectionTestUtil.<Long>invoke(
-				fvsCustomEntry, "getColumnOriginalValue",
-				new Class<?>[] {String.class}, "userId"));
-		Assert.assertEquals(
-			fvsCustomEntry.getEntityId(),
-			ReflectionTestUtil.invoke(
-				fvsCustomEntry, "getColumnOriginalValue",
-				new Class<?>[] {String.class}, "entityId"));
-		Assert.assertEquals(
-			fvsCustomEntry.getName(),
-			ReflectionTestUtil.invoke(
-				fvsCustomEntry, "getColumnOriginalValue",
-				new Class<?>[] {String.class}, "name"));
-	}
-
 	protected FVSCustomEntry addFVSCustomEntry() throws Exception {
 		long pk = RandomTestUtil.nextLong();
 
@@ -540,8 +456,6 @@ public class FVSCustomEntryPersistenceTest {
 		fvsCustomEntry.setCreateDate(RandomTestUtil.nextDate());
 
 		fvsCustomEntry.setModifiedDate(RandomTestUtil.nextDate());
-
-		fvsCustomEntry.setEntityId(RandomTestUtil.randomString());
 
 		fvsCustomEntry.setFvsEntryId(RandomTestUtil.nextLong());
 

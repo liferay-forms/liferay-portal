@@ -50,8 +50,6 @@ public class FVSCustomEntryTable extends BaseTable<FVSCustomEntryTable> {
 		"createDate", Date.class, Types.TIMESTAMP, Column.FLAG_DEFAULT);
 	public final Column<FVSCustomEntryTable, Date> modifiedDate = createColumn(
 		"modifiedDate", Date.class, Types.TIMESTAMP, Column.FLAG_DEFAULT);
-	public final Column<FVSCustomEntryTable, String> entityId = createColumn(
-		"entityId", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
 	public final Column<FVSCustomEntryTable, Long> fvsEntryId = createColumn(
 		"fvsEntryId", Long.class, Types.BIGINT, Column.FLAG_DEFAULT);
 	public final Column<FVSCustomEntryTable, String> name = createColumn(

@@ -74,8 +74,7 @@ public class FVSCustomEntryModelImpl
 		{"fvsCustomEntryId", Types.BIGINT}, {"companyId", Types.BIGINT},
 		{"userId", Types.BIGINT}, {"userName", Types.VARCHAR},
 		{"createDate", Types.TIMESTAMP}, {"modifiedDate", Types.TIMESTAMP},
-		{"entityId", Types.VARCHAR}, {"fvsEntryId", Types.BIGINT},
-		{"name", Types.VARCHAR}
+		{"fvsEntryId", Types.BIGINT}, {"name", Types.VARCHAR}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -90,13 +89,12 @@ public class FVSCustomEntryModelImpl
 		TABLE_COLUMNS_MAP.put("userName", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
-		TABLE_COLUMNS_MAP.put("entityId", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("fvsEntryId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("name", Types.VARCHAR);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table FVSCustomEntry (mvccVersion LONG default 0 not null,uuid_ VARCHAR(75) null,fvsCustomEntryId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,entityId VARCHAR(200) null,fvsEntryId LONG,name VARCHAR(200) null)";
+		"create table FVSCustomEntry (mvccVersion LONG default 0 not null,uuid_ VARCHAR(75) null,fvsCustomEntryId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,fvsEntryId LONG,name VARCHAR(200) null)";
 
 	public static final String TABLE_SQL_DROP = "drop table FVSCustomEntry";
 
@@ -122,32 +120,14 @@ public class FVSCustomEntryModelImpl
 	 * @deprecated As of Athanasius (7.3.x), replaced by {@link #getColumnBitmask(String)}
 	 */
 	@Deprecated
-	public static final long ENTITYID_COLUMN_BITMASK = 2L;
-
-	/**
-	 * @deprecated As of Athanasius (7.3.x), replaced by {@link #getColumnBitmask(String)}
-	 */
-	@Deprecated
-	public static final long NAME_COLUMN_BITMASK = 4L;
-
-	/**
-	 * @deprecated As of Athanasius (7.3.x), replaced by {@link #getColumnBitmask(String)}
-	 */
-	@Deprecated
-	public static final long USERID_COLUMN_BITMASK = 8L;
-
-	/**
-	 * @deprecated As of Athanasius (7.3.x), replaced by {@link #getColumnBitmask(String)}
-	 */
-	@Deprecated
-	public static final long UUID_COLUMN_BITMASK = 16L;
+	public static final long UUID_COLUMN_BITMASK = 2L;
 
 	/**
 	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
 	 *		#getColumnBitmask(String)}
 	 */
 	@Deprecated
-	public static final long FVSCUSTOMENTRYID_COLUMN_BITMASK = 32L;
+	public static final long FVSCUSTOMENTRYID_COLUMN_BITMASK = 4L;
 
 	/**
 	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
@@ -324,10 +304,6 @@ public class FVSCustomEntryModelImpl
 		attributeSetterBiConsumers.put(
 			"modifiedDate",
 			(BiConsumer<FVSCustomEntry, Date>)FVSCustomEntry::setModifiedDate);
-		attributeGetterFunctions.put("entityId", FVSCustomEntry::getEntityId);
-		attributeSetterBiConsumers.put(
-			"entityId",
-			(BiConsumer<FVSCustomEntry, String>)FVSCustomEntry::setEntityId);
 		attributeGetterFunctions.put(
 			"fvsEntryId", FVSCustomEntry::getFvsEntryId);
 		attributeSetterBiConsumers.put(
@@ -454,15 +430,6 @@ public class FVSCustomEntryModelImpl
 	public void setUserUuid(String userUuid) {
 	}
 
-	/**
-	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
-	 *             #getColumnOriginalValue(String)}
-	 */
-	@Deprecated
-	public long getOriginalUserId() {
-		return GetterUtil.getLong(this.<Long>getColumnOriginalValue("userId"));
-	}
-
 	@Override
 	public String getUserName() {
 		if (_userName == null) {
@@ -517,34 +484,6 @@ public class FVSCustomEntryModelImpl
 	}
 
 	@Override
-	public String getEntityId() {
-		if (_entityId == null) {
-			return "";
-		}
-		else {
-			return _entityId;
-		}
-	}
-
-	@Override
-	public void setEntityId(String entityId) {
-		if (_columnOriginalValues == Collections.EMPTY_MAP) {
-			_setColumnOriginalValues();
-		}
-
-		_entityId = entityId;
-	}
-
-	/**
-	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
-	 *             #getColumnOriginalValue(String)}
-	 */
-	@Deprecated
-	public String getOriginalEntityId() {
-		return getColumnOriginalValue("entityId");
-	}
-
-	@Override
 	public long getFvsEntryId() {
 		return _fvsEntryId;
 	}
@@ -575,15 +514,6 @@ public class FVSCustomEntryModelImpl
 		}
 
 		_name = name;
-	}
-
-	/**
-	 * @deprecated As of Athanasius (7.3.x), replaced by {@link
-	 *             #getColumnOriginalValue(String)}
-	 */
-	@Deprecated
-	public String getOriginalName() {
-		return getColumnOriginalValue("name");
 	}
 
 	@Override
@@ -680,7 +610,6 @@ public class FVSCustomEntryModelImpl
 		fvsCustomEntryImpl.setUserName(getUserName());
 		fvsCustomEntryImpl.setCreateDate(getCreateDate());
 		fvsCustomEntryImpl.setModifiedDate(getModifiedDate());
-		fvsCustomEntryImpl.setEntityId(getEntityId());
 		fvsCustomEntryImpl.setFvsEntryId(getFvsEntryId());
 		fvsCustomEntryImpl.setName(getName());
 
@@ -805,14 +734,6 @@ public class FVSCustomEntryModelImpl
 			fvsCustomEntryCacheModel.modifiedDate = Long.MIN_VALUE;
 		}
 
-		fvsCustomEntryCacheModel.entityId = getEntityId();
-
-		String entityId = fvsCustomEntryCacheModel.entityId;
-
-		if ((entityId != null) && (entityId.length() == 0)) {
-			fvsCustomEntryCacheModel.entityId = null;
-		}
-
 		fvsCustomEntryCacheModel.fvsEntryId = getFvsEntryId();
 
 		fvsCustomEntryCacheModel.name = getName();
@@ -905,7 +826,6 @@ public class FVSCustomEntryModelImpl
 	private Date _createDate;
 	private Date _modifiedDate;
 	private boolean _setModifiedDate;
-	private String _entityId;
 	private long _fvsEntryId;
 	private String _name;
 
@@ -946,7 +866,6 @@ public class FVSCustomEntryModelImpl
 		_columnOriginalValues.put("userName", _userName);
 		_columnOriginalValues.put("createDate", _createDate);
 		_columnOriginalValues.put("modifiedDate", _modifiedDate);
-		_columnOriginalValues.put("entityId", _entityId);
 		_columnOriginalValues.put("fvsEntryId", _fvsEntryId);
 		_columnOriginalValues.put("name", _name);
 	}
@@ -988,11 +907,9 @@ public class FVSCustomEntryModelImpl
 
 		columnBitmasks.put("modifiedDate", 128L);
 
-		columnBitmasks.put("entityId", 256L);
+		columnBitmasks.put("fvsEntryId", 256L);
 
-		columnBitmasks.put("fvsEntryId", 512L);
-
-		columnBitmasks.put("name", 1024L);
+		columnBitmasks.put("name", 512L);
 
 		_columnBitmasks = Collections.unmodifiableMap(columnBitmasks);
 	}
