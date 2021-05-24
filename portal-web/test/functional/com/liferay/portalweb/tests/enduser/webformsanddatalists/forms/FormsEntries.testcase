@@ -73,13 +73,73 @@ definition {
 	}
 
 	@description = "Verify that Entries Previews display the correct information"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test DisplayCorrectInfoInPreviews {
 		property forms.functional = "true";
 		property portal.acceptance = "false";
 
-		// TODO LPS-131077 DisplayCorrectInfoInPreviews pending implementation
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Forms");
+
+		FormsAdminNavigator.gotoAddForm();
+
+		Form.editName(formName = "Form 1");
+
+		Form.gotoAddField(
+			fieldPositionNumber = "0",
+			fieldType = "Text");
+
+		FormFields.editText(
+			fieldName = "label",
+			fieldValue = "Text Label");
+
+		Form.closeSidebar();
+		
+		Form.gotoAddField(
+			fieldPositionNumber = "1",
+			fieldType = "Numeric");
+
+		Form.save();
+
+		Form.publishForm();
+
+		FormsAdminNavigator.gotoPublishedForm();
+
+		FormFields.editText(
+			fieldName = "Text",
+			fieldValue = "Test Text");
+		
+		FormFields.editText(
+			fieldName = "Numeric",
+			fieldValue = "5");
+
+		FormPortlet.submitSuccessfully();
+
+		FormPortlet.viewSuccessPage(
+			successPageDescription = "Your information was successfully received. Thank you for filling out the form.",
+			successPageTitle = "Thank you.");
+
+		Navigator.openSpecificURL(url = "http://localhost:8080");
+		
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Forms");
+
+		FormsAdminNavigator.gotoViewEntries();
+
+		FormsAdmin.viewFormTableHeader(fieldHeader = "Text Label");
+		
+		FormsAdmin.viewFormTableHeader(fieldHeader = "Numeric");
+
+		FormsAdmin.viewFormTableBody(fieldBody = "Test Text");
+
+		FormsAdmin.viewFormTableBody(fieldBody = "5");
+
+		FormsAdmin.viewFormTableBody(fieldBody = "Approved");
+		
+		FormsAdmin.viewFormTableBody(fieldBody = "Test Test");
+
 	}
 
 	@description = "Verify that the correct number of Entries are displayed"

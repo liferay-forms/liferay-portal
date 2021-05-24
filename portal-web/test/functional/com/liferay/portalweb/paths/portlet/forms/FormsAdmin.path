@@ -10,8 +10,18 @@
 <tbody>
 <!--FORMS_ENTRY_TABLE-->
 <tr>
+	<td>FORM_ENTRY_TABLE_BODY</td>
+	<td>//table[contains(@class,'table')]//tbody//*[contains(text(),'${key_fieldBody}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>FORM_ENTRY_TABLE_ENTRY</td>
 	<td>//table[contains(.,'${key_fieldLabel}')]//tbody/tr/td[contains(.,'${key_fieldValue}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>FORM_ENTRY_TABLE_HEADER</td>
+	<td>//table[contains(@class,'table')]//thead//*[contains(text(),'${key_fieldHeader}')]</td>
 	<td></td>
 </tr>
 <tr>

@@ -208,6 +208,25 @@ definition {
 			value1 = "${fieldValue}");
 	}
 
+	macro viewFormTableBody {
+		var key_fieldBody = "${fieldBody}";
+		
+		AssertTextEquals(
+			locator1 = "FormsAdmin#FORM_ENTRY_TABLE_BODY",
+			value1 = "${fieldBody}");
+			
+	}
+
+	macro viewFormTableHeader {
+		var key_fieldHeader = "${fieldHeader}";
+
+		AssertTextEquals(
+			locator1 = "FormsAdmin#FORM_ENTRY_TABLE_HEADER",
+			value1 = "${fieldHeader}");
+
+	}
+
+
 	macro viewFormTableEntryNotPresent {
 		var key_fieldLabel = "${fieldLabel}";
 		var key_fieldValue = "${fieldValue}";
