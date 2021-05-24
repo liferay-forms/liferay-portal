@@ -519,8 +519,8 @@ paths:
             responses:
                 204:
                     content:
-                        application/json: { }
-                        application/xml: { }
+                        application/json: {}
+                        application/xml: {}
                     description:
                         ""
             tags: ["AccountUser"]
@@ -543,8 +543,8 @@ paths:
             responses:
                 204:
                     content:
-                        application/json: { }
-                        application/xml: { }
+                        application/json: {}
+                        application/xml: {}
                     description:
                         ""
             tags: ["AccountUser"]
@@ -904,8 +904,8 @@ paths:
             responses:
                 204:
                     content:
-                        application/json: { }
-                        application/xml: { }
+                        application/json: {}
+                        application/xml: {}
                     description:
                         ""
             tags: ["AccountUser"]
@@ -928,8 +928,8 @@ paths:
             responses:
                 204:
                     content:
-                        application/json: { }
-                        application/xml: { }
+                        application/json: {}
+                        application/xml: {}
                     description:
                         ""
             tags: ["AccountUser"]
