@@ -267,6 +267,7 @@ definition {
 	}
 
 	@description = "This is a test for LPS-129049. Verify Chatwoot provider can be enabled and disabled."
+	@ignore = "true"
 	@priority = "5"
 	test EnableAndDisableChatwoot {
 		ApplicationsMenu.gotoPortlet(
