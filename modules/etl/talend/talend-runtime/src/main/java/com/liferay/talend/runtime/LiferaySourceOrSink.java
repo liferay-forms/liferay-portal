@@ -184,7 +184,7 @@ public class LiferaySourceOrSink implements OASSource, SourceOrSink {
 		if (componentProperties instanceof LiferayConnectionProperties) {
 			return new ValidationResult(
 				ValidationResult.Result.ERROR,
-				"Connection properties not allowed here");
+				"Connection properties are not allowed here");
 		}
 
 		Properties aggregatedProperties = componentProperties.getProperties(
@@ -235,8 +235,8 @@ public class LiferaySourceOrSink implements OASSource, SourceOrSink {
 				i18nMessages.getMessage("error.validation.connection"));
 		}
 
-		if (StringUtil.isEmpty(_liferayConnectionProperties.getUserId()) ||
-			StringUtil.isEmpty(_liferayConnectionProperties.getPassword())) {
+		if (StringUtil.isEmpty(_liferayConnectionProperties.getPassword()) ||
+			StringUtil.isEmpty(_liferayConnectionProperties.getUserId())) {
 
 			return new ValidationResult(
 				ValidationResult.Result.ERROR,
