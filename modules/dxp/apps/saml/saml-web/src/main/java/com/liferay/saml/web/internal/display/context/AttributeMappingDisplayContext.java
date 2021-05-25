@@ -211,9 +211,9 @@ public class AttributeMappingDisplayContext {
 			return false;
 		}
 
-		List<Map.Entry<String, String>> prefixEntries = _entries.get(prefix);
-
 		int[] userAttributeMappingsIndexes = null;
+
+		List<Map.Entry<String, String>> prefixEntries = _entries.get(prefix);
 
 		if (Validator.isNotNull(userAttributeMappingsIndexesParam)) {
 			userAttributeMappingsIndexes = StringUtil.split(
