@@ -52,28 +52,28 @@ public class DefaultSamlSpIdpConnectionFieldExpressionHandler
 			samlSpIdpConnectionProcessorContext) {
 
 		SamlSpIdpConnectionProcessorContext.SamlSpIdpConnectionBind
-			<SamlSpIdpConnection> fieldExpressionMapper =
+			<SamlSpIdpConnection> samlSpIdpConnectionBind =
 				samlSpIdpConnectionProcessorContext.bind(
 					Integer.MIN_VALUE, this::_update);
 
-		fieldExpressionMapper.mapBoolean(
+		samlSpIdpConnectionBind.mapBoolean(
 			"assertionSignatureRequired",
 			SamlSpIdpConnection::setAssertionSignatureRequired);
-		fieldExpressionMapper.mapLong(
+		samlSpIdpConnectionBind.mapLong(
 			"clockSkew", SamlSpIdpConnection::setClockSkew);
-		fieldExpressionMapper.mapBoolean(
+		samlSpIdpConnectionBind.mapBoolean(
 			"enabled", SamlSpIdpConnection::setEnabled);
-		fieldExpressionMapper.mapBoolean(
+		samlSpIdpConnectionBind.mapBoolean(
 			"forceAuthn", SamlSpIdpConnection::setForceAuthn);
-		fieldExpressionMapper.mapBoolean(
+		samlSpIdpConnectionBind.mapBoolean(
 			"ldapImportEnabled", SamlSpIdpConnection::setLdapImportEnabled);
-		fieldExpressionMapper.mapBoolean(
+		samlSpIdpConnectionBind.mapBoolean(
 			"unknownUsersAreStrangers",
 			SamlSpIdpConnection::setUnknownUsersAreStrangers);
-		fieldExpressionMapper.mapString(
+		samlSpIdpConnectionBind.mapString(
 			"metadataUrl", SamlSpIdpConnection::setMetadataUrl);
 
-		fieldExpressionMapper.handleFileItemArray(
+		samlSpIdpConnectionBind.handleFileItemArray(
 			"metadataXml",
 			(samlSpIdpConnection, fileItems) -> {
 				if ((fileItems == null) || (fileItems.length == 0)) {
@@ -90,14 +90,14 @@ public class DefaultSamlSpIdpConnectionFieldExpressionHandler
 				samlSpIdpConnection.setMetadataXml(fileItem.getString());
 			});
 
-		fieldExpressionMapper.mapString("name", SamlSpIdpConnection::setName);
-		fieldExpressionMapper.mapString(
+		samlSpIdpConnectionBind.mapString("name", SamlSpIdpConnection::setName);
+		samlSpIdpConnectionBind.mapString(
 			"nameIdFormat", SamlSpIdpConnection::setNameIdFormat);
-		fieldExpressionMapper.mapString(
+		samlSpIdpConnectionBind.mapString(
 			"samlIdpEntityId", SamlSpIdpConnection::setSamlIdpEntityId);
-		fieldExpressionMapper.mapBoolean(
+		samlSpIdpConnectionBind.mapBoolean(
 			"signAuthnRequest", SamlSpIdpConnection::setSignAuthnRequest);
-		fieldExpressionMapper.mapString(
+		samlSpIdpConnectionBind.mapString(
 			"userIdentifierExpression",
 			SamlSpIdpConnection::setUserIdentifierExpression);
 
