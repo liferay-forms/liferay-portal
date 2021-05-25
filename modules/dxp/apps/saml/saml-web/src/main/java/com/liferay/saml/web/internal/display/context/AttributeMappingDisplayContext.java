@@ -50,9 +50,9 @@ public class AttributeMappingDisplayContext {
 	public AttributeMappingDisplayContext(
 			PortletRequest portletRequest,
 			SamlSpIdpConnection samlSpIdpConnection,
+			ThemeDisplay themeDisplay,
 			UserFieldExpressionHandlerRegistry
-				userFieldExpressionHandlerRegistry,
-			ThemeDisplay themeDisplay)
+				userFieldExpressionHandlerRegistry)
 		throws IOException {
 
 		_portletRequest = portletRequest;
@@ -96,12 +96,9 @@ public class AttributeMappingDisplayContext {
 
 			int prefixEndIndex = propertyValue.indexOf(CharPool.COLON);
 
-			String prefix;
+			String prefix = StringPool.BLANK; 
 
-			if (prefixEndIndex == -1) {
-				prefix = StringPool.BLANK;
-			}
-			else {
+			if (prefixEndIndex != -1) {
 				prefix = propertyValue.substring(0, prefixEndIndex);
 			}
 
@@ -150,7 +147,11 @@ public class AttributeMappingDisplayContext {
 	public Object[] getMessageArguments(
 		UserAttributeMappingException userAttributeMappingException) {
 
-		String message;
+		UserFieldExpressionHandler userFieldExpressionHandler =
+			_userFieldExpressionHandlerRegistry.getFieldExpressionHandler(
+				userAttributeMappingException.getPrefix());
+
+		String message = null;
 
 		if (UserAttributeMappingException.ErrorType.
 				DUPLICATE_FIELD_EXPRESSION ==
@@ -167,10 +168,6 @@ public class AttributeMappingDisplayContext {
 					_locale, AttributeMappingDisplayContext.class),
 				"all-attribute-mappings-must-specify-a-saml-attribute");
 		}
-
-		UserFieldExpressionHandler userFieldExpressionHandler =
-			_userFieldExpressionHandlerRegistry.getFieldExpressionHandler(
-				userAttributeMappingException.getPrefix());
 
 		return new String[] {
 			userFieldExpressionHandler.getSectionLabel(_locale), message
@@ -216,7 +213,7 @@ public class AttributeMappingDisplayContext {
 
 		List<Map.Entry<String, String>> prefixEntries = _entries.get(prefix);
 
-		int[] userAttributeMappingsIndexes;
+		int[] userAttributeMappingsIndexes = null;
 
 		if (Validator.isNotNull(userAttributeMappingsIndexesParam)) {
 			userAttributeMappingsIndexes = StringUtil.split(

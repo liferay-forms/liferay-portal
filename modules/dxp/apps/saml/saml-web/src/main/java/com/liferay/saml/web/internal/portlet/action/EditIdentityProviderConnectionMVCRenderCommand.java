@@ -68,7 +68,7 @@ public class EditIdentityProviderConnectionMVCRenderCommand
 			UserFieldExpressionResolverRegistry.class.getName(),
 			_userFieldExpressionResolverRegistry);
 
-		long clockSkew;
+		long clockSkew = 0;
 
 		SamlSpIdpConnection samlSpIdpConnection = null;
 
@@ -103,9 +103,9 @@ public class EditIdentityProviderConnectionMVCRenderCommand
 				AttributeMappingDisplayContext.class.getName(),
 				new AttributeMappingDisplayContext(
 					renderRequest, samlSpIdpConnection,
-					_userFieldExpressionHandlerRegistry,
 					(ThemeDisplay)renderRequest.getAttribute(
-						WebKeys.THEME_DISPLAY)));
+						WebKeys.THEME_DISPLAY),
+					_userFieldExpressionHandlerRegistry));
 		}
 		catch (IOException ioException) {
 			throw new PortletException(ioException);
