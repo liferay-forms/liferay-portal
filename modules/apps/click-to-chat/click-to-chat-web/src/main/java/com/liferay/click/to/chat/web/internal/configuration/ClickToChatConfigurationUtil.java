@@ -30,49 +30,49 @@ public class ClickToChatConfigurationUtil {
 		long companyId, long groupId) {
 
 		try {
-			ClickToChatConfiguration clickToChatConfigurationCompany =
+			ClickToChatConfiguration companyClickToChatConfiguration =
 				ConfigurationProviderUtil.getCompanyConfiguration(
 					ClickToChatConfiguration.class, companyId);
 
 			if (groupId == 0) {
-				return clickToChatConfigurationCompany;
+				return companyClickToChatConfiguration;
 			}
 
 			if (Objects.equals(
-					clickToChatConfigurationCompany.siteSettingsStrategy(),
+					companyClickToChatConfiguration.siteSettingsStrategy(),
 					"always-inherit")) {
 
-				return clickToChatConfigurationCompany;
+				return companyClickToChatConfiguration;
 			}
 
-			ClickToChatConfiguration clickToChatConfigurationGroup =
+			ClickToChatConfiguration groupClickToChatConfiguration =
 				ConfigurationProviderUtil.getGroupConfiguration(
 					ClickToChatConfiguration.class, groupId);
 
 			if (Objects.equals(
-					clickToChatConfigurationCompany.siteSettingsStrategy(),
+					companyClickToChatConfiguration.siteSettingsStrategy(),
 					"always-override")) {
 
-				return clickToChatConfigurationGroup;
+				return groupClickToChatConfiguration;
 			}
 
 			if (Objects.equals(
-					clickToChatConfigurationCompany.siteSettingsStrategy(),
+					companyClickToChatConfiguration.siteSettingsStrategy(),
 					"inherit-or-override")) {
 
 				if (Validator.isNotNull(
-						clickToChatConfigurationGroup.
+						groupClickToChatConfiguration.
 							chatProviderAccountId()) &&
 					Validator.isNotNull(
-						clickToChatConfigurationGroup.chatProviderId())) {
+						groupClickToChatConfiguration.chatProviderId())) {
 
-					return clickToChatConfigurationGroup;
+					return groupClickToChatConfiguration;
 				}
 
-				return clickToChatConfigurationCompany;
+				return companyClickToChatConfiguration;
 			}
 
-			return clickToChatConfigurationCompany;
+			return companyClickToChatConfiguration;
 		}
 		catch (ConfigurationException configurationException) {
 			return ReflectionUtil.throwException(configurationException);
