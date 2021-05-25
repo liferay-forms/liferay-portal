@@ -28,7 +28,6 @@ import com.liferay.saml.web.internal.exception.UserIdentifierExpressionException
 
 import java.io.StringWriter;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -51,87 +50,30 @@ public class AttributeMappingSamlSpIdpConnectionFieldExpressionHandler
 
 	@Override
 	public void bindProcessorContext(
-		SamlSpIdpConnectionProcessorContext processorContext) {
+		SamlSpIdpConnectionProcessorContext
+			samlSpIdpConnectionProcessorContext) {
 
 		SamlSpIdpConnectionProcessorContext.SamlSpIdpConnectionBind
-			<SamlSpIdpConnection> fieldExpressionMapper = processorContext.bind(
-				_processingIndex, this::_update);
+			<SamlSpIdpConnection> fieldExpressionMapper =
+				samlSpIdpConnectionProcessorContext.bind(
+					_processingIndex, this::_update);
 
 		fieldExpressionMapper.mapUnsafeString(
 			"userAttributeMappingsPrefixes",
 			(samlSpIdpConnection, prefixes) -> {
 				Properties userAttributeMappingsProperties = new Properties();
 
-				List<String> split = new ArrayList<>(
-					StringUtil.split(prefixes));
-
-				split.add(StringPool.BLANK);
-
-				for (String prefix : split) {
-					List<String> indexesString = StringUtil.split(
-						processorContext.getValue(
-							String.class,
-							prefix + ":userAttributeMappingsIndexes"));
-
-					Set<String> userFieldExpressions = new HashSet<>();
-
-					for (String index : indexesString.toArray(new String[0])) {
-						String fieldExpression = GetterUtil.getString(
-							processorContext.getValue(
-								String.class,
-								prefix +
-									":userAttributeMappingFieldExpression-" +
-										index));
-
-						String attributeName = GetterUtil.getString(
-							processorContext.getValue(
-								String.class,
-								prefix + ":userAttributeMappingSamlAttribute-" +
-									index));
-
-						if (!userFieldExpressions.add(fieldExpression)) {
-							throw new UserAttributeMappingException(
-								prefix, fieldExpression, attributeName,
-								UserAttributeMappingException.ErrorType.
-									DUPLICATE_FIELD_EXPRESSION);
-						}
-
-						if (fieldExpression.equals(StringPool.BLANK) &&
-							attributeName.equals(StringPool.BLANK)) {
-
-							continue;
-						}
-
-						if (fieldExpression.equals(StringPool.BLANK) ||
-							attributeName.equals(StringPool.BLANK)) {
-
-							throw new UserAttributeMappingException(
-								prefix, fieldExpression, attributeName,
-								UserAttributeMappingException.ErrorType.
-									INVALID_MAPPING);
-						}
-
-						if (!Validator.isBlank(prefix)) {
-							fieldExpression = prefix + ":" + fieldExpression;
-						}
-
-						userAttributeMappingsProperties.put(
-							attributeName, fieldExpression);
-
-						String prefix2 = processorContext.getValue(
-							String.class, "userIdentifierExpressionPrefix");
-
-						String index2 = processorContext.getValue(
-							String.class, "userIdentifierExpressionIndex");
-
-						if (Objects.equals(index, index2) &&
-							Objects.equals(prefix, prefix2)) {
-
-							samlSpIdpConnection.setUserIdentifierExpression(
-								"attribute:" + fieldExpression);
-						}
-					}
+				for (String prefix : StringUtil.split(prefixes)) {
+					_populate(
+						prefix, samlSpIdpConnection,
+						samlSpIdpConnectionProcessorContext,
+						userAttributeMappingsProperties);
 				}
+
+				_populate(
+					StringPool.BLANK, samlSpIdpConnection,
+					samlSpIdpConnectionProcessorContext,
+					userAttributeMappingsProperties);
 
 				try (StringWriter stringWriter = new StringWriter()) {
 					userAttributeMappingsProperties.store(stringWriter, null);
@@ -146,6 +88,72 @@ public class AttributeMappingSamlSpIdpConnectionFieldExpressionHandler
 	protected void activate(Map<String, Object> properties) {
 		_processingIndex = GetterUtil.getInteger(
 			properties.get("processing.index"));
+	}
+
+	private void _populate(
+			String prefix, SamlSpIdpConnection samlSpIdpConnection,
+			SamlSpIdpConnectionProcessorContext
+				samlSpIdpConnectionProcessorContext,
+			Properties userAttributeMappingsProperties)
+		throws PortalException {
+
+		List<String> indexes = StringUtil.split(
+			samlSpIdpConnectionProcessorContext.getValue(
+				String.class, prefix + ":userAttributeMappingsIndexes"));
+
+		Set<String> userFieldExpressions = new HashSet<>();
+
+		for (String index : indexes) {
+			String fieldExpression = GetterUtil.getString(
+				samlSpIdpConnectionProcessorContext.getValue(
+					String.class,
+					prefix + ":userAttributeMappingFieldExpression-" + index));
+
+			if (Objects.equals(
+					index,
+					samlSpIdpConnectionProcessorContext.getValue(
+						String.class, "userIdentifierExpressionIndex")) &&
+				Objects.equals(
+					prefix,
+					samlSpIdpConnectionProcessorContext.getValue(
+						String.class, "userIdentifierExpressionPrefix"))) {
+
+				samlSpIdpConnection.setUserIdentifierExpression(
+					"attribute:" + fieldExpression);
+			}
+
+			String attributeName = GetterUtil.getString(
+				samlSpIdpConnectionProcessorContext.getValue(
+					String.class,
+					prefix + ":userAttributeMappingSamlAttribute-" + index));
+
+			if (!userFieldExpressions.add(fieldExpression)) {
+				throw new UserAttributeMappingException(
+					prefix, fieldExpression, attributeName,
+					UserAttributeMappingException.ErrorType.
+						DUPLICATE_FIELD_EXPRESSION);
+			}
+
+			if (Validator.isBlank(attributeName) &&
+				Validator.isBlank(fieldExpression)) {
+
+				continue;
+			}
+
+			if (Validator.isBlank(attributeName) ||
+				Validator.isBlank(fieldExpression)) {
+
+				throw new UserAttributeMappingException(
+					prefix, fieldExpression, attributeName,
+					UserAttributeMappingException.ErrorType.INVALID_MAPPING);
+			}
+
+			if (!Validator.isBlank(prefix)) {
+				fieldExpression = prefix + ":" + fieldExpression;
+			}
+
+			userAttributeMappingsProperties.put(attributeName, fieldExpression);
+		}
 	}
 
 	private SamlSpIdpConnection _update(

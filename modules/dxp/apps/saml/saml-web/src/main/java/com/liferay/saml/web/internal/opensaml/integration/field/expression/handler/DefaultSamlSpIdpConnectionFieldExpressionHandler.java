@@ -48,11 +48,13 @@ public class DefaultSamlSpIdpConnectionFieldExpressionHandler
 
 	@Override
 	public void bindProcessorContext(
-		SamlSpIdpConnectionProcessorContext processorContext) {
+		SamlSpIdpConnectionProcessorContext
+			samlSpIdpConnectionProcessorContext) {
 
 		SamlSpIdpConnectionProcessorContext.SamlSpIdpConnectionBind
-			<SamlSpIdpConnection> fieldExpressionMapper = processorContext.bind(
-				Integer.MIN_VALUE, this::_update);
+			<SamlSpIdpConnection> fieldExpressionMapper =
+				samlSpIdpConnectionProcessorContext.bind(
+					Integer.MIN_VALUE, this::_update);
 
 		fieldExpressionMapper.mapBoolean(
 			"assertionSignatureRequired",
@@ -99,7 +101,8 @@ public class DefaultSamlSpIdpConnectionFieldExpressionHandler
 			"userIdentifierExpression",
 			SamlSpIdpConnection::setUserIdentifierExpression);
 
-		processorContext.bind(_processingIndex, this::_persist);
+		samlSpIdpConnectionProcessorContext.bind(
+			_processingIndex, this::_persist);
 	}
 
 	@Activate
