@@ -102,30 +102,19 @@ public class DefaultUserResolverTest extends BaseSamlTestCase {
 		_mockDigesterUtil();
 		_mockLanguageUtil();
 
+		getMockPortalService(
+			OrganizationLocalServiceUtil.class, OrganizationLocalService.class);
+
 		_company = _mockCompany();
-
-		CompanyLocalService companyLocalService = _mockCompanyLocalService(
-			_company);
-
-		MetadataManager metadataManager = _mockMetadataManager();
-
-		_samlSpIdpConnection = _mockSamlSpIdConnection();
-
-		SamlSpIdpConnectionLocalService samlSpIdpConnectionLocalService =
-			_mockSamlSpIdConnectionLocalService(_samlSpIdpConnection);
-
-		SamlPeerBindingLocalService samlPeerBindingLocalService =
-			_mockSamlPeerBindingLocalService();
-
 		_samlProviderConfigurationHelper =
 			_mockSamlProviderConfigurationHelper();
+		_samlSpIdpConnection = _mockSamlSpIdConnection();
 
-		DefaultUserFieldExpressionHandler defaultUserFieldExpressionHandler =
-			new DefaultUserFieldExpressionHandler();
+		_userLocalService = _mockUserLocalService();
 
 		_userFieldExpressionHandlerRegistry =
-			_mockDefaultUserFieldExpressionHandler(
-				defaultUserFieldExpressionHandler);
+			_mockDefaultUserFieldExpressionRegistry(
+				_createDefaultUserFieldExpressionHandler(_userLocalService));
 
 		_testUserFieldExpressionResolver =
 			new TestUserFieldExpressionResolver();
@@ -134,47 +123,31 @@ public class DefaultUserResolverTest extends BaseSamlTestCase {
 			_mockUserFieldExpressionResolverRegistry(
 				_testUserFieldExpressionResolver);
 
-		_userLocalService = _mockUserLocalService();
-
-		getMockPortalService(
-			OrganizationLocalServiceUtil.class, OrganizationLocalService.class);
-
 		ReflectionTestUtil.setFieldValue(
-			_defaultUserResolver, "_companyLocalService", companyLocalService);
-
+			_defaultUserResolver, "_companyLocalService",
+			_mockCompanyLocalService(_company));
 		ReflectionTestUtil.setFieldValue(
-			_defaultUserResolver, "_metadataManager", metadataManager);
-
-		ReflectionTestUtil.setFieldValue(
-			_defaultUserResolver, "_samlSpIdpConnectionLocalService",
-			samlSpIdpConnectionLocalService);
-
+			_defaultUserResolver, "_metadataManager", _mockMetadataManager());
 		ReflectionTestUtil.setFieldValue(
 			_defaultUserResolver, "_samlPeerBindingLocalService",
-			samlPeerBindingLocalService);
-
+			_mockSamlPeerBindingLocalService());
 		ReflectionTestUtil.setFieldValue(
 			_defaultUserResolver, "_samlProviderConfigurationHelper",
 			_samlProviderConfigurationHelper);
-
+		ReflectionTestUtil.setFieldValue(
+			_defaultUserResolver, "_samlSpIdpConnectionLocalService",
+			_mockSamlSpIdConnectionLocalService(_samlSpIdpConnection));
 		ReflectionTestUtil.setFieldValue(
 			_defaultUserResolver, "_userFieldExpressionHandlerRegistry",
 			_userFieldExpressionHandlerRegistry);
-
 		ReflectionTestUtil.setFieldValue(
 			_defaultUserResolver, "_userFieldExpressionResolverRegistry",
 			_userFieldExpressionResolverRegistry);
-
+		ReflectionTestUtil.setFieldValue(
+			_defaultUserResolver, "_userLocalService", _userLocalService);
 		ReflectionTestUtil.setFieldValue(
 			_defaultUserResolver, "_userProcessorFactory",
 			new UserProcessorFactoryImpl());
-
-		ReflectionTestUtil.setFieldValue(
-			_defaultUserResolver, "_userLocalService", _userLocalService);
-
-		ReflectionTestUtil.setFieldValue(
-			defaultUserFieldExpressionHandler, "_userLocalService",
-			_userLocalService);
 
 		_initMessageContext(true);
 		_initUnknownUserHandling();
@@ -357,6 +330,20 @@ public class DefaultUserResolverTest extends BaseSamlTestCase {
 		user.setPrimaryKey(0);
 
 		return user;
+	}
+
+	private DefaultUserFieldExpressionHandler
+		_createDefaultUserFieldExpressionHandler(
+			UserLocalService userLocalService) {
+
+		DefaultUserFieldExpressionHandler defaultUserFieldExpressionHandler =
+			new DefaultUserFieldExpressionHandler();
+
+		ReflectionTestUtil.setFieldValue(
+			defaultUserFieldExpressionHandler, "_userLocalService",
+			userLocalService);
+
+		return defaultUserFieldExpressionHandler;
 	}
 
 	private void _initMatchingUserHandling() throws Exception {
@@ -610,7 +597,7 @@ public class DefaultUserResolverTest extends BaseSamlTestCase {
 	}
 
 	private UserFieldExpressionHandlerRegistry
-		_mockDefaultUserFieldExpressionHandler(
+		_mockDefaultUserFieldExpressionRegistry(
 			DefaultUserFieldExpressionHandler
 				defaultUserFieldExpressionHandler) {
 
