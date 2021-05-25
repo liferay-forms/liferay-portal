@@ -266,7 +266,7 @@ definition {
 			locator1 = "ClickToChatConfiguration#CHECK_CHAT_PROVIDER_ID");
 	}
 
-	@description = "This is a test for LPS-129049. Verify Chatwoot provider can be enabled and disabled"
+	@description = "This is a test for LPS-129049. Verify Chatwoot provider can be enabled and disabled."
 	@priority = "5"
 	test EnableAndDisableChatwoot {
 		ApplicationsMenu.gotoPortlet(
@@ -310,7 +310,7 @@ definition {
 		AssertElementNotPresent(locator1 = "Providers#CHAT_CHATWOOT");
 	}
 
-	@description = "This is a test for LPS-129049. Verify Crisp provider can be enabled and disabled"
+	@description = "This is a test for LPS-129049. Verify Crisp provider can be enabled and disabled."
 	@ignore = "true"
 	@priority = "5"
 	test EnableAndDisableCrisp {
@@ -355,7 +355,7 @@ definition {
 		AssertElementNotPresent(locator1 = "Providers#CHAT_CRISP");
 	}
 
-	@description = "This is a test for LPS-129049. Verify Hubspot provider can be enabled and disabled"
+	@description = "This is a test for LPS-129049. Verify Hubspot provider can be enabled and disabled."
 	@priority = "5"
 	test EnableAndDisableHubspot {
 		ApplicationsMenu.gotoPortlet(
@@ -399,7 +399,7 @@ definition {
 		AssertElementNotPresent(locator1 = "Providers#CHAT_HUBSPOT");
 	}
 
-	@description = "This is a test for LPS-129049. Verify JivoChat provider can be enabled and disabled"
+	@description = "This is a test for LPS-129049. Verify JivoChat provider can be enabled and disabled."
 	@priority = "5"
 	test EnableAndDisableJivoChat {
 		property portal.acceptance = "true";
@@ -445,7 +445,7 @@ definition {
 		AssertElementNotPresent(locator1 = "Providers#CHAT_JIVOCHAT");
 	}
 
-	@description = "This is a test for LPS-129049. Verify LiveChat provider can be enabled and disabled"
+	@description = "This is a test for LPS-129049. Verify LiveChat provider can be enabled and disabled."
 	@ignore = "true"
 	@priority = "5"
 	test EnableAndDisableLiveChat {
@@ -490,7 +490,7 @@ definition {
 		AssertElementNotPresent(locator1 = "Providers#CHAT_LIVECHAT");
 	}
 
-	@description = "This is a test for LPS-129049. Verify LivePerson provider can be enabled and disabled"
+	@description = "This is a test for LPS-129049. Verify LivePerson provider can be enabled and disabled."
 	@priority = "5"
 	test EnableAndDisableLivePerson {
 		property portal.acceptance = "true";
@@ -536,7 +536,7 @@ definition {
 		AssertElementNotPresent(locator1 = "Providers#CHAT_LIVEPERSON");
 	}
 
-	@description = "This is a test for LPS-129049. Verify Smartsupp provider can be enabled and disabled"
+	@description = "This is a test for LPS-129049. Verify Smartsupp provider can be enabled and disabled."
 	@priority = "5"
 	test EnableAndDisableSmartsupp {
 		ApplicationsMenu.gotoPortlet(
@@ -580,7 +580,7 @@ definition {
 		AssertElementNotPresent(locator1 = "Providers#CHAT_SMARTSUPP");
 	}
 
-	@description = "This is a test for LPS-129049. Verify TawkTo provider can be enabled and disabled"
+	@description = "This is a test for LPS-129049. Verify TawkTo provider can be enabled and disabled."
 	@priority = "5"
 	test EnableAndDisableTawkTo {
 		ApplicationsMenu.gotoPortlet(
@@ -624,7 +624,7 @@ definition {
 		AssertElementNotPresent(locator1 = "Providers#CHAT_TAWKTO");
 	}
 
-	@description = "This is a test for LPS-129049. Verify Tidio provider can be enabled and disabled"
+	@description = "This is a test for LPS-129049. Verify Tidio provider can be enabled and disabled."
 	@ignore = "true"
 	@priority = "5"
 	test EnableAndDisableTidio {
@@ -669,7 +669,7 @@ definition {
 		AssertElementNotPresent(locator1 = "Providers#CHAT_TIDIO");
 	}
 
-	@description = "This is a test for LPS-129049. Verify Tolvnow provider can be enabled and disabled"
+	@description = "This is a test for LPS-129049. Verify Tolvnow provider can be enabled and disabled."
 	@priority = "5"
 	test EnableAndDisableTolvnow {
 		ApplicationsMenu.gotoPortlet(
@@ -713,7 +713,7 @@ definition {
 		AssertElementNotPresent(locator1 = "Providers#CHAT_TOLVNOW");
 	}
 
-	@description = "This is a test for LPS-129049. Verify Zendesk provider can be enabled and disabled"
+	@description = "This is a test for LPS-129049. Verify Zendesk provider can be enabled and disabled."
 	@priority = "5"
 	test EnableAndDisableZendesk {
 		ApplicationsMenu.gotoPortlet(
