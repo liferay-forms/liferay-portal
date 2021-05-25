@@ -31,29 +31,29 @@ public class CPMediaImpl implements CPMedia {
 	public CPMediaImpl(FileEntry fileEntry, ThemeDisplay themeDisplay)
 		throws PortalException {
 
-		String defaultUrl = DLUtil.getDownloadURL(
+		String defaultURL = DLUtil.getDownloadURL(
 			fileEntry, fileEntry.getFileVersion(), themeDisplay,
 			StringPool.BLANK);
 
-		_downloadURL = defaultUrl;
+		_downloadURL = defaultURL;
 
 		_id = fileEntry.getFileEntryId();
-		_url = defaultUrl;
-		_thumbnailURL = defaultUrl;
+		_url = defaultURL;
+		_thumbnailURL = defaultURL;
 		_mimeType = fileEntry.getMimeType();
 		_title = fileEntry.getTitle();
 	}
 
 	public CPMediaImpl(long groupId) throws PortalException {
-		String defaultUrl = CommerceMediaResolverUtil.getDefaultUrl(groupId);
+		String defaultURL = CommerceMediaResolverUtil.getDefaultUrl(groupId);
 
-		_downloadURL = defaultUrl;
+		_downloadURL = defaultURL;
 
 		_id = 0;
 		_mimeType = null;
-		_thumbnailURL = defaultUrl;
+		_thumbnailURL = defaultURL;
 		_title = null;
-		_url = defaultUrl;
+		_url = defaultURL;
 	}
 
 	public CPMediaImpl(
