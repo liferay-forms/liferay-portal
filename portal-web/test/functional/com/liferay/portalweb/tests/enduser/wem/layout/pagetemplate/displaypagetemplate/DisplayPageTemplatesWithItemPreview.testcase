@@ -105,6 +105,122 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-131040. Only the public vocabularies are available in preview item selector."
+	@priority = "4"
+	test ViewOnlyPublicVocabulariesAvailableToItemSelector {
+		task ("Add a category in Topic, Audience and Stage") {
+			var n = "1";
+
+			for (var vocabularyList : list "Topic,Audience,Stage") {
+					JSONCategory.addCategory(
+					groupName = "Global",
+					title = "Category Name ${n}",
+					vocabularyName = "${vocabularyList}");
+
+					var n = ${n} + 1;
+			}
+		}
+
+		task ("Add a display page template for Category") {
+			JSONLayoutpagetemplate.addDisplayPageTemplateEntry(
+				contentType = "Category",
+				displayPageTemplateEntryName = "Display Page Name",
+				groupName = "Test Site Name");
+		}
+
+		task ("Add a Button fragment to display Page Template") {
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
+
+			DisplayPageTemplatesAdmin.gotoDisplayPage(displayPageName = "Display Page Name");
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Button");
+		}
+
+		task ("Mapping the vocabulary field to Button fragment") {
+			PageEditorMapping.mapEditableTextToField(
+				field = "Vocabulary",
+				fragmentName = "Button",
+				id = "link");
+		}
+
+		task ("Open the preview item selector, select other item and expand the Tree") {
+			WaitForLiferayEvent.initializeLiferayEventLog();
+
+			Click(locator1 = "ControlMenu#DISPLAY_PAGE_PREVIEW_ITEM_SELECTOR");
+
+			DropdownMenuItem.click(menuItem = "Select Other Item");
+
+			SelectFrame(locator1 = "IFrame#MODAL_BODY");
+
+			Portlet.expandTree();
+		}
+
+		task ("Assert the category of Topic (Global)") {
+			AssertVisible(
+				key_nodeName = "Category Name 1",
+				locator1 = "Treeview#NODE_UNSELECTED");
+		}
+
+		task ("Assert Audience and Stage vocubalaries are not present") {
+			for (var vocabularyName : list "Audience(Global),Stage(Global)") {
+				AssertElementNotPresent(
+					key_nodeName = "${vocabularyName}",
+					locator1 = "Treeview#NODE_UNSELECTED");
+			}
+		}
+
+		task ("Close the iframe") {
+			IFrame.closeFrame();
+		}
+
+		task ("Open the Preview modal") {
+			WaitForLiferayEvent.initializeLiferayEventLog();
+
+			Click(locator1 = "PageEditor#PREVIEW");
+		}
+
+		task ("Open the preview item selector in, select other item and expand the Tree") {
+			Click(locator1 = "Modal#DISPLAY_PAGE_PREVIEW_ITEM_SELECTOR");
+
+			DropdownMenuItem.click(menuItem = "Select Other Item");
+
+			SelectFrame(
+				key_title = "Select",
+				locator1 = "IFrame#MODAL_ANY");
+
+			Portlet.expandTree();
+		}
+
+		task ("Assert the category of Topic in modal") {
+			AssertVisible(
+				key_nodeName = "Category Name 1",
+				locator1 = "Treeview#NODE_UNSELECTED");
+		}
+
+		task ("Assert Audience and Stage vocubalaries are not present in modal") {
+			for (var vocabularyName : list "Audience(Global),Stage(Global)") {
+				AssertElementNotPresent(
+					key_nodeName = "${vocabularyName}",
+					locator1 = "Treeview#NODE_UNSELECTED");
+			}
+		}
+
+		task ("Delete Global category") {
+			var n = "1";
+
+			for (var vocabularyList : list "Topic,Audience,Stage") {
+				JSONCategory.deleteCategory(
+					categoryName = "Category Name ${n}",
+					groupName = "Global",
+					vocabularyName = "${vocabularyList}");
+
+					var n = ${n} + 1;
+			}
+		}
+	}
+
 	@description = "This is a test for LPS-128904. Look for the item via scroll bar when there are lots of items shown in Preview With dropdown list."
 	@priority = "4"
 	test ViewItemInDropdownListViaScrollBar {
