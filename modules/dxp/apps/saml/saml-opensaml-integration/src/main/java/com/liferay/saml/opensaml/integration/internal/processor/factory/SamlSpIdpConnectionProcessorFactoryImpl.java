@@ -21,7 +21,7 @@ import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.upload.FileItem;
 import com.liferay.saml.opensaml.integration.field.expression.handler.SamlSpIdpConnectionFieldExpressionHandler;
 import com.liferay.saml.opensaml.integration.field.expression.handler.registry.SamlSpIdpConnectionFieldExpressionHandlerRegistry;
-import com.liferay.saml.opensaml.integration.internal.processor.ProcessorImpl;
+import com.liferay.saml.opensaml.integration.internal.processor.BaseProcessorImpl;
 import com.liferay.saml.opensaml.integration.processor.SamlSpIdpConnectionProcessor;
 import com.liferay.saml.opensaml.integration.processor.context.ProcessorContext;
 import com.liferay.saml.opensaml.integration.processor.context.SamlSpIdpConnectionProcessorContext;
@@ -51,7 +51,7 @@ public class SamlSpIdpConnectionProcessorFactoryImpl
 	}
 
 	public static class SamlSpIdpConnectionProcessorImpl
-		extends ProcessorImpl
+		extends BaseProcessorImpl
 			<SamlSpIdpConnection, SamlSpIdpConnectionProcessorContext,
 			 SamlSpIdpConnectionFieldExpressionHandler,
 			 SamlSpIdpConnectionFieldExpressionHandlerRegistry>
@@ -148,7 +148,7 @@ public class SamlSpIdpConnectionProcessorFactoryImpl
 		}
 
 		private static final Log _log = LogFactoryUtil.getLog(
-			ProcessorImpl.class);
+			SamlSpIdpConnectionProcessorImpl.class);
 
 	}
 

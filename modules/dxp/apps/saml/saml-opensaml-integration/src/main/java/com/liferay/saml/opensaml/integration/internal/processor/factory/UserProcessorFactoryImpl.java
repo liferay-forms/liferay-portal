@@ -20,7 +20,7 @@ import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.saml.opensaml.integration.field.expression.handler.UserFieldExpressionHandler;
 import com.liferay.saml.opensaml.integration.field.expression.handler.registry.UserFieldExpressionHandlerRegistry;
-import com.liferay.saml.opensaml.integration.internal.processor.ProcessorImpl;
+import com.liferay.saml.opensaml.integration.internal.processor.BaseProcessorImpl;
 import com.liferay.saml.opensaml.integration.processor.UserProcessor;
 import com.liferay.saml.opensaml.integration.processor.context.ProcessorContext;
 import com.liferay.saml.opensaml.integration.processor.context.UserProcessorContext;
@@ -45,7 +45,7 @@ public class UserProcessorFactoryImpl implements UserProcessorFactory {
 	}
 
 	public static class UserProcessorImpl
-		extends ProcessorImpl
+		extends BaseProcessorImpl
 			<User, UserProcessorContext, UserFieldExpressionHandler,
 			 UserFieldExpressionHandlerRegistry> implements UserProcessor {
 
@@ -106,7 +106,7 @@ public class UserProcessorFactoryImpl implements UserProcessorFactory {
 		}
 
 		private static final Log _log = LogFactoryUtil.getLog(
-			ProcessorImpl.class);
+			UserProcessorImpl.class);
 
 	}
 

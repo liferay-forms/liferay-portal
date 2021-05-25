@@ -44,13 +44,13 @@ import java.util.stream.Stream;
 /**
  * @author Stian Sigvartsen
  */
-public abstract class ProcessorImpl
+public abstract class BaseProcessorImpl
 	<M extends BaseModel<M>, PC extends ProcessorContext<M>,
 	 FEH extends FieldExpressionHandler<M, PC>,
 	 FEHR extends FieldExpressionHandlerRegistry<M, PC, FEH>>
 		implements Processor<M> {
 
-	public ProcessorImpl(M model, FEHR fieldExpressionHandlerRegistry) {
+	public BaseProcessorImpl(M model, FEHR fieldExpressionHandlerRegistry) {
 		_model = model;
 		_fieldExpressionHandlerRegistry = fieldExpressionHandlerRegistry;
 	}
