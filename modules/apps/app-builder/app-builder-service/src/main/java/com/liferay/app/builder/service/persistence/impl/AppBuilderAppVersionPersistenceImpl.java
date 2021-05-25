@@ -3552,25 +3552,25 @@ public class AppBuilderAppVersionPersistenceImpl
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.getServiceContext();
 
-		Date now = new Date();
+		Date date = new Date();
 
 		if (isNew && (appBuilderAppVersion.getCreateDate() == null)) {
 			if (serviceContext == null) {
-				appBuilderAppVersion.setCreateDate(now);
+				appBuilderAppVersion.setCreateDate(date);
 			}
 			else {
 				appBuilderAppVersion.setCreateDate(
-					serviceContext.getCreateDate(now));
+					serviceContext.getCreateDate(date));
 			}
 		}
 
 		if (!appBuilderAppVersionModelImpl.hasSetModifiedDate()) {
 			if (serviceContext == null) {
-				appBuilderAppVersion.setModifiedDate(now);
+				appBuilderAppVersion.setModifiedDate(date);
 			}
 			else {
 				appBuilderAppVersion.setModifiedDate(
-					serviceContext.getModifiedDate(now));
+					serviceContext.getModifiedDate(date));
 			}
 		}
 

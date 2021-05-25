@@ -15633,23 +15633,23 @@ public class LayoutPersistenceImpl
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.getServiceContext();
 
-		Date now = new Date();
+		Date date = new Date();
 
 		if (isNew && (layout.getCreateDate() == null)) {
 			if (serviceContext == null) {
-				layout.setCreateDate(now);
+				layout.setCreateDate(date);
 			}
 			else {
-				layout.setCreateDate(serviceContext.getCreateDate(now));
+				layout.setCreateDate(serviceContext.getCreateDate(date));
 			}
 		}
 
 		if (!layoutModelImpl.hasSetModifiedDate()) {
 			if (serviceContext == null) {
-				layout.setModifiedDate(now);
+				layout.setModifiedDate(date);
 			}
 			else {
-				layout.setModifiedDate(serviceContext.getModifiedDate(now));
+				layout.setModifiedDate(serviceContext.getModifiedDate(date));
 			}
 		}
 

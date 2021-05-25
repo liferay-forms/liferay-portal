@@ -12760,23 +12760,23 @@ public class DLFolderPersistenceImpl
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.getServiceContext();
 
-		Date now = new Date();
+		Date date = new Date();
 
 		if (isNew && (dlFolder.getCreateDate() == null)) {
 			if (serviceContext == null) {
-				dlFolder.setCreateDate(now);
+				dlFolder.setCreateDate(date);
 			}
 			else {
-				dlFolder.setCreateDate(serviceContext.getCreateDate(now));
+				dlFolder.setCreateDate(serviceContext.getCreateDate(date));
 			}
 		}
 
 		if (!dlFolderModelImpl.hasSetModifiedDate()) {
 			if (serviceContext == null) {
-				dlFolder.setModifiedDate(now);
+				dlFolder.setModifiedDate(date);
 			}
 			else {
-				dlFolder.setModifiedDate(serviceContext.getModifiedDate(now));
+				dlFolder.setModifiedDate(serviceContext.getModifiedDate(date));
 			}
 		}
 

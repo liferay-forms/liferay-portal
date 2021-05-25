@@ -2027,25 +2027,25 @@ public class BatchEngineImportTaskPersistenceImpl
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.getServiceContext();
 
-		Date now = new Date();
+		Date date = new Date();
 
 		if (isNew && (batchEngineImportTask.getCreateDate() == null)) {
 			if (serviceContext == null) {
-				batchEngineImportTask.setCreateDate(now);
+				batchEngineImportTask.setCreateDate(date);
 			}
 			else {
 				batchEngineImportTask.setCreateDate(
-					serviceContext.getCreateDate(now));
+					serviceContext.getCreateDate(date));
 			}
 		}
 
 		if (!batchEngineImportTaskModelImpl.hasSetModifiedDate()) {
 			if (serviceContext == null) {
-				batchEngineImportTask.setModifiedDate(now);
+				batchEngineImportTask.setModifiedDate(date);
 			}
 			else {
 				batchEngineImportTask.setModifiedDate(
-					serviceContext.getModifiedDate(now));
+					serviceContext.getModifiedDate(date));
 			}
 		}
 

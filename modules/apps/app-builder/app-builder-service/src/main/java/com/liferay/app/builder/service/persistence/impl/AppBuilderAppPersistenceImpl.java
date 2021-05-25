@@ -8501,24 +8501,24 @@ public class AppBuilderAppPersistenceImpl
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.getServiceContext();
 
-		Date now = new Date();
+		Date date = new Date();
 
 		if (isNew && (appBuilderApp.getCreateDate() == null)) {
 			if (serviceContext == null) {
-				appBuilderApp.setCreateDate(now);
+				appBuilderApp.setCreateDate(date);
 			}
 			else {
-				appBuilderApp.setCreateDate(serviceContext.getCreateDate(now));
+				appBuilderApp.setCreateDate(serviceContext.getCreateDate(date));
 			}
 		}
 
 		if (!appBuilderAppModelImpl.hasSetModifiedDate()) {
 			if (serviceContext == null) {
-				appBuilderApp.setModifiedDate(now);
+				appBuilderApp.setModifiedDate(date);
 			}
 			else {
 				appBuilderApp.setModifiedDate(
-					serviceContext.getModifiedDate(now));
+					serviceContext.getModifiedDate(date));
 			}
 		}
 

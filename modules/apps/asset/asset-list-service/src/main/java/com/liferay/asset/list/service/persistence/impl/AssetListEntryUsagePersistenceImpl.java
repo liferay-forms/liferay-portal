@@ -6072,25 +6072,25 @@ public class AssetListEntryUsagePersistenceImpl
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.getServiceContext();
 
-		Date now = new Date();
+		Date date = new Date();
 
 		if (isNew && (assetListEntryUsage.getCreateDate() == null)) {
 			if (serviceContext == null) {
-				assetListEntryUsage.setCreateDate(now);
+				assetListEntryUsage.setCreateDate(date);
 			}
 			else {
 				assetListEntryUsage.setCreateDate(
-					serviceContext.getCreateDate(now));
+					serviceContext.getCreateDate(date));
 			}
 		}
 
 		if (!assetListEntryUsageModelImpl.hasSetModifiedDate()) {
 			if (serviceContext == null) {
-				assetListEntryUsage.setModifiedDate(now);
+				assetListEntryUsage.setModifiedDate(date);
 			}
 			else {
 				assetListEntryUsage.setModifiedDate(
-					serviceContext.getModifiedDate(now));
+					serviceContext.getModifiedDate(date));
 			}
 		}
 

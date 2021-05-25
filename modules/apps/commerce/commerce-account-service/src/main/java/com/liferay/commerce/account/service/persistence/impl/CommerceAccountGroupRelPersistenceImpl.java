@@ -1662,25 +1662,25 @@ public class CommerceAccountGroupRelPersistenceImpl
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.getServiceContext();
 
-		Date now = new Date();
+		Date date = new Date();
 
 		if (isNew && (commerceAccountGroupRel.getCreateDate() == null)) {
 			if (serviceContext == null) {
-				commerceAccountGroupRel.setCreateDate(now);
+				commerceAccountGroupRel.setCreateDate(date);
 			}
 			else {
 				commerceAccountGroupRel.setCreateDate(
-					serviceContext.getCreateDate(now));
+					serviceContext.getCreateDate(date));
 			}
 		}
 
 		if (!commerceAccountGroupRelModelImpl.hasSetModifiedDate()) {
 			if (serviceContext == null) {
-				commerceAccountGroupRel.setModifiedDate(now);
+				commerceAccountGroupRel.setModifiedDate(date);
 			}
 			else {
 				commerceAccountGroupRel.setModifiedDate(
-					serviceContext.getModifiedDate(now));
+					serviceContext.getModifiedDate(date));
 			}
 		}
 

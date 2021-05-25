@@ -2426,25 +2426,25 @@ public class CommerceAccountPersistenceImpl
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.getServiceContext();
 
-		Date now = new Date();
+		Date date = new Date();
 
 		if (isNew && (commerceAccount.getCreateDate() == null)) {
 			if (serviceContext == null) {
-				commerceAccount.setCreateDate(now);
+				commerceAccount.setCreateDate(date);
 			}
 			else {
 				commerceAccount.setCreateDate(
-					serviceContext.getCreateDate(now));
+					serviceContext.getCreateDate(date));
 			}
 		}
 
 		if (!commerceAccountModelImpl.hasSetModifiedDate()) {
 			if (serviceContext == null) {
-				commerceAccount.setModifiedDate(now);
+				commerceAccount.setModifiedDate(date);
 			}
 			else {
 				commerceAccount.setModifiedDate(
-					serviceContext.getModifiedDate(now));
+					serviceContext.getModifiedDate(date));
 			}
 		}
 

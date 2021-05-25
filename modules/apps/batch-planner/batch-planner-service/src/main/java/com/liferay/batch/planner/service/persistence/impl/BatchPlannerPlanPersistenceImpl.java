@@ -1625,25 +1625,25 @@ public class BatchPlannerPlanPersistenceImpl
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.getServiceContext();
 
-		Date now = new Date();
+		Date date = new Date();
 
 		if (isNew && (batchPlannerPlan.getCreateDate() == null)) {
 			if (serviceContext == null) {
-				batchPlannerPlan.setCreateDate(now);
+				batchPlannerPlan.setCreateDate(date);
 			}
 			else {
 				batchPlannerPlan.setCreateDate(
-					serviceContext.getCreateDate(now));
+					serviceContext.getCreateDate(date));
 			}
 		}
 
 		if (!batchPlannerPlanModelImpl.hasSetModifiedDate()) {
 			if (serviceContext == null) {
-				batchPlannerPlan.setModifiedDate(now);
+				batchPlannerPlan.setModifiedDate(date);
 			}
 			else {
 				batchPlannerPlan.setModifiedDate(
-					serviceContext.getModifiedDate(now));
+					serviceContext.getModifiedDate(date));
 			}
 		}
 
