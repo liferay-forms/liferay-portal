@@ -269,7 +269,7 @@ public class LayoutReportsIssue {
 				@Override
 				public String getTitle(ResourceBundle resourceBundle) {
 					return ResourceBundleUtil.getString(
-						resourceBundle, "detail-missing-x-element", "title",
+						resourceBundle, "detail-missing-x-element", "<title>",
 						false);
 				}
 
