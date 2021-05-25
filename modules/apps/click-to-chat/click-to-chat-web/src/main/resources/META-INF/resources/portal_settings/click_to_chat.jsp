@@ -32,7 +32,7 @@ ClickToChatConfiguration clickToChatConfiguration = (ClickToChatConfiguration)re
 			<aui:option label="" value="" />
 
 			<%
-			for (String clickToChatSiteSettingsStrategy : ClickToChatConstants.CLICK_TO_CHAT_SITE_SETTINGS_STRATEGIES) {
+			for (String clickToChatSiteSettingsStrategy : ClickToChatConstants.SITE_SETTINGS_STRATEGIES) {
 			%>
 
 				<aui:option label='<%= "site-settings-strategy-" + clickToChatSiteSettingsStrategy %>' value="<%= clickToChatSiteSettingsStrategy %>" />
@@ -55,7 +55,7 @@ ClickToChatConfiguration clickToChatConfiguration = (ClickToChatConfiguration)re
 			<aui:option label="" value="" />
 
 			<%
-			for (String clickToChatChatProviderId : ClickToChatConstants.CLICK_TO_CHAT_CHAT_PROVIDER_IDS) {
+			for (String clickToChatChatProviderId : ClickToChatConstants.CHAT_PROVIDER_IDS) {
 			%>
 
 				<aui:option label='<%= "chat-provider-" + clickToChatChatProviderId %>' value="<%= clickToChatChatProviderId %>" />
@@ -73,7 +73,7 @@ ClickToChatConfiguration clickToChatConfiguration = (ClickToChatConfiguration)re
 		<aui:input label="chat-provider-account-id" name="chatProviderAccountId" type="text" value="<%= clickToChatConfiguration.chatProviderAccountId() %>" />
 
 		<%
-		for (String clickToChatChatProviderId : ClickToChatConstants.CLICK_TO_CHAT_CHAT_PROVIDER_IDS) {
+		for (String clickToChatChatProviderId : ClickToChatConstants.CHAT_PROVIDER_IDS) {
 		%>
 
 			<div class="hide mb-2" id="<portlet:namespace />clickToChatChatProviderLearnMessage<%= clickToChatChatProviderId %>">

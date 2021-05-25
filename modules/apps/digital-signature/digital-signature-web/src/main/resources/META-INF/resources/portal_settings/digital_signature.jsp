@@ -32,7 +32,7 @@ DigitalSignatureConfiguration digitalSignatureConfiguration = (DigitalSignatureC
 			<aui:option label="" value="" />
 
 			<%
-			for (String digitalSignatureSiteSettingsStrategy : DigitalSignatureConstants.DIGITAL_SIGNATURE_SITE_SETTINGS_STRATEGIES) {
+			for (String digitalSignatureSiteSettingsStrategy : DigitalSignatureConstants.SITE_SETTINGS_STRATEGIES) {
 			%>
 
 				<aui:option label='<%= "site-settings-strategy-" + digitalSignatureSiteSettingsStrategy %>' value="<%= digitalSignatureSiteSettingsStrategy %>" />

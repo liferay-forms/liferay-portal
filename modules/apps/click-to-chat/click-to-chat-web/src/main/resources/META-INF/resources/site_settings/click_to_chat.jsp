@@ -59,7 +59,7 @@ ClickToChatConfiguration clickToChatConfiguration = (ClickToChatConfiguration)re
 			<aui:option label="" value="" />
 
 			<%
-			for (String curClickToChatChatProviderId : ClickToChatConstants.CLICK_TO_CHAT_CHAT_PROVIDER_IDS) {
+			for (String curClickToChatChatProviderId : ClickToChatConstants.CHAT_PROVIDER_IDS) {
 			%>
 
 				<aui:option label='<%= "chat-provider-" + curClickToChatChatProviderId %>' value="<%= curClickToChatChatProviderId %>" />
@@ -81,7 +81,7 @@ ClickToChatConfiguration clickToChatConfiguration = (ClickToChatConfiguration)re
 		<aui:input disabled="<%= disabled %>" label="chat-provider-account-id" name="chatProviderAccountId" type="text" value="<%= GetterUtil.getString(request.getAttribute(ClickToChatWebKeys.CLICK_TO_CHAT_CHAT_PROVIDER_ACCOUNT_ID)) %>" />
 
 		<%
-		for (String curClickToChatChatProviderId : ClickToChatConstants.CLICK_TO_CHAT_CHAT_PROVIDER_IDS) {
+		for (String curClickToChatChatProviderId : ClickToChatConstants.CHAT_PROVIDER_IDS) {
 		%>
 
 			<div class="hide mb-2" id="<portlet:namespace />clickToChatChatProviderLearnMessage<%= curClickToChatChatProviderId %>">

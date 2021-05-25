@@ -19,7 +19,7 @@ package com.liferay.digital.signature.web.internal.constants;
  */
 public class DigitalSignatureConstants {
 
-	public static final String[] DIGITAL_SIGNATURE_SITE_SETTINGS_STRATEGIES = {
+	public static final String[] SITE_SETTINGS_STRATEGIES = {
 		"always-inherit", "always-override", "inherit-or-override"
 	};
 
