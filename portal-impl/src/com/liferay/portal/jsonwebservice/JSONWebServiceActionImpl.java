@@ -735,8 +735,8 @@ public class JSONWebServiceActionImpl implements JSONWebServiceAction {
 
 		TypeConverterManager typeConverterManager = TypeConverterManager.get();
 
-		typeConverterManager.register(Locale.class, new LocaleTypeConverter());
 		typeConverterManager.register(Date.class, new DateTypeConverter());
+		typeConverterManager.register(Locale.class, new LocaleTypeConverter());
 	}
 
 }
