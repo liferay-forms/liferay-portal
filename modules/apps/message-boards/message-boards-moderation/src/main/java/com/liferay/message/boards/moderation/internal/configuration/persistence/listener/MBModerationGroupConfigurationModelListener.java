@@ -63,12 +63,11 @@ public class MBModerationGroupConfigurationModelListener
 				_companyLocalService.forEachCompanyId(
 					curCompanyId -> _updateMBModerationWorkflow(
 						curCompanyId, enableMessageBoardsModeration));
-
-				return;
 			}
-
-			_updateMBModerationWorkflow(
-				companyId, enableMessageBoardsModeration);
+			else {
+				_updateMBModerationWorkflow(
+					companyId, enableMessageBoardsModeration);
+			}
 		}
 		catch (Exception exception) {
 			throw new ConfigurationModelListenerException(
