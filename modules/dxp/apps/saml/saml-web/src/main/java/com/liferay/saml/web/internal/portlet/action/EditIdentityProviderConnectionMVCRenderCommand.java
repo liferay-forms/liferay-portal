@@ -14,7 +14,6 @@
 
 package com.liferay.saml.web.internal.portlet.action;
 
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -28,8 +27,6 @@ import com.liferay.saml.persistence.service.SamlSpIdpConnectionLocalService;
 import com.liferay.saml.runtime.configuration.SamlProviderConfiguration;
 import com.liferay.saml.runtime.configuration.SamlProviderConfigurationHelper;
 import com.liferay.saml.web.internal.display.context.AttributeMappingDisplayContext;
-
-import java.io.IOException;
 
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
@@ -57,61 +54,58 @@ public class EditIdentityProviderConnectionMVCRenderCommand
 			RenderRequest renderRequest, RenderResponse renderResponse)
 		throws PortletException {
 
+		try {
+			return _render(renderRequest);
+		}
+		catch (Exception exception) {
+			throw new PortletException(exception);
+		}
+	}
+
+	private long _getClockSkew(
+		RenderRequest renderRequest, SamlSpIdpConnection samlSpIdpConnection) {
+
+		if (samlSpIdpConnection != null) {
+			return ParamUtil.getLong(
+				renderRequest, "clockSkew", samlSpIdpConnection.getClockSkew());
+		}
+
+		SamlProviderConfiguration samlProviderConfiguration =
+			_samlProviderConfigurationHelper.getSamlProviderConfiguration();
+
+		return ParamUtil.getLong(
+			renderRequest, "clockSkew", samlProviderConfiguration.clockSkew());
+	}
+
+	private String _render(RenderRequest renderRequest) throws Exception {
 		long samlSpIdpConnectionId = ParamUtil.getLong(
 			renderRequest, "samlSpIdpConnectionId");
-
-		renderRequest.setAttribute(
-			SamlProviderConfigurationHelper.class.getName(),
-			_samlProviderConfigurationHelper);
-
-		renderRequest.setAttribute(
-			UserFieldExpressionResolverRegistry.class.getName(),
-			_userFieldExpressionResolverRegistry);
-
-		long clockSkew = 0;
 
 		SamlSpIdpConnection samlSpIdpConnection = null;
 
 		if (samlSpIdpConnectionId > 0) {
-			try {
-				samlSpIdpConnection =
-					_samlSpIdpConnectionLocalService.getSamlSpIdpConnection(
-						samlSpIdpConnectionId);
-
-				clockSkew = ParamUtil.getLong(
-					renderRequest, "clockSkew",
-					samlSpIdpConnection.getClockSkew());
-
-				renderRequest.setAttribute(
-					SamlWebKeys.SAML_SP_IDP_CONNECTION, samlSpIdpConnection);
-			}
-			catch (PortalException portalException) {
-				throw new PortletException(portalException);
-			}
-		}
-		else {
-			SamlProviderConfiguration samlProviderConfiguration =
-				_samlProviderConfigurationHelper.getSamlProviderConfiguration();
-
-			clockSkew = ParamUtil.getLong(
-				renderRequest, "clockSkew",
-				samlProviderConfiguration.clockSkew());
+			samlSpIdpConnection =
+				_samlSpIdpConnectionLocalService.getSamlSpIdpConnection(
+					samlSpIdpConnectionId);
 		}
 
-		try {
-			renderRequest.setAttribute(
-				AttributeMappingDisplayContext.class.getName(),
-				new AttributeMappingDisplayContext(
-					renderRequest, samlSpIdpConnection,
-					(ThemeDisplay)renderRequest.getAttribute(
-						WebKeys.THEME_DISPLAY),
-					_userFieldExpressionHandlerRegistry));
-		}
-		catch (IOException ioException) {
-			throw new PortletException(ioException);
-		}
-
-		renderRequest.setAttribute(SamlWebKeys.SAML_CLOCK_SKEW, clockSkew);
+		renderRequest.setAttribute(
+			AttributeMappingDisplayContext.class.getName(),
+			new AttributeMappingDisplayContext(
+				renderRequest, samlSpIdpConnection,
+				(ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY),
+				_userFieldExpressionHandlerRegistry));
+		renderRequest.setAttribute(
+			SamlProviderConfigurationHelper.class.getName(),
+			_samlProviderConfigurationHelper);
+		renderRequest.setAttribute(
+			SamlWebKeys.SAML_CLOCK_SKEW,
+			_getClockSkew(renderRequest, samlSpIdpConnection));
+		renderRequest.setAttribute(
+			SamlWebKeys.SAML_SP_IDP_CONNECTION, samlSpIdpConnection);
+		renderRequest.setAttribute(
+			UserFieldExpressionResolverRegistry.class.getName(),
+			_userFieldExpressionResolverRegistry);
 
 		return "/admin/edit_identity_provider_connection.jsp";
 	}

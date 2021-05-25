@@ -60,7 +60,7 @@ public class DynamicUserFieldExpressionResolver
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(
-				"Dynamically resolved user identifier expression: " +
+				"Dynamically resolved with user identifier expression: " +
 					userIdentifierExpression);
 		}
 

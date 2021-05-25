@@ -70,7 +70,7 @@ public class AttributeUserFieldExpressionResolver
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(
-				"Matching against user field expression " +
+				"Resolving user with user field expression: " +
 					userFieldExpression);
 		}
 

@@ -30,9 +30,9 @@ String userIdentifierExpression = attributeMappingDisplayContext.getUserIdentifi
 		String prefix = entry.getKey();
 		UserFieldExpressionHandler userFieldExpressionHandler = entry.getValue();
 
+		List<Map.Entry<String, String>> prefixEntries = attributeMappingDisplayContext.getMapEntries(prefix);
 		String userAttributeMappingsContentBox = HtmlUtil.getAUICompatibleId(prefix + ":userAttributeMappingsContentBox");
 		int[] userAttributeMappingsIndexes = attributeMappingDisplayContext.getIndexes(prefix);
-		List<Map.Entry<String, String>> prefixEntries = attributeMappingDisplayContext.getMapEntries(prefix);
 	%>
 
 		<aui:field-wrapper label="<%= userFieldExpressionHandler.getSectionLabel(locale) %>">

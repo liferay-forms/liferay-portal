@@ -17,6 +17,7 @@ package com.liferay.saml.web.internal.opensaml.integration.field.expression.hand
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.upload.FileItem;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.saml.opensaml.integration.field.expression.handler.SamlSpIdpConnectionFieldExpressionHandler;
@@ -54,7 +55,9 @@ public class DefaultSamlSpIdpConnectionFieldExpressionHandler
 		SamlSpIdpConnectionProcessorContext.SamlSpIdpConnectionBind
 			<SamlSpIdpConnection> samlSpIdpConnectionBind =
 				samlSpIdpConnectionProcessorContext.bind(
-					Integer.MIN_VALUE, this::_update);
+					Integer.MIN_VALUE,
+					(currentSamlSpIdpConnection, newSamlSpIdpConnection,
+					 serviceContext) -> newSamlSpIdpConnection);
 
 		samlSpIdpConnectionBind.mapBoolean(
 			"assertionSignatureRequired",
@@ -76,9 +79,9 @@ public class DefaultSamlSpIdpConnectionFieldExpressionHandler
 		samlSpIdpConnectionBind.handleFileItemArray(
 			"metadataXml",
 			(samlSpIdpConnection, fileItems) -> {
-				if ((fileItems == null) || (fileItems.length == 0)) {
+				if (ArrayUtil.isEmpty(fileItems)) {
 
-					// This allows for metadataUrl to be dereferenced
+					// Dereference metadataUrl
 
 					samlSpIdpConnection.setMetadataXml(null);
 
@@ -162,15 +165,6 @@ public class DefaultSamlSpIdpConnectionFieldExpressionHandler
 		}
 
 		return null;
-	}
-
-	private SamlSpIdpConnection _update(
-			SamlSpIdpConnection currentSamlSpIdpConnection,
-			SamlSpIdpConnection newSamlSpIdpConnection,
-			ServiceContext serviceContext)
-		throws PortalException {
-
-		return newSamlSpIdpConnection;
 	}
 
 	private int _processingIndex;

@@ -230,7 +230,7 @@ public class DefaultUserResolver implements UserResolver {
 			if (_log.isDebugEnabled()) {
 				_log.debug(
 					StringBundler.concat(
-						"Matching user using subject naming identifier ",
+						"Resolving user using subject naming identifier ",
 						subjectNameIdentifier, " and name ID format ",
 						nameIdFormat));
 			}

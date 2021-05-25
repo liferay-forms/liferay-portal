@@ -30,7 +30,6 @@ import com.liferay.saml.opensaml.integration.processor.factory.SamlSpIdpConnecti
 import com.liferay.saml.persistence.model.SamlSpIdpConnection;
 import com.liferay.saml.persistence.service.SamlSpIdpConnectionLocalService;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +64,7 @@ public class UpdateIdentityProviderConnectionMVCActionCommand
 		long samlSpIdpConnectionId = ParamUtil.getLong(
 			uploadPortletRequest, "samlSpIdpConnectionId");
 
-		SamlSpIdpConnection samlSpIdpConnection;
+		SamlSpIdpConnection samlSpIdpConnection = null;
 
 		if (samlSpIdpConnectionId <= 0) {
 			samlSpIdpConnection =
@@ -94,12 +93,10 @@ public class UpdateIdentityProviderConnectionMVCActionCommand
 				entry.getKey(), value.toArray(new String[0]));
 		}
 
-		final String[] defaultValue = {StringPool.BLANK};
-
-		for (String booleanField : _booleanFields) {
-			if (!regularParameterMap.containsKey(booleanField)) {
+		for (String booleanFieldExpression : _BOOLEAN_FIELD_EXPRESSIONS) {
+			if (!regularParameterMap.containsKey(booleanFieldExpression)) {
 				samlSpIdpConnectionProcessor.setValueArray(
-					booleanField, defaultValue);
+					booleanFieldExpression, new String[] {StringPool.BLANK});
 			}
 		}
 
@@ -115,9 +112,10 @@ public class UpdateIdentityProviderConnectionMVCActionCommand
 		samlSpIdpConnectionProcessor.process(serviceContext);
 	}
 
-	private final List<String> _booleanFields = Arrays.asList(
+	private static final String[] _BOOLEAN_FIELD_EXPRESSIONS = {
 		"assertionSignatureRequired", "enabled", "forceAuthn",
-		"ldapImportEnabled", "unknownUsersAreStrangers", "signAuthnRequest");
+		"ldapImportEnabled", "unknownUsersAreStrangers", "signAuthnRequest"
+	};
 
 	@Reference
 	private Portal _portal;
