@@ -30,54 +30,54 @@ public class DigitalSignatureConfigurationUtil {
 		getDigitalSignatureConfiguration(long companyId, long groupId) {
 
 		try {
-			DigitalSignatureConfiguration digitalSignatureConfigurationCompany =
+			DigitalSignatureConfiguration companyDigitalSignatureConfiguration =
 				ConfigurationProviderUtil.getCompanyConfiguration(
 					DigitalSignatureConfiguration.class, companyId);
 
 			if (groupId == 0) {
-				return digitalSignatureConfigurationCompany;
+				return companyDigitalSignatureConfiguration;
 			}
 
 			if (Objects.equals(
-					digitalSignatureConfigurationCompany.siteSettingsStrategy(),
+					companyDigitalSignatureConfiguration.siteSettingsStrategy(),
 					"always-inherit")) {
 
-				return digitalSignatureConfigurationCompany;
+				return companyDigitalSignatureConfiguration;
 			}
 
-			DigitalSignatureConfiguration digitalSignatureConfigurationGroup =
+			DigitalSignatureConfiguration groupDigitalSignatureConfiguration =
 				ConfigurationProviderUtil.getGroupConfiguration(
 					DigitalSignatureConfiguration.class, groupId);
 
 			if (Objects.equals(
-					digitalSignatureConfigurationCompany.siteSettingsStrategy(),
+					companyDigitalSignatureConfiguration.siteSettingsStrategy(),
 					"always-override")) {
 
-				return digitalSignatureConfigurationGroup;
+				return groupDigitalSignatureConfiguration;
 			}
 
 			if (Objects.equals(
-					digitalSignatureConfigurationCompany.siteSettingsStrategy(),
+					companyDigitalSignatureConfiguration.siteSettingsStrategy(),
 					"inherit-or-override")) {
 
 				if (Validator.isNotNull(
-						digitalSignatureConfigurationGroup.apiUsername()) &&
+						groupDigitalSignatureConfiguration.apiUsername()) &&
 					Validator.isNotNull(
-						digitalSignatureConfigurationGroup.apiAccountId()) &&
+						groupDigitalSignatureConfiguration.apiAccountId()) &&
 					Validator.isNotNull(
-						digitalSignatureConfigurationGroup.accountBaseURI()) &&
+						groupDigitalSignatureConfiguration.accountBaseURI()) &&
 					Validator.isNotNull(
-						digitalSignatureConfigurationGroup.integrationKey()) &&
+						groupDigitalSignatureConfiguration.integrationKey()) &&
 					Validator.isNotNull(
-						digitalSignatureConfigurationGroup.rsaPrivateKey())) {
+						groupDigitalSignatureConfiguration.rsaPrivateKey())) {
 
-					return digitalSignatureConfigurationGroup;
+					return groupDigitalSignatureConfiguration;
 				}
 
-				return digitalSignatureConfigurationCompany;
+				return companyDigitalSignatureConfiguration;
 			}
 
-			return digitalSignatureConfigurationCompany;
+			return companyDigitalSignatureConfiguration;
 		}
 		catch (ConfigurationException configurationException) {
 			return ReflectionUtil.throwException(configurationException);
