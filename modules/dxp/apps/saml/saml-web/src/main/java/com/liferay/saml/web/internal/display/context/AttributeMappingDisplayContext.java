@@ -49,8 +49,7 @@ public class AttributeMappingDisplayContext {
 
 	public AttributeMappingDisplayContext(
 			PortletRequest portletRequest,
-			SamlSpIdpConnection samlSpIdpConnection,
-			ThemeDisplay themeDisplay,
+			SamlSpIdpConnection samlSpIdpConnection, ThemeDisplay themeDisplay,
 			UserFieldExpressionHandlerRegistry
 				userFieldExpressionHandlerRegistry)
 		throws IOException {
@@ -96,7 +95,7 @@ public class AttributeMappingDisplayContext {
 
 			int prefixEndIndex = propertyValue.indexOf(CharPool.COLON);
 
-			String prefix = StringPool.BLANK; 
+			String prefix = StringPool.BLANK;
 
 			if (prefixEndIndex != -1) {
 				prefix = propertyValue.substring(0, prefixEndIndex);

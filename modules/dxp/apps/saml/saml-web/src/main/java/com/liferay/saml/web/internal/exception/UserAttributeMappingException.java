@@ -44,6 +44,10 @@ public class UserAttributeMappingException extends PortalException {
 		super(throwable);
 	}
 
+	public String getAttributeName() {
+		return _attributeName;
+	}
+
 	public ErrorType getErrorType() {
 		return _errorType;
 	}
@@ -56,19 +60,15 @@ public class UserAttributeMappingException extends PortalException {
 		return _prefix;
 	}
 
-	public String getAttributeName() {
-		return _attributeName;
-	}
-
 	public enum ErrorType {
 
 		DUPLICATE_FIELD_EXPRESSION, INVALID_MAPPING, SAML_ATTRIBUTE_EXPRESSION
 
 	}
 
+	private String _attributeName = StringPool.BLANK;
 	private ErrorType _errorType;
 	private String _fieldExpression = StringPool.BLANK;
 	private String _prefix = StringPool.BLANK;
-	private String _attributeName = StringPool.BLANK;
 
 }
