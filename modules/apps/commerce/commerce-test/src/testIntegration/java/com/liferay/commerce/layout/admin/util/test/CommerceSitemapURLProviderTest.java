@@ -50,7 +50,6 @@ import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.LayoutSetLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
-import com.liferay.portal.kernel.test.rule.DataGuard;
 import com.liferay.portal.kernel.test.rule.Sync;
 import com.liferay.portal.kernel.test.util.CompanyTestUtil;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
@@ -93,7 +92,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 /**
  * @author Alec Sloan
  */
-@DataGuard(scope = DataGuard.Scope.CLASS)
 @RunWith(Arquillian.class)
 @Sync
 public class CommerceSitemapURLProviderTest {
