@@ -121,7 +121,7 @@ AUI.add(
 					toolbars: {
 						footer: [
 							{
-								cssClass: 'btn btn-primary',
+								cssClass: 'btn btn-primary mr-2',
 								discardDefaultButtonCssClasses: true,
 								label: Liferay.Language.get('delete'),
 								on: {
