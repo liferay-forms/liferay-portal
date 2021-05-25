@@ -17,19 +17,22 @@
 <%@ include file="/init.jsp" %>
 
 <%
-boolean digitalSignatureEnabled = GetterUtil.getBoolean(request.getAttribute(DigitalSignatureWebKeys.DIGITAL_SIGNATURE_ENABLED));
-
 DigitalSignatureConfiguration digitalSignatureConfiguration = (DigitalSignatureConfiguration)request.getAttribute(DigitalSignatureConfiguration.class.getName());
-
-boolean disabled = false;
-
-if (Objects.equals(digitalSignatureConfiguration.siteSettingsStrategy(), "always-inherit") || Validator.isNull(digitalSignatureConfiguration.siteSettingsStrategy())) {
-	disabled = true;
-}
 %>
 
 <div class="row">
 	<div class="col-md-12">
+
+		<%
+		boolean digitalSignatureEnabled = GetterUtil.getBoolean(request.getAttribute(DigitalSignatureWebKeys.DIGITAL_SIGNATURE_ENABLED));
+
+		boolean disabled = false;
+
+		if (Objects.equals(digitalSignatureConfiguration.siteSettingsStrategy(), "always-inherit") || Validator.isNull(digitalSignatureConfiguration.siteSettingsStrategy())) {
+			disabled = true;
+		}
+		%>
+
 		<aui:input checked="<%= digitalSignatureEnabled %>" disabled="<%= disabled %>" inlineLabel="right" label='<%= LanguageUtil.get(resourceBundle, "enabled") %>' labelCssClass="simple-toggle-switch" name="enabled" type="toggle-switch" value="<%= digitalSignatureEnabled %>" />
 	</div>
 </div>
@@ -61,26 +64,3 @@ if (Objects.equals(digitalSignatureConfiguration.siteSettingsStrategy(), "always
 		</div>
 	</div>
 </div>
-
-<script>
-	function <portlet:namespace />onChangeDigitalSignatureSiteSettingsStrategy(
-		event
-	) {
-		var digitalSignatureProviderCredentialsElement = document.getElementById(
-			'<portlet:namespace />digitalSignatureProviderCredentials'
-		);
-
-		var digitalSignatureSiteSettingsStrategyElement = document.getElementById(
-			'<portlet:namespace />siteSettingsStrategy'
-		);
-
-		if (
-			digitalSignatureSiteSettingsStrategyElement.value === 'always-override'
-		) {
-			digitalSignatureProviderCredentialsElement.classList.add('hide');
-		}
-		else {
-			digitalSignatureProviderCredentialsElement.classList.remove('hide');
-		}
-	}
-</script>
