@@ -220,7 +220,6 @@ definition {
 		SystemSettings.configureSystemSetting(
 			enableSetting = "${setValue}",
 			settingFieldName = "Access Local Network");
-			
 	}
 
 }

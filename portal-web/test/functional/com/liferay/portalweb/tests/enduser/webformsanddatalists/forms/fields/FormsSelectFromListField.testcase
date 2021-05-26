@@ -193,7 +193,6 @@ definition {
 			selectOption = "Antarctica");
 
 		FormPortlet.submitAndViewSuccessPage();
-		
 	}
 
 	@description = "Verify that changes to a Field can be canceled"
