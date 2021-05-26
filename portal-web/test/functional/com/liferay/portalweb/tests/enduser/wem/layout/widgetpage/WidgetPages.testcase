@@ -376,6 +376,28 @@ definition {
 		Blogs.viewControlsPG();
 	}
 
+	@description = "This is a use case for LPS-123143."
+	@priority = "3"
+	test ViewLanguageNameOfLanguageButtonInWidgetConfigurationPage {
+		ProductMenu.gotoPortlet(
+			category = "Site Builder",
+			portlet = "Pages");
+
+		SitePages.addPublicPage(
+			pageName = "Test Page Name",
+			sitePageType = "Widget Page");
+
+		ProductMenu.gotoPortlet(
+			category = "Site Builder",
+			portlet = "Pages");
+
+		SitePages.gotoPageMenuItem(
+			menuItem = "Configure",
+			pageName = "Test Page Name");
+
+		PortletEntry.viewLocale(locale = "en-US");
+	}
+
 	@priority = "3"
 	test ViewNoInfoMessageWhenChangingSiteTemplateAsUser {
 		property custom.properties = "jsonws.web.service.paths.excludes=";
