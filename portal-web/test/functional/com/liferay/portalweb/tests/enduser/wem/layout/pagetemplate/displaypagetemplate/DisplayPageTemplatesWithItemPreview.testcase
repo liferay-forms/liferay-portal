@@ -671,11 +671,11 @@ definition {
 		task ("Add a category in Topic, Audience and Stage") {
 			var n = "1";
 
-			for (var vocabularyList : list "Topic,Audience,Stage") {
+			for (var vocabularyName : list "Topic,Audience,Stage") {
 				JSONCategory.addCategory(
 					groupName = "Global",
 					title = "Category Name ${n}",
-					vocabularyName = "${vocabularyList}");
+					vocabularyName = "${vocabularyName}");
 
 				var n = ${n} + 1;
 			}
@@ -770,11 +770,11 @@ definition {
 		task ("Delete Global category") {
 			var n = "1";
 
-			for (var vocabularyList : list "Topic,Audience,Stage") {
+			for (var vocabularyName : list "Topic,Audience,Stage") {
 				JSONCategory.deleteCategory(
 					categoryName = "Category Name ${n}",
 					groupName = "Global",
-					vocabularyName = "${vocabularyList}");
+					vocabularyName = "${vocabularyName}");
 
 				var n = ${n} + 1;
 			}
