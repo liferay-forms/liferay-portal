@@ -123,7 +123,6 @@ definition {
 			outputParameterPath2 = "${outputParameterPath2}",
 			outputParameterType = "${outputParameterType}",
 			outputParameterType2 = "${outputParameterType2}");
-			
 	}
 
 	macro editDataProviderOutputParameter {

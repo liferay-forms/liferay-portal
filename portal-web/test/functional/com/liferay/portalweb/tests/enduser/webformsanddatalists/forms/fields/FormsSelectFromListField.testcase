@@ -50,7 +50,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-131359 CanBeDeleted pending implementation
-
 	}
 
 	@description = "Verify that a Select From List Field can be duplicated"
@@ -61,7 +60,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-131361 CanBeDuplicated pending implementation
-
 	}
 
 	@description = "Verify that a Select From List Field can be edited"
@@ -72,7 +70,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-131358 CanBeEdited pending implementation
-
 	}
 
 	@description = "Verify that a Select From List Field can be required"
@@ -83,7 +80,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-131360 CanBeRequired pending implementation
-
 	}
 
 	@description = "Verify that a Select From List Field can be set to repeatable"
@@ -94,7 +90,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-131362 CanBeSetAsRepeatable pending implementation
-
 	}
 
 	@description = "Verify that a Form can be submitted with the Select From List Field"
@@ -105,7 +100,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-131369 CanBeSubmitted pending implementation
-
 	}
 
 	@description = "Verify that a list can be created using Autofill"
@@ -199,7 +193,6 @@ definition {
 			selectOption = "Antarctica");
 
 		FormPortlet.submitAndViewSuccessPage();
-		
 	}
 
 	@description = "Verify that changes to a Field can be canceled"
@@ -210,7 +203,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-131364 ChangesCanBeCanceled pending implementation
-
 	}
 
 	@description = "Verify that the Field References for the options can be edited"
@@ -221,7 +213,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-131375 FieldReferenceOfOptionsCanBeEdited pending implementation
-
 	}
 
 	@description = "Verify that a Help Text can be added"
@@ -232,7 +223,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-131367 HelpTextCanBeAdded pending implementation
-
 	}
 
 	@description = "Verify that the Field Label can be edited"
@@ -243,7 +233,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-131365 LabelCanBeEdited pending implementation
-
 	}
 
 	@description = "Veriy that the Field Label can be hidden"
@@ -254,7 +243,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-131366 LabelCanBeHidden pending implementation
-
 	}
 
 	@description = "Verify that options can be added"
@@ -265,7 +253,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-131373 OptionsCanBeAdded pending implementation
-
 	}
 
 	@description = "Verify that options can be rearranged"
@@ -276,7 +263,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-131374 OptionsCanBeRearranged pending implementation
-
 	}
 
 	@description = "Verify that options can be sorted alphabetically"
@@ -287,7 +273,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-131372 OptionsCanBeSortedAlphabetically pending implementation
-
 	}
 
 	@description = "Verify that an option can be selected as a Predefined Value"
@@ -298,7 +283,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-131370 PredefinedValueCanBeAdded pending implementation
-
 	}
 
 	@description = "Verify that after deleting an option that had been selected as the Predefined Value, the Predefined Value is reset to "Choose Options""
@@ -309,7 +293,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-131371 PredefinedValueIsResetWhenSelectedOptionIsDeleted pending implementation
-
 	}
 
 	@description = "Verify that the Field Reference can be Edited"
@@ -320,7 +303,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-131368 ReferenceCanBeEdited pending implementation
-
 	}
 
 	@description = "Verify that the Field Type can be changed"
@@ -331,7 +313,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-131363 TypeCanBeChanged pending implementation
-
 	}
 
 }
