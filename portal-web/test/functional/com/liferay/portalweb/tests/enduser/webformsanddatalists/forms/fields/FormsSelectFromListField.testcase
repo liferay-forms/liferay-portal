@@ -109,14 +109,97 @@ definition {
 	}
 
 	@description = "Verify that a list can be created using Autofill"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test CanCreateListUsingAutofill {
 		property forms.functional = "true";
 		property portal.acceptance = "false";
 
-		// TODO LPS-131376 CanCreateListUsingAutofill pending implementation
+		FormsAdminNavigator.setLocalNetworkDataProvider(setValue = "true");
 
+		Navigator.openURL();
+
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Forms");
+
+		Navigator.gotoNavItem(navItem = "Data Providers");
+
+		FormsAdminNavigator.gotoAddDataProvider();
+
+		var portalURL = PropsUtil.get("portal.url");
+
+		FormsAdmin.editDataProviderLocalNetwork(
+			name = "Countries of the World",
+			outputParameterLabel = "Country Names",
+			outputParameterPath = "$..nameCurrentValue",
+			outputParameterType = "List",
+			timeout = "1000",
+			url = "${portalURL}/api/jsonws/country/get-countries");
+
+		FormsAdmin.saveDataProvider();
+
+		Navigator.gotoNavItem(navItem = "Forms");
+
+		FormsAdminNavigator.gotoAddForm();
+
+		Form.editName(formName = "Form 1");
+
+		Form.gotoAddField(
+			fieldPositionNumber = "0",
+			fieldType = "Single Selection");
+
+		FormFields.editOptionsRow(
+			optionValue = "United",
+			rowNumber = "1");
+
+		Form.closeSidebar();
+
+		Form.gotoAddField(
+			fieldPositionNumber = "1",
+			fieldType = "Select from List");
+
+		FormFields.selectSelectOption(
+			fieldName = "Create List",
+			selectOption = "From Autofill");
+
+		Form.save();
+
+		Form.publishForm();
+
+		FormsAdminNavigator.gotoRules();
+
+		FormRules.addRule();
+
+		FormRules.configureConditionOptions(
+			conditionField = "Single Selection",
+			conditionOperator = "Is equal to",
+			conditionRowNumber = "1",
+			conditionValueField = "United",
+			conditionValueType = "Value");
+
+		FormRules.configureActionOptions(
+			action = "Autofill",
+			actionRowNumber = "1",
+			actionTarget = "Countries of the World");
+
+		FormRules.selectAutofillOutput(dataProviderOutput = "Select from List");
+
+		FormRules.save();
+
+		FormsAdminNavigator.gotoFormBuilder();
+
+		FormsAdminNavigator.gotoPublishedForm();
+
+		FormFields.selectRadioOption(
+			fieldName = "SingleSelection",
+			radioOption = "United");
+
+		FormFields.selectSelectOption(
+			fieldName = "Select from List",
+			selectOption = "Antarctica");
+
+		FormPortlet.submitAndViewSuccessPage();
+		
 	}
 
 	@description = "Verify that changes to a Field can be canceled"
