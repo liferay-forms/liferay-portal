@@ -62,6 +62,70 @@ definition {
 			outputParameterType2 = "${outputParameterType2}");
 	}
 
+	macro editDataProviderLocalNetwork {
+		FormFields.editText(
+			fieldName = "DataProviderPortlet_name",
+			fieldValue = "${name}");
+
+		FormFields.editText(
+			fieldName = "$url",
+			fieldValue = "${url}");
+
+		if (isSet(timeout)) {
+			FormFields.editText(
+				fieldName = "$timeout",
+				fieldValue = "${timeout}");
+		}
+
+		if (isSet(description)) {
+			FormFields.editTextMultiline(
+				fieldName = "description",
+				fieldValue = "${description}");
+		}
+
+		if (isSet(filterParameterName)) {
+			FormFields.enableCheckbox(fieldName = "$filterable");
+
+			FormFields.editText(
+				fieldName = "$filterParameterName",
+				fieldValue = "${filterParameterName}");
+		}
+
+		if (isSet(cacheable) && "${cacheable}" == "true") {
+			FormFields.enableCheckbox(fieldName = "$cacheable");
+		}
+
+		if (isSet(username)) {
+			FormFields.editText(
+				fieldName = "$username",
+				fieldValue = "${username}");
+		}
+
+		if (isSet(password)) {
+			var key_fieldName = "$password";
+
+			if (IsElementPresent(locator1 = "FormFields#PASSWORD_FIELD")) {
+				FormFields.editPassword(
+					fieldName = "$password",
+					fieldValue = "${password}");
+			}
+			else {
+				FormFields.editText(
+					fieldName = "$password",
+					fieldValue = "${password}");
+			}
+		}
+
+		FormsAdmin.editDataProviderOutputParameter(
+			outputParameterLabel = "${outputParameterLabel}",
+			outputParameterLabel2 = "${outputParameterLabel2}",
+			outputParameterPath = "${outputParameterPath}",
+			outputParameterPath2 = "${outputParameterPath2}",
+			outputParameterType = "${outputParameterType}",
+			outputParameterType2 = "${outputParameterType2}");
+			
+	}
+
 	macro editDataProviderOutputParameter {
 		Type(
 			locator1 = "Form#DATA_PROVIDER_OUTPUT_PARAMETER_PATH_FIELD",

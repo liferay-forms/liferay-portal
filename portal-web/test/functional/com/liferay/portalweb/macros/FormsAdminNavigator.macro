@@ -200,4 +200,27 @@ definition {
 		Navigator.openSpecificURL(url = "${publishFormURL}");
 	}
 
+	macro setLocalNetworkDataProvider {
+		Navigator.openURL();
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "System Settings");
+
+		SystemSettings.gotoConfiguration(
+			configurationCategory = "Data Providers",
+			configurationName = "Data Providers",
+			configurationScope = "Site Scope");
+
+		WaitForElementPresent(
+			key_checkboxOption = "Access Local Network",
+			locator1 = "Checkbox#ENABLE_CHECKBOX_VIA_SPAN");
+
+		SystemSettings.configureSystemSetting(
+			enableSetting = "${setValue}",
+			settingFieldName = "Access Local Network");
+			
+	}
+
 }
