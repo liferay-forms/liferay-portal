@@ -698,14 +698,14 @@ definition {
 				fragmentName = "Button");
 		}
 
-		task ("Mapping the vocabulary field to Button fragment") {
+		task ("Mapping the Vocabulary field to Button fragment") {
 			PageEditorMapping.mapEditableTextToField(
 				field = "Vocabulary",
 				fragmentName = "Button",
 				id = "link");
 		}
 
-		task ("Open the preview item selector, select other item and expand the Tree") {
+		task ("Open the preview item selector") {
 			WaitForLiferayEvent.initializeLiferayEventLog();
 
 			Click(locator1 = "ControlMenu#DISPLAY_PAGE_PREVIEW_ITEM_SELECTOR");
@@ -717,13 +717,13 @@ definition {
 			Portlet.expandTree();
 		}
 
-		task ("Assert the category of Topic (Global)") {
+		task ("View the category of Topic (Global) is present") {
 			AssertVisible(
 				key_nodeName = "Category Name 1",
 				locator1 = "Treeview#NODE_UNSELECTED");
 		}
 
-		task ("Assert Audience and Stage vocubalaries are not present") {
+		task ("View Audience and Stage vocabularies are not present") {
 			for (var vocabularyName : list "Audience(Global),Stage(Global)") {
 				AssertElementNotPresent(
 					key_nodeName = "${vocabularyName}",
@@ -731,7 +731,7 @@ definition {
 			}
 		}
 
-		task ("Close the iframe") {
+		task ("Close the modal") {
 			IFrame.closeFrame();
 		}
 
@@ -741,7 +741,7 @@ definition {
 			Click(locator1 = "PageEditor#PREVIEW");
 		}
 
-		task ("Open the preview item selector in, select other item and expand the Tree") {
+		task ("Open the preview item selector in preview modal") {
 			Click(locator1 = "Modal#DISPLAY_PAGE_PREVIEW_ITEM_SELECTOR");
 
 			DropdownMenuItem.click(menuItem = "Select Other Item");
@@ -753,13 +753,13 @@ definition {
 			Portlet.expandTree();
 		}
 
-		task ("Assert the category of Topic in modal") {
+		task ("View the category of Topic is present") {
 			AssertVisible(
 				key_nodeName = "Category Name 1",
 				locator1 = "Treeview#NODE_UNSELECTED");
 		}
 
-		task ("Assert Audience and Stage vocubalaries are not present in modal") {
+		task ("View Audience and Stage vocabularies are not present") {
 			for (var vocabularyName : list "Audience(Global),Stage(Global)") {
 				AssertElementNotPresent(
 					key_nodeName = "${vocabularyName}",
@@ -767,7 +767,7 @@ definition {
 			}
 		}
 
-		task ("Delete Global category") {
+		task ("Delete the global categories") {
 			var n = "1";
 
 			for (var vocabularyName : list "Topic,Audience,Stage") {
