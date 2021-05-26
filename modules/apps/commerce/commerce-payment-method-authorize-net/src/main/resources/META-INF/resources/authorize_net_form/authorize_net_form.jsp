@@ -17,9 +17,7 @@
 <%@ include file="/init.jsp" %>
 
 <%
-String redirectURLAttribute = (String)request.getAttribute("redirectUrl");
-
-String redirectURL = URLCodec.decodeURL(redirectURLAttribute);
+String redirectURL = URLCodec.decodeURL((String)request.getAttribute("redirectUrl"));
 
 String tokenAttribute = (String)request.getAttribute("token");
 %>

@@ -17,20 +17,14 @@
 <%@ include file="/init.jsp" %>
 
 <%
-String redirectionDataAttribute = (String)request.getAttribute("redirectionData");
-
-String redirectionData = URLDecoder.decode(redirectionDataAttribute, "UTF-8");
-
-String redirectUrlAttribute = (String)request.getAttribute("redirectUrl");
-
-String redirectUrl = URLCodec.decodeURL(redirectUrlAttribute);
-
-String sealAttribute = (String)request.getAttribute("seal");
+String redirectionData = URLDecoder.decode((String)request.getAttribute("redirectionData"), "UTF-8");
+String redirectUrl = URLCodec.decodeURL((String)request.getAttribute("redirectUrl"));
+String seal = URLDecoder.decode((String)request.getAttribute("seal"), "UTF-8");
 %>
 
 <form action="<%= HtmlUtil.escapeHREF(redirectUrl) %>" class="hide" id="formMercanet" method="post" name="formMercanet">
 	<input name="redirectionData" type="hidden" value="<%= HtmlUtil.escapeAttribute(redirectionData) %>" />
-	<input name="seal" type="hidden" value="<%= HtmlUtil.escapeAttribute(URLDecoder.decode(sealAttribute, "UTF-8")) %>" />
+	<input name="seal" type="hidden" value="<%= HtmlUtil.escapeAttribute(seal) %>" />
 	<input type="submit" value="Proceed to checkout" />
 </form>
 
