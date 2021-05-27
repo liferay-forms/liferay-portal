@@ -86,6 +86,7 @@ const Numeric = ({
 	defaultLanguageId,
 	disabled,
 	editingLanguageId,
+	inputMaskFormat,
 	localizable,
 	localizedValue,
 	onChange,
@@ -97,6 +98,8 @@ const Numeric = ({
 	...otherProps
 }) => {
 	const [currentValue, setCurrentValue] = useState(value);
+	const [currentMask, setCurrentMask] = useState(inputMaskFormat);
+
 	const inputRef = useRef(null);
 
 	const [defaultSymbols] = useState(symbols);
@@ -160,7 +163,7 @@ const Numeric = ({
 			dir={Liferay.Language.direction[editingLanguageId]}
 			disabled={disabled}
 			lang={editingLanguageId}
-			onChange={(event) => {
+			onInput={(event) => {
 				const {value: newValue} = event.target;
 
 				if (
@@ -170,8 +173,101 @@ const Numeric = ({
 					return;
 				}
 
-				setCurrentValue(newValue);
-				onChange(event);
+				let newValueCopy = newValue;
+
+				/**
+				 * Apply mask if there is an inputMaskFormat
+				 */
+				if (currentMask) {
+					newValueCopy = [...newValue];
+					let updatedMask = currentMask;
+
+					//Use the original inputMask if the input is lower or equal to the required mask digits
+
+					if (
+						newValue.length <= inputMaskFormat.match(/9/g)?.length
+					) {
+						updatedMask = inputMaskFormat;
+					}
+
+					newValueCopy = newValueCopy.reverse();
+
+					const formattedValue = [];
+					const initialMask = updatedMask.split('').reverse();
+					const maskWithoutOptionals = updatedMask
+						.replaceAll('0', '')
+						.split('')
+						.reverse();
+					const requiredDigits = updatedMask.match(/9/g)?.length;
+					const optionalDigits = updatedMask.match(/0/g)?.length ?? 0;
+
+					const maxLimitExceeded = newValue.length > requiredDigits;
+
+					// Do not accept more digits than the mask needs and keep the current typed value
+
+					if (newValueCopy.length > requiredDigits + optionalDigits) {
+						newValueCopy = currentValue;
+					}
+					else {
+						if (maxLimitExceeded && optionalDigits > 0) {
+							const optionalDigitPosition = initialMask
+								.reverse()
+								.indexOf('0');
+
+							updatedMask = [...currentMask];
+
+							//update the mask by replacing the optional digit by a required digit
+
+							updatedMask.splice(optionalDigitPosition, 1, '9');
+
+							//add a new required digit into the index of optional digit
+
+							maskWithoutOptionals
+								.reverse()
+								.splice(optionalDigitPosition, 0, '9');
+							maskWithoutOptionals.reverse();
+						}
+
+						/**
+						 * maskWithoutOptionals: stack of mask digits and symbols
+						 * newValueCopy: stack with digits the user input
+						 */
+						while (
+							(maskWithoutOptionals.length !== 0 &&
+								newValueCopy.length !== 0) ||
+							(maskWithoutOptionals.some(
+								(digit) => digit != '9'
+							) &&
+								newValue.length >= requiredDigits)
+						) {
+							const last = maskWithoutOptionals.pop();
+
+							if (last && last !== '9') {
+								formattedValue.push(last);
+							}
+							else {
+								if (!newValueCopy) {
+									break;
+								}
+								const lastValue = newValueCopy.pop();
+
+								if (lastValue) {
+									formattedValue.push(lastValue);
+								}
+							}
+						}
+						newValueCopy = formattedValue.join('');
+					}
+					if (updatedMask) {
+						setCurrentMask(
+							Array.isArray(updatedMask)
+								? updatedMask.join('')
+								: updatedMask
+						);
+					}
+				}
+
+				setCurrentValue(new String(newValueCopy));
 			}}
 			onKeyUp={(event) => {
 				const {value: newValue} = event.target;
@@ -217,6 +313,8 @@ const Main = ({
 }) => {
 	const [edited, setEdited] = useState(false);
 
+	const formattedMask = inputMaskFormat.replace(/\d/g, '_');
+
 	return (
 		<FieldBase
 			{...otherProps}
@@ -244,7 +342,7 @@ const Main = ({
 					onChange(event);
 				}}
 				onFocus={onFocus}
-				placeholder={placeholder}
+				placeholder={placeholder || formattedMask}
 				predefinedValue={predefinedValue}
 				symbols={symbols}
 				value={edited || value ? value : predefinedValue}
