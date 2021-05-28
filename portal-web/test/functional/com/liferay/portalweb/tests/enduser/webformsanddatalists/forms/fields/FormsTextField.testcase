@@ -49,7 +49,6 @@ definition {
 
 		FormViewBuilder.editAutoComplete(key_optionValue = "Manually");
 
-
 		Type(
 			key_rowNumber = "1",
 			locator1 = "FormFields#OPTIONS_OPTION_VALUE_FIELD",
