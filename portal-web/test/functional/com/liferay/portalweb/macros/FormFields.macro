@@ -372,6 +372,27 @@ definition {
 			value1 = "${validationErrorMessage}");
 	}
 
+	macro editValidationTargetArgument {
+		Pause(locator1 = "1000");
+
+		Click(locator1 = "FormFields#VALIDATION_ARGUMENT");
+
+		AssertClick(
+			key_validationArgument = "${validationArgument}",
+			locator1 = "FormFields#VALIDATION_ARGUMENT_OPTION_TARGET_INPUT",
+			value1 = "${validationArgument}");
+
+		if (isSet(validationInput)) {
+			Type(
+				locator1 = "FormFields#VALIDATION_INPUT",
+				value1 = "${validationInput}");
+		}
+
+		Type(
+			locator1 = "FormFields#VALIDATION_ERROR_MESSAGE",
+			value1 = "${validationErrorMessage}");
+	}
+
 	macro enableCheckbox {
 		if (IsNotChecked.isNotCheckedNotVisible(locator1 = "FormFields#CHECKBOX", key_fieldName = "${fieldName}")) {
 			Click(
@@ -719,6 +740,18 @@ definition {
 		else {
 			Form.gotoBasicTab();
 		}
+	}
+
+	macro viewFieldReferenceFromGridField {
+		Click(
+			key_fieldName = "Grid",
+			locator1 = "Form#FIELD_BODY");
+
+		Form.gotoAdvancedTab();
+
+		AssertTextEquals(
+			locator1 = "Form#FIELD_REFERENCE",
+			value1 = "${key_fieldReference}");
 	}
 
 	macro viewFieldValidationErrorMessage {

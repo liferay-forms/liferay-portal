@@ -545,6 +545,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>VALIDATION_ARGUMENT_OPTION_TARGET_INPUT</td>
+	<td>//div[contains(@class,'dropdown-menu') and contains(@class,'show')]//ul[contains(@class,'list-unstyled')]//button[text()='${key_validationArgument}']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>VALIDATION_INPUT</td>
 	<td>//div[contains(@class,'validation-input')]//input | //input[contains(@name,'parameter')]</td>
 	<td></td>
