@@ -105,8 +105,7 @@ definition {
 		FormViewBuilder.validateFormMultipleSelectionField(
 			fieldLabel = "Option 2",
 			fieldName = "Copy of Multiple Selection");
-			
-		
+
 		FormViewBuilder.assertHelpTextPresent(
 			fieldName = "Multiple Selection",
 			fieldValue = "Help Text Test");
