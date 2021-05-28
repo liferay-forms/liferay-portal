@@ -98,8 +98,6 @@ definition {
 		FormViewBuilder.assertHelpTextPresent(
 			fieldName = "Copy of Numeric",
 			fieldValue = "Help Text Test");
-
-			
 	}
 
 	@description = "Verify that a Numeric Field can be edited"
