@@ -191,10 +191,6 @@ definition {
 		FormPortlet.waitForValidationErrorNotPresent(validationErrorMessage = "Test Error");
 
 		FormPortlet.submitAndViewSuccessPage();
-
-		
-
-
 	}
 
 	@description = "Verify that the "Is Less Than" option can be used to validate a Numeric Field"
