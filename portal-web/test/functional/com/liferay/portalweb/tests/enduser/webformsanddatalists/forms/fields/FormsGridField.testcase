@@ -93,26 +93,26 @@ definition {
 			fieldPositionNumber = "0",
 			fieldType = "Grid",
 			formPageNumber = "0");
-		
+
 		FormFields.editGridOptions(
 			gridField = "Rows",
-			rowNumber = "1",
-			optionValue = "Option 1");
-		
+			optionValue = "Option 1",
+			rowNumber = "1");
+
 		FormFields.editGridOptions(
 			gridField = "Rows",
-			rowNumber = "2",
-			optionValue = "Option 2");
+			optionValue = "Option 2",
+			rowNumber = "2");
 
 		FormFields.editGridOptions(
 			gridField = "Columns",
-			rowNumber = "1",
-			optionValue = "Option 3");
-		
+			optionValue = "Option 3",
+			rowNumber = "1");
+
 		FormFields.editGridOptions(
 			gridField = "Columns",
-			rowNumber = "2",
-			optionValue = "Option 4");
+			optionValue = "Option 4",
+			rowNumber = "2");
 
 		FormFields.enableSwitcher(fieldName = "Required Field");
 
@@ -129,19 +129,16 @@ definition {
 		FormPortlet.submitWithValidationError(validationErrorMessage = "This field is required.");
 
 		FormFields.selectGridRadioOptionWithoutCategory(
+			fieldName = "",
 			optionNumber1 = "1",
-			optionNumber2 = "3",
-			fieldName = "");
+			optionNumber2 = "3");
 
 		FormFields.selectGridRadioOptionWithoutCategory(
+			fieldName = "",
 			optionNumber1 = "2",
-			optionNumber2 = "4",
-			fieldName = "");
+			optionNumber2 = "4");
 
 		FormPortlet.submitSuccessfully();
-
-
-
 	}
 
 	@description = "Verify that a Form can be submitted with the Grid Field"
