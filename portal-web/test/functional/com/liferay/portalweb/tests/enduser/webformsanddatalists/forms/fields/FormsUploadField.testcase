@@ -87,13 +87,45 @@ definition {
 	}
 
 	@description = "Verify that an Upload Field can be duplicated"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test CanBeDuplicated {
 		property forms.functional = "true";
 		property portal.acceptance = "false";
 
-		// TODO LPS-133215 CanBeDuplicated pending implementation
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Forms");
+
+		FormsAdminNavigator.gotoAddForm();
+
+		Form.editName(formName = "Form 1");
+
+		Form.gotoAddField(
+			fieldPositionNumber = "0",
+			fieldType = "Upload",
+			formPageNumber = "0");
+
+		FormFields.editHelpText(
+			fieldName = "tip",
+			key_fieldLabel = "",
+			fieldHelpText = "Help Text Test");
+
+		FormFields.duplicateField();
+
+		FormViewBuilder.validateFieldLabel(fieldLabel = "Upload");
+
+		FormViewBuilder.validateFieldLabel(fieldLabel = "Copy of Upload");
+		
+		FormViewBuilder.assertHelpTextPresent(
+			fieldName = "Upload",
+			fieldValue = "Help Text Test");
+			
+		FormViewBuilder.assertHelpTextPresent(
+			fieldName = "Copy of Upload",
+			fieldValue = "Help Text Test");
+
+
+
 
 	}
 
