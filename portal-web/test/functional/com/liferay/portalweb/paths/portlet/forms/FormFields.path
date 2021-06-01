@@ -19,6 +19,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>FIELD_REPEATABLE_BUTTOM</td>
+	<td>//div[contains(@class,'ddm-field')]//div[contains(@data-field-name,'${key_fieldName}')]//button[contains(@class,'ddm-form-field-repeatable-add-button')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>FIELD_ADD_REMOVE</td>
 	<td>//div[contains(@class,'ddm-field')]//button[contains(@class,'ddm-form-field-repeatable-delete-button')]</td>
 	<td></td>
@@ -605,6 +610,11 @@
 <tr>
 	<td>SELECT_UPLOAD_FIELD</td>
 	<td>//span[@class='lfr-btn-label']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SELECT_UPLOAD_FIELD_BY_INDEX</td>
+	<td>//div[contains(concat(' ',normalize-space(@class),' '),' ddm-field-container')]/div[${key_index}]//span[contains(text(),'Select')]</td>
 	<td></td>
 </tr>
 <tr>

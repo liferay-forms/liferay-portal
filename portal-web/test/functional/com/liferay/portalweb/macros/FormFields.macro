@@ -721,6 +721,16 @@ definition {
 		}
 	}
 
+	macro viewFieldRepeatableButton {
+		key_fieldName = "${fieldName}";
+
+		for (var number : list "${key_repeatableFieldNumber}") {
+			AssertElementPresent(
+				key_name = "${fieldName}",
+				locator1 = "FormFields#FIELD_REPEATABLE_BUTTOM");
+		}
+	}
+
 	macro viewFieldValidationErrorMessage {
 		var key_fieldName = "${fieldName}";
 
