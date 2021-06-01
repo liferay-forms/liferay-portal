@@ -106,27 +106,23 @@ definition {
 			formPageNumber = "0");
 
 		FormFields.editHelpText(
+			fieldHelpText = "Help Text Test",
 			fieldName = "tip",
-			key_fieldLabel = "",
-			fieldHelpText = "Help Text Test");
+			key_fieldLabel = "");
 
 		FormFields.duplicateField();
 
 		FormViewBuilder.validateFieldLabel(fieldLabel = "Upload");
 
 		FormViewBuilder.validateFieldLabel(fieldLabel = "Copy of Upload");
-		
+
 		FormViewBuilder.assertHelpTextPresent(
 			fieldName = "Upload",
 			fieldValue = "Help Text Test");
-			
+
 		FormViewBuilder.assertHelpTextPresent(
 			fieldName = "Copy of Upload",
 			fieldValue = "Help Text Test");
-
-
-
-
 	}
 
 	@description = "Verify that an Upload Field can be edited"
