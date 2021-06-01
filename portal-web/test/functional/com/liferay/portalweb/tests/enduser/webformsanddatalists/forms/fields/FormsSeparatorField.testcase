@@ -65,7 +65,7 @@ definition {
 		Form.editFieldLabelMetal(fieldValue = "Test Separator");
 
 		FormFields.duplicateField();
-		
+
 		FormViewBuilder.validateFieldLabel(fieldLabel = "Test Separator");
 
 		FormViewBuilder.validateFieldLabel(fieldLabel = "Copy of Test Separator");
