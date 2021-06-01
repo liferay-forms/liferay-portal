@@ -137,8 +137,8 @@ definition {
 
 	macro editDateByIndex {
 		Type(
-			key_index = "${index}",
 			key_fieldLabel = "Date",
+			key_index = "${index}",
 			locator1 = "FormFields#PUBLISHED_FORM_FIELD_BY_INDEX",
 			value1 = "${key_value}");
 	}
@@ -847,8 +847,8 @@ definition {
 
 	macro viewPublishedFormFieldByIndex {
 		AssertElementPresent(
-			key_index = "${index}",
 			key_fieldLabel = "${fieldLabel}",
+			key_index = "${index}",
 			locator1 = "FormFields#PUBLISHED_FORM_FIELD_BY_INDEX");
 	}
 

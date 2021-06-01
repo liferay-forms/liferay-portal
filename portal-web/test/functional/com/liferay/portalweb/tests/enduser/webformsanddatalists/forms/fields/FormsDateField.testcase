@@ -114,13 +114,13 @@ definition {
 			repeatableFieldNumber = "1");
 
 		FormFields.viewPublishedFormFieldByIndex(
-			index = "1",
-			fieldLabel = "Date");
+			fieldLabel = "Date",
+			index = "1");
 
 		FormFields.viewPublishedFormFieldByIndex(
-			index = "2",
-			fieldLabel = "Date");
-		
+			fieldLabel = "Date",
+			index = "2");
+
 		FormFields.editDateByIndex(
 			index = "1",
 			key_value = "01012021");
@@ -130,10 +130,6 @@ definition {
 			key_value = "01012021");
 
 		FormPortlet.submitSuccessfully();
- 
-
- 
-
 	}
 
 	@description = "Verify that a Form can be submitted with the Date Field"
