@@ -148,7 +148,6 @@ definition {
 		FormViewBuilder.validateFieldLabelIsNotShown(fieldLabel = "Separator");
 
 		Form.save();
-		
 
 		Form.publishForm();
 
