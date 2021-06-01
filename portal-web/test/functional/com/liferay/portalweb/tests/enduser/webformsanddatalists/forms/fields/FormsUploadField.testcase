@@ -173,9 +173,6 @@ definition {
 			uploadFileName = "Document_1.docx");
 
 		FormPortlet.submitSuccessfully();
-
-
-
 	}
 
 	@description = "Verify that changes to the Field can be canceled"
