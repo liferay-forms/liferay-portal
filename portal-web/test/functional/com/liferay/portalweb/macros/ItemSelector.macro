@@ -255,8 +255,8 @@ definition {
 
 	macro gotoItemSelectorViaSelectButtonByGuest {
 		Click(
-			locator1 = "FormFields#UPLOAD_FIELD_GUEST_1",
-			key_fieldName = "${fieldName}");
+			key_fieldName = "${fieldName}",
+			locator1 = "FormFields#UPLOAD_FIELD_GUEST_1");
 	}
 
 	macro gotoPreviewViaSelectFile {
