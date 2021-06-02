@@ -85,13 +85,10 @@ definition {
 			uploadFileName = "Document_1.docx");
 
 		FormFields.viewTextValue(
-			fieldValue = "Document_1.docx",
-			fieldName = "");
+			fieldName = "",
+			fieldValue = "Document_1.docx");
 
 		FormFields.clearUploadField();
-
-
-
 	}
 
 	@description = "Verify that an Upload Field can be created"
