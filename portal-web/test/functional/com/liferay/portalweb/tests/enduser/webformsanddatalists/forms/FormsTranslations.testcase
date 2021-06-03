@@ -166,7 +166,6 @@ definition {
 
 		FormViewBuilder.validateFieldLabel(fieldLabel = "Date");
 
-
 		FormViewBuilder.assertHelpTextPresent(
 			fieldName = "Date",
 			fieldValue = "Test Help Text");
