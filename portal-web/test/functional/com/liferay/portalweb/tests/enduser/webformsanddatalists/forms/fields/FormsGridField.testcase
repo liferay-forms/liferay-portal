@@ -157,13 +157,8 @@ definition {
 		FormFields.viewTextLabel(fieldLabel = "Grid");
 
 		FormFields.assertGridOptionChecked(
-			rowValue = "Option 1",
-			columnValue = "Option 3");
-
-
-
-
-
+			columnValue = "Option 3",
+			rowValue = "Option 1");
 	}
 
 	@description = "Verify that edits to the Field can be canceled"
