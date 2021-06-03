@@ -323,7 +323,7 @@ definition {
 
 		FormsAdminNavigator.gotoPublishedForm();
 
-		FormViewBuilder.viewTranslationLanguage(symbolName="en-US");
+		FormViewBuilder.viewTranslationLanguage(symbolName = "en-US");
 
 		FormViewBuilder.validateFieldLabel(fieldLabel = "Single Selection");
 
@@ -356,7 +356,6 @@ definition {
 		FormViewBuilder.validateFormMultipleSelectionField(
 			fieldLabel = "Opción Dos",
 			fieldName = "Selección Única");
-
 	}
 
 	@description = "Verify that a Text field's Autocomplete Options can be translated"

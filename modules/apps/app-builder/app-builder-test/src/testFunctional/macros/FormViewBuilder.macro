@@ -1162,10 +1162,10 @@ definition {
 			locator1 = "FormViewBuilder#ENTRY_NUMERIC");
 	}
 
-	macro viewTranslationLanguage{
+	macro viewTranslationLanguage {
 		AssertElementPresent(
-			locator1 = "FormViewBuilder#SELECT_LANGUAGE_AT_APP_DEPLOYED",
-			changeAppLanguageTo = "${symbolName}");
+			changeAppLanguageTo = "${symbolName}",
+			locator1 = "FormViewBuilder#SELECT_LANGUAGE_AT_APP_DEPLOYED");
 	}
 
 }
