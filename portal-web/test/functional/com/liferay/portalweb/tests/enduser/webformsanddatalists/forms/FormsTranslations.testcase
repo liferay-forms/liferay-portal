@@ -329,7 +329,6 @@ definition {
 
 		FormsAdminNavigator.gotoAddForm();
 
-
 		Form.editName(formName = "Form 1");
 
 		Form.gotoAddField(
