@@ -101,6 +101,8 @@ definition {
 		AssertElementPresent(
 			key_name = "Test Multiple Selection",
 			locator1 = "FormFields#FIELD_TARGET_LABEL");
+
+		FormViewBuilder.validateFieldLabelIsNotShown(fieldLabel = "Multiple Selection");
 	}
 
 	@description = "Verify that a Multiple Selection Field can be required"
