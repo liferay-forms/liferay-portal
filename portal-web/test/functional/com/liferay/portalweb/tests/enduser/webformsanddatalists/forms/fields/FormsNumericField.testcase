@@ -107,7 +107,7 @@ definition {
 
 		FormFields.selectRadioOption(
 			fieldName = "",
-			radioOption ="Decimal");
+			radioOption = "Decimal");
 
 		Form.save();
 
@@ -116,15 +116,12 @@ definition {
 		FormsAdminNavigator.gotoPublishedForm();
 
 		FormFields.editText(
-			fieldName = "Numeric", 
+			fieldName = "Numeric",
 			fieldValue = "123.123");
 
 		FormFields.viewTextValue(
-			fieldName = "Numeric", 
+			fieldName = "Numeric",
 			fieldValue = "123.123");
-
-
-
 	}
 
 	@description = "Verify that a Numeric Field can be set to repeatable"
