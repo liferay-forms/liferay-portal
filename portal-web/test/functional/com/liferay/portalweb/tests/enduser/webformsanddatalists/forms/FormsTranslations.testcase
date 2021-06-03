@@ -195,14 +195,14 @@ definition {
 		FormViewBuilder.setFieldHelpText(fieldLabel = "Test Help Text");
 
 		FormFields.editGridOptions(
-				gridField = "Rows",
-				optionValue = "Option One",
-				rowNumber = "1");
+			gridField = "Rows",
+			optionValue = "Option One",
+			rowNumber = "1");
 
 		FormFields.editGridOptions(
-				gridField = "Columns",
-				optionValue = "Option Two",
-				rowNumber = "1");
+			gridField = "Columns",
+			optionValue = "Option Two",
+			rowNumber = "1");
 
 		Form.addTranslation(localizedLanguage = "Spanish (Spain)");
 
@@ -211,14 +211,14 @@ definition {
 		FormViewBuilder.setFieldHelpText(fieldLabel = "Texto de Ayuda");
 
 		FormFields.editGridOptions(
-				gridField = "Rows",
-				optionValue = "Opción Uno",
-				rowNumber = "1");
+			gridField = "Rows",
+			optionValue = "Opción Uno",
+			rowNumber = "1");
 
 		FormFields.editGridOptions(
-				gridField = "Columns",
-				optionValue = "Opción Dos",
-				rowNumber = "1");
+			gridField = "Columns",
+			optionValue = "Opción Dos",
+			rowNumber = "1");
 
 		Form.save();
 
@@ -226,7 +226,7 @@ definition {
 
 		FormsAdminNavigator.gotoPublishedForm();
 
-		FormViewBuilder.viewTranslationLanguage(symbolName="en-US");
+		FormViewBuilder.viewTranslationLanguage(symbolName = "en-US");
 
 		FormViewBuilder.validateFieldLabel(fieldLabel = "Grid");
 
@@ -236,13 +236,13 @@ definition {
 
 		FormFields.viewOptionRowName(
 			fieldTitle = "Grid",
-			rowNumber = "1",
-			optionName = "Option One");
+			optionName = "Option One",
+			rowNumber = "1");
 
 		FormFields.viewOptionColumnsName(
 			fieldTitle = "Grid",
-			rowNumber = "1",
-			optionName = "Option Two");
+			optionName = "Option Two",
+			rowNumber = "1");
 
 		FormViewBuilder.changeAppLanguageTo(changeAppLanguageTo = "en-US");
 
@@ -256,13 +256,13 @@ definition {
 
 		FormFields.viewOptionRowName(
 			fieldTitle = "Cuadrícula",
-			rowNumber = "1",
-			optionName = "Opción Uno");
+			optionName = "Opción Uno",
+			rowNumber = "1");
 
 		FormFields.viewOptionColumnsName(
 			fieldTitle = "Cuadrícula",
-			rowNumber = "1",
-			optionName = "Opción Dos");
+			optionName = "Opción Dos",
+			rowNumber = "1");
 	}
 
 	@description = "Verify that an Image field's Label and Help Text can be translated"
