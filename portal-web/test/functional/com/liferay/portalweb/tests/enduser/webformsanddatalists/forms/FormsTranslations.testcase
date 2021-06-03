@@ -146,7 +146,6 @@ definition {
 		FormViewBuilder.setFieldHelpText(fieldLabel = "Texto de Ayuda");
 
 		Form.save();
-		
 
 		Form.publishForm();
 
