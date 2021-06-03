@@ -68,6 +68,8 @@ definition {
 
 		FormsAdminNavigator.gotoDeleteField(fieldName = "Multiple Selection");
 
+		FormFields.viewDeletedFieldLabel(fieldName = "Multiple Selection");
+
 		Form.save();
 
 		FormsAdminNavigator.gotoBack();
