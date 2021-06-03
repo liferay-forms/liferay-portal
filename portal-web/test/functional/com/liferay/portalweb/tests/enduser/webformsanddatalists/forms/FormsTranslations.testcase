@@ -301,14 +301,14 @@ definition {
 
 		FormsAdminNavigator.gotoPublishedForm();
 
-		FormViewBuilder.viewTranslationLanguage(symbolName="en-US");
+		FormViewBuilder.viewTranslationLanguage(symbolName = "en-US");
 
 		FormViewBuilder.validateFieldLabel(fieldLabel = "Select from List");
 
 		FormViewBuilder.assertHelpTextPresent(
 			fieldName = "Select from List",
 			fieldValue = "Test Help Text");
-		
+
 		FormFields.viewSelectOptionsList(
 			fieldName = "Select from List",
 			selectOption = "Option One");
@@ -338,7 +338,6 @@ definition {
 		FormFields.viewSelectOptionsList(
 			fieldName = "Seleccionar de la Lista",
 			selectOption = "Opción Dos");
-
 	}
 
 	@description = "Verify that a Separator field's Label and Help Text can be translated"
