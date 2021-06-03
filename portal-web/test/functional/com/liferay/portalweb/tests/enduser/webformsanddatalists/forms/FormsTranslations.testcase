@@ -264,7 +264,6 @@ definition {
 			fieldName = "Numeric",
 			fieldValue = "Test Help Text");
 
-
 		FormViewBuilder.changeAppLanguageTo(changeAppLanguageTo = "en-US");
 
 		FormViewBuilder.changeAppLanguageTo(changeAppLanguageTo = "español-España");
