@@ -487,13 +487,64 @@ definition {
 	}
 
 	@description = "Verify that the Confirmation Label can be edited"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test ConfirmationLabelCanBeEdited {
 		property forms.functional = "true";
 		property portal.acceptance = "false";
 
-		// TODO LPS-133013 ConfirmationLabelCanBeEdited pending implementation
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Forms");
+
+		FormsAdminNavigator.gotoAddForm();
+
+		Form.editName(formName = "Form 1");
+
+		Form.gotoAddField(fieldType = "Text");
+
+		var fieldTextField = FormFields.getFieldName();
+
+		Form.gotoAdvancedTab();
+
+		FormFields.enableSwitcher(fieldName = "Require Confirmation");
+
+		FormFields.editConfirmation(confirmationLabel = "Confirm Test");
+
+		FormFields.viewTextLabel(fieldLabel = "Confirm Test Text");
+
+		FormFields.enableSwitcher(fieldName = "Validation");
+
+		FormFields.editValidation(
+			validationArgument = "Contains",
+			validationErrorMessage = "",
+			validationInput = "Test Text");
+
+		Form.save();
+
+		Form.publishForm();
+
+		FormsAdminNavigator.gotoPublishedForm();
+
+		FormFields.viewTextLabel(fieldLabel = "Confirm Test Text");
+
+		FormFields.editText(
+			fieldName = "${fieldTextField}",
+			fieldValue = "Test Text");
+
+		FormPortlet.viewValidationErrorMessage(validationErrorMessage = "The information does not match.");
+
+		FormFields.editConfirmationFieldText(
+			fieldName = "${fieldTextField}",
+			fieldValue = "Test Text");
+
+		FormPortlet.waitForValidationErrorNotPresent(validationErrorMessage = "The information does not match.");
+
+		FormPortlet.submitSuccessfully();
+
+		FormPortlet.viewSuccessPage(
+			successPageDescription = "Your information was successfully received. Thank you for filling out the form.",
+			successPageTitle = "Thank you.");
+			
 
 	}
 
