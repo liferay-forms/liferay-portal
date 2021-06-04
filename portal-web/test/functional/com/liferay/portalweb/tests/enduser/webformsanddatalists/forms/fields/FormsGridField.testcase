@@ -288,8 +288,6 @@ definition {
 		FormFields.viewFieldReference(
 			fieldName = "Grid",
 			key_fieldReferenceValue = "Grid1234");
-
-
 	}
 
 	@description = "Verify that the Field Type can be changed"
