@@ -135,7 +135,7 @@ definition {
 				fieldName = "confirmationErrorMessage",
 				fieldValue = "${confirmationErrorMessage}");
 		}
-		
+
 	}
 
 	macro editConfirmationFieldText {
