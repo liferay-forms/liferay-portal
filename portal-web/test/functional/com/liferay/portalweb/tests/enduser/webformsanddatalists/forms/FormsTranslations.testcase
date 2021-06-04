@@ -295,8 +295,6 @@ definition {
 		FormViewBuilder.validateFormMultipleSelectionField(
 			fieldLabel = "Opción Dos",
 			fieldName = "Selección Múltiple");
-
-
 	}
 
 	@description = "Verify that a Numeric field's Label, Placeholder Text and Help Text can be translated"
