@@ -61,9 +61,6 @@ definition {
 			fieldLabel = "Numeric",
 			fieldName = "Numeric");
 
-
-			
-
 	}
 
 	@description = "Verify that a Numeric Field can be deleted"
