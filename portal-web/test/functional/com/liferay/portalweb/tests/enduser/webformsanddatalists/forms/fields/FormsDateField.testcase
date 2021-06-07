@@ -130,8 +130,6 @@ definition {
 		FormViewBuilder.assertHelpTextPresent(
 			fieldName = "Copy of Date",
 			fieldValue = "Help Text Test");
-
-			
 	}
 
 	@description = "Verify that a Date Field can be edited"
