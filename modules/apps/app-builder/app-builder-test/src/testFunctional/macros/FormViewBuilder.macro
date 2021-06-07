@@ -161,6 +161,13 @@ definition {
 			key_placeHolder = "${placeHolder}",
 			locator1 = "FormViewBuilder#FIELD_PLACEHOLDER_TEXT");
 	}
+	
+	macro assertPredefinedDateValuePresent {
+		AssertElementPresent(
+			key_fieldName = "${fieldLabel}",
+			key_fieldValue = "${fieldValue}",
+			locator1 = "FormViewBuilder#PREDEFINED_VALUE_AT_FORM_DATE_FIELD");
+	}
 
 	macro assertPredefinedValueAtSidebar {
 		AssertTextEquals(
