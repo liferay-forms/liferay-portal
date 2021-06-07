@@ -311,6 +311,10 @@ public class DDMFormField implements Serializable {
 		return nestedDDMFormFieldsReferencesMap;
 	}
 
+	public LocalizedValue getPlaceholder() {
+		return (LocalizedValue)_properties.get("placeholder");
+	}
+
 	public LocalizedValue getPredefinedValue() {
 		return (LocalizedValue)_properties.get("predefinedValue");
 	}

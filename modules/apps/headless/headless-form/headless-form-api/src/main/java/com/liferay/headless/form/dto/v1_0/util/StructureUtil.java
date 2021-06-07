@@ -154,6 +154,8 @@ public class StructureUtil {
 		LocalizedValue labelLocalizedValue = ddmFormField.getLabel();
 		LocalizedValue predefinedLocalizedValue =
 			ddmFormField.getPredefinedValue();
+		LocalizedValue placeholderLocalizedValue =
+			ddmFormField.getPlaceholder();
 		String type = ddmFormField.getType();
 
 		return new FormField() {
@@ -197,6 +199,7 @@ public class StructureUtil {
 				showLabel = ddmFormField.isShowLabel();
 				tooltip = _toString(
 					locale, (LocalizedValue)ddmFormField.getProperty("tip"));
+				placeholder = _toString(locale, placeholderLocalizedValue);
 
 				setDataType(
 					() -> {
