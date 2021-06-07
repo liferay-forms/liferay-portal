@@ -378,8 +378,6 @@ definition {
 		FormFields.viewSingleSelectionOption(
 			key_optionLabel = "Option 2",
 			key_position = "2");
-
-			
 	}
 
 	@description = "Verify that a Field with the Autocomplete Property persists after being added to a Form via Fieldset"
