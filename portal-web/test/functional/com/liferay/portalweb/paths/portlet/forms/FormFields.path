@@ -14,6 +14,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>ANY_FIELD</td>
+	<td>//div[contains(@data-field-name,'${key_fieldName}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>FIELD_ADD</td>
 	<td>//div[contains(@class,'form-field-repeatable-toolbar')]//a[contains(@class,'add-button')]</td>
 	<td></td>
@@ -352,6 +357,11 @@
 <tr>
 	<td>TEXT_FIELD_NULL</td>
 	<td>//input[@type='text' and (@value='') and contains (@class,'form-control bg-light field')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>TEXT_FIELD_PLACEHOLDER</td>
+	<td>//div[contains(@data-field-name,'${key_fieldName}')]//input[@placeholder='${key_placeHolder}']</td>
 	<td></td>
 </tr>
 <tr>
