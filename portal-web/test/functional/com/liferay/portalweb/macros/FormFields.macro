@@ -832,7 +832,6 @@ definition {
 			key_fieldName = "${fieldName}",
 			key_placeHolder = "${placeHolder}",
 			locator1 = "FormFields#TEXT_FIELD_PLACEHOLDER");
-			
 	}
 
 	macro viewFieldReference {

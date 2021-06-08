@@ -397,7 +397,7 @@ definition {
 		FormFields.viewFieldPlaceholderText(
 			fieldName = "Text",
 			placeHolder = "");
-		
+
 		FormViewBuilder.setPlaceholder(fieldValue = "Placeholder Text Test");
 
 		FormFields.viewFieldPlaceholderText(
@@ -433,8 +433,6 @@ definition {
 		FormFields.viewFieldPlaceholderText(
 			fieldName = "Text",
 			placeHolder = "Placeholder Text Test");
-
-
 	}
 
 	@description = "Verify that a Predefined Value persists after being added to a Form via Fieldset"
