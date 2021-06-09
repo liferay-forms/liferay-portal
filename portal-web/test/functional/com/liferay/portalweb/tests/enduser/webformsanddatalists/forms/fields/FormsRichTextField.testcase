@@ -186,11 +186,7 @@ definition {
 
 		SelectFrame(value1 = "relative=top");
 
-		FormPortlet.submitSuccessfully();
-
-		FormPortlet.viewSuccessPage(
-			successPageDescription = "Your information was successfully received. Thank you for filling out the form.",
-			successPageTitle = "Thank you.");
+		FormPortlet.submitSuccessfullyAndViewSuccessPage();
 	}
 
 	@description = "Verify that a Form can be submitted with the Rich Text Field"
