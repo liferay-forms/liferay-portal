@@ -974,6 +974,14 @@ definition {
 			locator1 = "FormFields#GRID_OPTIONS_OPTION_ROW_NAME");
 	}
 
+	macro viewOptionRowNameNotPresent {
+		AssertElementNotPresent(
+			key_fieldName = "${fieldTitle}",
+			key_optionName = "${optionName}",
+			key_rowNumber = "${rowNumber}",
+			locator1 = "FormFields#GRID_OPTIONS_OPTION_ROW_NAME");
+	}
+
 	macro viewOptionsRowFieldName {
 		AssertTextEquals(
 			key_rowNumber = "${rowNumber}",
@@ -1014,15 +1022,6 @@ definition {
 				locator1 = "FormFields#OPTIONS_OPTION_VALUE_FIELD_VISIBLE",
 				value1 = "${fieldValue}");
 		}
-	}
-
-	macro viewPaginationField {
-		var key_currentPage = "${key_currentPage}";
-		var key_lastPage = "${key_lastPage}";
-
-		AssertElementPresent(
-			key_pagination = "Page ${key_currentPage} of ${key_lastPage}",
-			locator1 = "Form#PAGINATION_NUMBER");
 	}
 
 	macro viewParagraphField {

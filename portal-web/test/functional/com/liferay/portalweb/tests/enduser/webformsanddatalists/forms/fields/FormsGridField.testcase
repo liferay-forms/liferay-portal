@@ -612,6 +612,7 @@ definition {
 			gridField = "Rows",
 			optionValue = "Option 1",
 			rowNumber = "1");
+			
 
 		FormFields.editGridOptions(
 			gridField = "Rows",
@@ -627,7 +628,7 @@ definition {
 			gridField = "Rows",
 			rowNumber = "1");
 
-		FormFields.viewOptionRowName(
+		FormFields.viewOptionRowNameNotPresent(
 			fieldTitle = "Grid",
 			optionName = "Option 1",
 			rowNumber = "1");
@@ -638,7 +639,7 @@ definition {
 
 		FormsAdminNavigator.gotoPublishedForm();
 
-		FormFields.viewOptionRowName(
+		FormFields.viewOptionRowNameNotPresent(
 			fieldTitle = "Grid",
 			optionName = "Option 1",
 			rowNumber = "1");
@@ -648,8 +649,16 @@ definition {
 			optionName = "Option 2",
 			rowNumber = "1");
 
+		FormFields.viewOptionColumnsName(
+			fieldTitle = "Grid",
+<<<<<<< HEAD
+			rowNumber = "1",
+			optionName = "Option A");
+
 		FormFields.viewOptionRowName(
 			fieldTitle = "Grid",
+=======
+>>>>>>> 587e323 (LPS-132465 SF)
 			optionName = "Option A",
 			rowNumber = "1");
 	}
