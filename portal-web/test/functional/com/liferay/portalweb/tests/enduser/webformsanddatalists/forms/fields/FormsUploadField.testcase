@@ -182,7 +182,6 @@ definition {
 
 		FormsAdminNavigator.gotoPublishedForm();
 
-
 		FormViewBuilder.assertHelpTextPresent(
 			fieldName = "Upload",
 			fieldValue = "Test Help Text");
