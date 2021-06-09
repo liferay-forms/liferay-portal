@@ -135,35 +135,33 @@ definition {
 	@priority = "5"
 	test ReferenceCanBeEdited {
 		property forms.functional = "true";
+		property portal.acceptance = "false";
 
-        property portal.acceptance = "false";
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Forms");
 
-        ProductMenu.gotoPortlet(
-            category = "Content &amp; Data",
-            portlet = "Forms");
+		FormsAdminNavigator.gotoAddForm();
 
-        FormsAdminNavigator.gotoAddForm();
+		Form.editName(formName = "Form 1");
 
-        Form.editName(formName = "Form 1");
+		Form.gotoAddField(
+			fieldPositionNumber = "0",
+			fieldType = "Separator");
 
-        Form.gotoAddField(
-            fieldPositionNumber = "0",
-            fieldType = "Separator");
+		Form.gotoAdvancedTab();
 
-        Form.gotoAdvancedTab();
+		Form.editFieldReferenceMetal(fieldValue = "Separator1234");
 
-        Form.editFieldReferenceMetal(fieldValue = "Separator1234");
+		Form.save();
 
-        Form.save();
+		FormsAdminNavigator.gotoBack();
 
-        FormsAdminNavigator.gotoBack();
+		FormsAdminNavigator.gotoEditFormByName(formName = "Form 1");
 
-        FormsAdminNavigator.gotoEditFormByName(formName = "Form 1");
-        
 		Form.viewFieldReference(
-            fieldName = "Separator",
-            key_fieldReference = "Separator1234");
-
+			fieldName = "Separator",
+			key_fieldReference = "Separator1234");
 	}
 
 	@description = "Verify that the Field Type can be changed"
