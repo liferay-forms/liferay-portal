@@ -152,10 +152,10 @@ public class StructureUtil {
 		boolean acceptAllLanguages, DDMFormField ddmFormField, Locale locale) {
 
 		LocalizedValue labelLocalizedValue = ddmFormField.getLabel();
-		LocalizedValue predefinedLocalizedValue =
-			ddmFormField.getPredefinedValue();
 		LocalizedValue placeholderLocalizedValue =
 			ddmFormField.getPlaceholder();
+		LocalizedValue predefinedLocalizedValue =
+			ddmFormField.getPredefinedValue();
 		String type = ddmFormField.getType();
 
 		return new FormField() {
@@ -188,9 +188,7 @@ public class StructureUtil {
 				localizable = ddmFormField.isLocalizable();
 				multiple = ddmFormField.isMultiple();
 				name = ddmFormField.getName();
-				placeholder = _toString(
-					locale,
-					(LocalizedValue)ddmFormField.getProperty("placeholder"));
+				placeholder = _toString(locale, placeholderLocalizedValue);
 				predefinedValue = _toString(locale, predefinedLocalizedValue);
 				predefinedValue_i18n = LocalizedMapUtil.getI18nMap(
 					acceptAllLanguages, predefinedLocalizedValue.getValues());
