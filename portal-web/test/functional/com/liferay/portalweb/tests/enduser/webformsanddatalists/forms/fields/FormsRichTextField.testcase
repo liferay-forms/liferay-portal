@@ -270,13 +270,51 @@ definition {
 	}
 
 	@description = "Verify that a help text can be added to a Rich Text Field"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test HelpTextCanBeAdded {
 		property forms.functional = "true";
 		property portal.acceptance = "false";
 
-		// TODO LPS-133120 HelpTextCanBeAdded pending implementation
+		ProductMenu.gotoPortlet(
+			category = "Content &amp; Data",
+			portlet = "Forms");
+
+		FormsAdminNavigator.gotoAddForm();
+
+		Form.editName(formName = "Form 1");
+
+		Form.gotoAddField(
+			fieldPositionNumber = "0",
+			fieldType = "Rich Text");
+
+		FormFields.editHelpText(
+			fieldHelpText = "Rich Text Help Text",
+			fieldName = "tip");
+
+		FormViewBuilder.assertHelpTextPresent(
+			fieldName = "Rich Text",
+			fieldValue = "Rich Text Help Text");
+
+		Form.save();
+
+		Form.publishForm();
+
+		FormsAdminNavigator.gotoPublishedForm();
+
+		FormViewBuilder.assertHelpTextPresent(
+			fieldName = "Rich Text",
+			fieldValue = "Rich Text Help Text");
+
+		FormFields.editFrameField(
+            fielName = "Test",
+            fieldLabel = "Rich Text");
+
+		Button.clickSubmitButton();
+
+		FormPortlet.viewSuccessPage(
+			successPageDescription = "Your information was successfully received. Thank you for filling out the form.",
+			successPageTitle = "Thank you.");
+
 
 	}
 
