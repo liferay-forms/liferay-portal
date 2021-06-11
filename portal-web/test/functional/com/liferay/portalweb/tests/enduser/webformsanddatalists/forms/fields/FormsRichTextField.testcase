@@ -306,16 +306,14 @@ definition {
 			fieldValue = "Rich Text Help Text");
 
 		FormFields.editFrameField(
-            fielName = "Test",
-            fieldLabel = "Rich Text");
+			fieldLabel = "Rich Text",
+			fielName = "Test");
 
 		Button.clickSubmitButton();
 
 		FormPortlet.viewSuccessPage(
 			successPageDescription = "Your information was successfully received. Thank you for filling out the form.",
 			successPageTitle = "Thank you.");
-
-
 	}
 
 	@description = "Verify that the Field Label can be changed"
