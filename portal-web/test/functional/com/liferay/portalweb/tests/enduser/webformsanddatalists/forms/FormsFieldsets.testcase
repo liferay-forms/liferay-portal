@@ -216,9 +216,13 @@ definition {
 			elementSetTitle = "Element Set 1",
 			fieldPositionNumber = "0");
 
-		FormViewBuilder.validateFieldLabel(fieldLabel = "Text");
+		FormFields.viewLabel(
+			fieldLabel = "Text",
+			fieldName = "Text");
 
-		FormViewBuilder.validateFieldLabel(fieldLabel = "Single Selection");
+		FormFields.viewLabel(
+			fieldLabel = "Single Selection",
+			fieldName = "Single Selection");
 
 		Form.save();
 
@@ -226,7 +230,9 @@ definition {
 
 		FormsAdminNavigator.gotoPublishedForm();
 
-		FormViewBuilder.validateFieldLabel(fieldLabel = "Single Selection");
+		FormFields.viewLabel(
+			fieldLabel = "Single Selection",
+			fieldName = "Single Selection");
 
 		AssertElementPresent(
 			key_optionValue = "Option 1",
