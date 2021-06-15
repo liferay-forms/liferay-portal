@@ -963,11 +963,23 @@ definition {
 			value1 = "${fieldValue}");
 	}
 
+	macro viewField {
+		AssertElementPresent(
+			key_fieldName = "${fieldName}",
+			locator1 = "FormFields#FIELD");
+	}
+
 	macro viewFieldHelpText {
 		AssertTextEquals(
 			key_fieldName = "${fieldName}",
 			locator1 = "FormFields#HELP_TEXT",
 			value1 = "${fieldHelpText}");
+	}
+
+	macro viewFieldHidden {
+		AssertElementPresent(
+			key_fieldName = "${fieldName}",
+			locator1 = "FormFields#FIELD_HIDDEN");
 	}
 
 	macro viewFieldLabel {
