@@ -216,13 +216,21 @@ definition {
 			elementSetTitle = "Element Set 1",
 			fieldPositionNumber = "0");
 
-		FormFields.viewLabel(
-			fieldLabel = "Text",
-			fieldName = "Text");
+		AssertElementPresent(
+			key_name = "Text",
+			locator1 = "FormFields#FIELD_TARGET_LABEL");
 
-		FormFields.viewLabel(
-			fieldLabel = "Single Selection",
-			fieldName = "Single Selection");
+		AssertElementPresent(
+			key_name = "Single Selection",
+			locator1 = "FormFields#FIELD_TARGET_LABEL");
+
+		Click(
+			key_name = "Single Selection",
+			locator1 = "FormFields#FIELD_TARGET_LABEL");
+
+		FormFields.viewOptionsRowFieldValue(
+			fieldValue = "Option 1",
+			rowNumber = "1");
 
 		Form.save();
 
@@ -230,9 +238,9 @@ definition {
 
 		FormsAdminNavigator.gotoPublishedForm();
 
-		FormFields.viewLabel(
-			fieldLabel = "Single Selection",
-			fieldName = "Single Selection");
+		AssertElementPresent(
+			key_rowNumber = "1",
+			locator1 = "FormPortlet#SELECT_SINGLE_SELECTION_ROW");
 
 		AssertElementPresent(
 			key_optionValue = "Option 1",
