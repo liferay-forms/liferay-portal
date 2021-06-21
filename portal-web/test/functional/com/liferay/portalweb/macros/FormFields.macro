@@ -18,6 +18,13 @@ definition {
 			value1 = "${optionName}");
 	}
 
+	macro assertFieldsGroup {
+		AssertVisible(
+			key_fieldFieldLabel = "${fieldFieldLabel}",
+			key_fieldsGroupLabel = "${fieldGroupLabel}",
+			locator1 = "FormFields#FIELD_GROUP");
+	}
+
 	macro assertFieldsNotVisibleInFieldGroup {
 		for (var fieldFieldLabel : list "${fieldGroupLabelList}") {
 			AssertNotVisible(
@@ -1280,6 +1287,12 @@ definition {
 
 	macro viewRepeatableFieldDuplicateVisible {
 		AssertVisible(locator1 = "FormFields#FIELD_ADD_DUPLICATE");
+	}
+
+	macro viewRepeatableFieldGroup {
+		AssertElementPresent(
+			key_repeatableFieldNumber = "${repeatableFieldNumber}",
+			locator1 = "FormFields#FIELD_REPEATABLE_FIELD_GROUP");
 	}
 
 	macro viewRepeatableFieldHelpText {
