@@ -61,16 +61,11 @@ export const mergePages = (
 
 	return newPagesVisitor.mapFields(
 		(field) => {
-			let sourceField =
-				sourcePagesVisitor.findField(({name}) => name === field.name) ||
-				{};
-
-			if (!sourceField || Object.keys(sourceField).length === 0) {
-				sourceField =
-					sourcePagesVisitor.findField(
-						({fieldName}) => fieldName === field.fieldName
-					) || {};
-			}
+			const sourceField =
+				sourcePagesVisitor.findField(
+					({fieldName, name}) =>
+						name === field.name || fieldName === field.fieldName
+				) || {};
 
 			let fieldValue = field.valueChanged
 				? field.value
@@ -118,7 +113,7 @@ export const mergePages = (
 	);
 };
 
-const doEvaluate = debounce((fieldName, evaluatorContext, callback) => {
+const doEvaluate = debounce(async (fieldName, evaluatorContext, callback) => {
 	const {
 		defaultLanguageId,
 		editingLanguageId,
@@ -138,38 +133,40 @@ const doEvaluate = debounce((fieldName, evaluatorContext, callback) => {
 	if (window.AbortController) {
 		controller = new AbortController();
 	}
-
-	makeFetch({
-		body: convertToFormData({
-			languageId: editingLanguageId,
-			p_auth: Liferay.authToken,
-			portletNamespace,
-			serializedFormContext: JSON.stringify({
-				...evaluatorContext,
-				formId,
-				groupId: groupId ? groupId : themeDisplay.getScopeGroupId(),
-				nextPage: nextPage ? nextPage : null,
+	try {
+		const newPages = await makeFetch({
+			body: convertToFormData({
+				languageId: editingLanguageId,
+				p_auth: Liferay.authToken,
 				portletNamespace,
-				previousPage: previousPage ? previousPage : null,
+				serializedFormContext: JSON.stringify({
+					...evaluatorContext,
+					formId,
+					groupId: groupId ? groupId : themeDisplay.getScopeGroupId(),
+					nextPage: nextPage ? nextPage : null,
+					portletNamespace,
+					previousPage: previousPage ? previousPage : null,
+				}),
+				trigger: fieldName,
 			}),
-			trigger: fieldName,
-		}),
-		signal: controller && controller.signal,
-		url: EVALUATOR_URL,
-	})
-		.then((newPages) => {
-			const mergedPages = mergePages(
-				defaultLanguageId,
-				editingLanguageId,
-				fieldName,
-				newPages,
-				pages,
-				viewMode
-			);
+			signal: controller && controller.signal,
+			url: EVALUATOR_URL,
+		});
 
-			callback(null, mergedPages);
-		})
-		.catch((error) => callback(error));
+		const mergedPages = mergePages(
+			defaultLanguageId,
+			editingLanguageId,
+			fieldName,
+			newPages,
+			pages,
+			viewMode
+		);
+
+		callback(null, mergedPages);
+	}
+	catch (error) {
+		callback(error);
+	}
 }, 600);
 
 export const evaluate = (fieldName, evaluatorContext) => {
