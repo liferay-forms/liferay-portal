@@ -138,26 +138,6 @@ public class NumericDDMFormFieldTemplateContextContributorTest
 	}
 
 	@Test
-	public void testGetDecimalSymbolsWithAmericanLocale() {
-		Map<String, String> separatorSymbolsMap =
-			_numericDDMFormFieldTemplateContextContributor.getSymbolsMap(
-				LocaleUtil.US);
-
-		Assert.assertEquals(".", separatorSymbolsMap.get("decimalSymbol"));
-		Assert.assertEquals(",", separatorSymbolsMap.get("thousandsSeparator"));
-	}
-
-	@Test
-	public void testGetDecimalSymbolsWithBrazilianLocale() {
-		Map<String, String> separatorSymbolsMap =
-			_numericDDMFormFieldTemplateContextContributor.getSymbolsMap(
-				LocaleUtil.BRAZIL);
-
-		Assert.assertEquals(",", separatorSymbolsMap.get("decimalSymbol"));
-		Assert.assertEquals(".", separatorSymbolsMap.get("thousandsSeparator"));
-	}
-
-	@Test
 	public void testGetInputMaskProperties() {
 		DDMFormField ddmFormField = new DDMFormField("field", "numeric");
 
@@ -174,6 +154,27 @@ public class NumericDDMFormFieldTemplateContextContributorTest
 		Assert.assertEquals(true, (boolean)parameters.get("inputMask"));
 		Assert.assertEquals(
 			"(999) 0999-9999", parameters.get("inputMaskFormat"));
+	}
+
+	@Test
+	public void testGetSymbolsWithAmericanLocale() {
+		Map<String, String> symbolsMap =
+			_numericDDMFormFieldTemplateContextContributor.getSymbolsMap(
+				new DDMFormField("field", "numeric"), "integer", LocaleUtil.US);
+
+		Assert.assertEquals(".", symbolsMap.get("decimalSymbol"));
+		Assert.assertEquals(",", symbolsMap.get("thousandsSeparator"));
+	}
+
+	@Test
+	public void testGetSymbolsWithBrazilianLocale() {
+		Map<String, String> symbolsMap =
+			_numericDDMFormFieldTemplateContextContributor.getSymbolsMap(
+				new DDMFormField("field", "numeric"), "double",
+				LocaleUtil.BRAZIL);
+
+		Assert.assertEquals(",", symbolsMap.get("decimalSymbol"));
+		Assert.assertEquals(".", symbolsMap.get("thousandsSeparator"));
 	}
 
 	private DDMFormFieldRenderingContext _createDDMFormFieldRenderingContext() {
