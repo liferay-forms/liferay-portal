@@ -56,21 +56,19 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 		),
 		@DDMFormRule(
 			actions = {
-				"setValue('inputMask', FALSE)", "setVisible('inputMask', FALSE)"
-			},
-			condition = "equals(getValue('dataType'), 'double')"
-		),
-		@DDMFormRule(
-			actions = {
 				"setDataType('predefinedValue', getValue('dataType'))",
 				"setValidationDataType('validation', getValue('dataType'))",
 				"setValidationFieldName('validation', getValue('name'))",
-				"setVisible('characterOptions', getValue('inputMask'))",
+				"setVisible('append', equals(getValue('dataType'), 'double') and equals(getValue('inputMask'), TRUE))",
+				"setVisible('appendType', equals(getValue('dataType'), 'double') and equals(getValue('inputMask'), TRUE) and not(isEmpty(getValue('append'))))",
+				"setVisible('characterOptions', equals(getValue('dataType'), 'integer') and equals(getValue('inputMask'), TRUE))",
 				"setVisible('confirmationErrorMessage', getValue('requireConfirmation'))",
 				"setVisible('confirmationLabel', getValue('requireConfirmation'))",
+				"setVisible('decimalSymbol', equals(getValue('dataType'), 'double') and equals(getValue('inputMask'), TRUE))",
 				"setVisible('direction', getValue('requireConfirmation'))",
-				"setVisible('inputMaskFormat', getValue('inputMask'))",
+				"setVisible('inputMaskFormat', equals(getValue('dataType'), 'integer') and equals(getValue('inputMask'), TRUE))",
 				"setVisible('requiredErrorMessage', false)",
+				"setVisible('thousandsSeparator', equals(getValue('dataType'), 'double') and equals(getValue('inputMask'), TRUE))",
 				"setVisible('tooltip', false)"
 			},
 			condition = "TRUE"
@@ -116,6 +114,21 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 							}
 						)
 					}
+				),
+				@DDMFormLayoutRow(
+					{
+						@DDMFormLayoutColumn(
+							size = 6, value = "thousandsSeparator"
+						),
+						@DDMFormLayoutColumn(size = 6, value = "decimalSymbol")
+					}
+				),
+				@DDMFormLayoutRow(
+					{
+						@DDMFormLayoutColumn(
+							size = 12, value = {"append", "appendType"}
+						)
+					}
 				)
 			}
 		)
@@ -123,6 +136,20 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 )
 public interface NumericDDMFormFieldTypeSettings
 	extends DefaultDDMFormFieldTypeSettings {
+
+	@DDMFormField(
+		dataType = "string", label = "%prefix-or-suffix",
+		properties = "placeholder=%input-mask-append-placeholder",
+		tip = "%the-maximum-length-is-10-characters", type = "text"
+	)
+	public LocalizedValue append();
+
+	@DDMFormField(
+		optionLabels = {"%prefix", "%suffix"},
+		optionValues = {"prefix", "suffix"}, predefinedValue = "prefix",
+		properties = "showLabel=false", type = "radio"
+	)
+	public String appendType();
 
 	@DDMFormField(label = "%character-options", type = "help_text")
 	public boolean characterOptions();
@@ -147,6 +174,13 @@ public interface NumericDDMFormFieldTypeSettings
 	)
 	@Override
 	public String dataType();
+
+	@DDMFormField(
+		label = "%decimal-separator", optionLabels = {"0.00", "0,00"},
+		optionValues = {".", ","}, predefinedValue = "[\".\"]",
+		properties = "showEmptyOption=false", type = "select"
+	)
+	public LocalizedValue decimalSymbol();
 
 	@DDMFormField(
 		label = "%direction", optionLabels = {"%horizontal", "%vertical"},
@@ -208,6 +242,15 @@ public interface NumericDDMFormFieldTypeSettings
 		label = "%require-confirmation", properties = "showAsSwitcher=true"
 	)
 	public boolean requireConfirmation();
+
+	@DDMFormField(
+		label = "%thousands-separator",
+		optionLabels = {"%none", "1,000", "1.000", "1 000", "1\'000"},
+		optionValues = {"none", ",", ".", " ", "\'"},
+		predefinedValue = "[\"none\"]", properties = "showEmptyOption=false",
+		type = "select"
+	)
+	public LocalizedValue thousandsSeparator();
 
 	@DDMFormField
 	public LocalizedValue tooltip();
