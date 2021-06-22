@@ -8,6 +8,7 @@
 	"@readonly": "** AUTO-GENERATED: DO NOT EDIT OUTSIDE @overrides **",
 	"@see": "https://git.io/JY2EA",
 	"compilerOptions": {
+		"allowJs": true,
 		"allowSyntheticDefaultImports": true,
 		"baseUrl": ".",
 		"composite": true,
@@ -24,8 +25,7 @@
 		"typeRoots": [
 			"../../../node_modules/@types",
 			"./node_modules/@types"
-		],
-		"allowJs": true
+		]
 	},
 	"include": [
 		"src/**/*",
