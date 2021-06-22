@@ -117,8 +117,7 @@ public class DDMFormTemplateContextProcessor {
 			jsonObject.getString("fieldName"), ddmFormField);
 		setDDMFormFieldFieldReference(
 			jsonObject.getString("fieldReference"), ddmFormField);
-		setDDMFormFieldInputMaskFormat(
-			jsonObject.getString("inputMaskFormat"), ddmFormField);
+		setDDMFormFieldInputMaksProperties(jsonObject, ddmFormField);
 		setDDMFormFieldLabel(jsonObject.getString("label"), ddmFormField);
 		setDDMFormFieldLayout(ddmFormField, jsonObject.getString("layout"));
 		setDDMFormFieldLocalizable(
@@ -305,12 +304,26 @@ public class DDMFormTemplateContextProcessor {
 		ddmFormField.setFieldReference(GetterUtil.getString(fieldReference));
 	}
 
-	protected void setDDMFormFieldInputMaskFormat(
-		String inputMaskFormat, DDMFormField ddmFormField) {
+	protected void setDDMFormFieldInputMaksProperties(
+		JSONObject jsonObject, DDMFormField ddmFormField) {
 
 		ddmFormField.setProperty(
+			"append",
+			getLocalizedValue(
+				GetterUtil.getString(jsonObject.getString("append"))));
+		ddmFormField.setProperty(
+			"decimalSymbol",
+			getLocalizedValue(
+				GetterUtil.getString(jsonObject.getString("decimalSymbol"))));
+		ddmFormField.setProperty(
 			"inputMaskFormat",
-			getLocalizedValue(GetterUtil.getString(inputMaskFormat)));
+			getLocalizedValue(
+				GetterUtil.getString(jsonObject.getString("inputMaskFormat"))));
+		ddmFormField.setProperty(
+			"thousandsSeparator",
+			getLocalizedValue(
+				GetterUtil.getString(
+					jsonObject.getString("thousandsSeparator"))));
 	}
 
 	protected void setDDMFormFieldLabel(

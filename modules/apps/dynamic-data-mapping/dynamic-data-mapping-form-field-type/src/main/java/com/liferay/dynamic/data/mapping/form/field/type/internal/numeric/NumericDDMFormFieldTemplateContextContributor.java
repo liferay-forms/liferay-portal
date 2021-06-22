@@ -21,10 +21,16 @@ import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
 import com.liferay.dynamic.data.mapping.util.NumericDDMFormFieldUtil;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.text.DecimalFormat;
@@ -35,6 +41,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Leonardo Barros
@@ -55,9 +62,19 @@ public class NumericDDMFormFieldTemplateContextContributor
 		DDMFormField ddmFormField,
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
 
+		String dataType = getDataType(
+			ddmFormField, ddmFormFieldRenderingContext);
+
 		Locale locale = ddmFormFieldRenderingContext.getLocale();
 
 		return HashMapBuilder.<String, Object>put(
+			"append",
+			DDMFormFieldTypeUtil.getPropertyValue(
+				ddmFormField, locale, "append")
+		).put(
+			"appendType",
+			GetterUtil.getString(ddmFormField.getProperty("appendType"))
+		).put(
 			"confirmationErrorMessage",
 			DDMFormFieldTypeUtil.getPropertyValue(
 				ddmFormField, locale, "confirmationErrorMessage")
@@ -66,7 +83,7 @@ public class NumericDDMFormFieldTemplateContextContributor
 			DDMFormFieldTypeUtil.getPropertyValue(
 				ddmFormField, locale, "confirmationLabel")
 		).put(
-			"dataType", getDataType(ddmFormField, ddmFormFieldRenderingContext)
+			"dataType", dataType
 		).put(
 			"direction", ddmFormField.getProperty("direction")
 		).put(
@@ -102,7 +119,7 @@ public class NumericDDMFormFieldTemplateContextContributor
 			GetterUtil.getBoolean(
 				ddmFormField.getProperty("requireConfirmation"))
 		).put(
-			"symbols", getSymbolsMap(locale)
+			"symbols", getSymbolsMap(ddmFormField, dataType, locale)
 		).put(
 			"tooltip",
 			DDMFormFieldTypeUtil.getPropertyValue(
@@ -162,7 +179,25 @@ public class NumericDDMFormFieldTemplateContextContributor
 		return value;
 	}
 
-	protected Map<String, String> getSymbolsMap(Locale locale) {
+	protected Map<String, String> getSymbolsMap(
+		DDMFormField ddmFormField, String dataType, Locale locale) {
+
+		if (GetterUtil.getBoolean(ddmFormField.getProperty("inputMask")) &&
+			StringUtil.equals(dataType, "double")) {
+
+			return HashMapBuilder.put(
+				"decimalSymbol",
+				_getFirstValue(
+					DDMFormFieldTypeUtil.getPropertyValue(
+						ddmFormField, locale, "decimalSymbol"))
+			).put(
+				"thousandsSeparator",
+				_getFirstValue(
+					DDMFormFieldTypeUtil.getPropertyValue(
+						ddmFormField, locale, "thousandsSeparator"))
+			).build();
+		}
+
 		DecimalFormat decimalFormat = NumericDDMFormFieldUtil.getDecimalFormat(
 			locale);
 
@@ -177,5 +212,26 @@ public class NumericDDMFormFieldTemplateContextContributor
 			String.valueOf(decimalFormatSymbols.getGroupingSeparator())
 		).build();
 	}
+
+	@Reference
+	protected JSONFactory jsonFactory;
+
+	private String _getFirstValue(String value) {
+		try {
+			JSONArray jsonArray = jsonFactory.createJSONArray(value);
+
+			return GetterUtil.getString(jsonArray.get(0));
+		}
+		catch (JSONException jsonException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(jsonException, jsonException);
+			}
+
+			return value;
+		}
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		NumericDDMFormFieldTemplateContextContributor.class);
 
 }
