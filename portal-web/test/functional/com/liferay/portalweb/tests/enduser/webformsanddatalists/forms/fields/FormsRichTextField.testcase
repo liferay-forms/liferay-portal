@@ -347,8 +347,6 @@ definition {
 		FormFields.viewRichTextValue(
 			fieldName = "Rich Text",
 			fieldValue = "Test");
-
-			
 	}
 
 	@description = "Verify that changes to the Field can be canceled"
