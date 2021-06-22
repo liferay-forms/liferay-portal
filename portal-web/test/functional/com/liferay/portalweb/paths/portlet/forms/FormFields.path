@@ -69,6 +69,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>FIELD_HIDDEN</td>
+	<td>//div[@class='form-group hide' and contains(@data-field-name,'${key_fieldName}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>FIELD_HELPER_EDIT</td>
 	<td>xpath=(//input[contains(@class,'ddm-field-text')])[2]</td>
 	<td></td>
@@ -76,6 +81,11 @@
 <tr>
 	<td>FIELD_REQUIRED</td>
 	<td>//label[text()='${key_fieldFieldLabel}']/span[contains(@class,'required')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>FIELD_VISIBLE</td>
+	<td>//div[@class='form-group' and contains(@data-field-name,'${key_fieldName}')]</td>
 	<td></td>
 </tr>
 <tr>
