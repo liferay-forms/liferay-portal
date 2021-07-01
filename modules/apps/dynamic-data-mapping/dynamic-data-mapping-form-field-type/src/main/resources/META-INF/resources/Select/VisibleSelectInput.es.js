@@ -87,7 +87,7 @@ const VisibleSelectInput = forwardRef(
 
 			if (errorContainer) {
 				const errorInput = errorContainer.parentElement.querySelector(
-					'.form-builder-select-field.input-group-container'
+					'.form-control.results-chosen.select-field-trigger'
 				);
 
 				if (errorInput) {
@@ -105,7 +105,6 @@ const VisibleSelectInput = forwardRef(
 				onClick={onClick}
 				onKeyDown={onKeyDown}
 				ref={ref}
-				tabIndex="1"
 			>
 				<div
 					className={classNames(
