@@ -27,7 +27,7 @@ import {
 } from 'data-engine-js-components-web';
 import {EVENT_TYPES as CORE_EVENT_TYPES} from 'data-engine-js-components-web/js/core/actions/eventTypes.es';
 import moment from 'moment/min/moment-with-locales';
-import React, {useMemo, useState} from 'react';
+import React, {useLayoutEffect, useMemo, useState} from 'react';
 
 const convertInputValue = (fieldType, locale, value) => {
 	if (fieldType === 'date') {
@@ -41,8 +41,7 @@ const convertInputValue = (fieldType, locale, value) => {
 		if (moment(date).isValid()) {
 			return moment(date).format('YYYY-MM-DD');
 		}
-	}
-	else if (
+	} else if (
 		fieldType === 'document_library' ||
 		fieldType === 'geolocation' ||
 		fieldType === 'grid' ||
@@ -86,8 +85,7 @@ const getFieldDetails = (props) => {
 
 	if (hasError) {
 		fieldDetails += Liferay.Util.escape(errorMessage);
-	}
-	else if (required) {
+	} else if (required) {
 		fieldDetails += Liferay.Language.get('required');
 	}
 
@@ -232,6 +230,58 @@ function FieldBase({
 			type === 'paragraph' ||
 			type === 'radio');
 	const showPopover = fieldName === 'inputMaskFormat';
+
+	useLayoutEffect(() => {
+		console.log(type);
+		focusRequiredElement();
+	});
+
+	function focusRequiredElement() {
+		let errorInput = null;
+
+		const errorContainer = document.querySelector('.form-feedback-group');
+
+		if (errorContainer) {
+			switch (type) {
+				case 'select':
+					errorInput = errorContainer.parentElement.querySelector(
+						'.form-control.results-chosen.select-field-trigger'
+					);
+					break;
+				case 'date':
+				case 'image':
+				case 'document_library':
+				case 'color':
+					errorInput = errorContainer.parentElement.querySelector(
+						'.form-control'
+					);
+					break;
+				case 'radio':
+					errorInput = errorContainer.parentElement.querySelector(
+						'.custom-control-input'
+					);
+					break;
+				case 'checkbox_multiple':
+					errorInput =
+						errorContainer.parentElement.querySelector(
+							'.simple-toggle-switch.toggle-switch'
+						) ||
+						errorContainer.parentElement.querySelector(
+							'.custom-control-input'
+						);
+					break;
+				case 'grid':
+					errorInput = errorContainer.parentElement.querySelector(
+						'.custom-control-input.form-builder-grid-field'
+					);
+					break;
+			}
+			if (errorInput) {
+				errorInput.focus();
+			}
+			return;
+		}
+	}
 
 	return (
 		<div

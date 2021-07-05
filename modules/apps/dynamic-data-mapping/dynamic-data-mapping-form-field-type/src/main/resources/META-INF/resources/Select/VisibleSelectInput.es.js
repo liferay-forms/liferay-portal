@@ -15,7 +15,7 @@
 import ClayIcon from '@clayui/icon';
 import ClayLabel from '@clayui/label';
 import classNames from 'classnames';
-import React, {useLayoutEffect, forwardRef} from 'react';
+import React, {forwardRef} from 'react';
 
 const LabelOptionListItem = ({onCloseButtonClicked, option}) => (
 	<li>
@@ -79,22 +79,6 @@ const VisibleSelectInput = forwardRef(
 
 			return selectedOption ? selectedOption.label : triggerPlaceholder;
 		};
-
-		useLayoutEffect(() => {
-			const errorContainer = document.querySelector(
-				'.form-feedback-group'
-			);
-
-			if (errorContainer) {
-				const errorInput = errorContainer.parentElement.querySelector(
-					'.form-control.results-chosen.select-field-trigger'
-				);
-
-				if (errorInput) {
-					errorInput.focus();
-				}
-			}
-		});
 
 		return (
 			<div
