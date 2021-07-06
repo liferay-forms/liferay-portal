@@ -232,7 +232,6 @@ function FieldBase({
 	const showPopover = fieldName === 'inputMaskFormat';
 
 	useLayoutEffect(() => {
-		console.log(type);
 		focusRequiredElement();
 	});
 
