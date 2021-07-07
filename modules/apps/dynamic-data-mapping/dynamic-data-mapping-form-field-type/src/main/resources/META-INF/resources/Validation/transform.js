@@ -30,8 +30,8 @@ const getValidationFromExpression = (validations, validation) => {
 	};
 };
 
-const transformValidations = (initialValidations, dataType) => {
-	return initialValidations[normalizeDataType(dataType)].map((validation) => {
+const transformValidations = (validations, dataType) => {
+	return validations[normalizeDataType(dataType)].map((validation) => {
 		return {
 			...validation,
 			checked: false,
