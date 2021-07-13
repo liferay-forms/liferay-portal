@@ -73,6 +73,9 @@ export default function FieldsSidebarSettingsBody() {
 		rules,
 	} = useFormState();
 	const config = useConfig();
+
+	const {submitButtonId} = config;
+
 	const dispatch = useForm();
 
 	const Column = useMemo(() => getColumn({customFields}), [customFields]);
@@ -130,7 +133,10 @@ export default function FieldsSidebarSettingsBody() {
 						}
 						case CORE_EVENT_TYPES.FIELD.EVALUATE:
 							dispatch({
-								payload: {settingsContextPages: payload},
+								payload: {
+									settingsContextPages: payload,
+									submitButtonId,
+								},
 								type,
 							});
 							break;
@@ -138,6 +144,7 @@ export default function FieldsSidebarSettingsBody() {
 							break;
 					}
 				}}
+				submitButtonId={submitButtonId}
 			>
 				<Pages editable={false} overrides={{Column}} />
 			</FormFieldSettings>

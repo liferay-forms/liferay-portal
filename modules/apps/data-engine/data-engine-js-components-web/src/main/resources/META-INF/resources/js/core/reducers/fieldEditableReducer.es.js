@@ -24,6 +24,7 @@ import * as FormSupport from '../../utils/FormSupport.es';
 import {PagesVisitor} from '../../utils/visitors.es';
 import {EVENT_TYPES} from '../actions/eventTypes.es';
 import sectionAdded from '../utils/sectionAddedHandler';
+import {enableSubmitButton} from '../utils/submitButtonController.es';
 
 export const deleteField = ({
 	clean = false,
@@ -465,7 +466,7 @@ export default (state, action, config) => {
 			};
 		}
 		case EVENT_TYPES.FIELD.EVALUATE: {
-			const {settingsContextPages} = action.payload;
+			const {settingsContextPages, submitButtonId} = action.payload;
 			const {
 				defaultLanguageId,
 				editingLanguageId,
@@ -534,6 +535,8 @@ export default (state, action, config) => {
 				true,
 				true
 			);
+
+			enableSubmitButton(submitButtonId);
 
 			return {
 				focusedField: newFocusedField,
