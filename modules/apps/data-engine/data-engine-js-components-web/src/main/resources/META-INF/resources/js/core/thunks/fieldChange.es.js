@@ -88,6 +88,8 @@ export default function fieldChange({
 
 		dispatch({payload: editedPages, type: EVENT_TYPES.PAGE.UPDATE});
 
+		dispatch({payload: properties, type: EVENT_TYPES.FIELD.CHANGE});
+
 		if (evaluable) {
 			try {
 				let evaluatedPages = await evaluate(fieldName, {
@@ -147,14 +149,6 @@ export default function fieldChange({
 			}
 		}
 		else {
-
-			// We triggered a dispatch of FIELD_CHANGE just to propagate the event to
-			// the upper layers.
-
-			dispatch({payload: editedPages, type: EVENT_TYPES.PAGE.UPDATE});
-
-			dispatch({payload: properties, type: EVENT_TYPES.FIELD.CHANGE});
-
 			REVALIDATE_UPDATES.push({
 				editingLanguageId,
 				name: fieldInstance.name,
