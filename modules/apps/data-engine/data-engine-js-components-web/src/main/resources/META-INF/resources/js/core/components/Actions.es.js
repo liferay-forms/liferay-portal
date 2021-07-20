@@ -37,11 +37,13 @@ const ActionsContext = createContext({});
 const ACTIONS_TYPES = {
 	ACTIVE: 'ACTIVE',
 	HOVER: 'hover',
+	BLUR: 'blur',
 };
 
 const ACTIONS_INITAL_REDUCER = {
 	activeId: null,
 	hoveredId: null,
+	inactiveId: null,
 };
 
 const reducer = (state, action) => {
@@ -56,6 +58,11 @@ const reducer = (state, action) => {
 				...state,
 				hoveredId: action.payload,
 			};
+		case ACTIONS_TYPES.BLUR:
+			return {
+				...state,
+				activeId: action.payload
+			}
 		default:
 			return state;
 	}
@@ -88,6 +95,13 @@ export const ActionsProvider = ({actions, children, focusedFieldId}) => {
 					});
 					break;
 				}
+
+				case ACTIONS_TYPES.BLUR:
+					dispatchForm({
+						payload: {activePage, field},
+						type: EVENT_TYPES.FIELD.BLUR,
+					});
+					break;
 				default:
 					break;
 			}
@@ -175,6 +189,12 @@ export const ActionsControls = ({
 
 				break;
 
+			case 'scroll':
+				dispatch({
+					payload: {activePage, field},
+					type: ACTIONS_TYPES.BLUR,
+				});
+
 			default:
 				break;
 		}
@@ -184,6 +204,7 @@ export const ActionsControls = ({
 		onClick: handleFieldInteractions,
 		onMouseLeave: handleFieldInteractions,
 		onMouseOver: handleFieldInteractions,
+		onScroll: handleFieldInteractions,
 	});
 };
 
@@ -216,6 +237,12 @@ export const Actions = forwardRef(
 					className="dropdown-action"
 					items={actions.map(({action, ...otherProps}) => ({
 						onClick: () =>
+							action({
+								activePage,
+								fieldName: fieldId,
+								parentFieldName,
+							}),
+						onScroll: () =>
 							action({
 								activePage,
 								fieldName: fieldId,
