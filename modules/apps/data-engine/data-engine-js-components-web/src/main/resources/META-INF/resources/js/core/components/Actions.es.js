@@ -96,12 +96,13 @@ export const ActionsProvider = ({actions, children, focusedFieldId}) => {
 					break;
 				}
 
-				case ACTIONS_TYPES.BLUR:
+				case ACTIONS_TYPES.BLUR:{
 					dispatchForm({
 						payload: {activePage, field},
 						type: EVENT_TYPES.FIELD.BLUR,
 					});
 					break;
+				}
 				default:
 					break;
 			}
@@ -153,6 +154,10 @@ export const ActionsControls = ({
 			});
 		}
 	}, [actionsRef, columnRef, contentRect, hoveredId, activeId]);
+
+	document.addEventListener('scroll', () => {
+		return true;
+	})
 
 	const handleFieldInteractions = (event) => {
 		event.stopPropagation();
@@ -242,12 +247,7 @@ export const Actions = forwardRef(
 								fieldName: fieldId,
 								parentFieldName,
 							}),
-						onScroll: () =>
-							action({
-								activePage,
-								fieldName: fieldId,
-								parentFieldName,
-							}),
+						onScroll: () => {},
 						...otherProps,
 					}))}
 					menuElementAttrs={{className: 'ddm-field-dropdown'}}
