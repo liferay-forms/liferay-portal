@@ -18,6 +18,8 @@ import com.liferay.dynamic.data.mapping.expression.UpdateFieldPropertyRequest;
 import com.liferay.dynamic.data.mapping.form.evaluator.internal.expression.DDMFormEvaluatorExpressionObserver;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormRule;
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.util.GetterUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -53,6 +55,25 @@ public class DDMFormEvaluatorRuleHelper {
 		checkFieldAffectedBySetReadOnlyAction(ddmFormRule, ddmFormField);
 		checkFieldAffectedBySetRequiredAction(ddmFormRule, ddmFormField);
 		checkFieldAffectedBySetVisibleAction(ddmFormRule, ddmFormField);
+		checkFieldAffectedByCalculateAction(ddmFormRule, ddmFormField);
+	}
+
+	protected void checkFieldAffectedByCalculateAction(
+		DDMFormRule ddmFormRule, DDMFormField ddmFormField) {
+
+		Map<String, Object> properties = ddmFormField.getProperties();
+
+		if (containsAction(
+				ddmFormRule, "calculate", ddmFormField.getName(),
+				GetterUtil.getString(properties.get("value")))) {
+
+			UpdateFieldPropertyRequest.Builder builder =
+				UpdateFieldPropertyRequest.Builder.newBuilder(
+					ddmFormField.getName(), "value", StringPool.BLANK);
+
+			_ddmFormEvaluatorExpressionObserver.updateFieldProperty(
+				builder.build());
+		}
 	}
 
 	protected void checkFieldAffectedBySetReadOnlyAction(
@@ -117,6 +138,21 @@ public class DDMFormEvaluatorRuleHelper {
 
 		return stream.anyMatch(
 			action -> Objects.equals(setBooleanPropertyAction, action));
+	}
+
+	protected boolean containsAction(
+		DDMFormRule ddmFormRule, String functionName, String ddmFormFieldName,
+		String defaultValue) {
+
+		String setStringPropertyAction = String.format(
+			"%s('%s', %s)", functionName, ddmFormFieldName, defaultValue);
+
+		List<String> actions = ddmFormRule.getActions();
+
+		Stream<String> stream = actions.stream();
+
+		return stream.anyMatch(
+			action -> Objects.equals(setStringPropertyAction, action));
 	}
 
 	private final DDMFormEvaluatorExpressionObserver
