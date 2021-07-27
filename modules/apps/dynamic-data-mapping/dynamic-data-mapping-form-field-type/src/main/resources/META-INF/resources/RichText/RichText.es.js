@@ -46,7 +46,7 @@ const RichText = ({
 		}
 	}, [editingLanguageId, editorRef]);
 
-	const currentValue = value ?? predefinedValue;
+	const currentValue = predefinedValue || value;
 
 	return (
 		<FieldBase
