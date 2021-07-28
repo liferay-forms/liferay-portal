@@ -40,7 +40,7 @@ const Text = ({
 	value: initialValue,
 }) => {
 	const {editingLanguageId} = useFormState();
-	
+
 	const [value, setValue] = useSyncValue(
 		initialValue,
 		syncDelay,

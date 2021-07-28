@@ -30,7 +30,7 @@ const RichText = ({
 	...otherProps
 }) => {
 	const [dirty, setDirty] = useState(false);
-	
+
 	const editorRef = useRef();
 
 	const newEditorConfig = {
