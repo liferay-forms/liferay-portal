@@ -30,8 +30,13 @@ const RichText = ({
 	...otherProps
 }) => {
 	const [dirty, setDirty] = useState(false);
-
+	
 	const editorRef = useRef();
+
+	const newEditorConfig = {
+		...editorConfig,
+		contentsLangDirection: otherProps.dir,
+	};
 
 	useEffect(() => {
 		const editor = editorRef.current?.editor;
@@ -59,7 +64,7 @@ const RichText = ({
 		>
 			<ClassicEditor
 				contents={currentValue}
-				editorConfig={editorConfig}
+				editorConfig={newEditorConfig}
 				name={name}
 				onChange={(data) => {
 					if (currentValue?.trim() !== data?.trim()) {

@@ -16,7 +16,7 @@ import ClayAutocomplete from '@clayui/autocomplete';
 import ClayDropDown from '@clayui/drop-down';
 import {ClayInput} from '@clayui/form';
 import {usePrevious} from '@liferay/frontend-js-react-web';
-import {normalizeFieldName} from 'data-engine-js-components-web';
+import {normalizeFieldName, useFormState} from 'data-engine-js-components-web';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
 import {FieldBase} from '../FieldBase/ReactFieldBase.es';
@@ -26,7 +26,6 @@ import withConfirmationField from '../util/withConfirmationField.es';
 const Text = ({
 	defaultLanguageId,
 	disabled,
-	editingLanguageId,
 	fieldName,
 	id,
 	localizable,
@@ -40,6 +39,8 @@ const Text = ({
 	syncDelay,
 	value: initialValue,
 }) => {
+	const {editingLanguageId} = useFormState();
+	
 	const [value, setValue] = useSyncValue(
 		initialValue,
 		syncDelay,
