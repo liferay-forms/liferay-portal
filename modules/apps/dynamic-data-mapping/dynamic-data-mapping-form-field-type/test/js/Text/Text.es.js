@@ -14,6 +14,7 @@
 
 import '@testing-library/jest-dom/extend-expect';
 import {act, cleanup, fireEvent, render} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {PageProvider} from 'data-engine-js-components-web';
 import React from 'react';
 
@@ -339,24 +340,12 @@ describe('Field Text', () => {
 		const onChange = jest.fn();
 
 		const {container} = render(
-			<TextWithProvider
-				{...defaultTextConfig}
-				key="input"
-				onChange={onChange}
-			/>
+			<Text onChange={onChange} shouldUpdateValue={true} />
 		);
 
 		const input = container.querySelector('input');
 
-		fireEvent.change(input, {
-			target: {
-				value: 'test',
-			},
-		});
-
-		act(() => {
-			jest.runAllTimers();
-		});
+		userEvent.type(input, 'test');
 
 		expect(onChange).toHaveBeenCalled();
 	});

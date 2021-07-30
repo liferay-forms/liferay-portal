@@ -15,12 +15,10 @@
 import ClayAutocomplete from '@clayui/autocomplete';
 import ClayDropDown from '@clayui/drop-down';
 import {ClayInput} from '@clayui/form';
-import {usePrevious} from '@liferay/frontend-js-react-web';
-import {normalizeFieldName, useFormState} from 'data-engine-js-components-web';
+import {normalizeFieldName} from 'data-engine-js-components-web';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
 import {FieldBase} from '../FieldBase/ReactFieldBase.es';
-import {useSyncValue} from '../hooks/useSyncValue.es';
 import withConfirmationField from '../util/withConfirmationField.es';
 
 const Text = ({
@@ -28,6 +26,7 @@ const Text = ({
 	disabled,
 	fieldName,
 	id,
+	locale,
 	localizable,
 	localizedValue,
 	name,
@@ -36,73 +35,31 @@ const Text = ({
 	onFocus,
 	placeholder,
 	shouldUpdateValue,
-	syncDelay,
 	value: initialValue,
 }) => {
-	const {editingLanguageId} = useFormState();
-
-	const [value, setValue] = useSyncValue(
-		initialValue,
-		syncDelay,
-		editingLanguageId
-	);
-
 	const inputRef = useRef(null);
 
-	const prevEditingLanguageId = usePrevious(editingLanguageId);
-
-	useEffect(() => {
-		if (prevEditingLanguageId !== editingLanguageId && localizable) {
-			const newValue =
-				localizedValue[editingLanguageId] !== undefined
-					? localizedValue[editingLanguageId]
-					: localizedValue[defaultLanguageId];
-			setValue(newValue);
-		}
-	}, [
-		defaultLanguageId,
-		editingLanguageId,
-		localizable,
-		localizedValue,
-		prevEditingLanguageId,
-		setValue,
-	]);
-
-	useEffect(() => {
-		if (
-			fieldName === 'fieldReference' &&
-			inputRef.current &&
-			inputRef.current.value !== initialValue &&
-			(inputRef.current.value === '' || shouldUpdateValue)
-		) {
-			setValue(initialValue);
-			onChange({target: {value: initialValue}});
-		}
-	}, [
-		initialValue,
-		inputRef,
-		fieldName,
-		onChange,
-		setValue,
-		shouldUpdateValue,
-	]);
+	const memoValue = useMemo(() => {
+		return localizable
+			? localizedValue[locale] ?? localizedValue[defaultLanguageId]
+			: initialValue;
+	}, [defaultLanguageId, locale, localizable, localizedValue, initialValue]);
+	const [value, setValue] = useState(memoValue);
 
 	return (
 		<ClayInput
 			aria-labelledby={id}
 			className="ddm-field-text"
-			dir={Liferay.Language.direction[editingLanguageId]}
+			dir={Liferay.Language.direction[locale]}
 			disabled={disabled}
 			id={id}
-			lang={editingLanguageId}
+			lang={locale}
 			name={name}
 			onBlur={(event) => {
-				if (fieldName == 'fieldReference') {
-					onBlur({target: {value: initialValue}});
+				if (shouldUpdateValue) {
+					onChange({target: {value}});
 				}
-				else {
-					onBlur(event);
-				}
+				onBlur(event);
 			}}
 			onChange={(event) => {
 				const {value} = event.target;
@@ -113,9 +70,12 @@ const Text = ({
 				else if (fieldName === 'inputMaskFormat') {
 					event.target.value = value.replace(/[1-8]/g, '');
 				}
-
-				setValue(event.target.value);
-				onChange(event);
+				if (shouldUpdateValue) {
+					onChange(event);
+				}
+				else {
+					setValue(event.target.value);
+				}
 			}}
 			onFocus={onFocus}
 			placeholder={placeholder}
@@ -128,30 +88,26 @@ const Text = ({
 
 const Textarea = ({
 	disabled,
-	editingLanguageId,
 	id,
+	locale,
 	name,
 	onBlur,
 	onChange,
 	onFocus,
 	placeholder,
-	syncDelay,
-	value: initialValue,
+	value,
 }) => {
-	const [value, setValue] = useSyncValue(initialValue, syncDelay);
-
 	return (
 		<textarea
 			aria-labelledby={id}
 			className="ddm-field-text form-control"
-			dir={Liferay.Language.direction[editingLanguageId]}
+			dir={Liferay.Language.direction[locale]}
 			disabled={disabled}
 			id={id}
-			lang={editingLanguageId}
+			lang={locale}
 			name={name}
 			onBlur={onBlur}
 			onChange={(event) => {
-				setValue(event.target.value);
 				onChange(event);
 			}}
 			onFocus={onFocus}
@@ -165,19 +121,17 @@ const Textarea = ({
 
 const Autocomplete = ({
 	disabled,
-	editingLanguageId,
 	id,
+	locale,
 	name,
 	onBlur,
 	onChange,
 	onFocus,
 	options,
 	placeholder,
-	syncDelay,
-	value: initialValue,
+	value,
 }) => {
 	const [selectedItem, setSelectedItem] = useState(false);
-	const [value, setValue] = useSyncValue(initialValue, syncDelay);
 	const [visible, setVisible] = useState(false);
 	const inputRef = useRef(null);
 	const itemListRef = useRef(null);
@@ -245,14 +199,13 @@ const Autocomplete = ({
 		<ClayAutocomplete>
 			<ClayAutocomplete.Input
 				aria-labelledby={id}
-				dir={Liferay.Language.direction[editingLanguageId]}
+				dir={Liferay.Language.direction[locale]}
 				disabled={disabled}
 				id={id}
-				lang={editingLanguageId}
+				lang={locale}
 				name={name}
 				onBlur={onBlur}
 				onChange={(event) => {
-					setValue(event.target.value);
 					setVisible(!!event.target.value);
 					setSelectedItem(false);
 					onChange(event);
@@ -318,7 +271,6 @@ const Autocomplete = ({
 							key={index}
 							match={value}
 							onClick={() => {
-								setValue(label);
 								setVisible(false);
 								setSelectedItem(true);
 								onChange({target: {value: label}});
@@ -343,7 +295,7 @@ const Main = ({
 	autocompleteEnabled,
 	defaultLanguageId,
 	displayStyle = 'singleline',
-	editingLanguageId,
+	locale,
 	fieldName,
 	id,
 	localizable,
@@ -357,7 +309,6 @@ const Main = ({
 	predefinedValue = '',
 	readOnly,
 	shouldUpdateValue = false,
-	syncDelay = true,
 	value,
 	...otherProps
 }) => {
@@ -366,11 +317,7 @@ const Main = ({
 	]);
 	const Component =
 		DISPLAY_STYLE[
-			autocomplete || autocompleteEnabled
-				? 'autocomplete'
-				: displayStyle
-				? displayStyle
-				: `singleline`
+			autocomplete || autocompleteEnabled ? 'autocomplete' : displayStyle
 		];
 
 	const fieldDetailsId = id ? id + '_fieldDetails' : name + '_fieldDetails';
@@ -387,9 +334,9 @@ const Main = ({
 			<Component
 				defaultLanguageId={defaultLanguageId}
 				disabled={readOnly}
-				editingLanguageId={editingLanguageId}
 				fieldName={fieldName}
 				id={fieldDetailsId}
+				locale={locale}
 				localizable={localizable}
 				localizedValue={localizedValue}
 				name={name}
@@ -399,7 +346,6 @@ const Main = ({
 				options={optionsMemo}
 				placeholder={placeholder}
 				shouldUpdateValue={shouldUpdateValue}
-				syncDelay={syncDelay}
 				value={value ? value : predefinedValue}
 			/>
 		</FieldBase>
