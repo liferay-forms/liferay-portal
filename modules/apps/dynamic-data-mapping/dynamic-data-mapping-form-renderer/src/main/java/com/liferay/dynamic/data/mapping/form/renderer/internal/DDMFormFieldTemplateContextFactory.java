@@ -758,10 +758,23 @@ public class DDMFormFieldTemplateContextFactory {
 
 		Map<String, Object> localizedValues = new HashMap<>();
 
+		JSONObject jsonObject = _jsonFactory.createJSONObject();
+
 		for (Locale availableLocale : value.getAvailableLocales()) {
 			String languageId = LanguageUtil.getLanguageId(availableLocale);
 
-			Object localizedValue = value.getString(availableLocale);
+			String valueByLocale = value.getString(availableLocale);
+
+			Object localizedValue = valueByLocale;
+
+			if (valueByLocale.isEmpty() &&
+				(ddmFormField.getProperty("localizedValue") !=
+					localizedValue)) {
+
+				jsonObject.put(
+					LocaleUtil.toLanguageId(availableLocale),
+					value.getString(availableLocale));
+			}
 
 			if (ddmFormFieldValueAccessor != null) {
 				Object ddmFormFieldValueAccessorValue =
@@ -783,6 +796,7 @@ public class DDMFormFieldTemplateContextFactory {
 				GetterUtil.getObject(localizedValue, StringPool.BLANK));
 		}
 
+		ddmFormField.setProperty("localizedValue", jsonObject);
 		ddmFormFieldTemplateContext.put("localizedValue", localizedValues);
 	}
 

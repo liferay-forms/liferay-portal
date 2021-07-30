@@ -999,10 +999,19 @@ public class DDMFormEvaluatorHelper {
 			(ddmFormFieldContextKey, ddmFormFieldProperties) -> {
 				if (_ddmFormEvaluatorEvaluateRequest.isViewMode() &&
 					_ddmFormEvaluatorEvaluateRequest.isEditingFieldValue() &&
-					!isFieldNative(ddmFormFieldContextKey) &&
 					!isFieldVisible(ddmFormFieldContextKey)) {
 
 					ddmFormFieldProperties.put("value", StringPool.BLANK);
+
+					DDMFormFieldValue ddmFormFieldValue =
+						_ddmFormEvaluatorFormValuesHelper.getDDMFormFieldValue(
+							ddmFormFieldContextKey);
+
+					Value value = ddmFormFieldValue.getValue();
+
+					for (Locale availableLocale : value.getAvailableLocales()) {
+						value.addString(availableLocale, StringPool.BLANK);
+					}
 				}
 			});
 	}
