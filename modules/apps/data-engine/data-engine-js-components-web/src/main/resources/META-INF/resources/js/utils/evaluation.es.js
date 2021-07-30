@@ -103,10 +103,16 @@ export const mergePages = (
 			}
 
 			if (newField.localizable) {
+				if (
+					field.valueChanged &&
+					field.value != field.localizedValue[editingLanguageId]
+				) {
+					field.localizedValue[editingLanguageId] = field.value;
+				}
 				newField = {
 					...newField,
 					localizedValue: {
-						...sourceField.localizedValue,
+						...field.localizedValue,
 					},
 				};
 			}
