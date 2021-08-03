@@ -210,12 +210,14 @@ const Numeric: React.FC<IProps> = ({
 	const handleChange: ChangeEventHandler<HTMLInputElement> = ({
 		target: {value},
 	}) => {
-		const rawValue = value.replace(/\D/g, '');
+		const inputValueRaw = inputValue.raw.replace(/[\D]/g, '');
+		const rawValue = value.replace(/[\D]/g, '');
+
 		if (
-			(inputValue.masked?.length ?? 0) - value.length === 1 &&
-			(inputValue.raw?.length ?? 0) === rawValue.length
+			inputValue.masked?.length > value.length &&
+			(inputValueRaw?.length ?? 0) === rawValue.length
 		) {
-			value = inputValue.raw.slice(0, -1);
+			value = inputValueRaw.slice(0, -1);
 		}
 
 		if (inputMask && dataType === 'double') {
