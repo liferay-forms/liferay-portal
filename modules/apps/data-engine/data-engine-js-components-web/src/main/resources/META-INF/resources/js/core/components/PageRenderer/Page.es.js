@@ -155,7 +155,6 @@ const Page = ({
 	portletNamespace,
 	readOnly,
 	strings,
-	viewMode,
 }) => {
 	const empty = isEmptyPage(defaultPage);
 	const page = normalizePage(defaultPage, editingLanguageId);
@@ -225,7 +224,6 @@ const Page = ({
 						components={Components}
 						editable={editable}
 						rows={page.rows}
-						viewMode={viewMode}
 					/>
 				</Components.Page>
 			</Components.Container>
