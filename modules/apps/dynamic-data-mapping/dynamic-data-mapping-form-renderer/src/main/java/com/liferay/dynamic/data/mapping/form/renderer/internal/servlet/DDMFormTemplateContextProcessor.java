@@ -127,6 +127,8 @@ public class DDMFormTemplateContextProcessor {
 			jsonObject.getString("numericInputMask"), ddmFormField);
 		setDDMFormFieldOptions(
 			jsonObject.getJSONArray("options"), ddmFormField);
+		setDDMFormFieldPredefinedValue(
+			jsonObject.getString("predefinedValue"), ddmFormField);
 		setDDMFormFieldPlaceholder(
 			jsonObject.getString("placeholder"), ddmFormField);
 		setDDMFormFieldProperty(
@@ -383,6 +385,13 @@ public class DDMFormTemplateContextProcessor {
 		ddmFormField.setProperty(
 			"placeholder",
 			getLocalizedValue(GetterUtil.getString(placeholder)));
+	}
+
+	protected void setDDMFormFieldPredefinedValue(
+		String text, DDMFormField ddmFormField) {
+
+		ddmFormField.setProperty(
+			"predefinedValue", getLocalizedValue(GetterUtil.getString(text)));
 	}
 
 	protected void setDDMFormFieldProperty(
