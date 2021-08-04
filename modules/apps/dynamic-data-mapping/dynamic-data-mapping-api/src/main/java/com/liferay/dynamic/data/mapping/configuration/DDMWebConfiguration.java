@@ -64,6 +64,15 @@ public interface DDMWebConfiguration {
 	public boolean changeableDefaultLanguage();
 
 	@Meta.AD(
+		deflt = "false",
+		description = "display-image-field-description-required-description",
+		name = "display-image-field-description-required", required = false
+	)
+	public default boolean displayImageFieldDescriptionRequired() {
+		return false;
+	}
+
+	@Meta.AD(
 		deflt = "true", description = "enable-template-creation-description",
 		name = "enable-template-creation", required = false
 	)
