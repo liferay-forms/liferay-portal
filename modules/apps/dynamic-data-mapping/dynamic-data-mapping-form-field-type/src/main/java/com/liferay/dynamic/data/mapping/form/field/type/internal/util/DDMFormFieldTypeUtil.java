@@ -32,10 +32,6 @@ public class DDMFormFieldTypeUtil {
 		DDMFormField ddmFormField,
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
 
-		if (ddmFormFieldRenderingContext.isViewMode()) {
-			return StringPool.BLANK;
-		}
-
 		return getPropertyValue(
 			ddmFormField, ddmFormFieldRenderingContext.getLocale(),
 			"predefinedValue");

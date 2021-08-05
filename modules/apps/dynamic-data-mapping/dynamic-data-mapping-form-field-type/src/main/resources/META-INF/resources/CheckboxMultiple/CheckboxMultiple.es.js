@@ -68,15 +68,22 @@ const CheckboxMultiple = ({
 	value: initialValue,
 }) => {
 	const [value, setValue] = useState(initialValue);
+	const [variableChanged, setVariableChanged] = useState(false);
 
 	useEffect(() => {
 		setValue(initialValue);
 	}, [initialValue]);
 
-	const displayValues = value && value.length > 0 ? value : predefinedValue;
+	let displayValues =
+		value && (variableChanged || value.length > 0)
+			? value
+			: predefinedValue;
 	const Toggle = isSwitcher ? Switcher : ClayCheckbox;
 
 	const handleChange = (event) => {
+		setVariableChanged(true);
+
+		let valueChanged = '';
 		const {target} = event;
 		const newValue = value.filter(
 			(currentValue) => currentValue !== target.value
@@ -86,7 +93,24 @@ const CheckboxMultiple = ({
 			newValue.push(target.value);
 		}
 
-		setValue(newValue);
+		if (
+			value &&
+			value.length == 0 &&
+			!variableChanged &&
+			predefinedValue.length > 0 &&
+			target.value
+		) {
+			valueChanged = predefinedValue.concat(target.value);
+			displayValues = displayValues.concat(target.value);
+		}
+
+		if (valueChanged > 0) {
+			setValue(newValue.concat(valueChanged));
+		}
+		else {
+			setValue(newValue);
+		}
+
 		onChange(event, newValue);
 	};
 
