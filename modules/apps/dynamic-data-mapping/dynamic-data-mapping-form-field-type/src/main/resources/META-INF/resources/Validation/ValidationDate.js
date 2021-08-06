@@ -171,27 +171,25 @@ const ValidationDate = ({
 					</>
 				);
 			})}
-			{selectedValidation.name !== 'dateRange' && (
-				<Text
-					key="errorMessage"
-					label={Liferay.Language.get('error-message')}
-					name={`${name}_errorMessage`}
-					onBlur={onBlur}
-					onChange={(event) => {
-						dispatch({
-							payload: {
-								errorMessage: event.target.value,
-							},
-							type: EVENT_TYPES.CHANGE_ERROR_MESSAGE,
-						});
-					}}
-					placeholder={Liferay.Language.get('this-field-is-invalid')}
-					readOnly={readOnly}
-					required={false}
-					value={localizedValue(errorMessage)}
-					visible={visible}
-				/>
-			)}
+			<Text
+				key="errorMessage"
+				label={Liferay.Language.get('error-message')}
+				name={`${name}_errorMessage`}
+				onBlur={onBlur}
+				onChange={(event) => {
+					dispatch({
+						payload: {
+							errorMessage: event.target.value,
+						},
+						type: EVENT_TYPES.CHANGE_ERROR_MESSAGE,
+					});
+				}}
+				placeholder={Liferay.Language.get('this-field-is-invalid')}
+				readOnly={readOnly}
+				required={false}
+				value={localizedValue(errorMessage)}
+				visible={visible}
+			/>
 		</>
 	);
 };
