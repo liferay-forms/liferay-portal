@@ -18,11 +18,13 @@ import com.liferay.dynamic.data.mapping.expression.UpdateFieldPropertyRequest;
 import com.liferay.dynamic.data.mapping.form.evaluator.internal.expression.DDMFormEvaluatorExpressionObserver;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormRule;
+import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.GetterUtil;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -68,11 +70,14 @@ public class DDMFormEvaluatorRuleHelper {
 				GetterUtil.getString(properties.get("value")))) {
 
 			String value = StringPool.BLANK;
+			LocalizedValue predefinedValue = (LocalizedValue)properties.get(
+				"predefinedValue");
 
-			if (GetterUtil.getString(properties.get("predefinedValue")) !=
-					null) {
+			if (predefinedValue != null) {
+				Locale locale = new Locale(
+					(String)ddmFormField.getProperty("locale"));
 
-				value = GetterUtil.getString(properties.get("predefinedValue"));
+				value = predefinedValue.getString(locale);
 			}
 
 			UpdateFieldPropertyRequest.Builder builder =
