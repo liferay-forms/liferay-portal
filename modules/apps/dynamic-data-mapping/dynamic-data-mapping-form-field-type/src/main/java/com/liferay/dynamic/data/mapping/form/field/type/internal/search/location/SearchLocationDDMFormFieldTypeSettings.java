@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.form.field.type.internal.searchLocation;
+package com.liferay.dynamic.data.mapping.form.field.type.internal.search.location;
 
 import com.liferay.configuration.admin.constants.ConfigurationAdminPortletKeys;
 import com.liferay.dynamic.data.mapping.annotations.DDMForm;
