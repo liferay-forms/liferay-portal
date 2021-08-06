@@ -83,6 +83,16 @@ FieldBase.STATE = {
 	 * @default undefined
 	 * @memberof FieldBase
 	 * @type {?(bool|undefined)}
+	 *
+	 *
+	 */
+
+	predefinedValue: Config.string(),
+
+	/**
+	 * @default undefined
+	 * @memberof FieldBase
+	 * @type {?(string|undefined)}
 	 */
 
 	repeatable: Config.bool(),

@@ -37,6 +37,7 @@ const Text = ({
 	onChange,
 	onFocus,
 	placeholder,
+	setVariableChanged,
 	shouldUpdateValue,
 	syncDelay,
 	value: initialValue,
@@ -67,6 +68,10 @@ const Text = ({
 		prevEditingLanguageId,
 		setValue,
 	]);
+
+	useEffect(() => {
+		setVariableChanged(true);
+	}, [setVariableChanged]);
 
 	useEffect(() => {
 		if (
@@ -375,6 +380,8 @@ const Main = ({
 				: `singleline`
 		];
 
+	const [variableChanged, setVariableChanged] = useState(false);
+
 	const fieldDetailsId = id ? id + '_fieldDetails' : name + '_fieldDetails';
 
 	return (
@@ -384,6 +391,7 @@ const Main = ({
 			id={id}
 			localizedValue={localizedValue}
 			name={name}
+			predefinedValue={predefinedValue}
 			readOnly={readOnly}
 		>
 			<Component
@@ -401,9 +409,11 @@ const Main = ({
 				onFocus={onFocus}
 				options={optionsMemo}
 				placeholder={placeholder}
+				predefinedValue={predefinedValue}
+				setVariableChanged={setVariableChanged}
 				shouldUpdateValue={shouldUpdateValue}
 				syncDelay={syncDelay}
-				value={value ? value : predefinedValue}
+				value={variableChanged ? value : predefinedValue}
 			/>
 		</FieldBase>
 	);
