@@ -40,6 +40,9 @@ import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidationExpression;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
+import com.liferay.dynamic.data.mapping.model.DDMFormLayoutColumn;
+import com.liferay.dynamic.data.mapping.model.DDMFormLayoutPage;
+import com.liferay.dynamic.data.mapping.model.DDMFormLayoutRow;
 import com.liferay.dynamic.data.mapping.model.DDMFormRule;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.model.Value;
@@ -142,8 +145,16 @@ public class DDMFormEvaluatorHelper {
 
 		Stream<DDMFormRule> stream = ddmFormRules.stream();
 
+		Set<String> fieldNames = _getFieldNamesFromPage();
+
 		stream.filter(
 			DDMFormRule::isEnabled
+		).filter(
+			rule ->
+				(_ddmFormLayout == null) ||
+				(_ddmFormLayout.getPreviousPage() == null) ||
+				_conditionHasFieldName(rule.getCondition(), fieldNames) ||
+				_conditionDoesNotUseField(rule.getCondition())
 		).forEach(
 			rule -> {
 				evaluateDDMFormRule(rule);
@@ -838,6 +849,40 @@ public class DDMFormEvaluatorHelper {
 		defaultDDMFormFieldValueAccessor =
 			new DefaultDDMFormFieldValueAccessor();
 
+	private boolean _conditionDoesNotUseField(String condition) {
+		if ((condition != null) &&
+			(StringUtil.equalsIgnoreCase("TRUE", condition) ||
+			 condition.contains("belongsTo"))) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean _conditionHasFieldName(
+		String condition, Set<String> fieldNames) {
+
+		if (Validator.isNull(condition)) {
+			return false;
+		}
+
+		Stream<String> stream = fieldNames.stream();
+
+		if (stream.anyMatch(
+				fieldName ->
+					condition.contains(
+						StringPool.APOSTROPHE + fieldName +
+							StringPool.APOSTROPHE) ||
+					condition.contains(
+						StringPool.QUOTE + fieldName + StringPool.QUOTE))) {
+
+			return true;
+		}
+
+		return false;
+	}
+
 	private boolean _filterVisibleFieldsWithInputMask(
 		DDMFormEvaluatorFieldContextKey ddmFormEvaluatorFieldContextKey) {
 
@@ -858,6 +903,33 @@ public class DDMFormEvaluatorHelper {
 			_ddmFormEvaluatorFormValuesHelper.getDDMFormFieldContextKeys(name);
 
 		return ddmFormFieldContextKeys.stream();
+	}
+
+	private Set<String> _getFieldNamesFromPage() {
+		if ((_ddmFormLayout == null) ||
+			(_ddmFormLayout.getPreviousPage() == null)) {
+
+			return Collections.emptySet();
+		}
+
+		DDMFormLayoutPage ddmFormLayoutPage =
+			_ddmFormLayout.getDDMFormLayoutPage(
+				_ddmFormLayout.getPreviousPage());
+
+		List<DDMFormLayoutRow> ddmFormLayoutRows =
+			ddmFormLayoutPage.getDDMFormLayoutRows();
+
+		Set<String> fieldNames = new HashSet<>();
+
+		for (DDMFormLayoutRow ddmFormLayoutRow : ddmFormLayoutRows) {
+			for (DDMFormLayoutColumn ddmFormLayoutColumn :
+					ddmFormLayoutRow.getDDMFormLayoutColumns()) {
+
+				fieldNames.addAll(ddmFormLayoutColumn.getDDMFormFieldNames());
+			}
+		}
+
+		return fieldNames;
 	}
 
 	private Object _getFieldPropertyResponseValue(
