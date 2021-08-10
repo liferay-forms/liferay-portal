@@ -48,6 +48,9 @@ import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidationExpression;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
+import com.liferay.dynamic.data.mapping.model.DDMFormLayoutColumn;
+import com.liferay.dynamic.data.mapping.model.DDMFormLayoutPage;
+import com.liferay.dynamic.data.mapping.model.DDMFormLayoutRow;
 import com.liferay.dynamic.data.mapping.model.DDMFormRule;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.model.UnlocalizedValue;
@@ -266,6 +269,9 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 		ddmFormLayout.setNextPage(1);
 		ddmFormLayout.setPreviousPage(0);
 
+		ddmFormLayout.addDDMFormLayoutPage(new DDMFormLayoutPage());
+		ddmFormLayout.addDDMFormLayoutPage(new DDMFormLayoutPage());
+
 		DDMFormValues ddmFormValues = DDMFormValuesTestUtil.createDDMFormValues(
 			ddmForm);
 
@@ -398,6 +404,11 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 			new DDMFormRule(
 				Arrays.asList("jumpPage(1, 3)"), "getValue(\"field0\") >= 1"));
 
+		DDMFormLayout ddmFormLayout = _createDefaultDDMFormLayout(ddmForm);
+
+		ddmFormLayout.addDDMFormLayoutPage(new DDMFormLayoutPage());
+		ddmFormLayout.addDDMFormLayoutPage(new DDMFormLayoutPage());
+
 		DDMFormValues ddmFormValues = DDMFormValuesTestUtil.createDDMFormValues(
 			ddmForm);
 
@@ -406,7 +417,7 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 				"field0_instanceId", "field0", new UnlocalizedValue("2")));
 
 		DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse =
-			evaluate(ddmForm, ddmFormValues);
+			evaluate(ddmForm, ddmFormLayout, ddmFormValues, LocaleUtil.US);
 
 		Set<Integer> disabledPagesIndexes =
 			ddmFormEvaluatorEvaluateResponse.getDisabledPagesIndexes();
@@ -1990,6 +2001,22 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 		);
 	}
 
+	private DDMFormLayoutPage _addDDMFieldsToPage(
+		List<DDMFormField> ddmFormFields, DDMFormLayoutPage ddmFormLayoutPage) {
+
+		for (DDMFormField field : ddmFormFields) {
+			DDMFormLayoutRow ddmFormLayoutRow = new DDMFormLayoutRow();
+
+			ddmFormLayoutRow.addDDMFormLayoutColumn(
+				new DDMFormLayoutColumn(
+					DDMFormLayoutColumn.FULL, field.getName()));
+
+			ddmFormLayoutPage.addDDMFormLayoutRow(ddmFormLayoutRow);
+		}
+
+		return ddmFormLayoutPage;
+	}
+
 	private DDMFormValues _createDDMFormFieldValuesWithValue(
 		DDMForm ddmForm, String instanceId, String name, Value value) {
 
@@ -2020,6 +2047,19 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 				fieldLocalizable, fieldRepeatable, fieldRequired));
 
 		return ddmForm;
+	}
+
+	private DDMFormLayout _createDefaultDDMFormLayout(DDMForm ddmForm) {
+		DDMFormLayout ddmFormLayout = new DDMFormLayout();
+
+		ddmFormLayout.setNextPage(0);
+		ddmFormLayout.setPreviousPage(0);
+
+		ddmFormLayout.addDDMFormLayoutPage(
+			_addDDMFieldsToPage(
+				ddmForm.getDDMFormFields(), new DDMFormLayoutPage()));
+
+		return ddmFormLayout;
 	}
 
 	private Map<String, Object> _getDDMFormFieldPropertyChangesByKey(
