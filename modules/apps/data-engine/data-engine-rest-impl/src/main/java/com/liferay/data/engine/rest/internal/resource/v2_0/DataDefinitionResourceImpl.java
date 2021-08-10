@@ -472,10 +472,6 @@ public class DataDefinitionResourceImpl
 				StorageType.DEFAULT.getValue()),
 			new ServiceContext());
 
-		_addDataDefinitionFieldLinks(
-			ddmStructure.getStructureId(), ddmForm.getDDMFormFields(),
-			ddmStructure.getGroupId());
-
 		DataLayout dataLayout = dataDefinition.getDefaultDataLayout();
 
 		if (dataLayout != null) {
@@ -488,10 +484,22 @@ public class DataDefinitionResourceImpl
 			DataLayoutResource dataLayoutResource = _getDataLayoutResource(
 				false);
 
-			dataDefinition.setDefaultDataLayout(
-				dataLayoutResource.postDataDefinitionDataLayout(
-					ddmStructure.getStructureId(), dataLayout));
+			try {
+				dataDefinition.setDefaultDataLayout(
+					dataLayoutResource.postDataDefinitionDataLayout(
+						ddmStructure.getStructureId(), dataLayout));
+			}
+			catch (Exception exception) {
+				_ddmStructureLocalService.deleteDDMStructure(
+					ddmStructure.getStructureId());
+
+				throw exception;
+			}
 		}
+
+		_addDataDefinitionFieldLinks(
+			ddmStructure.getStructureId(), ddmForm.getDDMFormFields(),
+			ddmStructure.getGroupId());
 
 		dataDefinition = DataDefinitionUtil.toDataDefinition(
 			_dataDefinitionContentTypeTracker, _ddmFormFieldTypeServicesTracker,
