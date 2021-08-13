@@ -145,16 +145,16 @@ public class DDMFormEvaluatorHelper {
 
 		Stream<DDMFormRule> stream = ddmFormRules.stream();
 
-		Set<String> fieldNames = _getFieldNamesFromPage();
-
 		stream.filter(
 			DDMFormRule::isEnabled
 		).filter(
 			rule ->
 				(_ddmFormLayout == null) ||
-				(_ddmFormLayout.getPreviousPage() == null) ||
-				_conditionHasFieldName(rule.getCondition(), fieldNames) ||
-				_conditionDoesNotUseField(rule.getCondition())
+				(_ddmFormLayout.getCurrentPage() == null) ||
+				!_conditionHasDDMFormFieldName(
+					rule.getCondition(), _ddmFormFieldsMap.keySet()) ||
+				_conditionHasDDMFormFieldName(
+					rule.getCondition(), _getDDMFormFieldNamesFromCurrentPage())
 		).forEach(
 			rule -> {
 				evaluateDDMFormRule(rule);
@@ -849,33 +849,21 @@ public class DDMFormEvaluatorHelper {
 		defaultDDMFormFieldValueAccessor =
 			new DefaultDDMFormFieldValueAccessor();
 
-	private boolean _conditionDoesNotUseField(String condition) {
-		if ((condition != null) &&
-			(StringUtil.equalsIgnoreCase("TRUE", condition) ||
-			 condition.contains("belongsTo"))) {
-
-			return true;
-		}
-
-		return false;
-	}
-
-	private boolean _conditionHasFieldName(
-		String condition, Set<String> fieldNames) {
+	private boolean _conditionHasDDMFormFieldName(
+		String condition, Set<String> ddmFormFieldNames) {
 
 		if (Validator.isNull(condition)) {
 			return false;
 		}
 
-		Stream<String> stream = fieldNames.stream();
+		Stream<String> stream = ddmFormFieldNames.stream();
 
 		if (stream.anyMatch(
-				fieldName ->
+				ddmFormFieldName ->
+					condition.contains(StringUtil.quote(ddmFormFieldName)) ||
 					condition.contains(
-						StringPool.APOSTROPHE + fieldName +
-							StringPool.APOSTROPHE) ||
-					condition.contains(
-						StringPool.QUOTE + fieldName + StringPool.QUOTE))) {
+						StringUtil.quote(
+							ddmFormFieldName, StringPool.QUOTE)))) {
 
 			return true;
 		}
@@ -905,16 +893,16 @@ public class DDMFormEvaluatorHelper {
 		return ddmFormFieldContextKeys.stream();
 	}
 
-	private Set<String> _getFieldNamesFromPage() {
+	private Set<String> _getDDMFormFieldNamesFromCurrentPage() {
 		if ((_ddmFormLayout == null) ||
-			(_ddmFormLayout.getPreviousPage() == null)) {
+			(_ddmFormLayout.getCurrentPage() == null)) {
 
 			return Collections.emptySet();
 		}
 
 		DDMFormLayoutPage ddmFormLayoutPage =
 			_ddmFormLayout.getDDMFormLayoutPage(
-				_ddmFormLayout.getPreviousPage());
+				_ddmFormLayout.getCurrentPage());
 
 		List<DDMFormLayoutRow> ddmFormLayoutRows =
 			ddmFormLayoutPage.getDDMFormLayoutRows();

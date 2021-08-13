@@ -266,11 +266,11 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 
 		DDMFormLayout ddmFormLayout = new DDMFormLayout();
 
+		ddmFormLayout.addDDMFormLayoutPage(new DDMFormLayoutPage());
+		ddmFormLayout.addDDMFormLayoutPage(new DDMFormLayoutPage());
+
 		ddmFormLayout.setNextPage(1);
 		ddmFormLayout.setPreviousPage(0);
-
-		ddmFormLayout.addDDMFormLayoutPage(new DDMFormLayoutPage());
-		ddmFormLayout.addDDMFormLayoutPage(new DDMFormLayoutPage());
 
 		DDMFormValues ddmFormValues = DDMFormValuesTestUtil.createDDMFormValues(
 			ddmForm);
@@ -404,7 +404,7 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 			new DDMFormRule(
 				Arrays.asList("jumpPage(1, 3)"), "getValue(\"field0\") >= 1"));
 
-		DDMFormLayout ddmFormLayout = _createDefaultDDMFormLayout(ddmForm);
+		DDMFormLayout ddmFormLayout = _createDDMFormLayout(ddmForm);
 
 		ddmFormLayout.addDDMFormLayoutPage(new DDMFormLayoutPage());
 		ddmFormLayout.addDDMFormLayoutPage(new DDMFormLayoutPage());
@@ -2001,15 +2001,15 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 		);
 	}
 
-	private DDMFormLayoutPage _addDDMFieldsToPage(
+	private DDMFormLayoutPage _addDDMFormFieldsToPage(
 		List<DDMFormField> ddmFormFields, DDMFormLayoutPage ddmFormLayoutPage) {
 
-		for (DDMFormField field : ddmFormFields) {
+		for (DDMFormField ddmFormField : ddmFormFields) {
 			DDMFormLayoutRow ddmFormLayoutRow = new DDMFormLayoutRow();
 
 			ddmFormLayoutRow.addDDMFormLayoutColumn(
 				new DDMFormLayoutColumn(
-					DDMFormLayoutColumn.FULL, field.getName()));
+					DDMFormLayoutColumn.FULL, ddmFormField.getName()));
 
 			ddmFormLayoutPage.addDDMFormLayoutRow(ddmFormLayoutRow);
 		}
@@ -2030,6 +2030,19 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 		return ddmFormValues;
 	}
 
+	private DDMFormLayout _createDDMFormLayout(DDMForm ddmForm) {
+		DDMFormLayout ddmFormLayout = new DDMFormLayout();
+
+		ddmFormLayout.addDDMFormLayoutPage(
+			_addDDMFormFieldsToPage(
+				ddmForm.getDDMFormFields(), new DDMFormLayoutPage()));
+
+		ddmFormLayout.setNextPage(0);
+		ddmFormLayout.setPreviousPage(0);
+
+		return ddmFormLayout;
+	}
+
 	private DDMForm _createDDMFormWithField(
 		String fieldName, String fieldLabel, String fieldType,
 		String fieldDataType, boolean fieldLocalizable, boolean fieldRepeatable,
@@ -2047,19 +2060,6 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 				fieldLocalizable, fieldRepeatable, fieldRequired));
 
 		return ddmForm;
-	}
-
-	private DDMFormLayout _createDefaultDDMFormLayout(DDMForm ddmForm) {
-		DDMFormLayout ddmFormLayout = new DDMFormLayout();
-
-		ddmFormLayout.setNextPage(0);
-		ddmFormLayout.setPreviousPage(0);
-
-		ddmFormLayout.addDDMFormLayoutPage(
-			_addDDMFieldsToPage(
-				ddmForm.getDDMFormFields(), new DDMFormLayoutPage()));
-
-		return ddmFormLayout;
 	}
 
 	private Map<String, Object> _getDDMFormFieldPropertyChangesByKey(
