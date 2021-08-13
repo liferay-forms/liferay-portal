@@ -101,6 +101,10 @@ public class DDMFormLayout implements Serializable {
 		return _availableLocales;
 	}
 
+	public Integer getCurrentPage() {
+		return _currentPage;
+	}
+
 	public List<DDMFormField> getDDMFormFields() {
 		return _ddmFormFields;
 	}
@@ -154,6 +158,10 @@ public class DDMFormLayout implements Serializable {
 		_availableLocales = availableLocales;
 	}
 
+	public void setCurrentPage(Integer currentPage) {
+		_currentPage = currentPage;
+	}
+
 	public void setDDMFormFields(List<DDMFormField> ddmFormFields) {
 		for (DDMFormField ddmFormField : ddmFormFields) {
 			ddmFormField.setDDMFormLayout(this);
@@ -193,6 +201,7 @@ public class DDMFormLayout implements Serializable {
 	}
 
 	private Set<Locale> _availableLocales = new LinkedHashSet<>();
+	private Integer _currentPage;
 	private List<DDMFormField> _ddmFormFields = new ArrayList<>();
 	private List<DDMFormLayoutPage> _ddmFormLayoutPages = new ArrayList<>();
 	private List<DDMFormRule> _ddmFormRules = new ArrayList<>();

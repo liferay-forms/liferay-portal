@@ -120,6 +120,7 @@ export const mergePages = (
 
 const doEvaluate = debounce((fieldName, evaluatorContext, callback) => {
 	const {
+		activePage,
 		defaultLanguageId,
 		editingLanguageId,
 		formId,
@@ -145,6 +146,7 @@ const doEvaluate = debounce((fieldName, evaluatorContext, callback) => {
 			p_auth: Liferay.authToken,
 			portletNamespace,
 			serializedFormContext: JSON.stringify({
+				activePage: activePage ? activePage : null,
 				...evaluatorContext,
 				formId,
 				groupId: groupId ? groupId : themeDisplay.getScopeGroupId(),
