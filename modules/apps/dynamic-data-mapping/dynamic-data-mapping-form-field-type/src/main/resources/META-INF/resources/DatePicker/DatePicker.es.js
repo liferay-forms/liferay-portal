@@ -223,16 +223,17 @@ const DatePicker = ({
 			const currentValue = localizedValue[locale];
 
 			if (currentValue) {
-				const currentValue = localizedValue[locale];
-
-				if (currentValue) {
-					inputRef.current.value =
-						/_/.test(currentValue) &&
-						currentValue.match(DIGIT_REGEX)
-							? currentValue
-							: moment(currentValue).format(
-									dateMask.toUpperCase()
-							  );
+				if (
+					currentValue.includes('/') ||
+					currentValue.includes('.') ||
+					(currentValue.includes('-') && currentValue.includes('_'))
+				) {
+					inputRef.current.value = currentValue;
+				}
+				else {
+					inputRef.current.value = moment(currentValue).format(
+						dateMask.toUpperCase()
+					);
 				}
 			}
 			else if (initialValueMemoized) {
