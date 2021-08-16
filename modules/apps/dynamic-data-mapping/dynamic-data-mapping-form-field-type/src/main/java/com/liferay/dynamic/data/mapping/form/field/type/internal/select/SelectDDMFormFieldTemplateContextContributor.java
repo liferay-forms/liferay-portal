@@ -97,6 +97,11 @@ public class SelectDDMFormFieldTemplateContextContributor
 		).put(
 			"strings", getStrings(ddmFormFieldRenderingContext)
 		).put(
+			"tooltip",
+			DDMFormFieldTypeUtil.getPropertyValue(
+				ddmFormField, ddmFormFieldRenderingContext.getLocale(),
+				"tooltip")
+		).put(
 			"value",
 			getValue(
 				GetterUtil.getString(
