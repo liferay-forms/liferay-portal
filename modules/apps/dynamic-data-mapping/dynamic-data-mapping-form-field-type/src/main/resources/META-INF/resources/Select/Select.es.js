@@ -85,6 +85,10 @@ function toArray(value = '') {
 	}
 
 	if (!Array.isArray(newValue)) {
+		if (typeof newValue !== 'string') {
+			newValue = JSON.stringify(newValue);
+		}
+
 		newValue = [newValue];
 	}
 
