@@ -157,10 +157,6 @@ export const FIELDS = [
 		type: 'document_library',
 		value: 'document_library',
 	},
-	{
-		rulesActionDisabled: true,
-		rulesConditionDisabled: true,
-	},
 ];
 
 export const FIELDS_TYPES = [
@@ -436,5 +432,23 @@ export const ROLES = [
 		label: 'User',
 		name: 'User',
 		value: 'User',
+	},
+];
+
+export const RULES_ACTION_DISABLED_FIELDS = [
+	{
+		label: 'disabled_date',
+		rulesActionDisabled: true,
+		type: 'date',
+		value: 'date',
+	},
+];
+
+export const RULES_CONDITION_DISABLED_FIELDS = [
+	{
+		label: 'disabled_text',
+		rulesConditionDisabled: true,
+		type: 'text',
+		value: 'text',
 	},
 ];

@@ -39,6 +39,8 @@ import {
 	NUMBER_TYPE_FIELDS,
 	OPERATORS_BY_TYPE,
 	ROLES,
+	RULES_ACTION_DISABLED_FIELDS,
+	RULES_CONDITION_DISABLED_FIELDS,
 	STRING_DATATYPE_FIELDS,
 	TEXT_OPERATORS,
 	UPLOAD_TYPE_FIELD,
@@ -457,6 +459,78 @@ describe('Editor', () => {
 						expect(fieldOption.length).toBe(2);
 					});
 				});
+
+				it('shows all fields except the condition disabled ones', async () => {
+					const props = defaultProps(
+						FIELDS.concat(RULES_CONDITION_DISABLED_FIELDS)
+					);
+					const mockIsSignedIn = jest.fn();
+
+					Liferay.ThemeDisplay.isSignedIn = mockIsSignedIn;
+					const {getByText, queryAllByText} = render(
+						<Editor
+							{...props}
+							onChange={() => {}}
+							onValidator={() => {}}
+						/>
+					);
+
+					await waitForElement(() => {
+						return document.querySelector('.option-selected');
+					});
+
+					const fieldLeft = document
+						.querySelectorAll('.timeline-item')[1]
+						.querySelectorAll('.ddm-field')[0]
+						.querySelector('.option-selected');
+
+					fireEvent.click(fieldLeft);
+
+					await waitForElement(() => {
+						return document.querySelector('.dropdown-menu.show');
+					});
+
+					fireEvent.click(getByText('text'));
+
+					const operator = document
+						.querySelectorAll('.timeline-item')[1]
+						.querySelectorAll('.ddm-field')[1]
+						.querySelector('.option-selected');
+
+					fireEvent.click(operator);
+
+					fireEvent.click(getByText('Is equal to'));
+
+					const actionsType = document
+						.querySelectorAll('.timeline-item')[1]
+						.querySelectorAll('.ddm-field')[2]
+						.querySelector('.option-selected');
+
+					fireEvent.click(actionsType);
+
+					fireEvent.click(getByText('other-field'));
+
+					await waitForElement(() => {
+						return document.querySelector('.ddm-field');
+					});
+
+					const fieldRight = document
+						.querySelectorAll('.timeline-item')[1]
+						.querySelectorAll('.ddm-field')[3]
+						.querySelector('.option-selected');
+
+					fireEvent.click(fieldRight);
+
+					await waitForElement(() => {
+						return document.querySelector('.dropdown-menu.show');
+					});
+
+					RULES_CONDITION_DISABLED_FIELDS.forEach(({label}) => {
+						const fieldOccurrences = queryAllByText(label);
+
+						expect(fieldOccurrences).toHaveLength(0);
+					});
+				});
 			});
 
 			describe('Conditions logical operatores', () => {
@@ -758,6 +832,50 @@ describe('Editor', () => {
 
 				expect(queryAllByText('2 Page title')).toBeTruthy();
 				expect(queryAllByText('3 Page title')).toBeTruthy();
+			});
+
+			it('shows all fields except the action disabled ones', async () => {
+				const props = defaultProps(
+					FIELDS.concat(RULES_ACTION_DISABLED_FIELDS)
+				);
+
+				const {getByText, queryAllByText} = render(
+					<Editor
+						{...props}
+						onChange={() => {}}
+						onValidator={() => {}}
+					/>
+				);
+
+				await waitForElement(() => {
+					return document.querySelector('.option-selected');
+				});
+
+				const actionType = document
+					.querySelectorAll('.timeline-item')[4]
+					.querySelectorAll('.ddm-field')[0]
+					.querySelector('.option-selected');
+
+				fireEvent.click(actionType);
+
+				await waitForElement(() => {
+					return document.querySelector('.dropdown-menu.show');
+				});
+
+				fireEvent.click(getByText('show'));
+
+				const actionTarget = document
+					.querySelectorAll('.timeline-item')[4]
+					.querySelectorAll('.ddm-field')[1]
+					.querySelector('.option-selected');
+
+				fireEvent.click(actionTarget);
+
+				RULES_ACTION_DISABLED_FIELDS.forEach(({label}) => {
+					const fieldOccurrences = queryAllByText(label);
+
+					expect(fieldOccurrences).toHaveLength(1);
+				});
 			});
 		});
 	});
