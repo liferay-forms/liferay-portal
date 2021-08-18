@@ -90,6 +90,11 @@ export default function fieldChange({
 
 		dispatch({payload: editedPages, type: EVENT_TYPES.PAGE.UPDATE});
 
+		// We triggered a dispatch of FIELD_CHANGE just to propagate the event to
+		// the upper layers.
+
+		dispatch({payload: properties, type: EVENT_TYPES.FIELD.CHANGE});
+
 		if (evaluable) {
 			try {
 				disableSubmitButton(submitButtonId);
@@ -102,8 +107,6 @@ export default function fieldChange({
 					rules,
 					viewMode,
 				});
-
-				dispatch({payload: properties, type: EVENT_TYPES.FIELD.CHANGE});
 
 				if (REVALIDATE_UPDATES.length > 0) {
 
@@ -153,8 +156,6 @@ export default function fieldChange({
 			}
 		}
 		else {
-			dispatch({payload: properties, type: EVENT_TYPES.FIELD.CHANGE});
-
 			REVALIDATE_UPDATES.push({
 				editingLanguageId,
 				name: fieldInstance.name,
