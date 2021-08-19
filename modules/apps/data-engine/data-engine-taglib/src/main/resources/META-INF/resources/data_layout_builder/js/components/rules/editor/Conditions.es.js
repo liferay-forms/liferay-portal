@@ -42,7 +42,7 @@ function FieldOperator({
 		const fieldType =
 			OPERATOR_OPTIONS_TYPES[dataType] ?? OPERATOR_OPTIONS_TYPES.text;
 
-		return operatorsByType[fieldType].map((operator) => ({
+		return operatorsByType[dataType].map((operator) => ({
 			...operator,
 			value: operator.name,
 		}));
