@@ -81,7 +81,6 @@ export const App = ({autosaveInterval, autosaveURL, ...otherProps}) => {
 					>
 						<AutoSaveProvider
 							interval={autosaveInterval}
-							published={config.published}
 							url={autosaveURL}
 						>
 							<ToastProvider>
