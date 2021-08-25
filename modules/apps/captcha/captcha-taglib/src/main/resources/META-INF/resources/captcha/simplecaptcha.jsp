@@ -18,6 +18,10 @@
 
 <%
 String url = (String)request.getAttribute("liferay-captcha:captcha:url");
+
+String languageId = (String)request.getParameter("languageId");
+
+Locale currentLocale = (Locale)LocaleUtil.fromLanguageId(languageId);
 %>
 
 <c:if test="<%= captchaEnabled %>">
@@ -36,7 +40,7 @@ String url = (String)request.getAttribute("liferay-captcha:captcha:url");
 		/>
 
 		<aui:input ignoreRequestValue="<%= true %>" label="text-verification" name="captchaText" size="10" type="text" value="">
-			<aui:validator name="required" />
+			<aui:validator errorMessage='<%= LanguageUtil.get(currentLocale, "this-field-is-required") %>' name="required" />
 		</aui:input>
 	</div>
 
