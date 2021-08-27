@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.upgrade.v5_0_0.test;
+package com.liferay.dynamic.data.mapping.upgrade.test.v5_0_0;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
