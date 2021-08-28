@@ -28,7 +28,6 @@ import com.liferay.portal.kernel.model.StagedModel;
 import com.liferay.portal.kernel.test.rule.Sync;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,32 +54,13 @@ public class DDMFormInstanceStagedModelDataHandlerTest
 	}
 
 	@Override
-	protected Map<String, List<StagedModel>> addDependentStagedModelsMap(
-			Group group)
-		throws Exception {
-
-		Map<String, List<StagedModel>> dependentStagedModelsMap =
-			new LinkedHashMap<>();
-
-		DDMStructure ddmStructure = DDMStructureTestUtil.addStructure(
-			group.getGroupId(), DDMFormInstance.class.getName());
-
-		addDependentStagedModel(
-			dependentStagedModelsMap, DDMStructure.class, ddmStructure);
-
-		return dependentStagedModelsMap;
-	}
-
-	@Override
 	protected StagedModel addStagedModel(
 			Group group,
 			Map<String, List<StagedModel>> dependentStagedModelsMap)
 		throws Exception {
 
-		List<StagedModel> dependentStagedModels = dependentStagedModelsMap.get(
-			DDMStructure.class.getSimpleName());
-
-		DDMStructure ddmStructure = (DDMStructure)dependentStagedModels.get(0);
+		DDMStructure ddmStructure = DDMStructureTestUtil.addStructure(
+			group.getGroupId(), DDMFormInstance.class.getName());
 
 		DDMFormInstance ddmFormInstance =
 			DDMFormInstanceTestUtil.addDDMFormInstance(
