@@ -28,7 +28,6 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordVersionLocalServiceUtil;
-import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormInstanceRecordTestUtil;
@@ -130,10 +129,6 @@ public class DDMFormInstanceRecordStagedModelDataHandlerTest
 		addDependentStagedModel(
 			dependentStagedModelsMap, DDMFormInstance.class, ddmFormInstance);
 
-		addDependentStagedModel(
-			dependentStagedModelsMap, DDMStructure.class,
-			ddmFormInstance.getStructure());
-
 		return dependentStagedModelsMap;
 	}
 
@@ -215,19 +210,6 @@ public class DDMFormInstanceRecordStagedModelDataHandlerTest
 			Map<String, List<StagedModel>> dependentStagedModelsMap,
 			Group group)
 		throws Exception {
-
-		List<StagedModel> ddmStructureDependentStagedModels =
-			dependentStagedModelsMap.get(DDMStructure.class.getSimpleName());
-
-		Assert.assertEquals(
-			ddmStructureDependentStagedModels.toString(), 1,
-			ddmStructureDependentStagedModels.size());
-
-		DDMStructure ddmStructure =
-			(DDMStructure)ddmStructureDependentStagedModels.get(0);
-
-		DDMStructureLocalServiceUtil.getDDMStructureByUuidAndGroupId(
-			ddmStructure.getUuid(), group.getGroupId());
 
 		List<StagedModel> formInstanceDependentStagedModels =
 			dependentStagedModelsMap.get(DDMFormInstance.class.getSimpleName());
