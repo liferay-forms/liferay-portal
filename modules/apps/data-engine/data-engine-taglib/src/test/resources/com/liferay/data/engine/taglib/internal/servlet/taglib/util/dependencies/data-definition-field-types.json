@@ -10666,7 +10666,7 @@
 		"displayOrder": 8,
 		"group": "basic",
 		"icon": "check-circle",
-		"javaScriptModule": "dynamic-data-mapping-form-field-type@6.0.23/Checkbox/Checkbox.es",
+		"javaScriptModule": "dynamic-data-mapping-form-field-type@6.0.23/Checkbox/Checkbox",
 		"label": "Boolean Question",
 		"name": "checkbox",
 		"scope": "",

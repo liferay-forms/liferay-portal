@@ -38,7 +38,8 @@ declare global {
 		| 'prefix-or-suffix'
 		| 'suffix'
 		| 'the-maximum-length-is-10-characters'
-		| 'thousands-separator';
+		| 'thousands-separator'
+		| 'for-security-reasons-upload-field-repeatability-is-limited-the-limit-is-defined-in-x-system-settings-x';
 	type LocalizedValue<T> = {
 		[key in Locale]?: T;
 	};
@@ -46,6 +47,9 @@ declare global {
 		Language: {
 			direction: LocalizedValue<Direction>;
 			get: (key: LocalizedTextKey) => string;
+		};
+		Util: {
+			sub: (string: string, data: any, ...others: string[]) => string;
 		};
 	};
 }

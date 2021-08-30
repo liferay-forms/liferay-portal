@@ -18,7 +18,6 @@ exports[`Validation renders checkbox to enable Validation 1`] = `
           class="toggle-switch-check"
           name="enableValidation"
           type="checkbox"
-          value="true"
         />
         <span
           aria-hidden="true"

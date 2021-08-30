@@ -10,10 +10,8 @@ exports[`Field Checkbox has a helptext 1`] = `
       class="ddm-toggle-switch toggle-switch"
     >
       <input
-        checked=""
         class="toggle-switch-check"
         type="checkbox"
-        value="true"
       />
       <span
         aria-hidden="true"
@@ -61,7 +59,6 @@ exports[`Field Checkbox has a key 1`] = `
         checked=""
         class="toggle-switch-check"
         type="checkbox"
-        value="true"
       />
       <span
         aria-hidden="true"
@@ -95,10 +92,8 @@ exports[`Field Checkbox has a label 1`] = `
       class="ddm-toggle-switch toggle-switch"
     >
       <input
-        checked=""
         class="toggle-switch-check"
         type="checkbox"
-        value="true"
       />
       <span
         aria-hidden="true"
@@ -134,10 +129,8 @@ exports[`Field Checkbox has a predefined Value 1`] = `
       class="ddm-toggle-switch toggle-switch"
     >
       <input
-        checked=""
         class="toggle-switch-check"
         type="checkbox"
-        value="true"
       />
       <span
         aria-hidden="true"
@@ -174,7 +167,6 @@ exports[`Field Checkbox has a value 1`] = `
         checked=""
         class="toggle-switch-check"
         type="checkbox"
-        value="true"
       />
       <span
         aria-hidden="true"
@@ -209,10 +201,8 @@ exports[`Field Checkbox has an id 1`] = `
       class="ddm-toggle-switch toggle-switch"
     >
       <input
-        checked=""
         class="toggle-switch-check"
         type="checkbox"
-        value="true"
       />
       <span
         aria-hidden="true"
@@ -246,11 +236,9 @@ exports[`Field Checkbox is not editable 1`] = `
       class="ddm-toggle-switch toggle-switch"
     >
       <input
-        checked=""
         class="toggle-switch-check"
         disabled=""
         type="checkbox"
-        value="true"
       />
       <span
         aria-hidden="true"
@@ -284,10 +272,8 @@ exports[`Field Checkbox is not required 1`] = `
       class="ddm-toggle-switch toggle-switch"
     >
       <input
-        checked=""
         class="toggle-switch-check"
         type="checkbox"
-        value="true"
       />
       <span
         aria-hidden="true"
@@ -321,10 +307,8 @@ exports[`Field Checkbox is shown as a switcher 1`] = `
       class="ddm-toggle-switch toggle-switch"
     >
       <input
-        checked=""
         class="toggle-switch-check"
         type="checkbox"
-        value="true"
       />
       <span
         aria-hidden="true"
@@ -359,7 +343,6 @@ exports[`Field Checkbox is shown as checkbox 1`] = `
     >
       <label>
         <input
-          checked=""
           class="custom-control-input"
           type="checkbox"
         />
@@ -388,10 +371,8 @@ exports[`Field Checkbox renders Label if showLabel is true 1`] = `
       class="ddm-toggle-switch toggle-switch"
     >
       <input
-        checked=""
         class="toggle-switch-check"
         type="checkbox"
-        value="true"
       />
       <span
         aria-hidden="true"

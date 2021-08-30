@@ -17,7 +17,7 @@ import {cleanup, render} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 
-import Checkbox from '../../../src/main/resources/META-INF/resources/Checkbox/Checkbox.es';
+import Checkbox from '../../../src/main/resources/META-INF/resources/Checkbox/Checkbox';
 
 describe('Field Checkbox', () => {
 	afterEach(cleanup);
@@ -158,7 +158,7 @@ describe('Field Checkbox', () => {
 
 			const input = queryByLabelText('Boolean');
 			userEvent.click(input);
-			expect(onChange).toHaveBeenLastCalledWith(null, true);
+			expect(onChange).toHaveBeenLastCalledWith({target: {value: true}});
 		});
 
 		it('check that with true predefinedValue the boolean field is not checked when we disabled it', () => {
@@ -173,7 +173,7 @@ describe('Field Checkbox', () => {
 
 			const input = queryByLabelText('Boolean');
 			userEvent.click(input);
-			expect(onChange).toHaveBeenLastCalledWith(null, false);
+			expect(onChange).toHaveBeenLastCalledWith({target: {value: false}});
 		});
 
 		it('check it shows the label when we set it up', () => {

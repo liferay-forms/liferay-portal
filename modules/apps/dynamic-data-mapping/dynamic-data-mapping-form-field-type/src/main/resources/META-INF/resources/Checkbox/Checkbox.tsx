@@ -16,9 +16,11 @@ import {ClayCheckbox} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import React from 'react';
 
+// @ts-ignore
+
 import {FieldBase} from '../FieldBase/ReactFieldBase.es';
 
-const Switcher = ({
+const Switcher: React.FC<ISwitcherProps> = ({
 	checked,
 	disabled,
 	label,
@@ -38,10 +40,9 @@ const Switcher = ({
 					disabled={disabled}
 					name={name}
 					onChange={({target: {checked}}) => {
-						onChange(null, checked);
+						onChange({target: {value: checked}});
 					}}
 					type="checkbox"
-					value={true}
 				/>
 
 				<span aria-hidden="true" className="toggle-switch-bar">
@@ -83,7 +84,7 @@ const Switcher = ({
 	);
 };
 
-const Checkbox = ({
+const Checkbox: React.FC<ICheckboxProps> = ({
 	checked,
 	disabled,
 	label,
@@ -96,10 +97,10 @@ const Checkbox = ({
 		<ClayCheckbox
 			checked={checked}
 			disabled={disabled}
-			label={showLabel && label}
+			label={showLabel ? label : ''}
 			name={name}
 			onChange={({target: {checked}}) => {
-				onChange(null, checked);
+				onChange({target: {value: checked}});
 			}}
 		>
 			{showLabel && required && (
@@ -111,17 +112,16 @@ const Checkbox = ({
 	);
 };
 
-const Main = ({
+const Main: React.FC<IProps> = ({
 	label,
 	name,
 	onChange,
-	predefinedValue = true,
+	predefinedValue,
 	readOnly,
 	required,
 	showAsSwitcher = true,
 	showLabel = true,
 	showMaximumRepetitionsInfo = false,
-	spritemap,
 	systemSettingsURL,
 	value,
 	visible,
@@ -140,7 +140,7 @@ const Main = ({
 				checked={
 					!!(
 						value ??
-						(predefinedValue.length
+						(typeof predefinedValue === 'object'
 							? predefinedValue[0] === 'true'
 							: predefinedValue)
 					)
@@ -152,13 +152,47 @@ const Main = ({
 				required={required}
 				showLabel={showLabel}
 				showMaximumRepetitionsInfo={showMaximumRepetitionsInfo}
-				spritemap={spritemap}
 				systemSettingsURL={systemSettingsURL}
-				visible={visible}
 			/>
 		</FieldBase>
 	);
 };
+
+interface IProps {
+	label: string;
+	name: string;
+	onChange: (event: {target: {value: boolean}}) => void;
+	predefinedValue: boolean | String[];
+	readOnly: boolean;
+	required: boolean;
+	showAsSwitcher: boolean;
+	showLabel: boolean;
+	showMaximumRepetitionsInfo: boolean;
+	systemSettingsURL: string;
+	value: boolean;
+	visible: boolean;
+}
+interface ISwitcherProps {
+	checked: boolean;
+	disabled: boolean;
+	label: string;
+	name: string;
+	onChange: (event: {target: {value: boolean}}) => void;
+	required: boolean;
+	showLabel: boolean;
+	showMaximumRepetitionsInfo: boolean;
+	systemSettingsURL: string;
+}
+
+interface ICheckboxProps {
+	checked: boolean;
+	disabled: boolean;
+	label: string;
+	name: string;
+	onChange: (event: {target: {value: boolean}}) => void;
+	required: boolean;
+	showLabel: boolean;
+}
 
 Main.displayName = 'Checkbox';
 

@@ -16,7 +16,7 @@ import ClayForm from '@clayui/form';
 import {useFormState} from 'data-engine-js-components-web';
 import React, {useEffect, useReducer} from 'react';
 
-import Checkbox from '../Checkbox/Checkbox.es';
+import Checkbox from '../Checkbox/Checkbox';
 import ValidationDate from './ValidationDate';
 import ValidationTextAndNumeric from './ValidationTextAndNumeric';
 import {
@@ -93,10 +93,10 @@ const Validation = ({
 			<Checkbox
 				label={label}
 				name="enableValidation"
-				onChange={(event, enableValidation) => {
+				onChange={(event) => {
 					dispatch({
 						payload: {
-							enableValidation,
+							enableValidation: event.target.value,
 							fieldName: validation?.fieldName,
 						},
 						type: EVENT_TYPES.ENABLE_VALIDATION,
@@ -160,7 +160,7 @@ const ValidationWrapper = ({
 			label={label}
 			name={name}
 			onBlur={onBlur}
-			onChange={(value) => onChange(null, value)}
+			onChange={(value) => onChange({target: {value}})}
 			readOnly={readOnly}
 			validation={validation}
 			value={value}

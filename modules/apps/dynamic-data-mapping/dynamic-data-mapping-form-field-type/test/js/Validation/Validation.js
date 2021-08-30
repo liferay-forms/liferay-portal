@@ -108,17 +108,21 @@ describe('Validation', () => {
 
 		userEvent.click(inputCheckbox);
 
-		expect(onChange).toHaveBeenCalledWith(null, {
-			enableValidation: true,
-			errorMessage: {
-				en_US: undefined,
-			},
-			expression: {
-				name: 'contains',
-				value: 'contains(textfield, "{parameter}")',
-			},
-			parameter: {
-				en_US: undefined,
+		expect(onChange).toHaveBeenLastCalledWith({
+			target: {
+				value: {
+					enableValidation: true,
+					errorMessage: {
+						en_US: undefined,
+					},
+					expression: {
+						name: 'contains',
+						value: 'contains(textfield, "{parameter}")',
+					},
+					parameter: {
+						en_US: undefined,
+					},
+				},
 			},
 		});
 	});
@@ -158,17 +162,21 @@ describe('Validation', () => {
 
 		userEvent.click(inputCheckbox);
 
-		expect(onChange).toHaveBeenCalledWith(null, {
-			enableValidation: true,
-			errorMessage: {
-				en_US: undefined,
-			},
-			expression: {
-				name: 'eq',
-				value: 'numericfield=={parameter}',
-			},
-			parameter: {
-				en_US: undefined,
+		expect(onChange).toHaveBeenLastCalledWith({
+			target: {
+				value: {
+					enableValidation: true,
+					errorMessage: {
+						en_US: undefined,
+					},
+					expression: {
+						name: 'eq',
+						value: 'numericfield=={parameter}',
+					},
+					parameter: {
+						en_US: undefined,
+					},
+				},
 			},
 		});
 	});
@@ -208,17 +216,21 @@ describe('Validation', () => {
 
 		userEvent.click(inputCheckbox);
 
-		expect(onChange).toHaveBeenCalledWith(null, {
-			enableValidation: true,
-			errorMessage: {
-				en_US: undefined,
-			},
-			expression: {
-				name: 'futureDates',
-				value: 'futureDates(dateField, "{parameter}")',
-			},
-			parameter: {
-				en_US: undefined,
+		expect(onChange).toHaveBeenLastCalledWith({
+			target: {
+				value: {
+					enableValidation: true,
+					errorMessage: {
+						en_US: undefined,
+					},
+					expression: {
+						name: 'futureDates',
+						value: 'futureDates(dateField, "{parameter}")',
+					},
+					parameter: {
+						en_US: undefined,
+					},
+				},
 			},
 		});
 	});
