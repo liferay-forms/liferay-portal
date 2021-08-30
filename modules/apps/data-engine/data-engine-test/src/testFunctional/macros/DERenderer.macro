@@ -24,6 +24,7 @@ definition {
 			value1 = "${value}");
 	}
 
+<<<<<<< HEAD
 	macro assertDataInGridField {
 		if (!(isSet(fieldIndex))) {
 			var fieldIndex = "1";
@@ -39,6 +40,8 @@ definition {
 			locator1 = "DataEngineRenderer#GRID_OPTION_INDEXED");
 	}
 
+=======
+>>>>>>> 96b53cf (LRQA-69427 Add CanInputData test)
 	macro assertDataInImageField {
 		if (!(isSet(index))) {
 			var index = "1";
@@ -92,6 +95,23 @@ definition {
 			key_fieldLabel = "${fieldLabel}",
 			locator1 = "DataEngineRenderer#TEXT_INPUT_INDEXED",
 			value1 = "${value}");
+	}
+
+	macro assertDataInRichTextField {
+		if (!(isSet(index))) {
+			var index = "1";
+		}
+
+		SelectFrame.selectFrameNoLoading(
+			index = "${index}",
+			key_fieldLabel = "${fieldLabel}",
+			locator1 = "CKEditor#ANY_BODY_FIELD_IFRAME_WEB_CONTENT_ARTICLE");
+
+		AssertTextEquals(
+			locator1 = "CKEditor#BODY",
+			value1 = "${content}");
+
+		SelectFrame(value1 = "relative=top");
 	}
 
 	macro assertDataInSelectFromListField {
@@ -343,6 +363,23 @@ definition {
 			key_fieldLabel = "${fieldLabel}",
 			locator1 = "DataEngineRenderer#TEXT_INPUT_INDEXED",
 			value1 = "${value}");
+	}
+
+	macro inputDataInRichTextField {
+		if (!(isSet(index))) {
+			var index = "1";
+		}
+
+		SelectFrame.selectFrameNoLoading(
+			index = "${index}",
+			key_fieldLabel = "${fieldLabel}",
+			locator1 = "CKEditor#ANY_BODY_FIELD_IFRAME_WEB_CONTENT_ARTICLE");
+
+		Type(
+			locator1 = "CKEditor#BODY",
+			value1 = "${content}");
+
+		SelectFrame(value1 = "relative=top");
 	}
 
 	macro inputDataInSelectFromListField {
