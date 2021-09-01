@@ -12,7 +12,7 @@
  * details.
  */
 
-import {ClayCheckbox} from '@clayui/form';
+import {ClayCheckbox, ClayToggle} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import React from 'react';
 
@@ -32,30 +32,21 @@ const Switcher = ({
 	return (
 		<>
 			<label className="ddm-toggle-switch toggle-switch">
-				<input
-					checked={checked}
-					className="toggle-switch-check"
-					disabled={disabled}
-					name={name}
-					onChange={({target: {checked}}) => {
-						onChange(null, checked);
-					}}
-					type="checkbox"
-					value={true}
-				/>
-
 				<span aria-hidden="true" className="toggle-switch-bar">
 					<span className="toggle-switch-handle"></span>
-
-					{(showLabel || required) && (
-						<span className="toggle-switch-text toggle-switch-text-right">
-							{showLabel && label}
-
-							{required && (
-								<span className="ddm-label-required reference-mark">
-									<ClayIcon symbol="asterisk" />
-								</span>
-							)}
+					<ClayToggle
+						disabled={disabled}
+						name={name}
+						onToggle={(checked) => {
+							onChange({target: {value: checked}});
+						}}
+						toggled={checked}
+						value={checked}
+					/>
+					{showLabel && label}
+					{required && (
+						<span className="ddm-label-required reference-mark">
+							<ClayIcon symbol="asterisk" />
 						</span>
 					)}
 				</span>

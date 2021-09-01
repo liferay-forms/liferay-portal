@@ -9,12 +9,6 @@ exports[`Field Checkbox has a helptext 1`] = `
     <label
       class="ddm-toggle-switch toggle-switch"
     >
-      <input
-        checked=""
-        class="toggle-switch-check"
-        type="checkbox"
-        value="true"
-      />
       <span
         aria-hidden="true"
         class="toggle-switch-bar"
@@ -22,9 +16,28 @@ exports[`Field Checkbox has a helptext 1`] = `
         <span
           class="toggle-switch-handle"
         />
-        <span
-          class="toggle-switch-text toggle-switch-text-right"
-        />
+        <label
+          class="toggle-switch simple-toggle-switch"
+        >
+          <span
+            class="toggle-switch-check-bar"
+          >
+            <input
+              checked=""
+              class="toggle-switch-check"
+              type="checkbox"
+              value="true"
+            />
+            <span
+              aria-hidden="true"
+              class="toggle-switch-bar"
+            >
+              <span
+                class="toggle-switch-handle"
+              />
+            </span>
+          </span>
+        </label>
       </span>
     </label>
     <input
@@ -57,12 +70,6 @@ exports[`Field Checkbox has a key 1`] = `
     <label
       class="ddm-toggle-switch toggle-switch"
     >
-      <input
-        checked=""
-        class="toggle-switch-check"
-        type="checkbox"
-        value="true"
-      />
       <span
         aria-hidden="true"
         class="toggle-switch-bar"
@@ -70,9 +77,28 @@ exports[`Field Checkbox has a key 1`] = `
         <span
           class="toggle-switch-handle"
         />
-        <span
-          class="toggle-switch-text toggle-switch-text-right"
-        />
+        <label
+          class="toggle-switch simple-toggle-switch"
+        >
+          <span
+            class="toggle-switch-check-bar"
+          >
+            <input
+              checked=""
+              class="toggle-switch-check"
+              type="checkbox"
+              value="true"
+            />
+            <span
+              aria-hidden="true"
+              class="toggle-switch-bar"
+            >
+              <span
+                class="toggle-switch-handle"
+              />
+            </span>
+          </span>
+        </label>
       </span>
     </label>
     <input
@@ -94,12 +120,6 @@ exports[`Field Checkbox has a label 1`] = `
     <label
       class="ddm-toggle-switch toggle-switch"
     >
-      <input
-        checked=""
-        class="toggle-switch-check"
-        type="checkbox"
-        value="true"
-      />
       <span
         aria-hidden="true"
         class="toggle-switch-bar"
@@ -107,11 +127,29 @@ exports[`Field Checkbox has a label 1`] = `
         <span
           class="toggle-switch-handle"
         />
-        <span
-          class="toggle-switch-text toggle-switch-text-right"
+        <label
+          class="toggle-switch simple-toggle-switch"
         >
-          label
-        </span>
+          <span
+            class="toggle-switch-check-bar"
+          >
+            <input
+              checked=""
+              class="toggle-switch-check"
+              type="checkbox"
+              value="true"
+            />
+            <span
+              aria-hidden="true"
+              class="toggle-switch-bar"
+            >
+              <span
+                class="toggle-switch-handle"
+              />
+            </span>
+          </span>
+        </label>
+        label
       </span>
     </label>
     <input
@@ -133,12 +171,6 @@ exports[`Field Checkbox has a predefined Value 1`] = `
     <label
       class="ddm-toggle-switch toggle-switch"
     >
-      <input
-        checked=""
-        class="toggle-switch-check"
-        type="checkbox"
-        value="true"
-      />
       <span
         aria-hidden="true"
         class="toggle-switch-bar"
@@ -146,9 +178,28 @@ exports[`Field Checkbox has a predefined Value 1`] = `
         <span
           class="toggle-switch-handle"
         />
-        <span
-          class="toggle-switch-text toggle-switch-text-right"
-        />
+        <label
+          class="toggle-switch simple-toggle-switch"
+        >
+          <span
+            class="toggle-switch-check-bar"
+          >
+            <input
+              checked=""
+              class="toggle-switch-check"
+              type="checkbox"
+              value="true"
+            />
+            <span
+              aria-hidden="true"
+              class="toggle-switch-bar"
+            >
+              <span
+                class="toggle-switch-handle"
+              />
+            </span>
+          </span>
+        </label>
       </span>
     </label>
     <input
@@ -170,12 +221,6 @@ exports[`Field Checkbox has a value 1`] = `
     <label
       class="ddm-toggle-switch toggle-switch"
     >
-      <input
-        checked=""
-        class="toggle-switch-check"
-        type="checkbox"
-        value="true"
-      />
       <span
         aria-hidden="true"
         class="toggle-switch-bar"
@@ -183,9 +228,28 @@ exports[`Field Checkbox has a value 1`] = `
         <span
           class="toggle-switch-handle"
         />
-        <span
-          class="toggle-switch-text toggle-switch-text-right"
-        />
+        <label
+          class="toggle-switch simple-toggle-switch"
+        >
+          <span
+            class="toggle-switch-check-bar"
+          >
+            <input
+              checked=""
+              class="toggle-switch-check"
+              type="checkbox"
+              value="true"
+            />
+            <span
+              aria-hidden="true"
+              class="toggle-switch-bar"
+            >
+              <span
+                class="toggle-switch-handle"
+              />
+            </span>
+          </span>
+        </label>
       </span>
     </label>
     <input
@@ -208,12 +272,6 @@ exports[`Field Checkbox has an id 1`] = `
     <label
       class="ddm-toggle-switch toggle-switch"
     >
-      <input
-        checked=""
-        class="toggle-switch-check"
-        type="checkbox"
-        value="true"
-      />
       <span
         aria-hidden="true"
         class="toggle-switch-bar"
@@ -221,9 +279,28 @@ exports[`Field Checkbox has an id 1`] = `
         <span
           class="toggle-switch-handle"
         />
-        <span
-          class="toggle-switch-text toggle-switch-text-right"
-        />
+        <label
+          class="toggle-switch simple-toggle-switch"
+        >
+          <span
+            class="toggle-switch-check-bar"
+          >
+            <input
+              checked=""
+              class="toggle-switch-check"
+              type="checkbox"
+              value="true"
+            />
+            <span
+              aria-hidden="true"
+              class="toggle-switch-bar"
+            >
+              <span
+                class="toggle-switch-handle"
+              />
+            </span>
+          </span>
+        </label>
       </span>
     </label>
     <input
@@ -245,13 +322,6 @@ exports[`Field Checkbox is not editable 1`] = `
     <label
       class="ddm-toggle-switch toggle-switch"
     >
-      <input
-        checked=""
-        class="toggle-switch-check"
-        disabled=""
-        type="checkbox"
-        value="true"
-      />
       <span
         aria-hidden="true"
         class="toggle-switch-bar"
@@ -259,9 +329,29 @@ exports[`Field Checkbox is not editable 1`] = `
         <span
           class="toggle-switch-handle"
         />
-        <span
-          class="toggle-switch-text toggle-switch-text-right"
-        />
+        <label
+          class="toggle-switch simple-toggle-switch disabled"
+        >
+          <span
+            class="toggle-switch-check-bar"
+          >
+            <input
+              checked=""
+              class="toggle-switch-check"
+              disabled=""
+              type="checkbox"
+              value="true"
+            />
+            <span
+              aria-hidden="true"
+              class="toggle-switch-bar"
+            >
+              <span
+                class="toggle-switch-handle"
+              />
+            </span>
+          </span>
+        </label>
       </span>
     </label>
     <input
@@ -283,12 +373,6 @@ exports[`Field Checkbox is not required 1`] = `
     <label
       class="ddm-toggle-switch toggle-switch"
     >
-      <input
-        checked=""
-        class="toggle-switch-check"
-        type="checkbox"
-        value="true"
-      />
       <span
         aria-hidden="true"
         class="toggle-switch-bar"
@@ -296,9 +380,28 @@ exports[`Field Checkbox is not required 1`] = `
         <span
           class="toggle-switch-handle"
         />
-        <span
-          class="toggle-switch-text toggle-switch-text-right"
-        />
+        <label
+          class="toggle-switch simple-toggle-switch"
+        >
+          <span
+            class="toggle-switch-check-bar"
+          >
+            <input
+              checked=""
+              class="toggle-switch-check"
+              type="checkbox"
+              value="true"
+            />
+            <span
+              aria-hidden="true"
+              class="toggle-switch-bar"
+            >
+              <span
+                class="toggle-switch-handle"
+              />
+            </span>
+          </span>
+        </label>
       </span>
     </label>
     <input
@@ -320,12 +423,6 @@ exports[`Field Checkbox is shown as a switcher 1`] = `
     <label
       class="ddm-toggle-switch toggle-switch"
     >
-      <input
-        checked=""
-        class="toggle-switch-check"
-        type="checkbox"
-        value="true"
-      />
       <span
         aria-hidden="true"
         class="toggle-switch-bar"
@@ -333,9 +430,28 @@ exports[`Field Checkbox is shown as a switcher 1`] = `
         <span
           class="toggle-switch-handle"
         />
-        <span
-          class="toggle-switch-text toggle-switch-text-right"
-        />
+        <label
+          class="toggle-switch simple-toggle-switch"
+        >
+          <span
+            class="toggle-switch-check-bar"
+          >
+            <input
+              checked=""
+              class="toggle-switch-check"
+              type="checkbox"
+              value="true"
+            />
+            <span
+              aria-hidden="true"
+              class="toggle-switch-bar"
+            >
+              <span
+                class="toggle-switch-handle"
+              />
+            </span>
+          </span>
+        </label>
       </span>
     </label>
     <input
@@ -387,12 +503,6 @@ exports[`Field Checkbox renders Label if showLabel is true 1`] = `
     <label
       class="ddm-toggle-switch toggle-switch"
     >
-      <input
-        checked=""
-        class="toggle-switch-check"
-        type="checkbox"
-        value="true"
-      />
       <span
         aria-hidden="true"
         class="toggle-switch-bar"
@@ -400,9 +510,28 @@ exports[`Field Checkbox renders Label if showLabel is true 1`] = `
         <span
           class="toggle-switch-handle"
         />
-        <span
-          class="toggle-switch-text toggle-switch-text-right"
-        />
+        <label
+          class="toggle-switch simple-toggle-switch"
+        >
+          <span
+            class="toggle-switch-check-bar"
+          >
+            <input
+              checked=""
+              class="toggle-switch-check"
+              type="checkbox"
+              value="true"
+            />
+            <span
+              aria-hidden="true"
+              class="toggle-switch-bar"
+            >
+              <span
+                class="toggle-switch-handle"
+              />
+            </span>
+          </span>
+        </label>
       </span>
     </label>
     <input

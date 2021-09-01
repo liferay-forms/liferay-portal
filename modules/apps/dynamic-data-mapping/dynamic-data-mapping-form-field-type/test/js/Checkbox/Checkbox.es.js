@@ -158,7 +158,7 @@ describe('Field Checkbox', () => {
 
 			const input = queryByLabelText('Boolean');
 			userEvent.click(input);
-			expect(onChange).toHaveBeenLastCalledWith(null, true);
+			expect(input).not.toBeChecked();
 		});
 
 		it('check that with true predefinedValue the boolean field is not checked when we disabled it', () => {
@@ -173,7 +173,7 @@ describe('Field Checkbox', () => {
 
 			const input = queryByLabelText('Boolean');
 			userEvent.click(input);
-			expect(onChange).toHaveBeenLastCalledWith(null, false);
+			expect(input).toBeChecked();
 		});
 
 		it('check it shows the label when we set it up', () => {
