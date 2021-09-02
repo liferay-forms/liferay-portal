@@ -18,18 +18,20 @@ import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.report.DDMFormFieldTypeReportProcessor;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import org.osgi.service.component.annotations.Component;
 
 /**
- * @author Marcos Martins
+ * @author Rodrigo Paulino
  */
 @Component(
-	immediate = true, property = "ddm.form.field.type.name=radio",
+	immediate = true, property = "ddm.form.field.type.name=checkbox",
 	service = DDMFormFieldTypeReportProcessor.class
 )
-public class RadioDDMFormFieldTypeReportProcessor
+public class CheckboxDDMFormFieldTypeReportProcessor
 	implements DDMFormFieldTypeReportProcessor {
 
 	@Override
@@ -43,6 +45,15 @@ public class RadioDDMFormFieldTypeReportProcessor
 		String valueString = value.getString(value.getDefaultLocale());
 
 		if (Validator.isNotNull(valueString)) {
+			if (GetterUtil.getBoolean(valueString)) {
+				valueString = LanguageUtil.get(
+					value.getDefaultLocale(), "true");
+			}
+			else {
+				valueString = LanguageUtil.get(
+					value.getDefaultLocale(), "false");
+			}
+
 			updateData(
 				ddmFormInstanceReportEvent,
 				fieldJSONObject.getJSONObject("values"), valueString);
