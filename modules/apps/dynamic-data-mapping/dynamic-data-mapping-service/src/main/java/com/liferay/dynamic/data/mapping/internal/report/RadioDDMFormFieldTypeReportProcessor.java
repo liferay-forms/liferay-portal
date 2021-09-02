@@ -14,7 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.internal.report;
 
-import com.liferay.dynamic.data.mapping.constants.DDMFormInstanceReportConstants;
 import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.report.DDMFormFieldTypeReportProcessor;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
@@ -47,24 +46,9 @@ public class RadioDDMFormFieldTypeReportProcessor
 		String valueString = value.getString(value.getDefaultLocale());
 
 		if (Validator.isNotNull(valueString)) {
-			JSONObject valuesJSONObject = fieldJSONObject.getJSONObject(
-				"values");
-
-			int count = valuesJSONObject.getInt(valueString, 0);
-
-			if (ddmFormInstanceReportEvent.equals(
-					DDMFormInstanceReportConstants.EVENT_ADD_RECORD_VERSION)) {
-
-				count++;
-			}
-			else if (ddmFormInstanceReportEvent.equals(
-						DDMFormInstanceReportConstants.
-							EVENT_DELETE_RECORD_VERSION)) {
-
-				count--;
-			}
-
-			valuesJSONObject.put(valueString, count);
+			updateData(
+				ddmFormInstanceReportEvent,
+				fieldJSONObject.getJSONObject("values"), valueString);
 		}
 
 		return fieldJSONObject;
