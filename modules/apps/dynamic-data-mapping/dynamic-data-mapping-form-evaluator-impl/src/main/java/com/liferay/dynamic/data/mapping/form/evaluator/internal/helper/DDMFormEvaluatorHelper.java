@@ -53,6 +53,7 @@ import com.liferay.portal.kernel.resource.bundle.ResourceBundleLoader;
 import com.liferay.portal.kernel.resource.bundle.ResourceBundleLoaderUtil;
 import com.liferay.portal.kernel.util.AggregateResourceBundle;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
@@ -108,7 +109,7 @@ public class DDMFormEvaluatorHelper {
 		_ddmFormLayout = ddmFormEvaluatorEvaluateRequest.getDDMFormLayout();
 
 		_ddmFormEvaluatorRuleHelper = new DDMFormEvaluatorRuleHelper(
-			_ddmFormFieldsMap, ddmFormEvaluatorExpressionObserver);
+			_ddmFormFieldsMap, ddmFormEvaluatorExpressionObserver, this);
 
 		ddmFormEvaluatorDDMExpressionFieldAccessor =
 			new DDMFormEvaluatorExpressionFieldAccessor(
@@ -170,6 +171,39 @@ public class DDMFormEvaluatorHelper {
 			getDisabledPagesIndexes());
 
 		return formEvaluatorEvaluateResponse.build();
+	}
+
+	protected Map<String, Object> calculateAction(DDMFormRule ddmFormRule) {
+		final Map<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
+			temporaryChanges =
+				HashMapBuilder.
+					<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
+						putAll(
+							_ddmFormFieldsPropertyChanges
+					).build();
+
+		_ddmFormFieldsPropertyChanges.clear();
+
+		List<String> actions = ddmFormRule.getActions();
+
+		Stream<String> stream = actions.stream();
+
+		evaluateDDMFormRuleAction(stream.collect(Collectors.joining(" AND ")));
+
+		_ddmFormFieldsPropertyChanges.forEach(
+			(ddmFormFieldContextKey, ddmFormFieldProperties) -> {
+				Map<String, Object> ddmFormFieldPropertyChanges =
+					_ddmFormFieldsPropertyChanges.get(ddmFormFieldContextKey);
+
+				_ddmFormFieldsAffectedByCalculate.put(
+					ddmFormFieldContextKey.getName(),
+					ddmFormFieldPropertyChanges.get("value"));
+			});
+
+		_ddmFormFieldsPropertyChanges.clear();
+		_ddmFormFieldsPropertyChanges.putAll(temporaryChanges);
+
+		return fieldsAffectedByCalculateRule();
 	}
 
 	protected <T> DDMExpression<T> createExpression(String expression)
@@ -338,6 +372,10 @@ public class DDMFormEvaluatorHelper {
 
 		forEachEntry(
 			nameVisibilityExpressionMap, this::evaluateVisibilityExpression);
+	}
+
+	protected Map<String, Object> fieldsAffectedByCalculateRule() {
+		return _ddmFormFieldsAffectedByCalculate;
 	}
 
 	protected boolean filterFieldsWithDDMFormFieldValidation(
@@ -1017,6 +1055,8 @@ public class DDMFormEvaluatorHelper {
 	private final DDMFormEvaluatorFormValuesHelper
 		_ddmFormEvaluatorFormValuesHelper;
 	private final DDMFormEvaluatorRuleHelper _ddmFormEvaluatorRuleHelper;
+	private final Map<String, Object> _ddmFormFieldsAffectedByCalculate =
+		new HashMap<>();
 	private final Map<String, DDMFormField> _ddmFormFieldsMap;
 	private final Map<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
 		_ddmFormFieldsPropertyChanges = new HashMap<>();

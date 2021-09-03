@@ -21,6 +21,7 @@ import com.liferay.dynamic.data.mapping.model.DDMFormRule;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Collection;
 import java.util.List;
@@ -36,11 +37,13 @@ public class DDMFormEvaluatorRuleHelper {
 
 	public DDMFormEvaluatorRuleHelper(
 		Map<String, DDMFormField> ddmFormFieldsMap,
-		DDMFormEvaluatorExpressionObserver ddmFormEvaluatorExpressionObserver) {
+		DDMFormEvaluatorExpressionObserver ddmFormEvaluatorExpressionObserver,
+		DDMFormEvaluatorHelper ddmFormEvaluatorHelper) {
 
 		_ddmFormFieldsMap = ddmFormFieldsMap;
 		_ddmFormEvaluatorExpressionObserver =
 			ddmFormEvaluatorExpressionObserver;
+		_ddmFormEvaluatorHelper = ddmFormEvaluatorHelper;
 	}
 
 	public void checkFieldAffectedByAction(DDMFormRule ddmFormRule) {
@@ -65,18 +68,10 @@ public class DDMFormEvaluatorRuleHelper {
 
 		if (containsAction(
 				ddmFormRule, "calculate", ddmFormField.getName(),
-				GetterUtil.getString(ddmFormField.getProperty("value")))) {
+				GetterUtil.getString(ddmFormField.getProperty("value"))) ||
+			containsCalculatedAction(ddmFormRule, ddmFormField)) {
 
-			String newValue = StringPool.BLANK;
-
-			LocalizedValue predefinedValue = ddmFormField.getPredefinedValue();
-
-			if (predefinedValue != null) {
-				newValue = GetterUtil.getString(
-					predefinedValue.getString(
-						new Locale(
-							(String)ddmFormField.getProperty("locale"))));
-			}
+			String newValue = getLocalizedPredefinedValue(ddmFormField);
 
 			UpdateFieldPropertyRequest.Builder builder =
 				UpdateFieldPropertyRequest.Builder.newBuilder(
@@ -151,8 +146,59 @@ public class DDMFormEvaluatorRuleHelper {
 			action -> Objects.equals(setPropertyAction, action));
 	}
 
+	protected boolean containsCalculatedAction(
+		DDMFormRule ddmFormRule, DDMFormField currentField) {
+
+		List<String> actions = ddmFormRule.getActions();
+		String ddmFormFieldName = currentField.getName();
+
+		for (String action : actions) {
+			if (Validator.isNotNull(
+					currentField.getProperty("localizedValue")) &&
+				action.contains("calculate") &&
+				ddmFormFieldName.contains("Numeric")) {
+
+				Map<String, Object> calculateActionsResult =
+					_ddmFormEvaluatorHelper.calculateAction(ddmFormRule);
+
+				Object objectResult = calculateActionsResult.get(
+					ddmFormFieldName);
+
+				if (Validator.isNotNull(objectResult)) {
+					String stringResult = objectResult.toString();
+
+					if (stringResult.equals(
+							GetterUtil.getString(
+								currentField.getProperty("value"))) ||
+						(stringResult.equals("0") &&
+						 !GetterUtil.getBoolean(
+							 currentField.getProperty("focused")))) {
+
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	protected String getLocalizedPredefinedValue(DDMFormField ddmFormField) {
+		LocalizedValue predefinedValue = ddmFormField.getPredefinedValue();
+		String newValue = StringPool.BLANK;
+
+		if (predefinedValue != null) {
+			newValue = GetterUtil.getString(
+				predefinedValue.getString(
+					new Locale((String)ddmFormField.getProperty("locale"))));
+		}
+
+		return newValue;
+	}
+
 	private final DDMFormEvaluatorExpressionObserver
 		_ddmFormEvaluatorExpressionObserver;
+	private final DDMFormEvaluatorHelper _ddmFormEvaluatorHelper;
 	private final Map<String, DDMFormField> _ddmFormFieldsMap;
 
 }
