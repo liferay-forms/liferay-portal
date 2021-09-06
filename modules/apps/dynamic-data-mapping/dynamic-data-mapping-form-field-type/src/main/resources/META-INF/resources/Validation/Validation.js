@@ -94,6 +94,8 @@ const Validation = ({
 				label={label}
 				name="enableValidation"
 				onChange={(event, enableValidation) => {
+					const {value} = event.target;
+					enableValidation = value;
 					dispatch({
 						payload: {
 							enableValidation,
