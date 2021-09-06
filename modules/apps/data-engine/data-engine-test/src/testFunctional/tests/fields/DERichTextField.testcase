@@ -135,7 +135,7 @@ definition {
 			fieldName = "Rich Text");
 	}
 
-	@description = "This is a stubbed description"
+	@description = "This is a test for LRQA-69427. This test verifies that data inputted on the Rich Text field persists."
 	@priority = "5"
 	test CanInputData {
 		NavItem.gotoStructures();
@@ -176,7 +176,7 @@ definition {
 
 	}
 
-	@description = "This is a stubbed description"
+	@description = "This is a test for LRQA-69427. This test verifies that upon duplicating a repeatable field, inputted data on both fields persists"
 	@priority = "5"
 	test CanInputDataOnDuplicatedField {
 		NavItem.gotoStructures();
@@ -224,7 +224,7 @@ definition {
 			index = "2");
 	}
 
-	@description = "This is a stubbed description"
+	@description = "This is a test for LRQA-69427. This test verifies that is not possible to publish the Web Content with a required field blank	"
 	@priority = "4"
 	test CanNotPublishBlankRequiredField {
 		NavItem.gotoStructures();
@@ -250,7 +250,7 @@ definition {
 		FormViewBuilder.validateObjectLabelOptionTextIsShown(text = "This field is required.");
 	}
 
-	@description = "This is a stubbed description"
+	@description = "This is a test for LRQA-69427. This test verifies that is possible to remove a duplicated field (repeatable)"
 	@priority = "4"
 	test CanRemoveDuplicatedField {
 		NavItem.gotoStructures();
