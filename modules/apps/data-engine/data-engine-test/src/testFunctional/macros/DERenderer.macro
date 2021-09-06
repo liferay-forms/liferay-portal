@@ -24,7 +24,6 @@ definition {
 			value1 = "${value}");
 	}
 
-<<<<<<< HEAD
 	macro assertDataInGridField {
 		if (!(isSet(fieldIndex))) {
 			var fieldIndex = "1";
@@ -40,8 +39,6 @@ definition {
 			locator1 = "DataEngineRenderer#GRID_OPTION_INDEXED");
 	}
 
-=======
->>>>>>> 96b53cf (LRQA-69427 Add CanInputData test)
 	macro assertDataInImageField {
 		if (!(isSet(index))) {
 			var index = "1";
