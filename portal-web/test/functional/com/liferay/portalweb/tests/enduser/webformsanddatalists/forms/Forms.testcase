@@ -2281,8 +2281,6 @@ definition {
 			category = "Content &amp; Data",
 			portlet = "Forms");
 
-		LexiconEntry.changeDisplayStyle(displayStyle = "list");
-
 		FormsAdminNavigator.gotoViewEntries();
 
 		FormsAdmin.viewFormTableEntry(
