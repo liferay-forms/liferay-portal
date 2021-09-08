@@ -15,10 +15,13 @@
 package com.liferay.dynamic.data.mapping.form.field.type.internal.image;
 
 import com.liferay.document.library.kernel.service.DLAppService;
+import com.liferay.dynamic.data.mapping.configuration.DDMWebConfiguration;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueAccessor;
 import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
+import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -26,18 +29,23 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.trash.TrashHelper;
 
 import java.util.Locale;
+import java.util.Map;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Leonardo Barros
  */
 @Component(
+	configurationPid = "com.liferay.dynamic.data.mapping.configuration.DDMWebConfiguration",
 	immediate = true,
 	property = "ddm.form.field.type.name=" + DDMFormFieldTypeConstants.IMAGE,
 	service = {
@@ -89,15 +97,28 @@ public class ImageDDMFormFieldValueAccessor
 
 	@Override
 	public boolean isEmpty(DDMFormFieldValue ddmFormFieldValue, Locale locale) {
+		DDMFormField ddmFormField = ddmFormFieldValue.getDDMFormField();
+
 		JSONObject jsonObject = getValue(ddmFormFieldValue, locale);
 
-		if (Validator.isNull(jsonObject.getString("description")) ||
+		if (((!_ddmWebConfiguration.
+				enableSettingTheImageDescriptionAsOptional() ||
+			  GetterUtil.getBoolean(
+				  ddmFormField.getProperty("requiredDescription"))) &&
+			 Validator.isNull(jsonObject.getString("description"))) ||
 			Validator.isNull(jsonObject.getString("url"))) {
 
 			return true;
 		}
 
 		return false;
+	}
+
+	@Activate
+	@Modified
+	protected void activate(Map<String, Object> properties) {
+		_ddmWebConfiguration = ConfigurableUtil.createConfigurable(
+			DDMWebConfiguration.class, properties);
 	}
 
 	@Reference
@@ -124,6 +145,8 @@ public class ImageDDMFormFieldValueAccessor
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ImageDDMFormFieldValueAccessor.class);
+
+	private volatile DDMWebConfiguration _ddmWebConfiguration;
 
 	@Reference
 	private DLAppService _dlAppService;
