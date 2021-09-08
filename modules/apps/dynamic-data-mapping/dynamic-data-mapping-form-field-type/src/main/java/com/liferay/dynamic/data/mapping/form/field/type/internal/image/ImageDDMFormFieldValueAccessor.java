@@ -15,8 +15,10 @@
 package com.liferay.dynamic.data.mapping.form.field.type.internal.image;
 
 import com.liferay.document.library.kernel.service.DLAppService;
+import com.liferay.dynamic.data.mapping.configuration.DDMWebConfiguration;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueAccessor;
 import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -25,7 +27,10 @@ import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.trash.TrashHelper;
 
@@ -89,9 +94,35 @@ public class ImageDDMFormFieldValueAccessor
 
 	@Override
 	public boolean isEmpty(DDMFormFieldValue ddmFormFieldValue, Locale locale) {
+		DDMFormField ddmFormField = ddmFormFieldValue.getDDMFormField();
+
+		boolean requiredDescription = GetterUtil.getBoolean(
+			ddmFormField.getProperty("requiredDescription"));
+
+		boolean enableImageFieldRequiredDescription = false;
+
+		try {
+			DDMWebConfiguration ddmWebConfiguration =
+				ConfigurationProviderUtil.getSystemConfiguration(
+					DDMWebConfiguration.class);
+
+			enableImageFieldRequiredDescription =
+				ddmWebConfiguration.enableImageFieldRequiredDescription();
+		}
+		catch (ConfigurationException configurationException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(configurationException);
+			}
+		}
+
+		if (!enableImageFieldRequiredDescription) {
+			requiredDescription = true;
+		}
+
 		JSONObject jsonObject = getValue(ddmFormFieldValue, locale);
 
-		if (Validator.isNull(jsonObject.getString("description")) ||
+		if ((requiredDescription &&
+			 Validator.isNull(jsonObject.getString("description"))) ||
 			Validator.isNull(jsonObject.getString("url"))) {
 
 			return true;
