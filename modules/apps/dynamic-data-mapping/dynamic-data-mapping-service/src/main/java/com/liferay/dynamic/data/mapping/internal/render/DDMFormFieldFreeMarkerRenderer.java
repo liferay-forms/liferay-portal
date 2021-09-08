@@ -14,6 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.internal.render;
 
+import com.liferay.dynamic.data.mapping.configuration.DDMWebConfiguration;
 import com.liferay.dynamic.data.mapping.constants.DDMConstants;
 import com.liferay.dynamic.data.mapping.constants.DDMPortletKeys;
 import com.liferay.dynamic.data.mapping.constants.DDMTemplateConstants;
@@ -22,6 +23,7 @@ import com.liferay.dynamic.data.mapping.internal.util.DDMImpl;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderer;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
@@ -39,6 +41,8 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.language.constants.LanguageConstants;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil;
 import com.liferay.portal.kernel.security.auth.AuthTokenUtil;
 import com.liferay.portal.kernel.template.Template;
 import com.liferay.portal.kernel.template.TemplateConstants;
@@ -175,6 +179,41 @@ public class DDMFormFieldFreeMarkerRenderer implements DDMFormFieldRenderer {
 			"repeatable", Boolean.toString(ddmFormField.isRepeatable()));
 		fieldContext.put(
 			"required", Boolean.toString(ddmFormField.isRequired()));
+
+		boolean enableImageFieldRequiredDescription = false;
+
+		try {
+			DDMWebConfiguration ddmWebConfiguration =
+				ConfigurationProviderUtil.getSystemConfiguration(
+					DDMWebConfiguration.class);
+
+			enableImageFieldRequiredDescription =
+				ddmWebConfiguration.enableImageFieldRequiredDescription();
+		}
+		catch (ConfigurationException configurationException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(configurationException);
+			}
+		}
+
+		if (Objects.equals(ddmFormField.getType(), DDMFormFieldType.IMAGE)) {
+			if (ddmFormField.isRequired()) {
+				if (enableImageFieldRequiredDescription) {
+					fieldContext.put(
+						"requiredDescription",
+						GetterUtil.getBoolean(
+							ddmFormField.getProperty("requiredDescription"),
+							true));
+				}
+				else {
+					fieldContext.put("requiredDescription", true);
+				}
+			}
+			else {
+				fieldContext.put("requiredDescription", false);
+			}
+		}
+
 		fieldContext.put(
 			"showLabel", Boolean.toString(ddmFormField.isShowLabel()));
 		fieldContext.put("type", ddmFormField.getType());

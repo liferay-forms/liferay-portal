@@ -807,6 +807,14 @@ public class DDMImpl implements DDM {
 				"type", ddmFormField.getType()
 			);
 
+			if (Objects.equals(
+					ddmFormField.getType(), DDMFormFieldType.IMAGE)) {
+
+				jsonObject.put(
+					"requiredDescription",
+					ddmFormField.getProperty("requiredDescription"));
+			}
+
 			addDDMFormFieldLocalizedProperties(
 				jsonObject, ddmFormField, defaultLocale, defaultLocale);
 
