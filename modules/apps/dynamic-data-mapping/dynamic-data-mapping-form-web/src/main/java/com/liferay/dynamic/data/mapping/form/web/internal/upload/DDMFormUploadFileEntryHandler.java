@@ -52,10 +52,17 @@ public class DDMFormUploadFileEntryHandler implements UploadFileEntryHandler {
 	public FileEntry upload(UploadPortletRequest uploadPortletRequest)
 		throws IOException, PortalException {
 
+		return upload(uploadPortletRequest, "file");
+	}
+
+	public FileEntry upload(
+			UploadPortletRequest uploadPortletRequest, String parameterName)
+		throws IOException, PortalException {
+
 		File file = null;
 
 		try (InputStream inputStream = uploadPortletRequest.getFileAsStream(
-				"file")) {
+				parameterName)) {
 
 			long formInstanceId = ParamUtil.getLong(
 				uploadPortletRequest, "formInstanceId");
@@ -64,7 +71,7 @@ public class DDMFormUploadFileEntryHandler implements UploadFileEntryHandler {
 
 			file = FileUtil.createTempFile(inputStream);
 
-			String fileName = uploadPortletRequest.getFileName("file");
+			String fileName = uploadPortletRequest.getFileName(parameterName);
 
 			_ddmFormUploadValidator.validateFileSize(file, fileName);
 
@@ -73,6 +80,10 @@ public class DDMFormUploadFileEntryHandler implements UploadFileEntryHandler {
 			ThemeDisplay themeDisplay =
 				(ThemeDisplay)uploadPortletRequest.getAttribute(
 					WebKeys.THEME_DISPLAY);
+
+			if (groupId == 0) {
+				groupId = themeDisplay.getScopeGroupId();
+			}
 
 			return addFileEntry(
 				formInstanceId, groupId, folderId, file, fileName,
@@ -88,7 +99,8 @@ public class DDMFormUploadFileEntryHandler implements UploadFileEntryHandler {
 			String fileName, String mimeType, ThemeDisplay themeDisplay)
 		throws PortalException {
 
-		if (!DDMFormInstancePermission.contains(
+		if ((formInstanceId != 0) &&
+			!DDMFormInstancePermission.contains(
 				themeDisplay.getPermissionChecker(), formInstanceId,
 				DDMActionKeys.ADD_FORM_INSTANCE_RECORD)) {
 
