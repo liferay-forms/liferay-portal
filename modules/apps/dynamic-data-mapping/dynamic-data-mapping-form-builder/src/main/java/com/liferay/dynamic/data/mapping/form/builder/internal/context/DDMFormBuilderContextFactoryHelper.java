@@ -16,6 +16,7 @@ package com.liferay.dynamic.data.mapping.form.builder.internal.context;
 
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
+import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormTemplateContextFactory;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
@@ -264,10 +265,22 @@ public class DDMFormBuilderContextFactoryHelper {
 
 			DDMForm ddmForm = ddmFormField.getDDMForm();
 
-			Value value = doCreateDDMFormFieldValue(
-				ddmFormFieldTypeSetting,
-				ddmFormFieldProperties.get(propertyName),
-				ddmForm.getAvailableLocales());
+			Object propertyValue = ddmFormFieldProperties.get(propertyName);
+
+			Value value = null;
+
+			if (Objects.equals(
+					ddmFormField.getType(), DDMFormFieldTypeConstants.IMAGE) &&
+				Objects.equals(propertyName, "requiredDescription") &&
+				(propertyValue == null)) {
+
+				value = new UnlocalizedValue(Boolean.TRUE.toString());
+			}
+			else {
+				value = doCreateDDMFormFieldValue(
+					ddmFormFieldTypeSetting, propertyValue,
+					ddmForm.getAvailableLocales());
+			}
 
 			ddmFormFieldValue.setValue(value);
 
