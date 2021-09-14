@@ -159,6 +159,30 @@ public class DDMFormViewFormInstanceRecordsDisplayContext {
 		return availableLocales.size();
 	}
 
+	public String getBooleanTranslatedValues(String values, Locale locale) {
+		Stream<String> stream = Arrays.stream(values.split(", "));
+
+		String[] translatedColumnValues = stream.map(
+			value -> value.toLowerCase()
+		).map(
+			value -> LanguageUtil.get(locale, value)
+		).map(
+			value -> value.concat(", ")
+		).toArray(
+			String[]::new
+		);
+
+		StringBuilder translatedValues = new StringBuilder();
+
+		for (String translatedValue : translatedColumnValues) {
+			translatedValues.append(translatedValue);
+		}
+
+		translatedValues.setLength(translatedValues.length() - 2);
+
+		return translatedValues.toString();
+	}
+
 	public String getClearResultsURL() throws PortletException {
 		return PortletURLBuilder.create(
 			PortletURLUtil.clone(getPortletURL(), _renderResponse)
