@@ -136,11 +136,39 @@ definition {
 	}
 
 	@description = "This is a stubbed description"
-	@ignore = "true"
 	@priority = "5"
 	test CanInputLink {
+		JSONLayout.addPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "Test Page Name");
 
-		// TODO LRQA-70110	Refactor of Renderer Link to Page Field
+		NavItem.gotoStructures();
+
+		WebContentStructures.addCP(structureName = "WC Structure Title");
+
+		DEBuilder.addField(
+			fieldLabel = "Link to Page",
+			fieldName = "Link to Page");
+
+		WebContentStructures.saveCP();
+
+		NavItem.gotoWebContent();
+
+		WebContentNavigator.gotoAddWithStructureCP(structureName = "WC Structure Title");
+
+		PortletEntry.inputTitle(title = "Web Content Title");
+
+		DERenderer.inputDataInLinkToPageField(
+			webContentLinkToPageFieldLabel = "Link to Page",
+			webContentLinkToPage = "Test Page Name");
+
+		Button.clickPublish();
+
+		WebContentNavigator.gotoEditCP(webContentTitle = "Web Content Title");
+
+		DERenderer.assertDataInLinktoPageField(
+			webContentLinkToPageFieldLabel = "Link to Page",
+			webContentLinkToPage = "Test Page Name");
 
 	}
 
@@ -284,5 +312,4 @@ definition {
 			fieldFieldLabel = "Link to Page",
 			fieldName = "Link to Page");
 	}
-
 }
