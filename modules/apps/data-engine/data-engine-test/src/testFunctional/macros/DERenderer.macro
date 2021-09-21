@@ -65,6 +65,21 @@ definition {
 		}
 	}
 
+	macro assertDataInLinktoPageField {
+		if (!(isSet(index))) {
+			var index = "1";
+		}
+
+		var selectedPage = selenium.getElementValue("xpath=(//label[normalize-space(text())='${webContentLinkToPageFieldLabel}']/following-sibling::div//div[contains(@class,'input-group')]//input[contains(@type,'text')])[${index}]");
+
+		if (contains("${selectedPage}", "${webContentLinkToPage}")) {
+			echo("The ${selectedPage} is shown in field.");
+		}
+		else {
+			TestUtils.fail(message = "The ${selectedPage} is not shown in field.");
+		}
+	}
+
 	macro assertDataInMultipleSelectionField {
 		if (!(isSet(fieldIndex))) {
 			var fieldIndex = "1";
@@ -157,6 +172,21 @@ definition {
 			key_fieldLabel = "${fieldLabel}",
 			key_image = "${imageField}",
 			locator1 = "DataEngineRenderer#IMAGE_PICKER_PREVIEW_INDEXED");
+	}
+
+	macro assertLinktoPageNotPresent {
+		if (!(isSet(index))) {
+			var index = "1";
+		}
+
+		var selectedPage = selenium.getElementValue("xpath=(//label[normalize-space(text())='${webContentLinkToPageFieldLabel}']/following-sibling::div//div[contains(@class,'input-group')]//input[contains(@type,'text')])[${index}]");
+
+		if (!(contains("${selectedPage}", "${webContentLinkToPage}"))) {
+			echo("The ${selectedPage} is not shown in field.");
+		}
+		else {
+			TestUtils.fail(message = "The ${selectedPage} is shown in field.");
+		}
 	}
 
 	macro assertMultipleSelectionOptionIsUnchecked {
@@ -338,6 +368,31 @@ definition {
 				locator1 = "DataEngineRenderer#IMAGE_DESCRIPTION_INDEXED",
 				value1 = "${imageDescription}");
 		}
+	}
+
+	macro inputDataInLinkToPageField {
+		if (!(isSet(index))) {
+			var index = "1";
+		}
+
+		WaitForLiferayEvent.initializeLiferayEventLog();
+
+		Click(
+			key_fieldLabel = "${webContentLinkToPageFieldLabel}",
+			key_index = "${index}",
+			key_text = "Select",
+			locator1 = "DataEngineRenderer#BUTTON_LABEL_INDEXED");
+
+		SelectFrame(locator1 = "IFrame#MODAL_BODY");
+
+		Portlet.expandTree();
+
+		AssertClick.assertPartialTextClickAt(
+			key_nodeName = "${webContentLinkToPage}",
+			locator1 = "Treeview#NODE_UNSELECTED",
+			value1 = "${webContentLinkToPage}");
+
+		SelectFrameTop();
 	}
 
 	macro inputDataInMultipleSelectionField {
