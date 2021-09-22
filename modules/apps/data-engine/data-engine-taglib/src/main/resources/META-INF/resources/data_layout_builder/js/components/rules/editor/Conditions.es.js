@@ -156,7 +156,15 @@ function evaluateFieldLeft(fieldLeft, value) {
 		return props;
 	}
 
-	const {editorConfig, name, options = [], type} = fieldLeft;
+	const {
+		editorConfig,
+		name,
+		options = [],
+		type,
+		inputMask,
+		symbols,
+		inputMaskFormat,
+	} = fieldLeft;
 
 	switch (type) {
 		case 'checkbox': {
@@ -181,6 +189,12 @@ function evaluateFieldLeft(fieldLeft, value) {
 					instanceId
 				);
 				props.name = generateName(name, {instanceId});
+			}
+			break;
+		}
+		case 'numeric': {
+			if (inputMask) {
+				props.symbols = symbols;
 			}
 			break;
 		}
