@@ -80,7 +80,7 @@ definition {
 			fieldName = "Web Content");
 	}
 
-	@description = "This is a stubbed description"
+	@description = "This is a test for LRQA-70033. This test verifies that is possible to clear the Web Content field"
 	@priority = "5"
 	test CanClearInput {
 		NavItem.gotoStructures();
@@ -155,7 +155,7 @@ definition {
 			fieldName = "Web Content");
 	}
 
-	@description = "This is a stubbed description"
+	@description = "This is a test for LRQA-70033. This test verifies that upon duplicating a repeatable field, inputted data on both fields persists"
 	@priority = "5"
 	test CanInputDataOnDuplicatedField {
 		NavItem.gotoStructures();
@@ -203,7 +203,7 @@ definition {
 			contentName = "Web Content Title 2");
 	}
 
-	@description = "This is a stubbed description"
+	@description = "This is a test for LRQA-70033. This test verifies that is possible to link an Web Content on the Web Content field"
 	@priority = "5"
 	test CanInputLink {
 		NavItem.gotoStructures();
@@ -235,7 +235,7 @@ definition {
 			contentName = "Web Content Title 1");
 	}
 
-	@description = "This is a stubbed description"
+	@description = "This is a test for LRQA-70033. This test verifies that is not possible to publish the Web Content with a required field blank"
 	@priority = "4"
 	test CanNotPublishBlankRequiredField {
 		NavItem.gotoStructures();
@@ -261,7 +261,7 @@ definition {
 		FormViewBuilder.validateObjectLabelOptionTextIsShown(text = "This field is required.");
 	}
 
-	@description = "This is a stubbed description"
+	@description = "This is a test for LRQA-70033. This test verifies that is possible to remove a duplicated field (repeatable)"
 	@priority = "4"
 	test CanRemoveDuplicatedField {
 		NavItem.gotoStructures();
