@@ -62,17 +62,29 @@ const getMaskedValue = ({
 	dataType,
 	includeThousandsSeparator = false,
 	inputMaskFormat,
+	symbolChanged,
 	symbols,
 	value,
 }: {
 	dataType: NumericDataType;
 	includeThousandsSeparator?: boolean;
 	inputMaskFormat: string;
+	symbolChanged: boolean;
 	symbols: ISymbols;
 	value: string;
 }): IMaskedNumber => {
 	let mask;
 	if (dataType === 'double') {
+		const symbolsValue = value.match(NON_NUMERIC_REGEX);
+
+		if (
+			symbolChanged &&
+			symbolsValue &&
+			!value.includes(symbols.decimalSymbol)
+		) {
+			value = value.replace(symbolsValue[0], symbols.decimalSymbol);
+		}
+
 		const config: INumberMaskConfig = {
 			allowDecimal: true,
 			allowLeadingZeroes: true,
@@ -169,7 +181,7 @@ const Numeric: React.FC<IProps> = ({
 	placeholder,
 	predefinedValue,
 	readOnly,
-	symbols: symbolsProp = {decimalSymbol: '.'},
+	symbols: symbolsProp = {decimalSymbol: '.', symbolChanged: false},
 	value,
 	...otherProps
 }) => {
@@ -179,6 +191,7 @@ const Numeric: React.FC<IProps> = ({
 		return inputMask
 			? {
 					decimalSymbol: symbolsProp.decimalSymbol,
+					symbolChanged: false,
 					thousandsSeparator:
 						symbolsProp.thousandsSeparator == 'none'
 							? null
@@ -202,6 +215,7 @@ const Numeric: React.FC<IProps> = ({
 						symbols.thousandsSeparator
 					),
 					inputMaskFormat: inputMaskFormat as string,
+					symbolChanged: symbolsProp.symbolChanged,
 					symbols,
 					value: newValue,
 			  })
@@ -217,6 +231,7 @@ const Numeric: React.FC<IProps> = ({
 		inputMask,
 		inputMaskFormat,
 		localizedValue,
+		symbolsProp.symbolChanged,
 		placeholder,
 		predefinedValue,
 		value,
@@ -242,6 +257,7 @@ const Numeric: React.FC<IProps> = ({
 			? getMaskedValue({
 					dataType,
 					inputMaskFormat: inputMaskFormat as string,
+					symbolChanged: false,
 					symbols,
 					value,
 			  })

@@ -55,6 +55,7 @@ interface IProps {
 
 export interface ISymbols {
 	decimalSymbol: DecimalSymbol;
+	symbolChanged: boolean;
 	thousandsSeparator?: ThousandsSeparator | null;
 }
 
@@ -159,6 +160,7 @@ const NumericInputMask: React.FC<IProps> = ({
 						onChange={(event: any, value: any) => {
 							handleChange('symbols', {
 								decimalSymbol: decimalSymbol?.[0],
+								symbolChanged: true,
 								thousandsSeparator: value[0],
 							});
 
@@ -181,6 +183,7 @@ const NumericInputMask: React.FC<IProps> = ({
 						onChange={(event: any, value: any) => {
 							handleChange('symbols', {
 								decimalSymbol: value[0],
+								symbolChanged: true,
 								thousandsSeparator: thousandsSeparator?.includes(
 									'none'
 								)

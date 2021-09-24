@@ -40,6 +40,7 @@ interface IProps {
 }
 export interface ISymbols {
 	decimalSymbol: DecimalSymbol;
+	symbolChanged: boolean;
 	thousandsSeparator?: ThousandsSeparator | null;
 }
 interface ISelectProps<T> {
