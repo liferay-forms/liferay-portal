@@ -122,6 +122,8 @@ public class DDMFormEvaluatorHelper {
 		ddmFormEvaluatorExpressionParameterAccessor =
 			new DDMFormEvaluatorExpressionParameterAccessor(
 				_ddmFormEvaluatorEvaluateRequest);
+
+		_ddmFieldAffected = false;
 	}
 
 	public DDMFormEvaluatorEvaluateResponse evaluate() {
@@ -247,6 +249,8 @@ public class DDMFormEvaluatorHelper {
 					stream.collect(Collectors.joining(" AND ")));
 
 				_evaluatedActions = ListUtil.copy(actions);
+
+				_ddmFieldAffected = true;
 			}
 			else {
 				DDMFormRule copyDDMFormRule = new DDMFormRule(ddmFormRule);
@@ -265,8 +269,10 @@ public class DDMFormEvaluatorHelper {
 					copyDDMFormRule.setActions(actionsNotEvaluated);
 				}
 
-				_ddmFormEvaluatorRuleHelper.checkFieldAffectedByAction(
-					copyDDMFormRule);
+				if (!_ddmFieldAffected) {
+					_ddmFormEvaluatorRuleHelper.checkFieldAffectedByAction(
+						copyDDMFormRule);
+				}
 			}
 		}
 	}
@@ -1011,6 +1017,7 @@ public class DDMFormEvaluatorHelper {
 		DDMFormEvaluatorHelper.class);
 
 	private final DDMExpressionFactory _ddmExpressionFactory;
+	private boolean _ddmFieldAffected;
 	private final DDMForm _ddmForm;
 	private final DDMFormEvaluatorEvaluateRequest
 		_ddmFormEvaluatorEvaluateRequest;
