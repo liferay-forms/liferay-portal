@@ -36,6 +36,10 @@ public class DDMUserPersonalFolderItemSelectorCriterion
 		return _folderId;
 	}
 
+	public long getFormInstanceId() {
+		return _formInstanceId;
+	}
+
 	public long getGroupId() {
 		return _groupId;
 	}
@@ -44,11 +48,16 @@ public class DDMUserPersonalFolderItemSelectorCriterion
 		_folderId = folderId;
 	}
 
+	public void setFormInstanceId(long formInstanceId) {
+		_formInstanceId = formInstanceId;
+	}
+
 	public void setGroupId(long groupId) {
 		_groupId = groupId;
 	}
 
 	private long _folderId;
+	private long _formInstanceId;
 	private long _groupId;
 
 }
