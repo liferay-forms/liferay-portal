@@ -31,6 +31,34 @@ const localDataStorage = {
 export const RuleEditor = ({onCancel, onSave, rule, ...otherProps}) => {
 	const [disabled, setDisabled] = useState(true);
 
+	function convertNumericDataToNumber(rule) {
+		const {conditions} = rule;
+
+		conditions.map((condition) => {
+			const fieldInfo = condition.operands[0];
+			const fieldValue = condition.operands[1];
+
+			if (
+				fieldInfo.value.includes('Numeric') &&
+				typeof fieldValue.value == 'string'
+			) {
+				if (
+					fieldValue.value.includes(',') ||
+					fieldValue.value.includes('.')
+				) {
+					fieldValue.type = 'double';
+					fieldValue.value = parseFloat(
+						fieldValue.value.replace(',', '.')
+					);
+				}
+				else {
+					fieldValue.type = 'integer';
+					fieldValue.value = parseInt(fieldValue.value, 10);
+				}
+			}
+		});
+	}
+
 	return (
 		<ClayForm
 			className="form-rule-builder"
@@ -62,6 +90,7 @@ export const RuleEditor = ({onCancel, onSave, rule, ...otherProps}) => {
 						disabled={disabled}
 						displayType="primary"
 						onClick={() => {
+							convertNumericDataToNumber(localDataStorage.rule);
 							onSave(localDataStorage.rule);
 							localDataStorage.rule = undefined;
 						}}
