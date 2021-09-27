@@ -451,6 +451,9 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributor
 				new DDMUserPersonalFolderItemSelectorCriterion(
 					folderId, groupId);
 
+		ddmUserPersonalFolderItemSelectorCriterion.setFormInstanceId(
+			ddmFormFieldRenderingContext.getDDMFormInstanceId());
+
 		ddmUserPersonalFolderItemSelectorCriterion.
 			setDesiredItemSelectorReturnTypes(
 				new FileEntryItemSelectorReturnType());
