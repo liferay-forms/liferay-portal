@@ -52,10 +52,17 @@ public class DDMFormUploadFileEntryHandler implements UploadFileEntryHandler {
 	public FileEntry upload(UploadPortletRequest uploadPortletRequest)
 		throws IOException, PortalException {
 
+		return upload(uploadPortletRequest, "file");
+	}
+
+	public FileEntry upload(
+			UploadPortletRequest uploadPortletRequest, String parameterName)
+		throws IOException, PortalException {
+
 		File file = null;
 
 		try (InputStream inputStream = uploadPortletRequest.getFileAsStream(
-				"file")) {
+				parameterName)) {
 
 			long formInstanceId = ParamUtil.getLong(
 				uploadPortletRequest, "formInstanceId");
@@ -64,7 +71,7 @@ public class DDMFormUploadFileEntryHandler implements UploadFileEntryHandler {
 
 			file = FileUtil.createTempFile(inputStream);
 
-			String fileName = uploadPortletRequest.getFileName("file");
+			String fileName = uploadPortletRequest.getFileName(parameterName);
 
 			_ddmFormUploadValidator.validateFileSize(file, fileName);
 
