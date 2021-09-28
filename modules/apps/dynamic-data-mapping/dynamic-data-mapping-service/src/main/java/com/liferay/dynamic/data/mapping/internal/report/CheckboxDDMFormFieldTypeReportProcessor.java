@@ -18,7 +18,6 @@ import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.report.DDMFormFieldTypeReportProcessor;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -46,12 +45,10 @@ public class CheckboxDDMFormFieldTypeReportProcessor
 
 		if (Validator.isNotNull(valueString)) {
 			if (GetterUtil.getBoolean(valueString)) {
-				valueString = LanguageUtil.get(
-					value.getDefaultLocale(), "true");
+				valueString = Boolean.TRUE.toString();
 			}
 			else {
-				valueString = LanguageUtil.get(
-					value.getDefaultLocale(), "false");
+				valueString = Boolean.FALSE.toString();
 			}
 
 			updateData(
