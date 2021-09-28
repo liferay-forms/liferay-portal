@@ -123,6 +123,10 @@ const getFormattedValue = ({
 		return {masked: '', raw: ''};
 	}
 
+	if (typeof value == 'number') {
+		value = Math.abs(value).toString(10);
+	}
+
 	const config: INumberMaskConfig = {
 		allowLeadingZeroes: true,
 		allowNegative: true,
