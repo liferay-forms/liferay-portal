@@ -361,9 +361,15 @@ const ListItem = ({
 	const isNestedCondition = useMemo(
 		() =>
 			conditions.find((condition) =>
-				condition.operands.find((operand) =>
-					operand.value.match(/[aA-zZ]+[(].*[,]+.*[)]/)
-				)
+				condition.operands.find((operand) => {
+					if (
+						operand.label != 'Numeric' &&
+						operand.type != 'double' &&
+						operand.type != 'integer'
+					) {
+						operand.value.match(/[aA-zZ]+[(].*[,]+.*[)]/);
+					}
+				})
 			) !== undefined,
 		[conditions]
 	);
