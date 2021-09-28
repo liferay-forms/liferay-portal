@@ -449,5 +449,32 @@ describe('Field Numeric', () => {
 
 			expect(onChange).not.toHaveBeenCalled();
 		});
+
+		/**
+		 * LPS-139480
+		 */
+		it('changes the decimal operator when the user edits the symbol', () => {
+			const onChange = jest.fn();
+			const {container} = render(
+				<Numeric
+					append="999"
+					appendType="suffix"
+					dataType="double"
+					inputMask
+					name="numericField"
+					onChange={onChange}
+					symbols={{
+						decimalSymbol: '.',
+						symbolChanged: true,
+						thousandsSeparator: "'",
+					}}
+					value="1000,50"
+				/>
+			);
+
+			const input = container.querySelector('input');
+
+			expect(input).toHaveValue("1'000.50");
+		});
 	});
 });
