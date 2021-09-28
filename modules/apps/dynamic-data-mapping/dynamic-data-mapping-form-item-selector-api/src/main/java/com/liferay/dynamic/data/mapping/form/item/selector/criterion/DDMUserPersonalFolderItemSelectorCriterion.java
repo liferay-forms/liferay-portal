@@ -32,32 +32,32 @@ public class DDMUserPersonalFolderItemSelectorCriterion
 		_groupId = groupId;
 	}
 
-	public long getFolderId() {
-		return _folderId;
+	public long getDDMFormInstanceId() {
+		return _ddmFormInstanceId;
 	}
 
-	public long getFormInstanceId() {
-		return _formInstanceId;
+	public long getFolderId() {
+		return _folderId;
 	}
 
 	public long getGroupId() {
 		return _groupId;
 	}
 
-	public void setFolderId(long folderId) {
-		_folderId = folderId;
+	public void setDDMFormInstanceId(long ddmFormInstanceId) {
+		_ddmFormInstanceId = ddmFormInstanceId;
 	}
 
-	public void setFormInstanceId(long formInstanceId) {
-		_formInstanceId = formInstanceId;
+	public void setFolderId(long folderId) {
+		_folderId = folderId;
 	}
 
 	public void setGroupId(long groupId) {
 		_groupId = groupId;
 	}
 
+	private long _ddmFormInstanceId;
 	private long _folderId;
-	private long _formInstanceId;
 	private long _groupId;
 
 }

@@ -451,12 +451,11 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributor
 				new DDMUserPersonalFolderItemSelectorCriterion(
 					folderId, groupId);
 
-		ddmUserPersonalFolderItemSelectorCriterion.setFormInstanceId(
-			ddmFormFieldRenderingContext.getDDMFormInstanceId());
-
 		ddmUserPersonalFolderItemSelectorCriterion.
 			setDesiredItemSelectorReturnTypes(
 				new FileEntryItemSelectorReturnType());
+		ddmUserPersonalFolderItemSelectorCriterion.setDDMFormInstanceId(
+			ddmFormFieldRenderingContext.getDDMFormInstanceId());
 
 		itemSelectorCriteria.add(ddmUserPersonalFolderItemSelectorCriterion);
 
