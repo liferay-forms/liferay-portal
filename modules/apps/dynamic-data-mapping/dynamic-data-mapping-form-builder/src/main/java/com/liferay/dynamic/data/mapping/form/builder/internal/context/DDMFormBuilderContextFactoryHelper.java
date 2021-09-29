@@ -16,7 +16,6 @@ package com.liferay.dynamic.data.mapping.form.builder.internal.context;
 
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
-import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormTemplateContextFactory;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
@@ -287,22 +286,20 @@ public class DDMFormBuilderContextFactoryHelper {
 		}
 
 		if (Objects.equals(
-				ddmFormField.getType(), DDMFormFieldTypeConstants.IMAGE) &&
-			Objects.equals(
+				ddmFormFieldTypeSetting.getDataType(), "ddm-options")) {
+
+			return doCreateDDMFormFieldValue(
+				(DDMFormFieldOptions)propertyValue, availableLocales);
+		}
+
+		if (Objects.equals(
 				ddmFormFieldTypeSetting.getName(), "requiredDescription") &&
 			(propertyValue == null)) {
 
 			return new UnlocalizedValue(Boolean.TRUE.toString());
 		}
-		else if (Objects.equals(
-					ddmFormFieldTypeSetting.getDataType(), "ddm-options")) {
 
-			return doCreateDDMFormFieldValue(
-				(DDMFormFieldOptions)propertyValue, availableLocales);
-		}
-		else if (Objects.equals(
-					ddmFormFieldTypeSetting.getType(), "validation")) {
-
+		if (Objects.equals(ddmFormFieldTypeSetting.getType(), "validation")) {
 			return doCreateDDMFormFieldValue(
 				availableLocales, (DDMFormFieldValidation)propertyValue);
 		}

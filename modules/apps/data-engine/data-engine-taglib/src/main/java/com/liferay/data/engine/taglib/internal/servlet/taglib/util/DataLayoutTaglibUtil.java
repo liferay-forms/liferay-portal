@@ -30,7 +30,6 @@ import com.liferay.data.engine.taglib.servlet.taglib.definition.DataLayoutBuilde
 import com.liferay.dynamic.data.mapping.form.builder.context.DDMFormBuilderContextFactory;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
-import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormTemplateContextFactory;
 import com.liferay.dynamic.data.mapping.form.values.factory.DDMFormValuesFactory;
@@ -816,7 +815,7 @@ public class DataLayoutTaglibUtil {
 							setName(ddmFormFieldTypeSetting.getName());
 							setValue(
 								_createDDMFormFieldValue(
-									ddmForm.getAvailableLocales(), ddmFormField,
+									ddmForm.getAvailableLocales(),
 									ddmFormFieldTypeSetting,
 									ddmFormFieldProperties.get(
 										ddmFormFieldTypeSetting.getName())));
@@ -861,7 +860,7 @@ public class DataLayoutTaglibUtil {
 		}
 
 		private Value _createDDMFormFieldValue(
-				Set<Locale> availableLocales, DDMFormField ddmFormField,
+				Set<Locale> availableLocales,
 				DDMFormField ddmFormFieldTypeSetting, Object propertyValue)
 			throws Exception {
 
@@ -870,15 +869,7 @@ public class DataLayoutTaglibUtil {
 			}
 
 			if (Objects.equals(
-					ddmFormField.getType(), DDMFormFieldTypeConstants.IMAGE) &&
-				Objects.equals(
-					ddmFormFieldTypeSetting.getName(), "requiredDescription") &&
-				(propertyValue == null)) {
-
-				return new UnlocalizedValue(Boolean.TRUE.toString());
-			}
-			else if (Objects.equals(
-						ddmFormFieldTypeSetting.getDataType(), "ddm-options")) {
+					ddmFormFieldTypeSetting.getDataType(), "ddm-options")) {
 
 				return _createDDMFormFieldValue(
 					availableLocales,
@@ -888,8 +879,16 @@ public class DataLayoutTaglibUtil {
 						new DDMFormFieldOptions()
 					));
 			}
-			else if (Objects.equals(
-						ddmFormFieldTypeSetting.getType(), "validation")) {
+
+			if (Objects.equals(
+					ddmFormFieldTypeSetting.getName(), "requiredDescription") &&
+				(propertyValue == null)) {
+
+				return new UnlocalizedValue(Boolean.TRUE.toString());
+			}
+
+			if (Objects.equals(
+					ddmFormFieldTypeSetting.getType(), "validation")) {
 
 				return _createDDMFormFieldValue(
 					(DDMFormFieldValidation)propertyValue);
