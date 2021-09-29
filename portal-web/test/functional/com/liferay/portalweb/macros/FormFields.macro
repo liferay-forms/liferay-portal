@@ -1071,6 +1071,60 @@ definition {
 		}
 	}
 
+	macro validationCustomDateEndsOn {
+		var key_endsOnOption = "${endsOnOption}";
+		var key_endsOnOperation = "${endsOnOperation}";
+		var key_endsOnQuantity = "${endsOnQuantity}";
+		var key_endsOnUnit = "${endsOnUnit}";
+
+		Click(locator1 = "FormFields#VALIDATION_ENDS_ON");
+
+		DropdownMenuItem.click(menuItem = "${key_endsOnOption}");
+
+		Click(locator1 = "FormFields#VALIDATION_ENDS_ON_OPERATION");
+
+		DropdownMenuItem.click(menuItem = "${key_endsOnOperation}");
+
+		Type(
+			locator1 = "FormFields#VALIDATION_ENDS_ON_QUANTITY",
+			value1 = "${key_endsOnQuantity}");
+
+		Click(locator1 = "FormFields#VALIDATION_ENDS_ON_UNIT");
+
+		DropdownMenuItem.click(menuItem = "${key_endsOnUnit}");
+	}
+
+	macro validationCustomDateStartsFrom {
+		var key_startsFromOption = "${startsFromOption}";
+		var key_startsFromOperation = "${startsFromOperation}";
+		var key_startsFromQuantity = "${startsFromQuantity}";
+		var key_startsFromUnit = "${startsFromUnit}";
+
+		Click(locator1 = "FormFields#VALIDATION_STARTS_FROM");
+
+		DropdownMenuItem.click(menuItem = "${key_startsFromOption}");
+
+		Click(locator1 = "FormFields#VALIDATION_STARTS_FROM_OPERATION");
+
+		DropdownMenuItem.click(menuItem = "${startsFromOperation}");
+
+		Type(
+			locator1 = "FormFields#VALIDATION_STARTS_FROM_QUANTITY",
+			value1 = "${key_startsFromQuantity}");
+
+		Click(locator1 = "FormFields#VALIDATION_STARTS_FROM_UNIT");
+
+		DropdownMenuItem.click(menuItem = "${key_startsFromUnit}");
+	}
+
+	macro validationRangeCustomDate {
+		var key_acceptedDateOption = "${acceptedDateOption}";
+
+		Click(locator1 = "FormFields#VALIDATION_ACCEPTED_DATE");
+
+		DropdownMenuItem.click(menuItem = "${key_acceptedDateOption}");
+	}
+
 	macro viewAddedLanguage {
 		AssertElementPresent(
 			changeAppLanguageTo = "${key_language}",
@@ -2125,6 +2179,56 @@ definition {
 		AssertTextEquals.assertText(
 			locator1 = "Form#FIELD_LABEL",
 			value1 = "${fieldLabel}");
+	}
+
+	macro viewValidationCustomDateEndsOn {
+		var key_endsOnOption = "${endsOnOption}";
+		var key_endsOnOperation = "${endsOnOperation}";
+		var key_endsOnQuantity = "${endsOnQuantity}";
+		var key_endsOnUnit = "${endsOnUnit}";
+
+		if (isSet(endsOnOption)) {
+			Click(locator1 = "FormFields#VALIDATION_ENDS_ON");
+
+			DropdownMenuItem.click(menuItem = "${key_endsOnOption}");
+		}
+
+		AssertTextEquals(
+			locator1 = "FormFields#VALIDATION_STARTS_FROM_OPERATION",
+			value1 = "${key_endsOnOperation}");
+
+		AssertTextEquals.assertValue(
+			locator1 = "FormFields#VALIDATION_ENDS_ON_QUANTITY_VALUE",
+			value1 = "${key_endsOnQuantity}");
+
+		AssertTextEquals(
+			locator1 = "FormFields#VALIDATION_STARTS_FROM_UNIT",
+			value1 = "${key_endsOnUnit}");
+	}
+
+	macro viewValidationCustomDateStartsFrom {
+		var key_startsFromOption = "${startsFromOption}";
+		var key_startsFromOperation = "${startsFromOperation}";
+		var key_startsFromQuantity = "${startsFromQuantity}";
+		var key_startsFromUnit = "${startsFromUnit}";
+
+		if (isSet(startsFromOption)) {
+			Click(locator1 = "FormFields#VALIDATION_STARTS_FROM");
+
+			DropdownMenuItem.click(menuItem = "${key_startsFromOption}");
+		}
+
+		AssertTextEquals(
+			locator1 = "FormFields#VALIDATION_STARTS_FROM_OPERATION",
+			value1 = "${key_startsFromOperation}");
+
+		AssertTextEquals.assertValue(
+			locator1 = "FormFields#VALIDATION_STARTS_FROM_QUANTITY_VALUE",
+			value1 = "${key_startsFromQuantity}");
+
+		AssertTextEquals(
+			locator1 = "FormFields#VALIDATION_STARTS_FROM_UNIT",
+			value1 = "${key_startsFromUnit}");
 	}
 
 	macro viewValidationValueFieldNotPresent {
