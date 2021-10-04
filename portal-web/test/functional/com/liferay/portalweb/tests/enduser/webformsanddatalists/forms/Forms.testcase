@@ -1364,6 +1364,7 @@ definition {
 			repeatableFieldNumber = "4");
 
 		FormFields.addRepeatableField(
+			fieldLabel = "Small Image Extensions",
 			fieldName = "smallImageExtensions",
 			repeatableFieldNumber = "4");
 

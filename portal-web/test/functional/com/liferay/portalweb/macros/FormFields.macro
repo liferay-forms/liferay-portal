@@ -24,6 +24,7 @@ definition {
 
 		Click.javaScriptClick(
 			key_fieldName = "${fieldName}",
+			key_fieldLabel = "${fieldLabel}",
 			key_repeatableFieldNumber = "${repeatableFieldNumber}",
 			locator1 = "FormFields#FIELD_ADD_SPECIFIC");
 	}

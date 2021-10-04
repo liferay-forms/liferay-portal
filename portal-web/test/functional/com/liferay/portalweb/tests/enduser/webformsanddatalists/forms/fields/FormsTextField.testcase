@@ -415,6 +415,7 @@ definition {
 
 		FormFields.addRepeatableField(
 			fieldName = "${fieldTextField}",
+			fieldLabel = "Text Field",
 			repeatableFieldNumber = "1");
 
 		FormFields.editRepeatingText(

@@ -87,7 +87,7 @@
 </tr>
 <tr>
 	<td>FIELD_ADD_SPECIFIC</td>
-	<td>//div[contains(@class,'lfr-ddm-form-container')]//div[contains(@data-field-name,'${key_fieldName}')][${key_repeatableFieldNumber}]//div[contains(@class,'lfr-ddm-form-field-repeatable-toolbar')]//button[contains(@class,'btn') and contains(@title,'Duplicate')]</td>
+	<td>//div[contains(@class,'lfr-ddm-form-container')]//div[contains(@data-field-name,'${key_fieldName}')][${key_repeatableFieldNumber}]//div[contains(@class,'lfr-ddm-form-field-repeatable-toolbar')]//button[contains(@class,'btn') and contains(@aria-label,'Add duplicate field ${key_fieldLabel}') and contains(@title,'Duplicate')]</td>
 	<td></td>
 </tr>
 <tr>
