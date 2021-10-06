@@ -1099,17 +1099,14 @@ definition {
 		FormFields.enableSwitch(fieldName = "Input Mask");
 
 		FormFields.setInputMaskOnDecimal(
-			decimalSeparator = "0,00",
 			prefix = "ABC",
 			thousandsSeparator = "1 000");
 
-		FormFields.viewNumericInputMask(inputMaskValue = "0,00");
+		FormFields.viewNumericInputMask(inputMaskValue = "0.00");
 
 		Form.addTranslation(localizedLanguage = "Portuguese (Brazil)");
 
-		FormFields.setInputMaskOnDecimal(
-			decimalSeparator = "0.00",
-			prefix = "123");
+		FormFields.setInputMaskOnDecimal(prefix = "123");
 
 		FormFields.viewNumericInputMask(inputMaskValue = "0.00");
 
@@ -1123,7 +1120,7 @@ definition {
 
 		Navigator.openSpecificURL(url = "${publishedFormPublicURL}");
 
-		FormFields.viewNumericInputMask(inputMaskValue = "0,00");
+		FormFields.viewNumericInputMask(inputMaskValue = "0.00");
 
 		FormFields.editText(
 			fieldName = "Numeric",
