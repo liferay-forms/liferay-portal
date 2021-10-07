@@ -118,8 +118,12 @@ export const FormBuilder = () => {
 	);
 
 	useEffect(() => {
+		const MAX_INTEGER = Math.pow(2, 31);
+
 		const sessionLength = Liferay.Session
-			? Liferay.Session.get('sessionLength')
+			? Liferay.Session.get('sessionLength') >= MAX_INTEGER
+				? MAX_INTEGER - 1
+				: Liferay.Session.get('sessionLength')
 			: 60000;
 
 		const interval = setInterval(() => {
