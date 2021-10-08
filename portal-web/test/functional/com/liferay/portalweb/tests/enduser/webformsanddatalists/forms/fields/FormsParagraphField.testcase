@@ -636,10 +636,14 @@ definition {
 
 		FormsAdminNavigator.gotoEditFormByName(formName = "Form 1");
 
-		FormFields.viewParagraphField(
-			fieldName = "Paragraph",
-			fieldTitle = "Paragraph",
-			fieldValue = "Test");
+		WaitForElementPresent(
+			key_fieldName = "Paragraph",
+			locator1 = "FormFields#PARAGRAPH_TITLE");
+
+		WaitForElementPresent(
+			key_fieldName = "Paragraph",
+			locator1 = "FormFields#PARAGRAPH_BODY_TEXT_CONTENT",
+			value1 = "Test");
 
 		FormFields.viewTableNotPresent();
 	}
