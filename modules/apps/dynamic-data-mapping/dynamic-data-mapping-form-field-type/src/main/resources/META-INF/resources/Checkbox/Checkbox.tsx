@@ -16,6 +16,8 @@ import {ClayCheckbox, ClayInput, ClayToggle} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import React from 'react';
 
+import './Checkbox.scss';
+
 // @ts-ignore
 
 import {FieldBase} from '../FieldBase/ReactFieldBase.es';
