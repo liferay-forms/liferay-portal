@@ -13,6 +13,7 @@
  */
 
 import React from 'react';
+import './Checkbox.scss';
 declare const Main: React.FC<IProps>;
 interface IProps extends ICheckboxProps {
 	predefinedValue?: boolean | String[];
