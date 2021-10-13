@@ -231,7 +231,7 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Created Form Page Name",
-			formTitleNumber = "1");
+			formTitleNumber = "0");
 
 		Form.addTextField();
 
@@ -331,7 +331,7 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Page 1",
-			formTitleNumber = "1");
+			formTitleNumber = "0");
 
 		Form.addTextField();
 
@@ -345,7 +345,7 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Page 2",
-			formTitleNumber = "2");
+			formTitleNumber = "1");
 
 		Form.gotoAddField(
 			fieldType = "Single Selection",

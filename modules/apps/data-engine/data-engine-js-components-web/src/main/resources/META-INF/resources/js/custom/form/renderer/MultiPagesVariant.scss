@@ -1,0 +1,29 @@
+@mixin textarea-style($fontSize, $fontWeight) {
+	background: none;
+	border: transparent;
+	border-radius: 0.25rem;
+	color: #272833;
+	font-size: #{$fontSize}px;
+	font-weight: #{$fontWeight};
+	height: 36px;
+	max-height: 120px;
+	overflow: hidden;
+	resize: none;
+	width: 90%;
+
+	transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+	&:focus {
+		border-color: #80acff;
+		box-shadow: 0 0 0 0.125rem #fff, 0 0 0 0.25rem #80acff;
+		outline: 0;
+	}
+}
+
+.lfr__data-engine--multi-pages-variant--title {
+	@include textarea-style(28, 600);
+}
+
+.lfr__data-engine--multi-pages-variant--description {
+	@include textarea-style(14, 400);
+}
