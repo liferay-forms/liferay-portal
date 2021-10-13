@@ -358,7 +358,7 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Page A",
-			formTitleNumber = "1");
+			formTitleNumber = "0");
 
 		Form.gotoAddField(
 			fieldPositionNumber = "0",
@@ -368,13 +368,13 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Page B",
-			formTitleNumber = "2");
+			formTitleNumber = "1");
 
 		Form.addPage(formAddNewPageNumber = "2");
 
 		Form.editPageTitle(
 			formPageName = "Page C",
-			formTitleNumber = "3");
+			formTitleNumber = "2");
 
 		FormsAdminNavigator.gotoRules();
 

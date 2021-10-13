@@ -54,7 +54,7 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Created Form Page Name",
-			formTitleNumber = "1");
+			formTitleNumber = "0");
 
 		Form.addTextField(fieldPositionNumber = "0");
 
@@ -390,7 +390,7 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Page 1",
-			formTitleNumber = "1");
+			formTitleNumber = "0");
 
 		Form.editPageDescription(formPageDescriptionName = "Page 1 Descripton");
 
@@ -1624,7 +1624,7 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Page A",
-			formTitleNumber = "1");
+			formTitleNumber = "0");
 
 		Form.addTextField(formPageNumber = "0");
 
@@ -1636,7 +1636,7 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Page B",
-			formTitleNumber = "2");
+			formTitleNumber = "1");
 
 		Form.addTextField(formPageNumber = "1");
 
@@ -1662,19 +1662,19 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Page A",
-			formTitleNumber = "1");
+			formTitleNumber = "0");
 
 		Form.addPage(formAddNewPageNumber = "1");
 
 		Form.editPageTitle(
 			formPageName = "Page B",
-			formTitleNumber = "2");
+			formTitleNumber = "1");
 
 		Form.addPage(formAddNewPageNumber = "2");
 
 		Form.editPageTitle(
 			formPageName = "Page C",
-			formTitleNumber = "3");
+			formTitleNumber = "2");
 
 		Form.viewButtonPageDisabled(
 			formPageName = "Page A",
@@ -1720,7 +1720,7 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Test title",
-			formTitleNumber = "1");
+			formTitleNumber = "0");
 
 		Form.editPageDescription(formPageDescriptionName = "Text");
 
@@ -1732,7 +1732,7 @@ definition {
 
 		Form.viewFormPlaceholderPage(pageIndex = "0");
 
-		Form.viewPageTitleDefault(pageIndex = "0");
+		Form.viewPageTitleDefault(formTitleNumber = "0");
 
 		Form.viewPageEmptyField(pageIndex = "0");
 	}

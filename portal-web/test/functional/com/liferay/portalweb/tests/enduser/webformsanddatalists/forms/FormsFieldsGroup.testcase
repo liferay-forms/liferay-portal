@@ -224,7 +224,7 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Page A",
-			formTitleNumber = "1");
+			formTitleNumber = "0");
 
 		Form.addTextField(fieldPositionNumber = "0");
 
@@ -238,7 +238,7 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Page B",
-			formTitleNumber = "2");
+			formTitleNumber = "1");
 
 		Form.closeSidebar();
 

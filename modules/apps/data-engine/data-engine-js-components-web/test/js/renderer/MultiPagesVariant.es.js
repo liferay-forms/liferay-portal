@@ -26,6 +26,8 @@ import {pageReducer} from '../../../src/main/resources/META-INF/resources/js/cus
 import {PageHeader} from '../../../src/main/resources/META-INF/resources/js/custom/form/renderer/MultiPagesVariant.es';
 import mockPages from '../__mock__/mockPages.es';
 
+jest.mock('frontend-js-web');
+
 const WithProvider = ({children, config, onAction, page, state}) => (
 	<ConfigProvider value={config}>
 		<FormProvider
@@ -81,7 +83,7 @@ describe('MultiPagesVariant.PageHeader', () => {
 		);
 
 		const pageHeaderDescription = container.querySelector(
-			'.form-builder-page-header-description'
+			'.lfr__data-engine--multi-pages-variant--description'
 		);
 
 		expect(pageHeaderDescription.value).toBe(
@@ -89,7 +91,7 @@ describe('MultiPagesVariant.PageHeader', () => {
 		);
 
 		const pageHeaderTitle = container.querySelector(
-			'.form-builder-page-header-title'
+			'.lfr__data-engine--multi-pages-variant--title'
 		);
 
 		expect(pageHeaderTitle.placeholder).toBe('page-title');
@@ -109,7 +111,7 @@ describe('MultiPagesVariant.PageHeader', () => {
 			);
 
 			const input = container.querySelector(
-				'.form-builder-page-header-description'
+				'.lfr__data-engine--multi-pages-variant--description'
 			);
 
 			const newDescription = 'New Description';
@@ -148,7 +150,7 @@ describe('MultiPagesVariant.PageHeader', () => {
 			);
 
 			const input = container.querySelector(
-				'.form-builder-page-header-description'
+				'.lfr__data-engine--multi-pages-variant--description'
 			);
 
 			const newDescription = 'Nova Descrição';
@@ -183,7 +185,7 @@ describe('MultiPagesVariant.PageHeader', () => {
 			);
 
 			const input = container.querySelector(
-				'.form-builder-page-header-title'
+				'.lfr__data-engine--multi-pages-variant--title'
 			);
 
 			const newTitle = 'New Title';
@@ -222,7 +224,7 @@ describe('MultiPagesVariant.PageHeader', () => {
 			);
 
 			const input = container.querySelector(
-				'.form-builder-page-header-title'
+				'.lfr__data-engine--multi-pages-variant--title'
 			);
 
 			const newTitle = 'Novo Título';

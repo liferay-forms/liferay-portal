@@ -15,13 +15,16 @@
 import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
 import {ClayDropDownWithItems} from '@clayui/drop-down';
 import ClayLayout from '@clayui/layout';
-import React from 'react';
+import {autoSize} from 'frontend-js-web';
+import React, {useEffect, useRef} from 'react';
 
 import {EVENT_TYPES as CORE_EVENT_TYPES} from '../../../core/actions/eventTypes.es';
 import {useForm, useFormState} from '../../../core/hooks/useForm.es';
 import {usePage} from '../../../core/hooks/usePage.es';
 import {sub} from '../../../utils/strings';
 import {EVENT_TYPES} from '../eventTypes.es';
+
+import './MultiPagesVariant.scss';
 
 export function Container({children, empty, pageIndex, pages}) {
 	const {editingLanguageId, successPageSettings} = useFormState();
@@ -205,11 +208,20 @@ export function PageHeader({localizedDescription, localizedTitle}) {
 	const {pageIndex} = usePage();
 
 	const dispatch = useForm();
+	const titleRef = useRef(null);
+	const descriptionRef = useRef(null);
+
+	useEffect(() => {
+		if (titleRef.current && descriptionRef) {
+			new autoSize(titleRef.current);
+			new autoSize(descriptionRef.current);
+		}
+	}, []);
 
 	return (
 		<div>
-			<input
-				className="form-builder-page-header-title form-control p-0"
+			<textarea
+				className="lfr__data-engine--multi-pages-variant--title"
 				maxLength="120"
 				onChange={(event) =>
 					dispatch({
@@ -218,15 +230,16 @@ export function PageHeader({localizedDescription, localizedTitle}) {
 					})
 				}
 				placeholder={Liferay.Language.get('page-title')}
+				ref={titleRef}
 				value={
 					localizedTitle[editingLanguageId] ??
 					localizedTitle[defaultLanguageId]
 				}
 			/>
 
-			<input
-				className="form-builder-page-header-description form-control p-0"
-				maxLength="120"
+			<textarea
+				className="lfr__data-engine--multi-pages-variant--description"
+				maxLength="178"
 				onChange={(event) =>
 					dispatch({
 						payload: {pageIndex, value: event.target.value},
@@ -236,6 +249,7 @@ export function PageHeader({localizedDescription, localizedTitle}) {
 				placeholder={Liferay.Language.get(
 					'add-a-short-description-for-this-page'
 				)}
+				ref={descriptionRef}
 				value={
 					localizedDescription[editingLanguageId] ??
 					localizedDescription[defaultLanguageId]

@@ -117,7 +117,7 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Page 1",
-			formTitleNumber = "1");
+			formTitleNumber = "0");
 
 		Form.gotoAddField(
 			fieldPositionNumber = "0",
@@ -232,7 +232,7 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Page 2",
-			formTitleNumber = "2");
+			formTitleNumber = "1");
 
 		Form.gotoAddField(
 			fieldPositionNumber = "0",
@@ -263,7 +263,7 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Page 3",
-			formTitleNumber = "3");
+			formTitleNumber = "2");
 
 		Form.gotoAddField(
 			fieldPositionNumber = "0",
@@ -397,7 +397,7 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Page 1",
-			formTitleNumber = "1");
+			formTitleNumber = "0");
 
 		Form.addTextField(
 			fieldPositionNumber = "0",
@@ -413,7 +413,7 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Page 2",
-			formTitleNumber = "2");
+			formTitleNumber = "1");
 
 		Form.addTextField(
 			fieldPositionNumber = "0",
@@ -431,7 +431,7 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Page 3",
-			formTitleNumber = "3");
+			formTitleNumber = "2");
 
 		Form.addTextField(
 			fieldPositionNumber = "0",

@@ -117,7 +117,7 @@
 </tr>
 <tr>
 	<td>PAGE_TITLE_FIELD</td>
-	<td>xpath=(//input[contains(@class,'form-builder-page-header-title')])[${key_titleNumber}]</td>
+	<td>//div[contains(@data-ddm-page,'${key_titleNumber}')]//textarea[contains(@class,'lfr__data-engine--multi-pages-variant--title')]</td>
 	<td></td>
 </tr>
 <tr>

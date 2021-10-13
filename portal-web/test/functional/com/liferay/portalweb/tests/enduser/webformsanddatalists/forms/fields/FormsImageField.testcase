@@ -172,7 +172,7 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Created Form Page Name",
-			formTitleNumber = "1");
+			formTitleNumber = "0");
 
 		Form.editDescription();
 

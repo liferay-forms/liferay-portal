@@ -44,7 +44,7 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Page 1",
-			formTitleNumber = "1");
+			formTitleNumber = "0");
 
 		Form.gotoAddField(
 			fieldPositionNumber = "0",
@@ -73,7 +73,7 @@ definition {
 
 			Form.editPageTitle(
 				formPageName = "Page ${pageNumber}",
-				formTitleNumber = "${pageNumber}");
+				formTitleNumber = "${option}");
 
 			if ("${pageNumber}" == "2") {
 				Form.addTextField(
@@ -174,7 +174,7 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Page 1",
-			formTitleNumber = "1");
+			formTitleNumber = "0");
 
 		Form.gotoAddField(
 			fieldPositionNumber = "0",
@@ -205,7 +205,7 @@ definition {
 
 			Form.editPageTitle(
 				formPageName = "Page ${pageNumber}",
-				formTitleNumber = "${pageNumber}");
+				formTitleNumber = "${option}");
 
 			if ("${pageNumber}" == "2") {
 				Form.addTextField(
@@ -350,7 +350,7 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Page 1",
-			formTitleNumber = "1");
+			formTitleNumber = "0");
 
 		Form.gotoAddField(
 			fieldPositionNumber = "0",
@@ -381,7 +381,7 @@ definition {
 
 			Form.editPageTitle(
 				formPageName = "Page ${pageNumber}",
-				formTitleNumber = "${pageNumber}");
+				formTitleNumber = "${option}");
 
 			if ("${pageNumber}" == "2") {
 				Form.addTextField(
@@ -489,7 +489,7 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Page 1",
-			formTitleNumber = "1");
+			formTitleNumber = "0");
 
 		Form.gotoAddField(
 			fieldPositionNumber = "0",
@@ -520,7 +520,7 @@ definition {
 
 			Form.editPageTitle(
 				formPageName = "Page ${pageNumber}",
-				formTitleNumber = "${pageNumber}");
+				formTitleNumber = "${option}");
 
 			if ("${pageNumber}" == "2") {
 				Form.addTextField(
@@ -630,7 +630,7 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Page 1",
-			formTitleNumber = "1");
+			formTitleNumber = "0");
 
 		Form.gotoAddField(
 			fieldPositionNumber = "0",
@@ -659,7 +659,7 @@ definition {
 
 			Form.editPageTitle(
 				formPageName = "Page ${pageNumber}",
-				formTitleNumber = "${pageNumber}");
+				formTitleNumber = "${option}");
 
 			if ("${pageNumber}" == "2") {
 				Form.addTextField(
@@ -730,7 +730,7 @@ definition {
 
 		Form.editPageTitle(
 			formPageName = "Renamed Page",
-			formTitleNumber = "3");
+			formTitleNumber = "2");
 
 		Form.save();
 
