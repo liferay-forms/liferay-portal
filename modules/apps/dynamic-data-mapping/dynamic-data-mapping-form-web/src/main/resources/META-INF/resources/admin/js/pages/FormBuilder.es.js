@@ -118,12 +118,27 @@ export const FormBuilder = () => {
 	);
 
 	useEffect(() => {
-		const MAX_INTEGER = Math.pow(2, 31);
+		if(Liferay.Session){
+			const MAX_INTERVAL_INTEGER = 2147483647;
 
+			const sessionLength = Math.min(Liferay.Session.get('sessionLength'), MAX_INTERVAL_INTEGER);
+			console.log('Initial Session Length' + sessionLength);
+	
+			const interval = setInterval(() => {
+				const now = new Date();
+				console.log('Liferay Session = ' + Liferay.Session);
+				console.log('Time now = ' + now);
+				Liferay.Session.extend();
+			}, sessionLength / 2);
+	
+			return () => clearInterval(interval);
+
+		}
+	}, []);
+
+	/* useEffect(() => {
 		const sessionLength = Liferay.Session
-			? Liferay.Session.get('sessionLength') >= MAX_INTEGER
-				? MAX_INTEGER - 1
-				: Liferay.Session.get('sessionLength')
+			? Liferay.Session.get('sessionLength')
 			: 60000;
 
 		const interval = setInterval(() => {
@@ -133,7 +148,7 @@ export const FormBuilder = () => {
 		}, sessionLength / 2);
 
 		return () => clearInterval(interval);
-	}, []);
+	}, []); */
 
 	/**
 	 * Opens the sidebar whenever a field is focused
