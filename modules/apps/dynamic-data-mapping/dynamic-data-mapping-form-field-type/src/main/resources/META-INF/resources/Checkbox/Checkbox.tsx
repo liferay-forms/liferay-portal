@@ -12,9 +12,11 @@
  * details.
  */
 
-import {ClayCheckbox, ClayInput, ClayToggle} from '@clayui/form';
+import {ClayCheckbox, ClayInput} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import React from 'react';
+
+import Switch from '../components/Switch';
 
 import './Checkbox.scss';
 
@@ -34,24 +36,17 @@ const Switcher: React.FC<ISwitcherProps> = ({
 	systemSettingsURL,
 }) => {
 	return (
-		<>
-			<label className="toggle-switch">
-				<ClayToggle
-					disabled={disabled}
-					name={name}
-					onToggle={(checked) => {
-						onChange({target: {value: checked}});
-					}}
-					toggled={checked}
-					value={String(checked)}
-				/>
-
-				{showLabel && label}
-
-				{required && (
-					<ClayIcon className="reference-mark" symbol="asterisk" />
-				)}
-			</label>
+		<>	
+			<Switch
+				checked={checked}
+				disabled={disabled}
+				label={label}
+				name={name}
+				onChange={onChange}
+				required={required}
+				showLabel={showLabel}
+				value={checked}
+			/>
 			{checked && showMaximumRepetitionsInfo && (
 				<div className="ddm-info">
 					<span className="ddm-tooltip">
