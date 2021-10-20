@@ -17,6 +17,7 @@ import classNames from 'classnames';
 import React, {useEffect, useState} from 'react';
 
 import {FieldBase} from '../FieldBase/ReactFieldBase.es';
+import SwithcerComponent from '../components/Switcher';
 import {setJSONArrayValue} from '../util/setters.es';
 
 import './CheckboxMultiple.scss';
@@ -30,6 +31,7 @@ const Switcher = ({
 	onBlur,
 	onChange,
 	onFocus,
+	showLabel = true,
 	value,
 }) => (
 	<div
@@ -37,23 +39,21 @@ const Switcher = ({
 			'lfr-ddm-form-field-checkbox-switch-inline': inline,
 		})}
 	>
-		<label className="simple-toggle-switch toggle-switch">
-			<input
-				checked={checked}
-				className="toggle-switch-check"
-				disabled={disabled}
-				name={name}
-				onBlur={onBlur}
-				onChange={onChange}
-				onFocus={onFocus}
-				type="checkbox"
-				value={value}
-			/>
-			<span aria-hidden="true" className="toggle-switch-bar">
-				<span className="toggle-switch-handle"></span>
-			</span>
-			<span className="toggle-switch-label">{label}</span>
-		</label>
+		<SwithcerComponent
+			id={value}
+			checked={checked}
+			disabled={disabled}
+			inline={inline}
+			label={label}
+			name={name}
+			onBlur={onBlur}
+			onChange={onChange}
+			onFocus={onFocus}
+			showLabel={showLabel}
+		/>
+		<span aria-hidden="true" className="toggle-switch-bar">
+			<span className="toggle-switch-handle"></span>
+		</span>
 	</div>
 );
 
@@ -68,13 +68,8 @@ const CheckboxMultiple = ({
 	onFocus,
 	options,
 	predefinedValue,
-	value: initialValue,
 }) => {
-	const [value, setValue] = useState(initialValue);
-
-	useEffect(() => {
-		setValue(initialValue);
-	}, [initialValue]);
+	const [value, setValue] = useState([]);
 
 	const displayValues =
 		value?.length || (value?.length === 0 && localizedValueEdited)
@@ -88,8 +83,11 @@ const CheckboxMultiple = ({
 			(currentValue) => currentValue !== target.value
 		);
 
-		if (target.checked) {
-			newValue.push(target.value);
+		if (target.value.checked) {
+			newValue.push(target.value.id);
+		}else {
+			const index = newValue.indexOf(target.value.id);
+			newValue.splice(index, 1);
 		}
 
 		setValue(newValue);
