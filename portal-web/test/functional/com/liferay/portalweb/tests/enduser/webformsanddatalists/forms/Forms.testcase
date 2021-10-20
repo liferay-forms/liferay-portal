@@ -2141,10 +2141,6 @@ definition {
 			fieldName = "${fieldDateField}",
 			fieldValue = "05/02/2016");
 
-		FormsAdmin.viewCheckboxEntry(
-			fieldName = "${fieldMultipleSelectionField}",
-			fieldValue = "Checkbox 1");
-
 		ProductMenu.gotoPortlet(
 			category = "Content & Data",
 			portlet = "Forms");
@@ -2210,10 +2206,6 @@ definition {
 			fieldLabel = "New Date",
 			fieldName = "${fieldDateField}",
 			fieldValue = "05/02/2016");
-
-		FormsAdmin.viewCheckboxEntry(
-			fieldName = "${fieldMultipleSelectionField}",
-			fieldValue = "Checkbox 1");
 
 		Navigator.openURL();
 
@@ -2379,10 +2371,6 @@ definition {
 			fieldLabel = "Text Field",
 			fieldName = "${fieldTextField}",
 			fieldValue = "Text Field Value");
-
-		FormsAdmin.viewCheckboxEntry(
-			fieldName = "${fieldMultipleSelectionField}",
-			fieldValue = "Checkbox 1");
 
 		FormsAdmin.viewRadioEntry(
 			fieldLabel = "Radio Field",
@@ -2562,12 +2550,6 @@ definition {
 
 		FormsAdmin.viewFormTableEntry(
 			fieldLabel = "Checkbox Field",
-			fieldValue = "Switch 1");
-
-		FormsAdminNavigator.gotoView();
-
-		FormsAdmin.viewCheckboxEntry(
-			fieldName = "${fieldMultipleSelectionField}",
 			fieldValue = "Switch 1");
 	}
 

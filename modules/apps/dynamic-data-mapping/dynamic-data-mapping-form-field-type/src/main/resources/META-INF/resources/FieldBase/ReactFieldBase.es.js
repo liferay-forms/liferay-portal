@@ -240,7 +240,9 @@ function FieldBase({
 	const showPopover = fieldName === 'inputMaskFormat';
 
 	const hasSwitchTooltip =
-		name.includes('required') || name.includes('hideField') ? true : false;
+		name?.includes('required') || name?.includes('hideField')
+			? true
+			: false;
 
 	return (
 		<div
