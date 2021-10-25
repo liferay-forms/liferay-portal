@@ -15,6 +15,9 @@
 import './ValidationDate.scss';
 
 import {ClayInput} from '@clayui/form';
+import ClayIcon from '@clayui/icon';
+import {ClayTooltipProvider} from '@clayui/tooltip';
+import {useFormState} from 'data-engine-js-components-web';
 import React, {useState} from 'react';
 
 import Select from '../Select/Select.es';
@@ -369,6 +372,8 @@ const ValidationDate = ({
 		return name === 'startsFrom' ? startsFrom : endsOn;
 	};
 
+	const {dateFieldTypeValidationEnabled} = useFormState();
+
 	return (
 		<>
 			<Select
@@ -416,7 +421,35 @@ const ValidationDate = ({
 						<Select
 							disableEmptyOption
 							key={`selectedParameter_${index}`}
-							label={element.label}
+							label={
+								dateFieldTypeValidationEnabled ? (
+									<div className="ddm__validationDate-toolTip">
+										<label>{element.label}</label>
+										<ClayTooltipProvider>
+											<div
+												data-tooltip-align="top"
+												title={
+													element.label ===
+													'Starts From'
+														? Liferay.Language.get(
+																'starts-from-tooltip'
+														  )
+														: Liferay.Language.get(
+																'ends-on-tooltip'
+														  )
+												}
+											>
+												<ClayIcon
+													className="ddm__validationDate-toolTip--icon"
+													symbol="question-circle-full"
+												/>
+											</div>
+										</ClayTooltipProvider>
+									</div>
+								) : (
+									<label>{element.label}</label>
+								)
+							}
 							name="selectedParameter"
 							onChange={(event, value) => {
 								if (startSection) {

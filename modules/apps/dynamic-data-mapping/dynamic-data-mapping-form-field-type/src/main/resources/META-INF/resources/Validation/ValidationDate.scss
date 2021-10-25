@@ -1,3 +1,12 @@
 .ddm-form-field-type__validation-date {
 	width: 33%;
 }
+
+.ddm__validationDate-toolTip {
+	display: flex;
+	gap: 5px;
+
+	.ddm__validationDate-toolTip--icon {
+		color: #a7a9bc;
+	}
+}
