@@ -58,7 +58,6 @@ definition {
 			outputParameterName = "Countries Full Name",
 			outputParameterName2 = "Countries A2",
 			outputParameterPath = "nameCurrentValue",
-			outputParameterPath2 = "a2",
 			outputParameterType = "List",
 			outputParameterType2 = "List",
 			password = "test",
@@ -85,7 +84,7 @@ definition {
 
 		Form.editTextFieldDataProvider(
 			dataProvider = "Country Names",
-			dataProviderOutput = "Countries A2");
+			dataProviderOutput = "Countries Full Name");
 
 		Form.save();
 
