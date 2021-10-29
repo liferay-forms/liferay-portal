@@ -99,7 +99,7 @@ public interface DDMFormInstanceSettings {
 
 	@DDMFormField(
 		label = "%save-answers-automatically", predefinedValue = "true",
-		properties = "showAsSwitcher=true"
+		properties = "showAsSwitcher=false"
 	)
 	public boolean autosaveEnabled();
 
@@ -145,12 +145,12 @@ public interface DDMFormInstanceSettings {
 
 	@DDMFormField(
 		label = "%require-user-authentication", predefinedValue = "false",
-		properties = "showAsSwitcher=true"
+		properties = "showAsSwitcher=false"
 	)
 	public boolean requireAuthentication();
 
 	@DDMFormField(
-		label = "%require-captcha", properties = "showAsSwitcher=true",
+		label = "%require-captcha", properties = "showAsSwitcher=false",
 		type = "checkbox"
 	)
 	public boolean requireCaptcha();
