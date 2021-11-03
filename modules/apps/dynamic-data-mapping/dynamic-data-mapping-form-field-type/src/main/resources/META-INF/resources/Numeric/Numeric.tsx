@@ -29,6 +29,7 @@ import {conformToMask} from 'vanilla-text-mask';
 
 import {FieldBase} from '../FieldBase/ReactFieldBase.es';
 import {ISymbols} from '../NumericInputMask/NumericInputMask';
+import {trimLeftZero} from '../util/numericalOperations';
 
 // @ts-ignore
 
@@ -248,6 +249,8 @@ const Numeric: React.FC<IProps> = ({
 	const handleChange: ChangeEventHandler<HTMLInputElement> = ({
 		target: {value},
 	}) => {
+		value =
+			inputMask && dataType === 'integer' ? value : trimLeftZero(value);
 
 		// allows user to delete characters from the mask
 
