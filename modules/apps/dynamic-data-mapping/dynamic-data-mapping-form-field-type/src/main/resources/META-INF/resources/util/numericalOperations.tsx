@@ -12,6 +12,9 @@
  * details.
  */
 
+const NON_NUMERIC_REGEX = /[\D]/g;
+const POSITIVE_NUMBERS_REGEX = /[1-9]/;
+
 export const limitValue = ({
 	defaultValue,
 	max,
@@ -28,6 +31,21 @@ export const limitValue = ({
 	}
 	else if (value > max) {
 		return max;
+	}
+
+	return value;
+};
+
+export const trimLeftZero = (value: string) => {
+	if (
+		value.length > 1 &&
+		value[0] === '0' &&
+		!value[1].match(NON_NUMERIC_REGEX)
+	) {
+		const zeroes = value
+			.replace(NON_NUMERIC_REGEX, '')
+			.split(POSITIVE_NUMBERS_REGEX)[0].length;
+		value = value.replace('0'.repeat(zeroes), '');
 	}
 
 	return value;
