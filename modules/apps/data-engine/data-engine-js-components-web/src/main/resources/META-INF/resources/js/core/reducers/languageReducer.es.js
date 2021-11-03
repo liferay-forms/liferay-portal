@@ -138,7 +138,7 @@ const updateFieldLanguage = ({
 			editingLanguageId
 		);
 
-		if (field.fieldName === 'predefinedValue') {
+		if (currentOptions && field.fieldName === 'predefinedValue') {
 			updatedField.options = currentOptions;
 		}
 
