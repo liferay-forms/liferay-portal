@@ -114,15 +114,6 @@ public class DDMFormBuilderContextFactoryHelper {
 		).put(
 			"rules", new ArrayList<>()
 		).put(
-			"successPage",
-			HashMapBuilder.<String, Object>put(
-				"body", StringPool.BLANK
-			).put(
-				"enabled", Boolean.FALSE
-			).put(
-				"title", StringPool.BLANK
-			).build()
-		).put(
 			"sidebarPanels", _getSidebarPanels()
 		).build();
 	}
