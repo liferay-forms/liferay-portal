@@ -1302,6 +1302,8 @@ definition {
 			Click(
 				index = "${index}",
 				locator1 = "DataEngineBuilder#OPTION_REMOVE_BUTTON_INDEXED");
+
+			Pause(locator1 = "2000");
 		}
 
 		if (isSet(fieldFieldLabel)) {
