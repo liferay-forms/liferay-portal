@@ -95,6 +95,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.portlet.PortletSession;
@@ -583,6 +584,34 @@ public class DDMFormDisplayContext {
 		}
 
 		return ParamUtil.getBoolean(_renderRequest, "shared");
+	}
+
+	public boolean isLimitToOneSubmissionPerUser() throws PortalException {
+		if (isDefaultUser() || !isLimitToOneSubmissionPerUserEnabled()) {
+			return Boolean.FALSE;
+		}
+
+		List<DDMFormInstanceRecordVersion> ddmFormInstanceRecordVersions =
+			_ddmFormInstanceRecordVersionLocalService.
+				getFormInstanceRecordVersions(getUserId(), getFormInstanceId());
+
+		Stream<DDMFormInstanceRecordVersion> stream =
+			ddmFormInstanceRecordVersions.stream();
+
+		List<DDMFormInstanceRecordVersion>
+			ddmFormInstanceRecordVersionsNotDrafts = stream.filter(
+				ddmFormInstanceRecordVersion ->
+					ddmFormInstanceRecordVersion.getStatus() !=
+						WorkflowConstants.STATUS_DRAFT
+			).collect(
+				Collectors.toList()
+			);
+
+		if (!ddmFormInstanceRecordVersionsNotDrafts.isEmpty()) {
+			return Boolean.TRUE;
+		}
+
+		return Boolean.FALSE;
 	}
 
 	public boolean isLimitToOneSubmissionPerUserEnabled()
