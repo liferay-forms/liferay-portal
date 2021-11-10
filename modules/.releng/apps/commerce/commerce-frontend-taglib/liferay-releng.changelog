@@ -112,3 +112,8 @@ f0fe6f61e9ffc3cebc34a2e6b2ffc97191f45167^..2ec08c3b9ba21fe4b827efe780e3ea4cedfad
 # Bundle Version 13.0.4
 #
 0c16de7b1d7ffe235ad3a3da426edecf98803ece^..262aed6f8f68837217bc822784c79b2ab54128c3=LPS-105380
+
+#
+# Bundle Version 13.0.6
+#
+262aed6f8f68837217bc822784c79b2ab54128c3^..d0de1bcca954ccaf4449f4f3730c87629ccb258b=COMMERCE-6387

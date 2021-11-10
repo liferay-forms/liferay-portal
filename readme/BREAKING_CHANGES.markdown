@@ -12,7 +12,7 @@ Here are some of the types of changes documented in this file:
 * Execution requirements: Java version, J2EE Version, browser versions, etc.
 * Deprecations or end of support: For example, warning that a certain feature or API will be dropped in an upcoming version.
 
-*This document has been reviewed through the breaking change entry at commit `384fefe7facc`.*
+*This document has been reviewed through the breaking change entry at commit `ac5b1e9670b1`.*
 
 Each change must have a brief descriptive title and contain the following information:
 
@@ -899,5 +899,28 @@ In the UI, review the OpenID Connect Provider Connection configuration(s). Speci
 #### Why was this change made?
 
 This improves using all signing algorithms supported by OpenID Connect providers.
+
+---------------------------------------
+
+### Restricted the Service Builder Task to Service Module Folders that have a Service XML File
+
+- **Date:** 2021-Nov-02
+- **JIRA Ticket:** [LPS-129696](https://issues.liferay.com/browse/LPS-129696)
+
+#### What changed?
+
+Automatically applied the Service Builder plugin to all OSGi projects but restricted the `buildService` task target to `*-service` module folders that contain a `service.xml` file.
+
+#### Who is affected?
+
+This affects you if you are running the `buildService` task in a the Liferay Workspace.
+
+#### How should I update my code?
+
+This requires no code changes. When you run the `buildService` task, you must target a `*-service` module folder that contains a `service.xml` file.
+
+#### Why was this change made?
+
+This was done to clarify the folder that `buildService` should target.
 
 ---------------------------------------

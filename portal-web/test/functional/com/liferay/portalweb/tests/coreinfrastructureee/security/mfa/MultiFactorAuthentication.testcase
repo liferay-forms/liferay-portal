@@ -174,26 +174,18 @@ definition {
 	@priority = "5"
 	test BlockedAfterReachAllowedFailedAttempts {
 		property database.types = "db2,hypersonic,mariadb,mysql,oracle,postgresql,sqlserver,sybase";
+		property osgi.module.configuration.file.names = "com.liferay.multi.factor.authentication.email.otp.configuration.MFAEmailOTPConfiguration.config";
+		property osgi.module.configurations = "emailFromAddress=&quot;test@liferay.com&quot;${line.separator}emailFromName=&quot;Joe\ Bloggs&quot;";
 		property test.name.skip.portal.instance = "MultiFactorAuthentication#BlockedAfterReachAllowedFailedAttempts";
 
 		var portalURL = PropsUtil.get("portal.url");
 
-		task ("Configure OTP email sender") {
+		task ("Enable OTP") {
 			PortalSettings.gotoConfiguration(
 				configurationCategory = "Multi-Factor Authentication",
 				configurationName = "Multi-Factor Authentication and Email One-Time Password Configuration",
 				configurationScope = "Virtual Instance Scope");
 
-			MultiFactorAuthentication.configureOTPEmailSender(
-				emailAddress = "test@liferay.com",
-				emailSenderName = "Joe Bloggs");
-
-			MultiFactorAuthentication.viewOTPEmailSenderCP(
-				emailAddress = "test@liferay.com",
-				emailSenderName = "Joe Bloggs");
-		}
-
-		task ("Enable OTP") {
 			MultiFactorAuthentication.configureOTP(enableOTP = "true");
 		}
 
@@ -375,13 +367,7 @@ definition {
 		}
 
 		task ("Check if Instance admin is able to disable Basic Authentication") {
-			var curl = '''
-				http://www.able.com:8080/api/jsonws/user/get-current-user
-			''';
-
-			var reponse = JSONCurlUtil.get("${curl}");
-
-			MultiFactorAuthentication.canAdminDisableBasicAuthentication(userResponse = "${response}");
+			MultiFactorAuthentication.canAdminDisableBasicAuthentication();
 		}
 	}
 
@@ -479,6 +465,7 @@ definition {
 
 	@description = "This is a use case for LPS-102467 and LPS-110444"
 	@priority = "5"
+	@uitest
 	test EditEmailTemplate {
 		property database.types = "db2,hypersonic,mariadb,mysql,oracle,postgresql,sqlserver,sybase";
 		property test.name.skip.portal.instance = "MultiFactorAuthentication#EditEmailTemplate";
@@ -628,6 +615,8 @@ definition {
 	@priority = "5"
 	test EndUserPermissionCheck {
 		property custom.properties = "jsonws.web.service.paths.excludes=";
+		property osgi.module.configuration.file.names = "com.liferay.multi.factor.authentication.email.otp.configuration.MFAEmailOTPConfiguration.config";
+		property osgi.module.configurations = "emailFromAddress=&quot;test@liferay.com&quot;${line.separator}emailFromName=&quot;Joe\ Bloggs&quot;";
 
 		var portalURL = PropsUtil.get("portal.url");
 		task ("Add user with password") {
@@ -643,22 +632,12 @@ definition {
 				userEmailAddress = "userea@liferay.com");
 		}
 
-		task ("Configure OTP email sender") {
+		task ("Enable OTP") {
 			PortalSettings.gotoConfiguration(
 				configurationCategory = "Multi-Factor Authentication",
 				configurationName = "Multi-Factor Authentication and Email One-Time Password Configuration",
 				configurationScope = "Virtual Instance Scope");
 
-			MultiFactorAuthentication.configureOTPEmailSender(
-				emailAddress = "test@liferay.com",
-				emailSenderName = "Joe Bloggs");
-
-			MultiFactorAuthentication.viewOTPEmailSenderCP(
-				emailAddress = "test@liferay.com",
-				emailSenderName = "Joe Bloggs");
-		}
-
-		task ("Enable OTP") {
 			MultiFactorAuthentication.configureOTP(enableOTP = "true");
 		}
 
@@ -695,6 +674,8 @@ definition {
 	@description = "This is a use case for LPS-102469"
 	@priority = "5"
 	test LoginSuccessfulAfterResetPasswordAsEndUser {
+		property osgi.module.configuration.file.names = "com.liferay.multi.factor.authentication.email.otp.configuration.MFAEmailOTPConfiguration.config";
+		property osgi.module.configurations = "emailFromAddress=&quot;test@liferay.com&quot;${line.separator}emailFromName=&quot;Joe\ Bloggs&quot;";
 		property test.name.skip.portal.instance = "MultiFactorAuthentication#LoginSuccessfulAfterResetPasswordAsEndUser";
 
 		var portalURL = PropsUtil.get("portal.url");
@@ -707,22 +688,12 @@ definition {
 				userScreenName = "usersn");
 		}
 
-		task ("Configure OTP email sender") {
+		task ("Enable OTP") {
 			PortalSettings.gotoConfiguration(
 				configurationCategory = "Multi-Factor Authentication",
 				configurationName = "Multi-Factor Authentication and Email One-Time Password Configuration",
 				configurationScope = "Virtual Instance Scope");
 
-			MultiFactorAuthentication.configureOTPEmailSender(
-				emailAddress = "test@liferay.com",
-				emailSenderName = "Joe Bloggs");
-
-			MultiFactorAuthentication.viewOTPEmailSenderCP(
-				emailAddress = "test@liferay.com",
-				emailSenderName = "Joe Bloggs");
-		}
-
-		task ("Enable OTP") {
 			MultiFactorAuthentication.configureOTP(enableOTP = "true");
 		}
 
@@ -766,26 +737,18 @@ definition {
 	@priority = "5"
 	test LoginSuccessfulAfterRetryTimeout {
 		property database.types = "db2,hypersonic,mariadb,mysql,oracle,postgresql,sqlserver,sybase";
+		property osgi.module.configuration.file.names = "com.liferay.multi.factor.authentication.email.otp.configuration.MFAEmailOTPConfiguration.config";
+		property osgi.module.configurations = "emailFromAddress=&quot;test@liferay.com&quot;${line.separator}emailFromName=&quot;Joe\ Bloggs&quot;";
 		property test.name.skip.portal.instance = "MultiFactorAuthentication#LoginSuccessfulAfterRetryTimeout";
 
 		var portalURL = PropsUtil.get("portal.url");
 
-		task ("Configure OTP email sender") {
+		task ("Enable OTP and set failed attempts maximum number and retry time out") {
 			PortalSettings.gotoConfiguration(
 				configurationCategory = "Multi-Factor Authentication",
 				configurationName = "Multi-Factor Authentication and Email One-Time Password Configuration",
 				configurationScope = "Virtual Instance Scope");
 
-			MultiFactorAuthentication.configureOTPEmailSender(
-				emailAddress = "test@liferay.com",
-				emailSenderName = "Joe Bloggs");
-
-			MultiFactorAuthentication.viewOTPEmailSenderCP(
-				emailAddress = "test@liferay.com",
-				emailSenderName = "Joe Bloggs");
-		}
-
-		task ("Enable OTP and set failed attempts maximum number and retry time out") {
 			MultiFactorAuthentication.configureOTP(enableOTP = "true");
 
 			MultiFactorAuthentication.emailOTPConfiguration(
@@ -825,27 +788,20 @@ definition {
 
 	@description = "This is a use case for LPS-101746"
 	@priority = "5"
+	@uitest
 	test LoginWithIPBasedVerifierEnabled {
+		property osgi.module.configuration.file.names = "com.liferay.multi.factor.authentication.email.otp.configuration.MFAEmailOTPConfiguration.config";
+		property osgi.module.configurations = "emailFromAddress=&quot;test@liferay.com&quot;${line.separator}emailFromName=&quot;Joe\ Bloggs&quot;";
 		property test.name.skip.portal.instance = "MultiFactorAuthentication#LoginWithIPBasedVerifierEnabled";
 
 		var portalURL = PropsUtil.get("portal.url");
 
-		task ("Configure OTP email sender") {
+		task ("Enable OTP") {
 			PortalSettings.gotoConfiguration(
 				configurationCategory = "Multi-Factor Authentication",
 				configurationName = "Multi-Factor Authentication and Email One-Time Password Configuration",
 				configurationScope = "Virtual Instance Scope");
 
-			MultiFactorAuthentication.configureOTPEmailSender(
-				emailAddress = "test@liferay.com",
-				emailSenderName = "Joe Bloggs");
-
-			MultiFactorAuthentication.viewOTPEmailSenderCP(
-				emailAddress = "test@liferay.com",
-				emailSenderName = "Joe Bloggs");
-		}
-
-		task ("Enable OTP") {
 			MultiFactorAuthentication.configureOTP(enableOTP = "true");
 		}
 
@@ -1040,9 +996,12 @@ definition {
 
 	@description = "This is a use case for LPS-101720"
 	@priority = "5"
+	@uitest
 	test LoginWithOTPEnabled {
 		property custom.properties = "jsonws.web.service.paths.excludes=";
 		property database.types = "db2,hypersonic,mariadb,mysql,oracle,postgresql,sqlserver,sybase";
+		property osgi.module.configuration.file.names = "com.liferay.multi.factor.authentication.email.otp.configuration.MFAEmailOTPConfiguration.config";
+		property osgi.module.configurations = "emailFromAddress=&quot;test@liferay.com&quot;${line.separator}emailFromName=&quot;Joe\ Bloggs&quot;";
 		property test.name.skip.portal.instance = "MultiFactorAuthentication#LoginWithOTPEnabled";
 
 		var portalURL = PropsUtil.get("portal.url");
@@ -1060,22 +1019,12 @@ definition {
 				userEmailAddress = "userea@liferay.com");
 		}
 
-		task ("Configure OTP email sender") {
+		task ("Enable OTP") {
 			PortalSettings.gotoConfiguration(
 				configurationCategory = "Multi-Factor Authentication",
 				configurationName = "Multi-Factor Authentication and Email One-Time Password Configuration",
 				configurationScope = "Virtual Instance Scope");
 
-			MultiFactorAuthentication.configureOTPEmailSender(
-				emailAddress = "test@liferay.com",
-				emailSenderName = "Joe Bloggs");
-
-			MultiFactorAuthentication.viewOTPEmailSenderCP(
-				emailAddress = "test@liferay.com",
-				emailSenderName = "Joe Bloggs");
-		}
-
-		task ("Enable OTP") {
 			MultiFactorAuthentication.configureOTP(enableOTP = "true");
 		}
 
@@ -1285,6 +1234,8 @@ definition {
 	@priority = "4"
 	test RemoveCurrentTOTPWontAffectOthers {
 		property custom.properties = "jsonws.web.service.paths.excludes=";
+		property osgi.module.configuration.file.names = "com.liferay.multi.factor.authentication.email.otp.configuration.MFAEmailOTPConfiguration.config";
+		property osgi.module.configurations = "emailFromAddress=&quot;test@liferay.com&quot;${line.separator}emailFromName=&quot;Joe\ Bloggs&quot;";
 		property test.name.skip.portal.instance = "MultiFactorAuthentication#RemoveCurrentTOTPWontAffectOthers";
 
 		var portalURL = PropsUtil.get("portal.url");
@@ -1310,18 +1261,12 @@ definition {
 				userEmailAddress = "test@liferay.com");
 		}
 
-		task ("Configure OTP email sender") {
+		task ("Enable OTP") {
 			PortalSettings.gotoConfiguration(
 				configurationCategory = "Multi-Factor Authentication",
 				configurationName = "Multi-Factor Authentication and Email One-Time Password Configuration",
 				configurationScope = "Virtual Instance Scope");
 
-			MultiFactorAuthentication.configureOTPEmailSender(
-				emailAddress = "test@liferay.com",
-				emailSenderName = "Joe Bloggs");
-		}
-
-		task ("Enable OTP") {
 			MultiFactorAuthentication.configureOTP(enableOTP = "true");
 		}
 
@@ -1427,19 +1372,17 @@ definition {
 
 	@description = "This is a use case for LPS-118204"
 	@priority = "4"
+	@uitest
 	test VerifyUIchangesInMFA {
-		task ("Configure OTP email sender") {
+		property osgi.module.configuration.file.names = "com.liferay.multi.factor.authentication.email.otp.configuration.MFAEmailOTPConfiguration.config";
+		property osgi.module.configurations = "emailFromAddress=&quot;test@liferay.com&quot;${line.separator}emailFromName=&quot;Joe\ Bloggs&quot;";
+
+		task ("Enable OTP") {
 			PortalSettings.gotoConfiguration(
 				configurationCategory = "Multi-Factor Authentication",
 				configurationName = "Multi-Factor Authentication and Email One-Time Password Configuration",
 				configurationScope = "Virtual Instance Scope");
 
-			MultiFactorAuthentication.configureOTPEmailSender(
-				emailAddress = "test@liferay.com",
-				emailSenderName = "Joe Bloggs");
-		}
-
-		task ("Enable OTP") {
 			MultiFactorAuthentication.configureOTP(enableOTP = "true");
 		}
 
@@ -1524,26 +1467,18 @@ definition {
 	@description = "This is a use case for LPS-92658"
 	@priority = "4"
 	test ViewResourceActionsOfOTPVerificationFailure {
+		property osgi.module.configuration.file.names = "com.liferay.multi.factor.authentication.email.otp.configuration.MFAEmailOTPConfiguration.config";
+		property osgi.module.configurations = "emailFromAddress=&quot;test@liferay.com&quot;${line.separator}emailFromName=&quot;Joe\ Bloggs&quot;";
 		property test.name.skip.portal.instance = "MultiFactorAuthentication#ViewResourceActionsOfOTPVerificationFailure";
 
 		var portalURL = PropsUtil.get("portal.url");
 
-		task ("Configure OTP email sender") {
+		task ("Enable OTP") {
 			PortalSettings.gotoConfiguration(
 				configurationCategory = "Multi-Factor Authentication",
 				configurationName = "Multi-Factor Authentication and Email One-Time Password Configuration",
 				configurationScope = "Virtual Instance Scope");
 
-			MultiFactorAuthentication.configureOTPEmailSender(
-				emailAddress = "test@liferay.com",
-				emailSenderName = "Joe Bloggs");
-
-			MultiFactorAuthentication.viewOTPEmailSenderCP(
-				emailAddress = "test@liferay.com",
-				emailSenderName = "Joe Bloggs");
-		}
-
-		task ("Enable OTP") {
 			MultiFactorAuthentication.configureOTP(enableOTP = "true");
 		}
 

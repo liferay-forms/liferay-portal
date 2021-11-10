@@ -25,18 +25,22 @@ import com.liferay.portal.vulcan.graphql.annotation.GraphQLField;
 import com.liferay.portal.vulcan.graphql.annotation.GraphQLName;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.search.experiences.rest.dto.v1_0.FieldMappingInfo;
 import com.liferay.search.experiences.rest.dto.v1_0.KeywordQueryContributor;
 import com.liferay.search.experiences.rest.dto.v1_0.ModelPrefilterContributor;
 import com.liferay.search.experiences.rest.dto.v1_0.QueryPrefilterContributor;
 import com.liferay.search.experiences.rest.dto.v1_0.SXPBlueprint;
 import com.liferay.search.experiences.rest.dto.v1_0.SXPElement;
+import com.liferay.search.experiences.rest.dto.v1_0.SXPParameterContributorDefinition;
 import com.liferay.search.experiences.rest.dto.v1_0.SearchableAssetName;
 import com.liferay.search.experiences.rest.dto.v1_0.SearchableAssetNameDisplay;
+import com.liferay.search.experiences.rest.resource.v1_0.FieldMappingInfoResource;
 import com.liferay.search.experiences.rest.resource.v1_0.KeywordQueryContributorResource;
 import com.liferay.search.experiences.rest.resource.v1_0.ModelPrefilterContributorResource;
 import com.liferay.search.experiences.rest.resource.v1_0.QueryPrefilterContributorResource;
 import com.liferay.search.experiences.rest.resource.v1_0.SXPBlueprintResource;
 import com.liferay.search.experiences.rest.resource.v1_0.SXPElementResource;
+import com.liferay.search.experiences.rest.resource.v1_0.SXPParameterContributorDefinitionResource;
 import com.liferay.search.experiences.rest.resource.v1_0.SearchableAssetNameDisplayResource;
 import com.liferay.search.experiences.rest.resource.v1_0.SearchableAssetNameResource;
 
@@ -58,6 +62,14 @@ import org.osgi.service.component.ComponentServiceObjects;
  */
 @Generated("")
 public class Query {
+
+	public static void setFieldMappingInfoResourceComponentServiceObjects(
+		ComponentServiceObjects<FieldMappingInfoResource>
+			fieldMappingInfoResourceComponentServiceObjects) {
+
+		_fieldMappingInfoResourceComponentServiceObjects =
+			fieldMappingInfoResourceComponentServiceObjects;
+	}
 
 	public static void
 		setKeywordQueryContributorResourceComponentServiceObjects(
@@ -102,6 +114,15 @@ public class Query {
 			sxpElementResourceComponentServiceObjects;
 	}
 
+	public static void
+		setSXPParameterContributorDefinitionResourceComponentServiceObjects(
+			ComponentServiceObjects<SXPParameterContributorDefinitionResource>
+				sxpParameterContributorDefinitionResourceComponentServiceObjects) {
+
+		_sxpParameterContributorDefinitionResourceComponentServiceObjects =
+			sxpParameterContributorDefinitionResourceComponentServiceObjects;
+	}
+
 	public static void setSearchableAssetNameResourceComponentServiceObjects(
 		ComponentServiceObjects<SearchableAssetNameResource>
 			searchableAssetNameResourceComponentServiceObjects) {
@@ -117,6 +138,23 @@ public class Query {
 
 		_searchableAssetNameDisplayResourceComponentServiceObjects =
 			searchableAssetNameDisplayResourceComponentServiceObjects;
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {fieldMappingInfos(query: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField
+	public FieldMappingInfoPage fieldMappingInfos(
+			@GraphQLName("query") String query)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_fieldMappingInfoResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			fieldMappingInfoResource -> new FieldMappingInfoPage(
+				fieldMappingInfoResource.getFieldMappingInfosPage(query)));
 	}
 
 	/**
@@ -195,7 +233,7 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {sXPBlueprint(sxpBlueprintId: ___){configuration, description, id, title}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {sXPBlueprint(sxpBlueprintId: ___){configuration, description, description_i18n, id, title, title_i18n}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
 	public SXPBlueprint sXPBlueprint(
@@ -232,7 +270,7 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {sXPElement(sxpElementId: ___){description, description_i18n, elementDefinition, id, title, title_i18n}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {sXPElement(sxpElementId: ___){description, description_i18n, elementDefinition, hidden, id, title, title_i18n}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
 	public SXPElement sXPElement(@GraphQLName("sxpElementId") Long sxpElementId)
@@ -243,6 +281,25 @@ public class Query {
 			this::_populateResourceContext,
 			sxpElementResource -> sxpElementResource.getSXPElement(
 				sxpElementId));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {sXPParameterContributorDefinitions{items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField
+	public SXPParameterContributorDefinitionPage
+			sXPParameterContributorDefinitions()
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_sxpParameterContributorDefinitionResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			sxpParameterContributorDefinitionResource ->
+				new SXPParameterContributorDefinitionPage(
+					sxpParameterContributorDefinitionResource.
+						getSXPParameterContributorDefinitionsPage()));
 	}
 
 	/**
@@ -276,6 +333,39 @@ public class Query {
 				new SearchableAssetNameDisplayPage(
 					searchableAssetNameDisplayResource.
 						getSearchableAssetNameLanguagePage(languageId)));
+	}
+
+	@GraphQLName("FieldMappingInfoPage")
+	public class FieldMappingInfoPage {
+
+		public FieldMappingInfoPage(Page fieldMappingInfoPage) {
+			actions = fieldMappingInfoPage.getActions();
+
+			items = fieldMappingInfoPage.getItems();
+			lastPage = fieldMappingInfoPage.getLastPage();
+			page = fieldMappingInfoPage.getPage();
+			pageSize = fieldMappingInfoPage.getPageSize();
+			totalCount = fieldMappingInfoPage.getTotalCount();
+		}
+
+		@GraphQLField
+		protected Map<String, Map> actions;
+
+		@GraphQLField
+		protected java.util.Collection<FieldMappingInfo> items;
+
+		@GraphQLField
+		protected long lastPage;
+
+		@GraphQLField
+		protected long page;
+
+		@GraphQLField
+		protected long pageSize;
+
+		@GraphQLField
+		protected long totalCount;
+
 	}
 
 	@GraphQLName("KeywordQueryContributorPage")
@@ -447,6 +537,41 @@ public class Query {
 
 	}
 
+	@GraphQLName("SXPParameterContributorDefinitionPage")
+	public class SXPParameterContributorDefinitionPage {
+
+		public SXPParameterContributorDefinitionPage(
+			Page sxpParameterContributorDefinitionPage) {
+
+			actions = sxpParameterContributorDefinitionPage.getActions();
+
+			items = sxpParameterContributorDefinitionPage.getItems();
+			lastPage = sxpParameterContributorDefinitionPage.getLastPage();
+			page = sxpParameterContributorDefinitionPage.getPage();
+			pageSize = sxpParameterContributorDefinitionPage.getPageSize();
+			totalCount = sxpParameterContributorDefinitionPage.getTotalCount();
+		}
+
+		@GraphQLField
+		protected Map<String, Map> actions;
+
+		@GraphQLField
+		protected java.util.Collection<SXPParameterContributorDefinition> items;
+
+		@GraphQLField
+		protected long lastPage;
+
+		@GraphQLField
+		protected long page;
+
+		@GraphQLField
+		protected long pageSize;
+
+		@GraphQLField
+		protected long totalCount;
+
+	}
+
 	@GraphQLName("SearchableAssetNamePage")
 	public class SearchableAssetNamePage {
 
@@ -535,6 +660,22 @@ public class Query {
 	}
 
 	private void _populateResourceContext(
+			FieldMappingInfoResource fieldMappingInfoResource)
+		throws Exception {
+
+		fieldMappingInfoResource.setContextAcceptLanguage(_acceptLanguage);
+		fieldMappingInfoResource.setContextCompany(_company);
+		fieldMappingInfoResource.setContextHttpServletRequest(
+			_httpServletRequest);
+		fieldMappingInfoResource.setContextHttpServletResponse(
+			_httpServletResponse);
+		fieldMappingInfoResource.setContextUriInfo(_uriInfo);
+		fieldMappingInfoResource.setContextUser(_user);
+		fieldMappingInfoResource.setGroupLocalService(_groupLocalService);
+		fieldMappingInfoResource.setRoleLocalService(_roleLocalService);
+	}
+
+	private void _populateResourceContext(
 			KeywordQueryContributorResource keywordQueryContributorResource)
 		throws Exception {
 
@@ -619,6 +760,26 @@ public class Query {
 	}
 
 	private void _populateResourceContext(
+			SXPParameterContributorDefinitionResource
+				sxpParameterContributorDefinitionResource)
+		throws Exception {
+
+		sxpParameterContributorDefinitionResource.setContextAcceptLanguage(
+			_acceptLanguage);
+		sxpParameterContributorDefinitionResource.setContextCompany(_company);
+		sxpParameterContributorDefinitionResource.setContextHttpServletRequest(
+			_httpServletRequest);
+		sxpParameterContributorDefinitionResource.setContextHttpServletResponse(
+			_httpServletResponse);
+		sxpParameterContributorDefinitionResource.setContextUriInfo(_uriInfo);
+		sxpParameterContributorDefinitionResource.setContextUser(_user);
+		sxpParameterContributorDefinitionResource.setGroupLocalService(
+			_groupLocalService);
+		sxpParameterContributorDefinitionResource.setRoleLocalService(
+			_roleLocalService);
+	}
+
+	private void _populateResourceContext(
 			SearchableAssetNameResource searchableAssetNameResource)
 		throws Exception {
 
@@ -654,6 +815,8 @@ public class Query {
 			_roleLocalService);
 	}
 
+	private static ComponentServiceObjects<FieldMappingInfoResource>
+		_fieldMappingInfoResourceComponentServiceObjects;
 	private static ComponentServiceObjects<KeywordQueryContributorResource>
 		_keywordQueryContributorResourceComponentServiceObjects;
 	private static ComponentServiceObjects<ModelPrefilterContributorResource>
@@ -664,6 +827,9 @@ public class Query {
 		_sxpBlueprintResourceComponentServiceObjects;
 	private static ComponentServiceObjects<SXPElementResource>
 		_sxpElementResourceComponentServiceObjects;
+	private static ComponentServiceObjects
+		<SXPParameterContributorDefinitionResource>
+			_sxpParameterContributorDefinitionResourceComponentServiceObjects;
 	private static ComponentServiceObjects<SearchableAssetNameResource>
 		_searchableAssetNameResourceComponentServiceObjects;
 	private static ComponentServiceObjects<SearchableAssetNameDisplayResource>

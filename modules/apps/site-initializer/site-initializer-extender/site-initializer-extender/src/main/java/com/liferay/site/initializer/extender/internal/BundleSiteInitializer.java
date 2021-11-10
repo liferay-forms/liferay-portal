@@ -647,9 +647,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 				commerceInventoryWarehouses,
 				CommerceInventoryWarehouse.
 					COMMERCE_INVENTORY_WAREHOUSE_ID_ACCESSOR),
-			BundleSiteInitializer.class.getClassLoader(),
-			"/site-initializer/commerce-catalogs/" +
-				StringUtil.replace(resourcePath, ".json", "/"),
+			_classLoader, StringUtil.replace(resourcePath, ".json", "/"),
 			serviceContext.getScopeGroupId(), serviceContext.getUserId());
 	}
 
@@ -1594,20 +1592,26 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 	}
 
-	private void _addSiteNavigationMenuItems(
-			JSONArray jsonArray, SiteNavigationMenu siteNavigationMenu,
-			ServiceContext serviceContext)
+	private void _addSiteNavigationMenu(
+			JSONObject jsonObject, ServiceContext serviceContext)
 		throws Exception {
+
+		SiteNavigationMenu siteNavigationMenu =
+			_siteNavigationMenuLocalService.addSiteNavigationMenu(
+				serviceContext.getUserId(), serviceContext.getScopeGroupId(),
+				jsonObject.getString("name"), serviceContext);
 
 		SiteNavigationMenuItemType siteNavigationMenuItemType =
 			_siteNavigationMenuItemTypeRegistry.getSiteNavigationMenuItemType(
 				SiteNavigationMenuItemTypeConstants.LAYOUT);
 
-		for (int i = 0; i < jsonArray.length(); i++) {
-			JSONObject jsonObject = jsonArray.getJSONObject(i);
+		for (Object object :
+				JSONUtil.toObjectArray(jsonObject.getJSONArray("pages"))) {
 
-			boolean privateLayout = jsonObject.getBoolean("privateLayout");
-			String friendlyURL = jsonObject.getString("friendlyURL");
+			JSONObject pageJSONObject = (JSONObject)object;
+
+			boolean privateLayout = pageJSONObject.getBoolean("privateLayout");
+			String friendlyURL = pageJSONObject.getString("friendlyURL");
 
 			Layout layout = _layoutLocalService.fetchLayoutByFriendlyURL(
 				serviceContext.getScopeGroupId(), privateLayout, friendlyURL);
@@ -1623,6 +1627,28 @@ public class BundleSiteInitializer implements SiteInitializer {
 				siteNavigationMenuItemType.getTypeSettingsFromLayout(layout),
 				serviceContext);
 		}
+
+		for (Object object :
+				JSONUtil.toObjectArray(jsonObject.getJSONArray("urls"))) {
+
+			JSONObject urlJSONObject = (JSONObject)object;
+
+			UnicodeProperties typeSettingsUnicodeProperties =
+				new UnicodeProperties();
+
+			typeSettingsUnicodeProperties.setProperty(
+				"name", urlJSONObject.getString("name"));
+			typeSettingsUnicodeProperties.setProperty(
+				"url", urlJSONObject.getString("url"));
+			typeSettingsUnicodeProperties.setProperty(
+				"useNewTab", urlJSONObject.getString("useNewTab"));
+
+			_siteNavigationMenuItemLocalService.addSiteNavigationMenuItem(
+				serviceContext.getUserId(), serviceContext.getScopeGroupId(),
+				siteNavigationMenu.getSiteNavigationMenuId(), 0,
+				SiteNavigationMenuItemTypeConstants.URL,
+				typeSettingsUnicodeProperties.toString(), serviceContext);
+		}
 	}
 
 	private void _addSiteNavigationMenus(ServiceContext serviceContext)
@@ -1637,18 +1663,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(json);
 
 		for (int i = 0; i < jsonArray.length(); i++) {
-			JSONObject jsonObject = jsonArray.getJSONObject(i);
-
-			String name = jsonObject.getString("name");
-
-			SiteNavigationMenu siteNavigationMenu =
-				_siteNavigationMenuLocalService.addSiteNavigationMenu(
-					serviceContext.getUserId(),
-					serviceContext.getScopeGroupId(), name, serviceContext);
-
-			_addSiteNavigationMenuItems(
-				jsonObject.getJSONArray("pages"), siteNavigationMenu,
-				serviceContext);
+			_addSiteNavigationMenu(jsonArray.getJSONObject(i), serviceContext);
 		}
 	}
 

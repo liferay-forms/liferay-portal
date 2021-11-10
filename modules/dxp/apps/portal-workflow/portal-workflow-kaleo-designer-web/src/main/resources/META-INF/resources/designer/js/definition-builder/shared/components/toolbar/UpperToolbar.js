@@ -7,69 +7,139 @@
  * contacting Liferay, Inc. See the License for the specific language governing
  * permissions and limitations under the License, including but not limited to
  * distribution rights of the Software.
+ *
  */
 
 import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
-import ClayIcon from '@clayui/icon';
+import {ClayInput} from '@clayui/form';
 import ClayLabel from '@clayui/label';
-import ClayUpperToolbar from '@clayui/upper-toolbar';
-import React, {useState} from 'react';
+import ClayLayout from '@clayui/layout';
+import ClayToolbar from '@clayui/toolbar';
+import {TranslationAdminSelector} from 'frontend-js-components-web';
+import PropTypes from 'prop-types';
+import React, {useEffect, useRef, useState} from 'react';
 
-export default function ({title, version}) {
+import {getAvailableLocalesObject} from '../../../util/availableLocales';
+
+export default function UpperToolbar({
+	displayNames,
+	languageIds,
+	title,
+	translations,
+	version,
+}) {
+	const inputRef = useRef(null);
+
+	const defaultLanguageId = themeDisplay.getLanguageId();
+
 	const [definitionTitle, setDefinitionTitle] = useState(title);
 
+	const [selectedLanguageId, setSelectedLanguageId] = useState('');
+
+	const availableLocales = getAvailableLocalesObject(
+		displayNames,
+		languageIds
+	);
+
+	const onSelectedLanguageIdChange = (id) => {
+		if (id) {
+			setSelectedLanguageId(id);
+		}
+		inputRef?.current.focus();
+	};
+
+	const onInputBlur = () => {
+		if (selectedLanguageId) {
+			translations[selectedLanguageId] = definitionTitle;
+		}
+	};
+
+	useEffect(() => {
+		if (selectedLanguageId) {
+			setDefinitionTitle(translations[selectedLanguageId]);
+		}
+	}, [selectedLanguageId, setDefinitionTitle, translations]);
+
 	return (
-		<ClayUpperToolbar className="upper-toolbar-component">
-			<ClayUpperToolbar.Item>
-				<ClayButton
-					className="translation-button"
-					displayType="secondary"
-				>
-					<ClayIcon symbol="en-us" />
-					<div className="translation-label">en-US</div>
-				</ClayButton>
-			</ClayUpperToolbar.Item>
-			<ClayUpperToolbar.Item expand>
-				<ClayUpperToolbar.Input
-					id="definition-title"
-					onChange={({target: {value}}) => {
-						setDefinitionTitle(value);
-					}}
-					placeholder={Liferay.Language.get('untitled-workflow')}
-					type="text"
-					value={definitionTitle}
-				/>
-			</ClayUpperToolbar.Item>
-			<ClayUpperToolbar.Item>
-				<ClayLabel className="version" displayType="secondary">
-					<div>
-						{Liferay.Language.get('version')}:
-						<span className="version-text">{version}</span>
-					</div>
-				</ClayLabel>
-			</ClayUpperToolbar.Item>
-			<ClayUpperToolbar.Item>
-				<ClayButton displayType="secondary">
-					{Liferay.Language.get('cancel')}
-				</ClayButton>
-			</ClayUpperToolbar.Item>
-			<ClayUpperToolbar.Item>
-				<ClayButton displayType="secondary">
-					{Liferay.Language.get('save')}
-				</ClayButton>
-			</ClayUpperToolbar.Item>
-			<ClayUpperToolbar.Item>
-				<ClayButton displayType="primary">
-					{Liferay.Language.get('publish')}
-				</ClayButton>
-			</ClayUpperToolbar.Item>
-			<ClayUpperToolbar.Item>
-				<ClayButtonWithIcon
-					displayType="secondary"
-					onClick={() => {}}
-					symbol="code"
-				/>
-			</ClayUpperToolbar.Item>
-		</ClayUpperToolbar>
+		<ClayToolbar className="upper-toolbar">
+			<ClayLayout.ContainerFluid>
+				<ClayToolbar.Nav>
+					<ClayToolbar.Item>
+						<TranslationAdminSelector
+							activeLanguageIds={languageIds}
+							adminMode
+							availableLocales={availableLocales}
+							defaultLanguageId={defaultLanguageId}
+							onSelectedLanguageIdChange={
+								onSelectedLanguageIdChange
+							}
+							translations={translations}
+						/>
+					</ClayToolbar.Item>
+					<ClayToolbar.Item expand>
+						<ClayInput
+							className="form-control-inline"
+							id="definition-title"
+							onBlur={() => onInputBlur()}
+							onChange={({target: {value}}) => {
+								setDefinitionTitle(value);
+							}}
+							placeholder={Liferay.Language.get(
+								'untitled-workflow'
+							)}
+							ref={inputRef}
+							type="text"
+							value={definitionTitle || title}
+						/>
+					</ClayToolbar.Item>
+
+					{version !== '0' && (
+						<ClayToolbar.Item>
+							<ClayLabel
+								className="version"
+								displayType="secondary"
+							>
+								<div>
+									{Liferay.Language.get('version')}:
+									<span className="version-text">
+										{version}
+									</span>
+								</div>
+							</ClayLabel>
+						</ClayToolbar.Item>
+					)}
+					<ClayToolbar.Item>
+						<ClayButton displayType="secondary">
+							{Liferay.Language.get('cancel')}
+						</ClayButton>
+					</ClayToolbar.Item>
+					<ClayToolbar.Item>
+						<ClayButton displayType="secondary">
+							{Liferay.Language.get('save')}
+						</ClayButton>
+					</ClayToolbar.Item>
+					<ClayToolbar.Item>
+						<ClayButton displayType="primary">
+							{Liferay.Language.get('publish')}
+						</ClayButton>
+					</ClayToolbar.Item>
+					<ClayToolbar.Item>
+						<ClayButtonWithIcon
+							displayType="secondary"
+							onClick={() => {}}
+							symbol="code"
+						/>
+					</ClayToolbar.Item>
+				</ClayToolbar.Nav>
+			</ClayLayout.ContainerFluid>
+		</ClayToolbar>
 	);
 }
+
+UpperToolbar.propTypes = {
+	displayNames: PropTypes.arrayOf(PropTypes.string).isRequired,
+	languageIds: PropTypes.arrayOf(PropTypes.string).isRequired,
+	title: PropTypes.PropTypes.string.isRequired,
+	translations: PropTypes.object,
+	version: PropTypes.PropTypes.string.isRequired,
+};

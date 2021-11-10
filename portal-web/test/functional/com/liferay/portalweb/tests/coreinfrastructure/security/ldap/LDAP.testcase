@@ -24,9 +24,10 @@ definition {
 		}
 	}
 
-	@description = "This is a use case for LPS-65498."
+	@description = "This is a use case for LPS-65498. LDAP user can be imported with blank password."
 	@priority = "5"
-	test ImportLDAPUserWithBlankPassword {
+	@uitest
+	test CanImportLDAPUserWithBlankPassword {
 		property apacheds.blank.user.password.enabled = "true";
 		property apacheds.enabled = "true";
 		property app.server.types = "tomcat";
@@ -65,10 +66,7 @@ definition {
 		}
 
 		task ("View user information and assert -Unable to encrypt blank password- message not present on console") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Users",
-				panel = "Control Panel",
-				portlet = "Users and Organizations");
+			User.openUsersAdmin();
 
 			User.viewCP(
 				userEmailAddress = "ldapuseremail@liferay.com",
@@ -80,9 +78,9 @@ definition {
 		}
 	}
 
-	@description = "This is a use case for LPS-30529."
+	@description = "This is a use case for LPS-30529. User fields are not reset to default when signing in with imported LDAP user."
 	@priority = "4"
-	test ResetFieldsValueForImportedLDAPUser {
+	test FieldValuesNotResetForImportedLDAPUser {
 		property apacheds.enabled = "true";
 		property custom.properties = "field.enable.com.liferay.portal.kernel.model.Contact.male=true";
 		property test.name.skip.portal.instance = "LDAP#ResetFieldsValueForImportedLDAPUser";
@@ -118,10 +116,7 @@ definition {
 		}
 
 		task ("View user information") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Users",
-				panel = "Control Panel",
-				portlet = "Users and Organizations");
+			User.openUsersAdmin();
 
 			User.viewCP(
 				userEmailAddress = "ldapuseremail@liferay.com",
@@ -185,38 +180,13 @@ definition {
 		}
 	}
 
-	@description = "This is a use case for LPS-73381."
-	@priority = "4"
-	test ViewHiddenSecurityCredential {
-		property test.name.skip.portal.instance = "LDAP#ViewHiddenSecurityCredential";
-
-		task ("Add Server and edit security credential") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Configuration",
-				panel = "Control Panel",
-				portlet = "System Settings");
-
-			SystemSettings.gotoConfiguration(
-				configurationCategory = "LDAP",
-				configurationName = "Servers",
-				configurationScope = "Virtual Instance Scope");
-
-			Button.clickAdd();
-
-			SystemSettings.editSecurityCredential(securityCredential = "123456");
-		}
-	}
-
-	@description = "This is a use case for LPS-73381."
+	@description = "This is a use case for LPS-73381. LDAP instance settings do not affect system settings."
 	@priority = "3"
-	test ViewLDAPInstanceSettingsDoNotAffectSystemSettings {
+	test LDAPInstanceSettingsDoNotAffectSystemSettings {
 		property test.name.skip.portal.instance = "LDAP#ViewInstanceSettingsEnableLDAPAuthNotAffectSystemSetting";
 
 		task ("Enable LDAP Authentication") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Configuration",
-				panel = "Control Panel",
-				portlet = "System Settings");
+			SystemSettings.openSystemSettingsAdmin();
 
 			SystemSettings.gotoConfiguration(
 				configurationCategory = "LDAP",
@@ -229,10 +199,7 @@ definition {
 		}
 
 		task ("Assert LDAP Authentication enabled checkbox is not checked") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Configuration",
-				panel = "Control Panel",
-				portlet = "System Settings");
+			SystemSettings.openSystemSettingsAdmin();
 
 			SystemSettings.gotoConfiguration(
 				configurationCategory = "LDAP",
@@ -240,6 +207,26 @@ definition {
 				configurationScope = "Virtual Instance Scope");
 
 			FormFields.viewCheckboxNotChecked(fieldName = "Enabled");
+		}
+	}
+
+	@description = "This is a use case for LPS-73381. LDAP security credentials are obscured when entered."
+	@priority = "4"
+	@uitest
+	test LDAPSecurityCredentialsAreHidden {
+		property test.name.skip.portal.instance = "LDAP#ViewHiddenSecurityCredential";
+
+		task ("Add Server and edit security credential") {
+			SystemSettings.openSystemSettingsAdmin();
+
+			SystemSettings.gotoConfiguration(
+				configurationCategory = "LDAP",
+				configurationName = "Servers",
+				configurationScope = "Virtual Instance Scope");
+
+			Button.clickAdd();
+
+			SystemSettings.editSecurityCredential(securityCredential = "123456");
 		}
 	}
 

@@ -92,14 +92,6 @@ definition {
 		AssertHTMLSourceTextPresent(value1 = "${pageSource}");
 	}
 
-	macro assertCannotDeleteOnlyPage {
-		Click.waitForMenuToggleJSClick(
-			key_pageName = "${pageName}",
-			locator1 = "SitePages#LIST_GROUP_ITEM_ELLIPSIS_ICON");
-
-		MenuItem.viewNotPresent(menuItem = "Delete");
-	}
-
 	macro assertCanonicalURL {
 		var HTML = '''<link data-senna-track="temporary" href="''';
 		var HTML2 = '''" rel="canonical">''';
@@ -301,16 +293,21 @@ definition {
 	}
 
 	macro editPageMetadata {
-		Type.typeClickAt(
-			locator1 = "TextInput#SEO_HTML_TITLE",
-			value1 = "${HTMLTitle}");
+		Navigator.gotoNavTab(navTab = "SEO");
 
 		Type.typeClickAt(
-			locator1 = "TextInput#SEO_META_TAGS_DESCRIPTION",
+			key_text = "Title",
+			locator1 = "TextInput#ANY",
+			value1 = "${htmlTitle}");
+
+		Type.typeClickAt(
+			key_text = "Description",
+			locator1 = "TextInput#ANY",
 			value1 = "${metaTagsDescription}");
 
 		Type.typeClickAt(
-			locator1 = "TextArea#SEO_META_TAGS_KEYWORDS",
+			key_text = "keywords",
+			locator1 = "TextArea#ANY",
 			value1 = "${metaTagsKeywords}");
 
 		Button.clickSave();
@@ -971,7 +968,9 @@ definition {
 	}
 
 	macro viewPageLocalization {
-		AssertElementPresent(locator1 = "TextInput#SEO_HTML_TITLE");
+		AssertElementPresent(
+			key_text = "Title",
+			locator1 = "TextInput#ANY");
 
 		AssertTextEquals.assertPartialText(
 			key_fieldName = "${fieldName}",
@@ -988,16 +987,21 @@ definition {
 	}
 
 	macro viewPageMetadata {
-		AssertTextEquals(
-			locator1 = "TextInput#SEO_HTML_TITLE",
-			value1 = "${HTMLTitle}");
+		Navigator.gotoNavTab(navTab = "SEO");
 
 		AssertTextEquals(
-			locator1 = "TextInput#SEO_META_TAGS_DESCRIPTION",
+			key_text = "Title",
+			locator1 = "TextInput#ANY",
+			value1 = "${htmlTitle}");
+
+		AssertTextEquals(
+			key_text = "Description",
+			locator1 = "TextInput#ANY",
 			value1 = "${metaTagsDescription}");
 
 		AssertTextEquals(
-			locator1 = "TextArea#SEO_META_TAGS_KEYWORDS",
+			key_text = "keywords",
+			locator1 = "TextArea#ANY",
 			value1 = "${metaTagsKeywords}");
 	}
 

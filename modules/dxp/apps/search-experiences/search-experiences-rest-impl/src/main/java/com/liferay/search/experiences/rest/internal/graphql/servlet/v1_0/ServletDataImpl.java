@@ -17,11 +17,13 @@ package com.liferay.search.experiences.rest.internal.graphql.servlet.v1_0;
 import com.liferay.portal.vulcan.graphql.servlet.ServletData;
 import com.liferay.search.experiences.rest.internal.graphql.mutation.v1_0.Mutation;
 import com.liferay.search.experiences.rest.internal.graphql.query.v1_0.Query;
+import com.liferay.search.experiences.rest.resource.v1_0.FieldMappingInfoResource;
 import com.liferay.search.experiences.rest.resource.v1_0.KeywordQueryContributorResource;
 import com.liferay.search.experiences.rest.resource.v1_0.ModelPrefilterContributorResource;
 import com.liferay.search.experiences.rest.resource.v1_0.QueryPrefilterContributorResource;
 import com.liferay.search.experiences.rest.resource.v1_0.SXPBlueprintResource;
 import com.liferay.search.experiences.rest.resource.v1_0.SXPElementResource;
+import com.liferay.search.experiences.rest.resource.v1_0.SXPParameterContributorDefinitionResource;
 import com.liferay.search.experiences.rest.resource.v1_0.SearchResponseResource;
 import com.liferay.search.experiences.rest.resource.v1_0.SearchableAssetNameDisplayResource;
 import com.liferay.search.experiences.rest.resource.v1_0.SearchableAssetNameResource;
@@ -52,6 +54,8 @@ public class ServletDataImpl implements ServletData {
 		Mutation.setSearchResponseResourceComponentServiceObjects(
 			_searchResponseResourceComponentServiceObjects);
 
+		Query.setFieldMappingInfoResourceComponentServiceObjects(
+			_fieldMappingInfoResourceComponentServiceObjects);
 		Query.setKeywordQueryContributorResourceComponentServiceObjects(
 			_keywordQueryContributorResourceComponentServiceObjects);
 		Query.setModelPrefilterContributorResourceComponentServiceObjects(
@@ -62,6 +66,9 @@ public class ServletDataImpl implements ServletData {
 			_sxpBlueprintResourceComponentServiceObjects);
 		Query.setSXPElementResourceComponentServiceObjects(
 			_sxpElementResourceComponentServiceObjects);
+		Query.
+			setSXPParameterContributorDefinitionResourceComponentServiceObjects(
+				_sxpParameterContributorDefinitionResourceComponentServiceObjects);
 		Query.setSearchableAssetNameResourceComponentServiceObjects(
 			_searchableAssetNameResourceComponentServiceObjects);
 		Query.setSearchableAssetNameDisplayResourceComponentServiceObjects(
@@ -96,6 +103,10 @@ public class ServletDataImpl implements ServletData {
 		_searchResponseResourceComponentServiceObjects;
 
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+	private ComponentServiceObjects<FieldMappingInfoResource>
+		_fieldMappingInfoResourceComponentServiceObjects;
+
+	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<KeywordQueryContributorResource>
 		_keywordQueryContributorResourceComponentServiceObjects;
 
@@ -106,6 +117,10 @@ public class ServletDataImpl implements ServletData {
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<QueryPrefilterContributorResource>
 		_queryPrefilterContributorResourceComponentServiceObjects;
+
+	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+	private ComponentServiceObjects<SXPParameterContributorDefinitionResource>
+		_sxpParameterContributorDefinitionResourceComponentServiceObjects;
 
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<SearchableAssetNameResource>
