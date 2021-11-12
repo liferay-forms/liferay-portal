@@ -108,7 +108,6 @@ long formInstanceId = ddmFormDisplayContext.getFormInstanceId();
 						<aui:input name="formInstanceId" type="hidden" value="<%= formInstance.getFormInstanceId() %>" />
 						<aui:input name="languageId" type="hidden" value="<%= languageId %>" />
 						<aui:input name="workflowAction" type="hidden" value="<%= WorkflowConstants.ACTION_PUBLISH %>" />
-
 						<liferay-ui:error exception="<%= CaptchaException.class %>" message="captcha-verification-failed" />
 						<liferay-ui:error exception="<%= CaptchaTextException.class %>" message="text-verification-failed" />
 						<liferay-ui:error exception="<%= DDMFormRenderingException.class %>" message="unable-to-render-the-selected-form" />
@@ -181,6 +180,19 @@ long formInstanceId = ddmFormDisplayContext.getFormInstanceId();
 									message="you-do-not-have-the-permission-to-access-the-upload-fields-on-this-form"
 								/>
 							</clay:container-fluid>
+						</div>
+
+						<div class="ddm-form-web__show-partial-results-alert">
+							<react:component
+								module="admin/js/util/ShowPartialResultsAlert.es"
+								props='<%=
+									HashMapBuilder.<String, Object>put(
+										"dismissible", true
+									).put(
+										"showPartialResultsToRespondents", ddmFormDisplayContext.isShowPartialResultsToRespondents()
+									).build()
+								%>'
+							/>
 						</div>
 
 						<div class="ddm-form-basic-info">
