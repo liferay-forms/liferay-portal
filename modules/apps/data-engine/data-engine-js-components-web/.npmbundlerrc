@@ -1,0 +1,9 @@
+{
+	"config": {
+		"imports": {
+			"dynamic-data-mapping-form-report-web": {
+				"/": "*"
+			}
+		}
+	}
+}
