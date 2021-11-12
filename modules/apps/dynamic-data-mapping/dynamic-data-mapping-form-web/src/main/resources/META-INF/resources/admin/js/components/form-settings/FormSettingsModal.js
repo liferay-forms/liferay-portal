@@ -52,7 +52,7 @@ const FormSettingsModal = ({
 	}, [dispatch, prevPagesRef, serializedSettingsContext]);
 
 	const {observer, onClose} = useModal({
-		onClose: () => {
+		onClose: async () => {
 			if (undoPagesRef.current) {
 				dispatch({
 					payload: prevPagesRef.current,
@@ -64,8 +64,29 @@ const FormSettingsModal = ({
 				});
 			}
 			else {
-				serializedSettingsContext.value = JSON.stringify({pages});
+				serializedSettingsContext.value = JSON.stringify({
+					pages,
+				});
 			}
+
+			const settingsDDMForm = await Liferay.componentReady(
+				'formSettingsAPI'
+			);
+
+			const showPartialResultsToRespondents = settingsDDMForm.reactComponentRef.current
+				.getFields()
+				.find(
+					({fieldName}) =>
+						fieldName === 'showPartialResultsToRespondents'
+				).value;
+
+			const showPartialResultsToRespondentsElement = document.querySelector(
+				'[id$="showPartialResultsToRespondents"]'
+			);
+
+			showPartialResultsToRespondentsElement.style.display = showPartialResultsToRespondents
+				? 'block'
+				: 'none';
 
 			undoPagesRef.current = true;
 			onCloseFormSettings();
