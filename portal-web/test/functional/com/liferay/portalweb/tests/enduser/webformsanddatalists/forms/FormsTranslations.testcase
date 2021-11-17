@@ -1326,7 +1326,9 @@ definition {
 			fieldLabel = "Rich Text",
 			fieldName = "Rich Text");
 
-		FormFields.viewRichTextPredefinedValue(fieldValue = "Test Predefined Value");
+		FormFields.viewRichTextPredefinedValue(
+			fieldLabel = "Rich Text",
+			fieldValue = "Test Predefined Value");
 
 		FormFields.viewFieldHelpText(
 			fieldHelpText = "Test Help Text",
@@ -1340,7 +1342,9 @@ definition {
 			fieldLabel = "Texto Rico",
 			fieldName = "Texto Rico");
 
-		FormFields.viewRichTextPredefinedValue(fieldValue = "Valor Predefinido");
+		FormFields.viewRichTextPredefinedValue(
+			fieldLabel = "Texto Rico",
+			fieldValue = "Valor Predefinido");
 
 		FormFields.viewFieldHelpText(
 			fieldHelpText = "Texto de Ayuda",
