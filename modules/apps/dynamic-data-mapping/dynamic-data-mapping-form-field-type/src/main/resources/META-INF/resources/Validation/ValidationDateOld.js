@@ -91,6 +91,10 @@ const getDateOptionsByType = (label, name) => ({
 	],
 });
 
+const getOperation = (quantity) => {
+	return quantity < 0 ? 'minus' : 'plus';
+};
+
 const getSelectedParameter = (
 	localizedValue,
 	selectedParameterName,
