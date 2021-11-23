@@ -153,7 +153,8 @@ public class FragmentsImporterImpl implements FragmentsImporter {
 				_importResources(
 					userId, groupId,
 					fragmentCollection.getFragmentCollectionId(),
-					fragmentCollection.getResourcesFolderId(), zipFile);
+					fragmentCollection.getResourcesFolderId(),
+					entry.getKey(),zipFile);
 
 				_importFragmentCompositions(
 					userId, groupId, zipFile,
@@ -765,7 +766,7 @@ public class FragmentsImporterImpl implements FragmentsImporter {
 	}
 
 	private void _importResources(
-			long userId, long groupId, long fragmentCollectionId, long folderId,
+			long userId, long groupId, long fragmentCollectionId, long folderId, String fragmentCollectionKey,
 			ZipFile zipFile)
 		throws Exception {
 
@@ -833,7 +834,11 @@ public class FragmentsImporterImpl implements FragmentsImporter {
 				zipEntry.getName(), StringPool.FORWARD_SLASH);
 
 			if (!ArrayUtil.contains(paths, "resources") ||
-				excludePaths.contains(zipEntry.getName())) {
+				excludePaths.contains(zipEntry.getName()) ||
+				!zipEntry.getName(
+				).contains(
+					fragmentCollectionKey
+				)) {
 
 				continue;
 			}
