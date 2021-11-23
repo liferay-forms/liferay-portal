@@ -55,7 +55,7 @@
 
 		.ddm-form-name {
 			font-size: 32px;
-			font-weight: 300;
+			font-weight: 600;
 			padding: $baseline * 5 0 0 0;
 
 			p {
@@ -66,6 +66,16 @@
 
 	.ddm-form-builder-buttons {
 		margin-bottom: 0;
+	}
+
+	.ddm-form-page-back {
+		left: -18px;
+		position: relative;
+		top: -156px;
+
+		.btn:hover {
+			text-decoration: none;
+		}
 	}
 
 	.form-builder-field-list-container {
@@ -99,6 +109,23 @@
 
 	.form-feedback-item {
 		font-size: 14px;
+	}
+
+	.horizontal-line {
+		background-color: #cdced9;
+		height: 1px;
+		margin-bottom: 40px;
+		margin-top: 40px;
+		padding: 0 10px;
+	}
+
+	.lfr-ddm-default-page-footer-buttons {
+		padding-right: 12px;
+		padding-top: 20px;
+
+		&--submit-again {
+			margin-right: 16px;
+		}
 	}
 
 	.lfr-ddm-form-page-description {
