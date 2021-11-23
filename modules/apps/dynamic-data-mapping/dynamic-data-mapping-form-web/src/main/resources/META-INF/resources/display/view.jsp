@@ -57,11 +57,16 @@ long formInstanceId = ddmFormDisplayContext.getFormInstanceId();
 		</div>
 	</c:when>
 	<c:otherwise>
+		<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" id="/dynamic_data_mapping_form/get_form_report_data" var="formReportDataURL">
+			<portlet:param name="formInstanceId" value="<%= String.valueOf(formInstanceId) %>" />
+		</liferay-portlet:resourceURL>
 
 		<%
 		String languageId = ddmFormDisplayContext.getDefaultLanguageId();
 
 		Locale displayLocale = LocaleUtil.fromLanguageId(languageId);
+
+		DDMFormInstance formInstance = ddmFormDisplayContext.getFormInstance();
 		%>
 
 		<c:choose>
@@ -74,33 +79,77 @@ long formInstanceId = ddmFormDisplayContext.getFormInstanceId();
 				LocalizedValue body = ddmFormSuccessPageSettings.getBody();
 				%>
 
-				<div class="portlet-forms">
-					<div class="ddm-form-basic-info ddm-form-success-page">
-						<clay:container-fluid>
-							<h1 class="ddm-form-name"><%= HtmlUtil.escape(GetterUtil.getString(title.getString(displayLocale), title.getString(title.getDefaultLocale()))) %></h1>
+				<c:choose>
+					<c:when test="<%= ddmFormDisplayContext.isFFShowPartialResultsEnabled() %>">
+						<react:component
+							module="admin/js/util/DefaultPage"
+							props='<%=
+								HashMapBuilder.<String, Object>put(
+									"formReportDataURL", formReportDataURL.toString()
+								).put(
+									"formTitle", formInstance.getName(displayLocale)
+								).put(
+									"limitToOneSubmissionPerUser", ddmFormDisplayContext.isLimitToOneSubmissionPerUserEnabled()
+								).put(
+									"pageDescription", HtmlUtil.escape(GetterUtil.getString(body.getString(displayLocale), body.getString(body.getDefaultLocale())))
+								).put(
+									"pageTitle", HtmlUtil.escape(GetterUtil.getString(title.getString(displayLocale), title.getString(title.getDefaultLocale())))
+								).put(
+									"showPartialResultsToRespondents", ddmFormDisplayContext.isShowPartialResultsToRespondents()
+								).build()
+							%>'
+						/>
+					</c:when>
+					<c:otherwise>
+						<div class="portlet-forms">
+							<div class="ddm-form-basic-info ddm-form-success-page">
+								<clay:container-fluid>
+									<h1 class="ddm-form-name"><%= HtmlUtil.escape(GetterUtil.getString(title.getString(displayLocale), title.getString(title.getDefaultLocale()))) %></h1>
 
-							<p class="ddm-form-description"><%= HtmlUtil.escape(GetterUtil.getString(body.getString(displayLocale), body.getString(body.getDefaultLocale()))) %></p>
-						</clay:container-fluid>
-					</div>
-				</div>
+									<p class="ddm-form-description"><%= HtmlUtil.escape(GetterUtil.getString(body.getString(displayLocale), body.getString(body.getDefaultLocale()))) %></p>
+								</clay:container-fluid>
+							</div>
+						</div>
+					</c:otherwise>
+				</c:choose>
 			</c:when>
 			<c:when test="<%= ddmFormDisplayContext.hasSubmittedAnEntry() && !ddmFormDisplayContext.isPreview() %>">
-				<div class="portlet-forms">
-					<div class="ddm-form-basic-info">
-						<clay:container-fluid>
-							<h1 class="ddm-form-name"><%= LanguageUtil.get(request, "you-have-already-responded") %></h1>
+				<c:choose>
+					<c:when test="<%= ddmFormDisplayContext.isFFShowPartialResultsEnabled() %>">
+						<react:component
+							module="admin/js/util/DefaultPage"
+							props='<%=
+								HashMapBuilder.<String, Object>put(
+									"formReportDataURL", formReportDataURL.toString()
+								).put(
+									"formTitle", HtmlUtil.escapeJS(formInstance.getName(displayLocale))
+								).put(
+									"limitToOneSubmissionPerUser", ddmFormDisplayContext.isLimitToOneSubmissionPerUserEnabled()
+								).put(
+									"pageDescription", LanguageUtil.get(request, "you-can-fill-out-this-form-only-once.-contact-the-owner-of-the-form-if-you-think-this-is-a-mistake")
+								).put(
+									"pageTitle", LanguageUtil.get(request, "you-have-already-responded")
+								).put(
+									"showPartialResultsToRespondents", ddmFormDisplayContext.isShowPartialResultsToRespondents()
+								).build()
+							%>'
+						/>
+					</c:when>
+					<c:otherwise>
+						<div class="portlet-forms">
+							<div class="ddm-form-basic-info">
+								<clay:container-fluid>
+									<h1 class="ddm-form-name"><%= LanguageUtil.get(request, "you-have-already-responded") %></h1>
 
-							<p class="ddm-form-description"><%= LanguageUtil.get(request, "you-can-fill-out-this-form-only-once.-contact-the-owner-of-the-form-if-you-think-this-is-a-mistake") %></p>
-						</clay:container-fluid>
-					</div>
-				</div>
+									<p class="ddm-form-description"><%= LanguageUtil.get(request, "you-can-fill-out-this-form-only-once.-contact-the-owner-of-the-form-if-you-think-this-is-a-mistake") %></p>
+								</clay:container-fluid>
+							</div>
+						</div>
+					</c:otherwise>
+				</c:choose>
 			</c:when>
 			<c:when test="<%= ddmFormDisplayContext.isFormAvailable() %>">
 				<portlet:actionURL name="/dynamic_data_mapping_form/add_form_instance_record" var="addFormInstanceRecordActionURL" />
-
-				<%
-				DDMFormInstance formInstance = ddmFormDisplayContext.getFormInstance();
-				%>
 
 				<div class="portlet-forms">
 					<aui:form action="<%= addFormInstanceRecordActionURL %>" data-DDMFormInstanceId="<%= formInstanceId %>" data-senna-off="true" method="post" name="fm">
