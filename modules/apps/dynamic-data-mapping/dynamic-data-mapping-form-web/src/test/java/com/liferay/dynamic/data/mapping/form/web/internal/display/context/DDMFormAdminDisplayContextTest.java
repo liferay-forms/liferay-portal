@@ -23,10 +23,12 @@ import com.liferay.dynamic.data.mapping.form.renderer.DDMFormTemplateContextFact
 import com.liferay.dynamic.data.mapping.form.values.factory.DDMFormValuesFactory;
 import com.liferay.dynamic.data.mapping.form.web.internal.configuration.DDMFormWebConfiguration;
 import com.liferay.dynamic.data.mapping.form.web.internal.configuration.activator.FFSubmissionsSettingsConfigurationActivator;
+import com.liferay.dynamic.data.mapping.form.web.internal.constants.DDMFormWebKeys;
 import com.liferay.dynamic.data.mapping.form.web.internal.instance.lifecycle.AddDefaultSharedFormLayoutPortalInstanceLifecycleListener;
 import com.liferay.dynamic.data.mapping.io.DDMFormFieldTypesSerializer;
 import com.liferay.dynamic.data.mapping.io.exporter.DDMFormInstanceRecordWriterTracker;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
+import com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecord;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceSettings;
 import com.liferay.dynamic.data.mapping.model.UnlocalizedValue;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceLocalService;
@@ -63,6 +65,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.util.PropsImpl;
 
 import java.util.Locale;
+import java.util.TimeZone;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.RenderRequest;
@@ -158,6 +161,47 @@ public class DDMFormAdminDisplayContextTest extends PowerMockito {
 
 		Assert.assertEquals(
 			getSharedFormURL(), _ddmFormAdminDisplayContext.getSharedFormURL());
+	}
+
+	@Test
+	public void testIsFormExpired() throws Exception {
+		Assert.assertFalse(_ddmFormAdminDisplayContext.isFormExpired());
+
+		DDMFormInstanceSettings ddmFormInstanceSettings = mock(
+			DDMFormInstanceSettings.class);
+
+		DDMFormInstanceRecord ddmFormInstanceRecord =
+			_mockDDMFormInstanceRecord(ddmFormInstanceSettings);
+
+		when(
+			_httpServletRequest.getAttribute(
+				Matchers.eq(
+					DDMFormWebKeys.DYNAMIC_DATA_MAPPING_FORM_INSTANCE_RECORD))
+		).thenReturn(
+			ddmFormInstanceRecord
+		);
+
+		when(
+			ddmFormInstanceSettings.neverExpire()
+		).thenReturn(
+			true
+		);
+
+		Assert.assertFalse(_ddmFormAdminDisplayContext.isFormExpired());
+
+		when(
+			ddmFormInstanceSettings.expirationDate()
+		).thenReturn(
+			"1987-09-22"
+		);
+
+		when(
+			ddmFormInstanceSettings.neverExpire()
+		).thenReturn(
+			false
+		);
+
+		Assert.assertTrue(_ddmFormAdminDisplayContext.isFormExpired());
 	}
 
 	@Test
@@ -273,15 +317,15 @@ public class DDMFormAdminDisplayContextTest extends PowerMockito {
 	protected HttpServletRequest mockHttpServletRequest() {
 		ThemeDisplay themeDisplay = mockThemeDisplay();
 
-		HttpServletRequest httpServletRequest = mock(HttpServletRequest.class);
+		_httpServletRequest = mock(HttpServletRequest.class);
 
 		when(
-			httpServletRequest.getAttribute(WebKeys.THEME_DISPLAY)
+			_httpServletRequest.getAttribute(WebKeys.THEME_DISPLAY)
 		).thenReturn(
 			themeDisplay
 		);
 
-		return httpServletRequest;
+		return _httpServletRequest;
 	}
 
 	protected ThemeDisplay mockThemeDisplay() {
@@ -299,6 +343,12 @@ public class DDMFormAdminDisplayContextTest extends PowerMockito {
 			_PORTAL_URL
 		);
 
+		when(
+			themeDisplay.getTimeZone()
+		).thenReturn(
+			TimeZone.getDefault()
+		);
+
 		return themeDisplay;
 	}
 
@@ -311,7 +361,7 @@ public class DDMFormAdminDisplayContextTest extends PowerMockito {
 	}
 
 	protected void setUpDDMFormDisplayContext() throws Exception {
-		_renderRequest = mock(RenderRequest.class);
+		_renderRequest = _mockRenderRequest();
 
 		_ddmFormAdminDisplayContext = new DDMFormAdminDisplayContext(
 			_renderRequest, mock(RenderResponse.class),
@@ -416,6 +466,39 @@ public class DDMFormAdminDisplayContextTest extends PowerMockito {
 		return ddmFormInstance;
 	}
 
+	private DDMFormInstanceRecord _mockDDMFormInstanceRecord(
+			DDMFormInstanceSettings ddmFormInstanceSettings)
+		throws Exception {
+
+		DDMFormInstance ddmFormInstance = _mockDDMFormInstance(
+			ddmFormInstanceSettings);
+
+		DDMFormInstanceRecord ddmFormInstanceRecord = mock(
+			DDMFormInstanceRecord.class);
+
+		when(
+			ddmFormInstanceRecord.getFormInstance()
+		).thenReturn(
+			ddmFormInstance
+		);
+
+		return ddmFormInstanceRecord;
+	}
+
+	private RenderRequest _mockRenderRequest() {
+		RenderRequest renderRequest = mock(RenderRequest.class);
+
+		ThemeDisplay themeDisplay = mockThemeDisplay();
+
+		when(
+			renderRequest.getAttribute(Matchers.eq(WebKeys.THEME_DISPLAY))
+		).thenReturn(
+			themeDisplay
+		);
+
+		return renderRequest;
+	}
+
 	private String _read(String fileName) throws Exception {
 		Class<?> clazz = getClass();
 
@@ -438,6 +521,7 @@ public class DDMFormAdminDisplayContextTest extends PowerMockito {
 		RandomTestUtil.randomLong();
 
 	private DDMFormAdminDisplayContext _ddmFormAdminDisplayContext;
+	private HttpServletRequest _httpServletRequest;
 	private RenderRequest _renderRequest;
 
 }
