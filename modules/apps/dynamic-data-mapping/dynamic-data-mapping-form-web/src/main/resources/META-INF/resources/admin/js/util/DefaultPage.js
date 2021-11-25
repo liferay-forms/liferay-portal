@@ -13,10 +13,7 @@
  */
 
 import ClayButton from '@clayui/button';
-import {useResource} from '@clayui/data-provider';
-import ClayIcon from '@clayui/icon';
-import Reports from 'dynamic-data-mapping-form-report-web';
-import {fetch} from 'frontend-js-web';
+import {PartialResults} from 'data-engine-js-components-web';
 import React, {useState} from 'react';
 
 const DefaultPage = ({
@@ -28,12 +25,6 @@ const DefaultPage = ({
 	showPartialResultsToRespondents,
 }) => {
 	const [showReport, setShowReport] = useState(false);
-
-	const {resource} = useResource({
-		fetch,
-		link: formReportDataURL,
-	});
-
 	const onSeePartialResultsClick = () => {
 		setShowReport(true);
 	};
@@ -48,63 +39,10 @@ const DefaultPage = ({
 				</div>
 
 				{showReport ? (
-					<>
-						<div className="ddm-form-page-back">
-							<ClayButton
-								displayType="link"
-								onClick={() => setShowReport(false)}
-							>
-								<ClayIcon symbol="order-arrow-left" />
-
-								{Liferay.Language.get('back')}
-							</ClayButton>
-						</div>
-						<div
-							className="portlet-ddm-form-report"
-							id="container-portlet-ddm-form-report"
-						>
-							<div className="portlet-ddm-form-report-header">
-								<div className="container-fluid">
-									<div className="align-items-center">
-										<span className="portlet-ddm-form-report-header-title text-truncate">
-											{resource?.totalItems === 1
-												? Liferay.Util.sub(
-														Liferay.Language.get(
-															'x-entry'
-														),
-														[resource?.totalItems]
-												  )
-												: Liferay.Util.sub(
-														Liferay.Language.get(
-															'x-entries'
-														),
-														[resource?.totalItems]
-												  )}
-										</span>
-									</div>
-
-									<div className="align-items-center">
-										<span className="portlet-ddm-form-report-header-subtitle text-truncate">
-											{resource?.totalItems > 0
-												? resource?.lastModifiedDate
-												: Liferay.Language.get(
-														'there-are-no-entries'
-												  )}
-										</span>
-									</div>
-								</div>
-							</div>
-
-							<Reports
-								data={resource?.data}
-								fields={resource?.fields}
-								formReportRecordsFieldValuesURL={
-									resource?.formReportRecordsFieldValuesURL
-								}
-								portletNamespace={resource?.portletNamespace}
-							/>
-						</div>
-					</>
+					<PartialResults
+						onShow={() => setShowReport(false)}
+						reportDataURL={formReportDataURL}
+					/>
 				) : (
 					<>
 						<div className="ddm-form-basic-info ddm-form-success-page">
