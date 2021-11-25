@@ -118,7 +118,6 @@ long formInstanceId = ddmFormDisplayContext.getFormInstanceId();
 						<aui:input name="formInstanceId" type="hidden" value="<%= formInstance.getFormInstanceId() %>" />
 						<aui:input name="languageId" type="hidden" value="<%= languageId %>" />
 						<aui:input name="workflowAction" type="hidden" value="<%= WorkflowConstants.ACTION_PUBLISH %>" />
-
 						<liferay-ui:error exception="<%= CaptchaException.class %>" message="captcha-verification-failed" />
 						<liferay-ui:error exception="<%= CaptchaTextException.class %>" message="text-verification-failed" />
 						<liferay-ui:error exception="<%= DDMFormRenderingException.class %>" message="unable-to-render-the-selected-form" />
@@ -204,6 +203,17 @@ long formInstanceId = ddmFormDisplayContext.getFormInstanceId();
 								/>
 							</clay:container-fluid>
 						</div>
+
+						<react:component
+							module="admin/js/util/ShowPartialResultsAlert"
+							props='<%=
+								HashMapBuilder.<String, Object>put(
+									"dismissible", true
+								).put(
+									"showPartialResultsToRespondents", ddmFormDisplayContext.isShowPartialResultsToRespondents()
+								).build()
+							%>'
+						/>
 
 						<div class="ddm-form-basic-info">
 							<clay:container-fluid>
