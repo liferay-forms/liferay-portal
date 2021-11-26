@@ -12,10 +12,11 @@
  * details.
  */
 
-import {ClayDropDownWithItems} from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
 import {ClayTooltipProvider} from '@clayui/tooltip';
 import React, {useMemo} from 'react';
+
+import DDMSelect from './DDMSelect';
 
 const SelectDateType: React.FC<IProps> = ({
 	dateFieldName,
@@ -32,50 +33,22 @@ const SelectDateType: React.FC<IProps> = ({
 				({name}) => dateFieldName === name
 			) as IDateFieldOption;
 
-			return date?.label ?? 'Response Date';
+			return date ?? ({label: 'Response Date'} as IDateFieldOption);
 		}
 
 		const option = options?.find(({value}) => value === type);
 
-		return option?.label;
+		return option;
 	}, [dateFieldName, type, dateFieldOptions, options]);
 
-	const items: IItem[] = [
-		...options.map((option) => ({
-			...option,
-			onClick: () => onChange(option.value),
-		})),
-	];
-
 	if (dateFieldOptions.length > 0) {
-		items.push(
+		options.push(
 			{
 				type: 'divider',
-			},
-			{
-				items: dateFieldOptions.map((option) => ({
-					...option,
-					onClick: () => {
-						onChange('dateField', option.name);
-					},
-				})),
-				label: Liferay.Language.get('date-fields'),
-				type: 'group',
-			}
+			} as IOptions,
+			...dateFieldOptions
 		);
 	}
-
-	const select = (
-		<div className="form-builder-select-field input-group-container">
-			<div className="form-control results-chosen select-field-trigger">
-				<div className="option-selected">{selectedOption}</div>
-
-				<a className="select-arrow-down-container">
-					<ClayIcon symbol="caret-double" />
-				</a>
-			</div>
-		</div>
-	);
 
 	return (
 		<div className="ddm__validation-date-start-end">
@@ -94,7 +67,13 @@ const SelectDateType: React.FC<IProps> = ({
 				)}
 			</div>
 
-			<DDMSelect options={items} />
+			<DDMSelect
+				label={selectedOption?.label}
+				name={selectedOption?.name}
+				onChange={() => onChange}
+				options={options}
+				value={selectedOption?.value}
+			/>
 		</div>
 	);
 };
@@ -111,7 +90,7 @@ interface IProps {
 	type: Type;
 }
 
-interface IItem {
+/* interface IItem {
 	items?: {
 		label: string;
 		name: string;
@@ -122,15 +101,18 @@ interface IItem {
 	onClick?: () => void;
 	type?: 'group' | 'divider';
 	value?: DateType;
-}
+} */
 
 interface IDateFieldOption {
 	label: string;
 	name: string;
+	type: string;
+	value: string;
 }
 
 interface IOptions {
 	label: string;
-	name: DateType;
-	value: DateType;
+	name: string;
+	type: string;
+	value: string;
 }
