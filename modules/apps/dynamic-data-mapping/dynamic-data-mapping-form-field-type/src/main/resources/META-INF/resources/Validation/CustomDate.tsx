@@ -12,7 +12,7 @@
  * details.
  */
 
-import {ClayInput, ClaySelectWithOption} from '@clayui/form';
+import {ClayInput} from '@clayui/form';
 import React, {ChangeEvent, useEffect, useState} from 'react';
 
 // @ts-ignore
@@ -20,6 +20,7 @@ import React, {ChangeEvent, useEffect, useState} from 'react';
 import {limitValue} from '../util/numericalOperations';
 
 import './CustomDate.scss';
+import DDMSelect from './DDMSelect';
 import SelectDateType from './SelectDateType';
 
 const MAX_QUANTITY = 999;
@@ -27,7 +28,7 @@ const MIN_QUANTITY = 1;
 const PLUS_VALUE = 'plus';
 const MINUS_VALUE = 'minus';
 
-const operationsOptions: ISelectOptions[] = [
+const OPERATION_OPTIONS: ISelectOptions[] = [
 	{
 		label: Liferay.Language.get('plus'),
 		value: PLUS_VALUE,
@@ -38,7 +39,7 @@ const operationsOptions: ISelectOptions[] = [
 	},
 ];
 
-const unitOptions = [
+const UNIT_OPTIONS = [
 	{
 		label: Liferay.Language.get('days'),
 		value: 'days',
@@ -116,7 +117,7 @@ const CustomDate: React.FC<IProps> = ({
 				<label>
 					{Liferay.Language.get('operation')}
 
-					<ClaySelectWithOption
+					<DDMSelect
 						disabled={readOnly}
 						name={`selectedOperation_${eventType}`}
 						onChange={({target: {value}}) => {
@@ -134,7 +135,7 @@ const CustomDate: React.FC<IProps> = ({
 								});
 							}
 						}}
-						options={operationsOptions}
+						options={OPERATION_OPTIONS}
 						value={
 							parameters.quantity < 0 ? MINUS_VALUE : PLUS_VALUE
 						}
@@ -159,7 +160,7 @@ const CustomDate: React.FC<IProps> = ({
 				<label>
 					{Liferay.Language.get('unit')}
 
-					<ClaySelectWithOption
+					<DDMSelect
 						disabled={readOnly}
 						name={`selectedUnit_${eventType}`}
 						onChange={({target: {value}}) =>
@@ -168,7 +169,7 @@ const CustomDate: React.FC<IProps> = ({
 								unit: value as Unit,
 							})
 						}
-						options={unitOptions}
+						options={UNIT_OPTIONS}
 						value={parameters.unit}
 					/>
 				</label>
