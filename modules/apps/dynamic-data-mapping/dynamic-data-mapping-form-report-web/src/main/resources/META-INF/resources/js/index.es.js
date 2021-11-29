@@ -16,7 +16,6 @@ import React from 'react';
 
 import App from './App.es';
 import EmptyState from './components/empty-state/EmptyState.es';
-export * from '../css/main.scss';
 
 export default function main({data, ...restProps}) {
 	if (!data || data.length === 0) {

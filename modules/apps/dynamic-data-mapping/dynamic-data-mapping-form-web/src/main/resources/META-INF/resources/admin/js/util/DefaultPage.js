@@ -30,7 +30,7 @@ const DefaultPage = ({
 	};
 
 	return (
-		<div className="portlet-forms">
+		<div className="ddm-form-web-dafault-page portlet-forms">
 			<div className="container-fluid container-fluid-max-xl">
 				<div className="ddm-form-basic-info">
 					<h1 className="ddm-form-name">{formTitle}</h1>

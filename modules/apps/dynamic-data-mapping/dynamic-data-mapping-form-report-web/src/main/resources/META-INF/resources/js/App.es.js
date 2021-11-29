@@ -20,6 +20,8 @@ import Sidebar from './components/sidebar/Sidebar.es';
 import {SidebarContextProvider} from './components/sidebar/SidebarContext.es';
 import {transformSearchLocationValues} from './utils/searchLocation.es';
 
+import '../css/main.scss';
+
 export default function App({
 	data,
 	fields,
