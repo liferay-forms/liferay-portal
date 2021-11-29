@@ -122,7 +122,7 @@ long formInstanceId = ddmFormDisplayContext.getFormInstanceId();
 								HashMapBuilder.<String, Object>put(
 									"formReportDataURL", formReportDataURL.toString()
 								).put(
-									"formTitle", HtmlUtil.escapeJS(formInstance.getName(displayLocale))
+									"formTitle", formInstance.getName(displayLocale)
 								).put(
 									"limitToOneSubmissionPerUser", ddmFormDisplayContext.isLimitToOneSubmissionPerUserEnabled()
 								).put(
