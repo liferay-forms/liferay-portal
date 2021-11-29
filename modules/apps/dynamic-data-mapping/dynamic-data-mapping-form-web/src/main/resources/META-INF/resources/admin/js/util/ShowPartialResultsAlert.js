@@ -38,12 +38,9 @@ const ShowPartialResultsAlert = ({
 
 	return (
 		<div
-			className={classNames(
-				'container-fluid container-fluid-max-xl',
-				{
-					'ddm-form-web__show-partial-results-alert--hidden': !showPartialResult,
-				}
-			)}
+			className={classNames('container-fluid container-fluid-max-xl', {
+				'ddm-form-web__show-partial-results-alert--hidden': !showPartialResult,
+			})}
 		>
 			<ClayAlert {...alertProps}>
 				{Liferay.Language.get(
