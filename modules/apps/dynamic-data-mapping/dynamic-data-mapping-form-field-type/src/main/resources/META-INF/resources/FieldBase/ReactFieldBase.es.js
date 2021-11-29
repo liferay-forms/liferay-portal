@@ -239,11 +239,15 @@ function FieldBase({
 			type === 'radio');
 	const showPopover = fieldName === 'inputMaskFormat';
 
+	const hasSwitchTooltip =
+		name.includes('required') || name.includes('hideField') ? true : false;
+
 	return (
 		<div
 			aria-labelledby={!renderLabel ? fieldDetailsId : null}
 			className={classNames('form-group', {
 				'has-error': hasError,
+				'has-switch-tooltip': hasSwitchTooltip,
 				'hide': !visible,
 			})}
 			data-field-name={name}
