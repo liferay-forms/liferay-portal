@@ -56,7 +56,7 @@ export * as FieldUtil from './core/utils/fields';
 export {default as sectionAdded} from './core/utils/sectionAddedHandler';
 export {capitalize} from './utils/strings';
 export {enableSubmitButton} from './core/utils/submitButtonController.es';
-export {PartialResults} from './custom/form/components/PartialResults';
+export {default as PartialResults} from './custom/form/components/PartialResults';
 
 // Custom Form
 

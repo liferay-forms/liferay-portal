@@ -13,6 +13,7 @@
  */
 
 import React from 'react';
+import './PartialResults.scss';
 declare const PartialResults: React.FC<IProps>;
 export default PartialResults;
 interface IProps {

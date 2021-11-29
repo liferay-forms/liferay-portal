@@ -74,7 +74,7 @@ export function Container({
 	}
 
 	return (
-		<>
+		<div className="ddm-form-wizard">
 			{showReport ? (
 				<PartialResults
 					onShow={() => setShowReport(false)}
@@ -132,7 +132,7 @@ export function Container({
 					)}
 				</div>
 			)}
-		</>
+		</div>
 	);
 }
 

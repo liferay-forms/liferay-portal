@@ -18,6 +18,8 @@ import ClayIcon from '@clayui/icon';
 import Reports from 'dynamic-data-mapping-form-report-web';
 import React from 'react';
 
+import './PartialResults.scss';
+
 const PartialResults: React.FC<IProps> = ({onShow, reportDataURL}) => {
 	const {resource} = useResource({
 		fetch,
