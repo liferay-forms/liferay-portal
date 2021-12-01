@@ -118,7 +118,7 @@ definition {
 
 		Type(
 			locator1 = "FormFields#PREDEFINED_VALUE_BODY",
-			value1 = "Rich Text Test");
+			value1 = "R");
 
 		SelectFrame(value1 = "relative=top");
 
@@ -134,11 +134,11 @@ definition {
 
 		FormFields.viewRichTextValue(
 			fieldName = "Predefined Value",
-			fieldValue = "Rich Text Test");
+			fieldValue = "R");
 
 		FormFields.viewRichTextValue(
 			fieldName = "Field",
-			fieldValue = "Rich Text Test");
+			fieldValue = "R");
 
 		FormFields.viewFieldHelpText(
 			fieldHelpText = "Help Text Test",
