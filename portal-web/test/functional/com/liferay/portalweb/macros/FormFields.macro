@@ -576,7 +576,7 @@ definition {
 
 		Type(
 			key_fieldName = "${fieldName}",
-			locator1 = "FormFields#TEXT_MULTILINE_FIELD_2",
+			locator1 = "FormFields#TEXT_MULTILINE_FIELD",
 			value1 = "${fieldValue}");
 	}
 
