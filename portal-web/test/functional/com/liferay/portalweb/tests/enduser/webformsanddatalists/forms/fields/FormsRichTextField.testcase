@@ -415,7 +415,6 @@ definition {
 	@priority = "5"
 	test PredefinedValueCanBeAdded {
 		property forms.functional = "true";
-		property portal.upstream = "quarantine";
 
 		FormsAdmin.addForm();
 
@@ -428,12 +427,12 @@ definition {
 		Form.gotoAdvancedTab();
 
 		CKEditor.addContentInWebContent(
-			content = "Rich Text Test",
+			content = "R",
 			fieldLabel = "Predefined Value");
 
 		FormFields.viewRichTextValue(
 			fieldName = "Rich Text",
-			fieldValue = "Rich Text Test");
+			fieldValue = "R");
 
 		Form.save();
 
@@ -443,7 +442,7 @@ definition {
 
 		FormFields.viewRichTextValue(
 			fieldName = "Rich Text",
-			fieldValue = "Rich Text Test");
+			fieldValue = "R");
 
 		FormPortlet.submitSuccessfully();
 
