@@ -83,7 +83,7 @@ public class DDMDataProviderTestUtil {
 				"username", "test@liferay.com"));
 		ddmFormValues.addDDMFormFieldValue(
 			DDMFormValuesTestUtil.createUnlocalizedDDMFormFieldValue(
-				"timeout", "1000"));
+				"timeout", "30000"));
 
 		if (inputParameterSettings != null) {
 			for (DDMDataProviderInputParametersSettings inputParameterSetting :
