@@ -39,7 +39,7 @@ import com.liferay.dynamic.data.mapping.model.DDMFormSuccessPageSettings;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMStructureVersion;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceLocalService;
-import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordLocalService;
+import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordService;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordVersionLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceService;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceVersionLocalService;
@@ -114,7 +114,7 @@ public class DDMFormDisplayContext {
 	public DDMFormDisplayContext(
 		DDMFormFieldTypeServicesTracker ddmFormFieldTypeServicesTracker,
 		DDMFormInstanceLocalService ddmFormInstanceLocalService,
-		DDMFormInstanceRecordLocalService ddmFormInstanceRecordLocalService,
+		DDMFormInstanceRecordService ddmFormInstanceRecordService,
 		DDMFormInstanceRecordVersionLocalService
 			ddmFormInstanceRecordVersionLocalService,
 		DDMFormInstanceService ddmFormInstanceService,
@@ -136,7 +136,7 @@ public class DDMFormDisplayContext {
 
 		_ddmFormFieldTypeServicesTracker = ddmFormFieldTypeServicesTracker;
 		_ddmFormInstanceLocalService = ddmFormInstanceLocalService;
-		_ddmFormInstanceRecordLocalService = ddmFormInstanceRecordLocalService;
+		_ddmFormInstanceRecordService = ddmFormInstanceRecordService;
 		_ddmFormInstanceRecordVersionLocalService =
 			ddmFormInstanceRecordVersionLocalService;
 		_ddmFormInstanceService = ddmFormInstanceService;
@@ -374,13 +374,15 @@ public class DDMFormDisplayContext {
 		return _ddmFormInstanceId;
 	}
 
-	public DDMFormInstanceRecord getFormInstanceRecord() {
+	public DDMFormInstanceRecord getFormInstanceRecord()
+		throws PortalException {
+
 		if (_ddmFormInstanceRecord != null) {
 			return _ddmFormInstanceRecord;
 		}
 
 		_ddmFormInstanceRecord =
-			_ddmFormInstanceRecordLocalService.fetchDDMFormInstanceRecord(
+			_ddmFormInstanceRecordService.getFormInstanceRecord(
 				getFormInstanceRecordId());
 
 		return _ddmFormInstanceRecord;
@@ -1118,8 +1120,7 @@ public class DDMFormDisplayContext {
 	private final DDMFormInstanceLocalService _ddmFormInstanceLocalService;
 	private DDMFormInstanceRecord _ddmFormInstanceRecord;
 	private long _ddmFormInstanceRecordId;
-	private final DDMFormInstanceRecordLocalService
-		_ddmFormInstanceRecordLocalService;
+	private final DDMFormInstanceRecordService _ddmFormInstanceRecordService;
 	private final DDMFormInstanceRecordVersionLocalService
 		_ddmFormInstanceRecordVersionLocalService;
 	private final DDMFormInstanceService _ddmFormInstanceService;
