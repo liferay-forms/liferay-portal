@@ -582,7 +582,7 @@ public class DDMFormEvaluatorHelper {
 		String fieldInstanceId =
 			ddmFormEvaluatorFieldContextKey.getInstanceId();
 
-		boolean valid = false;
+		Boolean valid = Boolean.FALSE;
 
 		try {
 			String localizedValueString = null;
@@ -634,7 +634,7 @@ public class DDMFormEvaluatorHelper {
 
 		builder.withInstanceId(fieldInstanceId);
 
-		if (!valid) {
+		if (!Objects.equals(Boolean.TRUE, valid)) {
 			String errorMessage = null;
 
 			LocalizedValue errorMessageLocalizedValue =
