@@ -58,15 +58,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -209,22 +204,28 @@ public class DDMExpressionEvaluatorVisitor
 				_ddmExpressionFieldAccessor);
 		}
 
-		Optional<Method> methodOptional = _getApplyMethodOptional(
-			ddmExpressionFunction);
+		Method method;
 
-		if (!methodOptional.isPresent()) {
+		Object[] functionParameters = getFunctionParameters(
+			context.functionParameters());
+
+		try {
+			method = _getApplyMethod(
+				new Class<?>[functionParameters.length],
+				ddmExpressionFunction.getClass());
+		}
+		catch (NoSuchMethodException noSuchMethodException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(noSuchMethodException, noSuchMethodException);
+			}
+
 			return null;
 		}
-
-		Method method = methodOptional.get();
 
 		method.setAccessible(true);
 
 		try {
 			Class<?>[] parameterTypes = method.getParameterTypes();
-
-			Object[] functionParameters = getFunctionParameters(
-				context.functionParameters());
 
 			if ((parameterTypes.length == 1) &&
 				(parameterTypes[0] == new Object[0].getClass())) {
@@ -565,46 +566,17 @@ public class DDMExpressionEvaluatorVisitor
 		return (T)parseTree.accept(this);
 	}
 
-	private Optional<Method> _getApplyMethodOptional(
-		DDMExpressionFunction ddmExpressionFunction) {
+	private Method _getApplyMethod(Class<?>[] classes, Class<?> clazz)
+		throws NoSuchMethodException {
 
-		List<Method> methods = Stream.of(
-			_getHierarchicalMethods(ddmExpressionFunction.getClass())
-		).filter(
-			method -> StringUtil.equals("apply", method.getName())
-		).collect(
-			Collectors.toList()
-		);
+		Arrays.fill(classes, Object.class);
 
-		Iterator<Method> iterator = methods.iterator();
-
-		Method method = iterator.next();
-
-		Class<?>[] parameterTypes = method.getParameterTypes();
-
-		Object object = new Object();
-
-		if ((parameterTypes.length == 1) &&
-			(parameterTypes[0] == object.getClass()) && iterator.hasNext()) {
-
-			return Optional.ofNullable(iterator.next());
+		try {
+			return clazz.getMethod("apply", classes);
 		}
-
-		return Optional.ofNullable(method);
-	}
-
-	private Method[] _getHierarchicalMethods(Class<?> clazz) {
-		Set<Method> methods = new HashSet<>();
-
-		if (clazz.getSuperclass() != null) {
-			Collections.addAll(
-				methods, _getHierarchicalMethods(clazz.getSuperclass()));
+		catch (NoSuchMethodException noSuchMethodException) {
+			return clazz.getMethod("apply", Object[].class);
 		}
-
-		Collections.addAll(methods, clazz.getDeclaredMethods());
-		Collections.addAll(methods, clazz.getMethods());
-
-		return methods.toArray(new Method[0]);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
