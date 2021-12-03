@@ -22,9 +22,15 @@ export function getColumn(pages, nestedIndexes = []) {
 	nestedIndexes.forEach((indexes) => {
 		const {columnIndex, pageIndex, rowIndex} = indexes;
 
+		let index = pageIndex;
+
+		if (pages.length - 1 < pageIndex) {
+			index = 0;
+		}
+
 		column = FormSupport.getColumn(
 			context,
-			column ? 0 : pageIndex,
+			column ? 0 : index,
 			rowIndex,
 			columnIndex
 		);
