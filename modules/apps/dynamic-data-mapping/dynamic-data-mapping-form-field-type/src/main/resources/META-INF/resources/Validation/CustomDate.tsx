@@ -192,9 +192,9 @@ interface IDateFieldOption {
 type Unit = 'days' | 'months' | 'years';
 interface IOptions {
 	label: string;
-	name: 'customDate' | 'responseDate';
+	name: string;
 	type: string;
-	value: 'customDate' | 'responseDate';
+	value: string;
 }
 
 interface ISelectOptions {

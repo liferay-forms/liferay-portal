@@ -86,12 +86,15 @@ interface IProps {
 interface IDateFieldOption {
 	label: string;
 	name: string;
+	type: string;
+	value: string;
 }
 
 interface IOptions {
 	label: string;
-	name: 'customDate' | 'responseDate';
-	value: 'customDate' | 'responseDate';
+	name: string;
+	type: string;
+	value: string;
 }
 
 type EventType = 'startsFrom' | 'endsOn';
