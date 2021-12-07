@@ -27,9 +27,12 @@ interface IProps {
 interface IDateFieldOption {
 	label: string;
 	name: string;
+	type: string;
+	value: string;
 }
 interface IOptions {
 	label: string;
-	name: DateType;
-	value: DateType;
+	name: string;
+	type: string;
+	value: string;
 }
