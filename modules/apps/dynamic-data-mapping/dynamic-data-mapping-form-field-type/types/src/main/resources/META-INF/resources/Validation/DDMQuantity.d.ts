@@ -11,13 +11,14 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-import React, { ChangeEvent } from 'react';
+
+import React, {ChangeEvent} from 'react';
 declare const DDMQuantity: React.FC<IProps>;
 export default DDMQuantity;
 interface IProps {
-    label: string;
-    name?: string;
-    onChange: (event: ChangeEvent<HTMLInputElement>) => void;
-    readOnly?: boolean;
-    value: number;
+	label: string;
+	name?: string;
+	onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+	readOnly?: boolean;
+	value: number;
 }
