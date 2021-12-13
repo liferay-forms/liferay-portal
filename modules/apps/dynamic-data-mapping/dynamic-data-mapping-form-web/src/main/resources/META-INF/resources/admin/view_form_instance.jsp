@@ -141,7 +141,7 @@ FormInstancePermissionCheckerHelper formInstancePermissionCheckerHelper = ddmFor
 										name="status"
 									>
 										<c:choose>
-											<c:when test="<%= !ddmFormAdminDisplayContext.isFormExpired(formInstance) %>">
+											<c:when test="<%= !DDMFormInstanceStatusUtil.isFormExpired(formInstance, timeZone) %>">
 												<clay:label
 													displayType="success"
 													label="available"

@@ -70,11 +70,13 @@ long formInstanceId = ddmFormDisplayContext.getFormInstanceId();
 
 		boolean showSuccessPage = ddmFormDisplayContext.isShowSuccessPage();
 
+		boolean expired = DDMFormInstanceStatusUtil.isFormExpired(formInstance, timeZone);
+
 		boolean preview = ddmFormDisplayContext.isPreview();
 		%>
 
 		<c:choose>
-			<c:when test="<%= showSuccessPage || (ddmFormDisplayContext.hasSubmittedAnEntry() && !preview) %>">
+			<c:when test="<%= showSuccessPage || expired || (ddmFormDisplayContext.hasSubmittedAnEntry() && !preview) %>">
 
 				<%
 				String pageDescription;
@@ -83,6 +85,10 @@ long formInstanceId = ddmFormDisplayContext.getFormInstanceId();
 				if (showSuccessPage) {
 					pageDescription = ddmFormDisplayContext.getSuccessPageDescription(displayLocale);
 					pageTitle = ddmFormDisplayContext.getSuccessPageTitle(displayLocale);
+				}
+				else if (expired) {
+					pageDescription = LanguageUtil.get(request, "this-form-has-an-expiration-date");
+					pageTitle = LanguageUtil.get(request, "this-form-is-no-longer-available");
 				}
 				else {
 					pageDescription = LanguageUtil.get(request, "you-can-fill-out-this-form-only-once.-contact-the-owner-of-the-form-if-you-think-this-is-a-mistake");
