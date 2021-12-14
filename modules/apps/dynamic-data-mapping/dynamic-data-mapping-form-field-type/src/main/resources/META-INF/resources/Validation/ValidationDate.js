@@ -108,7 +108,7 @@ const ValidationDate = ({
 
 	const errorMessageName = name + '_errorMessage';
 
-	const {formBuilder, dateFieldTypeValidationEnabled} = useFormState();
+	const {dateFieldTypeValidationEnabled, formBuilder} = useFormState();
 
 	const fields = useMemo(() => {
 		const fields = [];
@@ -165,16 +165,20 @@ const ValidationDate = ({
 							? {
 									parameters: startDate,
 									title: Liferay.Language.get('start-date'),
-									tooltip: Liferay.Language.get(
-										'starts-from-tooltip'
-									),
+									tooltip: dateFieldTypeValidationEnabled
+										? Liferay.Language.get(
+												'starts-from-tooltip'
+										  )
+										: null,
 							  }
 							: {
 									parameters: endDate,
 									title: Liferay.Language.get('end-date'),
-									tooltip: Liferay.Language.get(
-										'ends-on-tooltip'
-									),
+									tooltip: dateFieldTypeValidationEnabled
+										? Liferay.Language.get(
+												'ends-on-tooltip'
+										  )
+										: null,
 							  };
 
 					return (
