@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`FormSupport add a new field to column to the pages 1`] = `
+exports[`FormSupport add a new row to the pages and reorder 1`] = `
 Array [
   Object {
     "description": "Add a short description for this page.",
@@ -11,6 +11,18 @@ Array [
       "en_US": "Page title",
     },
     "rows": Array [
+      Object {
+        "columns": Array [
+          Object {
+            "fields": Array [
+              Object {
+                "type": "newRow",
+              },
+            ],
+            "size": 12,
+          },
+        ],
+      },
       Object {
         "columns": Array [
           Object {
@@ -76,12 +88,7 @@ Array [
             "size": 3,
           },
           Object {
-            "fields": Array [
-              Object {
-                "spritemap": "icons.svg",
-                "type": "text",
-              },
-            ],
+            "fields": Array [],
             "size": 9,
           },
         ],
@@ -189,7 +196,7 @@ Array [
 ]
 `;
 
-exports[`FormSupport add a new row to the pages and reorder 1`] = `
+exports[`FormSupport addFieldToColumn add a new field to column 1`] = `
 Array [
   Object {
     "description": "Add a short description for this page.",
@@ -200,18 +207,6 @@ Array [
       "en_US": "Page title",
     },
     "rows": Array [
-      Object {
-        "columns": Array [
-          Object {
-            "fields": Array [
-              Object {
-                "type": "newRow",
-              },
-            ],
-            "size": 12,
-          },
-        ],
-      },
       Object {
         "columns": Array [
           Object {
@@ -277,7 +272,12 @@ Array [
             "size": 3,
           },
           Object {
-            "fields": Array [],
+            "fields": Array [
+              Object {
+                "spritemap": "icons.svg",
+                "type": "text",
+              },
+            ],
             "size": 9,
           },
         ],
