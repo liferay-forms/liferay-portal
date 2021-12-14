@@ -108,13 +108,13 @@ const ValidationDate = ({
 
 	const errorMessageName = name + '_errorMessage';
 
-	const {builderPages, dateFieldTypeValidationEnabled} = useFormState();
+	const {formBuilder, dateFieldTypeValidationEnabled} = useFormState();
 
 	const fields = useMemo(() => {
 		const fields = [];
 
 		if (dateFieldTypeValidationEnabled) {
-			const visitor = new PagesVisitor(builderPages);
+			const visitor = new PagesVisitor(formBuilder.pages);
 
 			visitor.visitFields((field) => {
 				if (
@@ -133,7 +133,7 @@ const ValidationDate = ({
 		}
 
 		return fields;
-	}, [builderPages, dateFieldTypeValidationEnabled, parentFieldName]);
+	}, [formBuilder.pages, dateFieldTypeValidationEnabled, parentFieldName]);
 
 	return (
 		<>
