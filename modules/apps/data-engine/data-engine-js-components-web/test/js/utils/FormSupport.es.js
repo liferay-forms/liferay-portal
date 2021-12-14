@@ -20,7 +20,7 @@ let pages = null;
 
 describe('FormSupport', () => {
 	beforeEach(() => {
-		pages = JSON.parse(JSON.stringify(mockPages));
+		pages = Array.from(JSON.parse(JSON.stringify(mockPages)));
 	});
 
 	afterEach(() => {
@@ -75,24 +75,95 @@ describe('FormSupport', () => {
 		).toMatchSnapshot();
 	});
 
-	it('add a new field to column to the pages', () => {
-		const columnIndex = 1;
-		const field = {
-			spritemap: 'icons.svg',
-			type: 'text',
-		};
-		const pageIndex = 0;
-		const rowIndex = 0;
+	describe('addFieldToColumn', () => {
+		it('add a new field to column', () => {
+			const columnIndex = 1;
+			const field = {
+				spritemap: 'icons.svg',
+				type: 'text',
+			};
+			const pageIndex = 0;
+			const rowIndex = 0;
 
-		expect(
-			FormSupport.addFieldToColumn(
+			expect(
+				FormSupport.addFieldToColumn(
+					pages,
+					pageIndex,
+					rowIndex,
+					columnIndex,
+					field
+				)
+			).toMatchSnapshot();
+		});
+
+		it('add a new field to column with invalid column index', () => {
+			const pageIndex = 0;
+			const rowIndex = 1;
+
+			const maxColumnIndex =
+				pages[pageIndex].rows[rowIndex].columns.length - 1;
+
+			expect(
+				FormSupport.isEmptyColumn(
+					pages,
+					pageIndex,
+					rowIndex,
+					maxColumnIndex
+				)
+			).toBeTruthy();
+
+			const newPages = FormSupport.addFieldToColumn(
+				pages,
+				pageIndex,
+				rowIndex,
+				maxColumnIndex + Math.floor(Math.random() * 10) + 1,
+				{
+					fieldName: 'newTextField',
+					spritemap: 'icons.svg',
+					type: 'text',
+				}
+			);
+
+			expect(
+				newPages[pageIndex].rows[rowIndex].columns[maxColumnIndex]
+					.fields[0].fieldName
+			).toBe('newTextField');
+		});
+
+		it('add a new field to non-empty column', () => {
+			const columnIndex = 1;
+			const pageIndex = 0;
+			const rowIndex = 1;
+
+			expect(
+				FormSupport.isEmptyColumn(
+					pages,
+					pageIndex,
+					rowIndex,
+					columnIndex
+				)
+			).toBeFalsy();
+
+			const newPages = FormSupport.addFieldToColumn(
 				pages,
 				pageIndex,
 				rowIndex,
 				columnIndex,
-				field
-			)
-		).toMatchSnapshot();
+				{
+					fieldName: 'newTextField',
+					spritemap: 'icons.svg',
+					type: 'text',
+				}
+			);
+
+			expect(newPages[pageIndex].rows.length).toBe(
+				pages[pageIndex].rows.length + 1
+			);
+			expect(
+				newPages[pageIndex].rows[rowIndex].columns[0].fields[0]
+					.fieldName
+			).toBe('newTextField');
+		});
 	});
 
 	it('adds a new fields to column void', () => {
