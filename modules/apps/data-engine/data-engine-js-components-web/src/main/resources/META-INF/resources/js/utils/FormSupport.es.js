@@ -101,6 +101,12 @@ export function addFieldToColumn(
 		return addRow(pages, numberOfRows, pageIndex, newRow);
 	}
 
+	const numberOfColumns = pages[pageIndex].rows[rowIndex].columns.length;
+
+	if (columnIndex >= numberOfColumns) {
+		columnIndex = numberOfColumns - 1;
+	}
+
 	if (!isEmptyColumn(pages, pageIndex, rowIndex, columnIndex)) {
 		pages = addRow(pages, rowIndex, pageIndex);
 	}
