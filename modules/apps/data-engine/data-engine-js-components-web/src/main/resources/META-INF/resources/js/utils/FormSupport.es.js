@@ -108,6 +108,7 @@ export function addFieldToColumn(
 	}
 
 	if (!isEmptyColumn(pages, pageIndex, rowIndex, columnIndex)) {
+		columnIndex = 0;
 		pages = addRow(pages, rowIndex, pageIndex);
 	}
 
