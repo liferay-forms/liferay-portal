@@ -34,6 +34,8 @@ definition {
 	@description = "Verify that a translation can be added"
 	@priority = "5"
 	test CanBeCreated {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -64,6 +66,8 @@ definition {
 	@description = "Verify that multiple translations can be added"
 	@priority = "5"
 	test CanBeCreatedInMultipleLanguages {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form1");
@@ -120,6 +124,8 @@ definition {
 	@description = "Verify that only one translation is supported for each language"
 	@priority = "5"
 	test CanBeCreatedOnlyOncePerLanguage {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form1");
@@ -229,6 +235,8 @@ definition {
 	@description = "Verify that a translation can be deactivated"
 	@priority = "5"
 	test CanBeDeleted {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form1");
@@ -257,6 +265,8 @@ definition {
 	@description = "Verify that a translation can be edited"
 	@priority = "5"
 	test CanBeEdited {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form1");
@@ -299,6 +309,8 @@ definition {
 	@description = "Verify that a translation can be previewed"
 	@priority = "5"
 	test CanBePreviewed {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form1");
@@ -335,6 +347,8 @@ definition {
 	@description = "Verify that a translation can be published"
 	@priority = "5"
 	test CanBePublished {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -377,6 +391,8 @@ definition {
 	@description = "Verify that a translated Form can be submitted"
 	@priority = "5"
 	test CanBeSubmitted {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -431,6 +447,8 @@ definition {
 	@description = "Verify that a Color field's Label and Help Text can be translated"
 	@priority = "5"
 	test ColorFieldCanBeTranslated {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -475,6 +493,8 @@ definition {
 	@description = "Verify that a Date field's Label and Help Text can be translated"
 	@priority = "5"
 	test DateFieldCanBeTranslated {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -791,6 +811,8 @@ definition {
 	@description = "Verify that Forms submitted in different languages show the appropriate country flags in View Entries"
 	@priority = "5"
 	test EntriesDisplayTheCorrectLanguageFlag {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -843,6 +865,8 @@ definition {
 	@description = "Verify that a field that is added in a translation is also added to the default language"
 	@priority = "5"
 	test FieldsAddedToTranslationAreAddedToDefaultLanguage {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -869,6 +893,8 @@ definition {
 	@description = "Verify that if a field is deleted on the translation, it is also deleted on the default language"
 	@priority = "5"
 	test FieldsDeletedInATranslationAreDeletedInTheDefaultLanguage {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -897,6 +923,8 @@ definition {
 	@description = "Verify that a Grid field's Label, Help Text and Options can be translated"
 	@priority = "5"
 	test GridFieldCanBeTranslated {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -981,6 +1009,8 @@ definition {
 	@description = "Verify that an Image field's Label and Help Text can be translated"
 	@priority = "5"
 	test ImageFieldCanBeTranslated {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -1025,6 +1055,8 @@ definition {
 	@description = "Verify that the properties of a field remain the same when adding a translation"
 	@priority = "5"
 	test MaintainPropertiesFromDefaultLanguage {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -1058,6 +1090,8 @@ definition {
 	@description = "Verify that a Multiple Selection field's Label, Help Text and Options can be translated"
 	@priority = "5"
 	test MultipleSelectionFieldCanBeTranslated {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -1141,6 +1175,8 @@ definition {
 	@description = "Verify that a Numeric field's Label, Placeholder Text and Help Text can be translated"
 	@priority = "5"
 	test NumericFieldCanBeTranslated {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -1193,6 +1229,8 @@ definition {
 	@description = "Verify that a Paragraph field's Label and Body Text can be translated"
 	@priority = "5"
 	test ParagraphFieldCanBeTranslated {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -1237,6 +1275,7 @@ definition {
 	@description = "Verify that a Rich Text field's Label, Help Text and Predefined Value can be translated"
 	@priority = "5"
 	test RichTextFieldCanBeTranslated {
+		property portal.acceptance = "true";
 		property forms.functional = "false";
 
 		FormsAdmin.addForm();
@@ -1320,6 +1359,8 @@ definition {
 	@description = "Verify that a Select From List field's Label, Help Text and Options can be translated"
 	@priority = "5"
 	test SelectFromListFieldCanBeTranslated {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -1402,6 +1443,8 @@ definition {
 	@description = "Verify that a Separator field's Label and Help Text can be translated"
 	@priority = "5"
 	test SeparatorFieldCanBeTranslated {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -1446,6 +1489,8 @@ definition {
 	@description = "Verify that a Single Selection field's Label, Help Text and Options can be translated"
 	@priority = "5"
 	test SingleSelectionFieldCanBeTranslated {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -1591,6 +1636,8 @@ definition {
 	@description = "Verify that a Text field's Autocomplete Options can be translated"
 	@priority = "5"
 	test TextFieldAutocompleteOptionsCanBeTranslated {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form1");
@@ -1643,6 +1690,8 @@ definition {
 	@description = "Verify that a Text field's Label, Placeholder Text and Help Text can be translated"
 	@priority = "5"
 	test TextFieldBasicPropertiesCanBeTranslated {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form1");
@@ -1695,6 +1744,8 @@ definition {
 	@description = "Verify that a Text field's Predefined Value can be translated"
 	@priority = "5"
 	test TextFieldPredefinedValueCanBeTranslated {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -1725,6 +1776,8 @@ definition {
 	@description = "Verify that an Upload field's Label and Help Text can be translated"
 	@priority = "5"
 	test UploadFieldCanBeTranslated {
+		property portal.acceptance = "true";
+		
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");

@@ -38,6 +38,8 @@ definition {
 	@description = "Verify that the backspace function can delete all entries in the Calculator"
 	@priority = "5"
 	test BackspaceCanDeleteAllEntriesInCalculator {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -120,6 +122,8 @@ definition {
 	@description = "Verify that a Rule Action can be deleted"
 	@priority = "5"
 	test CanBeDeleted {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -193,6 +197,8 @@ definition {
 	@description = "Verify that a Rule Action can be edited"
 	@priority = "5"
 	test CanBeEdited {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -352,6 +358,8 @@ definition {
 	@description = "Verify that a Rule with 'Jump to page' action can be created"
 	@priority = "4"
 	test CanCreateAJumpToPageRule {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -422,6 +430,8 @@ definition {
 	@description = "Verify that a Rule with 'Enable' action can be created"
 	@priority = "4"
 	test CanCreateAnEnableRule {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -548,6 +558,8 @@ definition {
 	@description = "Verify that a Rule with more than one Action can be created"
 	@priority = "5"
 	test CanCreateARuleWithMoreThanOneAction {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -627,6 +639,8 @@ definition {
 	@description = "Verify that a Rule with 'Show' action can be created"
 	@priority = "5"
 	test CanCreateAShowRule {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -687,6 +701,8 @@ definition {
 	@description = "Verify that a Calculate Rule can be created using the decimal point"
 	@priority = "5"
 	test CanIncludeDecimalPointInCalculations {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -756,6 +772,8 @@ definition {
 	@description = "Verify that a Calculate Rule can be created using Numeric Fields in the calculation"
 	@priority = "5"
 	test CanIncludeNumericFieldsInCalculations {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -828,6 +846,8 @@ definition {
 	@description = "Verify that a Calculate Rule can be created using all operators (+, -, *, /)"
 	@priority = "5"
 	test CanIncludeOperatorsInCalculations {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -910,6 +930,8 @@ definition {
 	@description = "Verify that a Calculate Rule can be created using the parenthesis"
 	@priority = "5"
 	test CanIncludeParenthesisInCalculations {
+		property portal.acceptance = "true";
+		
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
