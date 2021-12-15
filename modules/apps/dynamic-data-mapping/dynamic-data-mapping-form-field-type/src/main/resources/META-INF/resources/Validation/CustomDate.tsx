@@ -12,13 +12,16 @@
  * details.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, {ChangeEvent, useEffect, useState} from 'react';
+
 import './CustomDate.scss';
+
+// @ts-ignore
+
+import {limitValue} from '../util/numericalOperations';
 import DDMQuantity from './DDMQuantity';
 import DDMSelect from './DDMSelect';
 import SelectDateType from './SelectDateType';
-// @ts-ignore
-import { limitValue } from '../util/numericalOperations';
 
 const MAX_QUANTITY = 999;
 const MIN_QUANTITY = 1;
@@ -112,8 +115,9 @@ const CustomDate: React.FC<IProps> = ({
 				options={options.filter(({name}) => name !== CUSTOM_DATE)}
 				type={parameters.date}
 			/>
-			<div className="ddm__custom-date">
+			<div className="lfr-ddm__custom-date">
 				<DDMSelect
+					className="lfr_ddm__custom-date-select"
 					disabled={readOnly}
 					label={Liferay.Language.get('operation')}
 					name={`selectedOperation_${eventType}`}
@@ -135,14 +139,15 @@ const CustomDate: React.FC<IProps> = ({
 				/>
 
 				<DDMQuantity
-					readOnly={readOnly}
 					label={Liferay.Language.get('quantity')}
 					name={`inputedQuantity_${eventType}`}
 					onChange={handleQuantityChange}
-					value={parameters.quantity}
+					readOnly={readOnly}
+					value={Math.abs(parameters.quantity)}
 				/>
 
 				<DDMSelect
+					className="lfr_ddm__custom-date-select"
 					disabled={readOnly}
 					label={Liferay.Language.get('unit')}
 					name={`selectedUnit_${eventType}`}

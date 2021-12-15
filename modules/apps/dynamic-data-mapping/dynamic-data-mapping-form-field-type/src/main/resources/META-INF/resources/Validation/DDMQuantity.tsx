@@ -13,50 +13,61 @@
  */
 
 import {ClayInput} from '@clayui/form';
-import React, {ChangeEvent, useState} from 'react';
-// @ts-ignore
-import { limitValue } from '../util/numericalOperations';
+import React, {ChangeEvent, KeyboardEvent, useEffect, useState} from 'react';
 
 const MAX_QUANTITY = 999;
 const MIN_QUANTITY = 1;
 
 const DDMQuantity: React.FC<IProps> = ({
-    label,
-    name,
-    onChange,
-    readOnly,
-    value: initialValue
+	label,
+	name,
+	onChange,
+	readOnly,
+	value: initialValue,
 }) => {
-    const [value, setValue] = useState<string>(initialValue.toString());
+	const [value, setValue] = useState<string>(initialValue.toString());
 
-    const handleChange = () => {
-        value === '' ? '' : Math.abs(value);
-    }
+	useEffect(() => {
+		if (initialValue.toString() !== value) {
+			setValue(initialValue.toString());
+		}
+	}, [initialValue, value]);
 
-    return (
-    <>
-        <label>{label}</label>
+	const handleChange = ({target: {value}}: ChangeEvent<HTMLInputElement>) => {
+		setValue(value);
+	};
 
-        <ClayInput
-            className="ddm-field-text"
-            disabled={readOnly}
-            max={MAX_QUANTITY}
-            min={MIN_QUANTITY}
-            name={name}
-            onBlur={onChange}
-            onChange={onChange}
-            type="number"
-            value={value}
-        />
-    </>)
+	const normalizeValue = (event: KeyboardEvent<HTMLInputElement>) => {
+		if (/[-.+,]/.test(event.key)) {
+			event.preventDefault();
+		}
+	};
+
+	return (
+		<label>
+			{label}
+
+			<ClayInput
+				disabled={readOnly}
+				max={MAX_QUANTITY}
+				min={MIN_QUANTITY}
+				name={name}
+				onBlur={onChange}
+				onChange={handleChange}
+				onKeyPress={normalizeValue}
+				type="number"
+				value={value}
+			/>
+		</label>
+	);
 };
 
 export default DDMQuantity;
 
 interface IProps {
-    label: string,
-    name?: string,
-    onChange: (event: ChangeEvent<HTMLInputElement>) => void,
-    readOnly?: boolean,
-    value: number
+	label: string;
+	name?: string;
+	onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+	readOnly?: boolean;
+	value: number;
 }
