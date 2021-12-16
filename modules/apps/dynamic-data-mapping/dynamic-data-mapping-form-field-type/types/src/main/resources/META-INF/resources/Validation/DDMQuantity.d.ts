@@ -11,20 +11,13 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-import React from 'react';
-declare function DDMSelect({ className, disabled, label, name, onChange, options, value: selectedValue, }: IProps): JSX.Element;
-export default DDMSelect;
+import React, { ChangeEvent } from 'react';
+declare const DDMQuantity: React.FC<IProps>;
+export default DDMQuantity;
 interface IProps {
-    className?: string;
-    disabled?: boolean;
     label: string;
-    name: string;
-    onChange: React.ChangeEventHandler<HTMLInputElement>;
-    options: IOption[];
-    value: string;
-}
-interface IOption {
-    label: string;
-    onClick?: React.ChangeEvent;
-    value: string;
+    name?: string;
+    onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+    readOnly?: boolean;
+    value: number;
 }
