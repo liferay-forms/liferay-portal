@@ -91,7 +91,7 @@ const PartialResults: React.FC<IProps> = ({onShow, reportDataURL}) => {
 			</div>
 
 			<FormReport
-				data={data}
+				data={data && JSON.parse(data)}
 				fields={fields}
 				formReportRecordsFieldValuesURL={
 					formReportRecordsFieldValuesURL
@@ -110,7 +110,7 @@ interface IProps {
 }
 
 interface IReportDataResponse {
-	data: unknown;
+	data: string;
 	fields: unknown[];
 	formReportRecordsFieldValuesURL: unknown;
 	lastModifiedDate: string;
