@@ -68,6 +68,8 @@ definition {
 	@description = "Verify that a Rule Condition can be deleted"
 	@priority = "5"
 	test CanBeDeleted {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -143,6 +145,8 @@ definition {
 	@description = "Verify that a Rule Condition can be edited"
 	@priority = "5"
 	test CanBeEdited {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -200,6 +204,8 @@ definition {
 	@description = "Verify that a Rule with 'Contains' condition can be created"
 	@priority = "4"
 	test CanCreateAContainsRule {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -263,6 +269,8 @@ definition {
 	@description = "Verify that a Rule with 'Does Not Contain' condition can be created"
 	@priority = "4"
 	test CanCreateADoesNotContainRule {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -330,6 +338,8 @@ definition {
 	@description = "Verify that a Rule with 'Is Empty' condition can be created"
 	@priority = "4"
 	test CanCreateAnIsEmptyRule {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -388,6 +398,8 @@ definition {
 	@description = "Verify that a Rule with 'Is Equal To' condition can be created"
 	@priority = "4"
 	test CanCreateAnIsEqualToRule {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -453,6 +465,8 @@ definition {
 	@description = "Verify that a Rule with 'Is greater than or Equal To' condition is working fine on the numeric field"
 	@priority = "4"
 	test CanCreateAnIsGreaterThanOrEqualToRule {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -526,6 +540,8 @@ definition {
 	@description = "Verify that a Rule with 'Is greater than' condition is working fine on the numeric field"
 	@priority = "4"
 	test CanCreateAnIsGreaterThanRule {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -593,6 +609,8 @@ definition {
 	@description = "Verify that a Rule with 'Is less than or Equal To' condition is working fine on the numeric field"
 	@priority = "4"
 	test CanCreateAnIsLessThanOrEqualToRule {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -674,6 +692,8 @@ definition {
 	@description = "Verify that a Rule with 'Is less than' condition is working fine on the numeric field"
 	@priority = "4"
 	test CanCreateAnIsLessThanRule {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -849,6 +869,8 @@ definition {
 	@description = "Verify that a Rule with 'Is Not Equal To' condition can be created"
 	@priority = "4"
 	test CanCreateAnIsNotEqualToRule {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -1164,6 +1186,8 @@ definition {
 	@description = "Verify that the OR operator on Condition is working as expected"
 	@priority = "5"
 	test CanCreateMultipleConditionsUsingOR {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -1265,6 +1289,8 @@ definition {
 	@description = "Verify that the OR operator on Condition is disabled by default"
 	@priority = "5"
 	test OrOperatorisDisabledByDefault {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");

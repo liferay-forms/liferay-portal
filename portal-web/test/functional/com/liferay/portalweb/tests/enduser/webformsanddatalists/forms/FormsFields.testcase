@@ -106,6 +106,7 @@ definition {
 	@description = "Verify that a Form with all the Fields can be submitted"
 	@priority = "5"
 	test CanBeSubmittedWithAllFields {
+		property portal.acceptance = "true";
 		property test.name.skip.portal.instance = "FormsFields#CanBeSubmittedWithAllFields";
 		property testray.component.names = "Training";
 

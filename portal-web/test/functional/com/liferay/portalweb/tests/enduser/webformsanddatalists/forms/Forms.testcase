@@ -423,6 +423,8 @@ definition {
 	@description = "Verify that a Form can be published from an autosaved draft"
 	@priority = "5"
 	test CanBeCreatedFromAutosavedDraft {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Test");
@@ -576,6 +578,8 @@ definition {
 	@description = "Verify that a Form can be duplicated"
 	@priority = "5"
 	test CanBeDuplicated {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -746,6 +750,8 @@ definition {
 	@description = "LPS-61740 - Verify that a Form can be previewed"
 	@priority = "5"
 	test CanBePreviewed {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -766,6 +772,8 @@ definition {
 	@description = "LPS-61740 - Verify that a Form can be published"
 	@priority = "5"
 	test CanBePublished {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -806,6 +814,8 @@ definition {
 	@description = "Verify that a Form can be unpublished"
 	@priority = "5"
 	test CanBeUnpublished {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -1433,6 +1443,8 @@ definition {
 	@description = "This is a use case for LPS-81578."
 	@priority = "4"
 	test GuestUserCanNotSeeFormAfterPermissionRemoved {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName();
@@ -1479,6 +1491,8 @@ definition {
 	@description = "Verify that multiple Forms can be deleted"
 	@priority = "5"
 	test MultipleFormsCanBeDeleted {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -1559,6 +1573,8 @@ definition {
 	@description = "Verify that Form Pages can be reordered"
 	@priority = "5"
 	test PagesCanBeReordered {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -1617,6 +1633,8 @@ definition {
 	@description = "Verify that Form Pages can be reset"
 	@priority = "5"
 	test PagesCanBeReset {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -1739,6 +1757,8 @@ definition {
 	@description = "Verify that a Form cannot be created without at least 1 field"
 	@priority = "5"
 	test ShouldHaveAtLeastOneField {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Click(locator1 = "Button#SAVE");
@@ -1752,7 +1772,7 @@ definition {
 
 	@priority = "4"
 	test SubmitFormWithMultipleFieldsAndViewEntriesViaDescriptiveDisplay {
-		property portal.acceptance = "quarantine";
+		property portal.acceptance = "true";
 		property portal.upstream = "quarantine";
 		property test.name.skip.portal.instance = "Forms#SubmitFormWithMultipleFieldsAndViewEntriesViaDescriptiveDisplay";
 
@@ -2036,6 +2056,7 @@ definition {
 	@description = "This is a use case for LPS-126817."
 	@priority = "5"
 	test ViewSelectFromListOptionValueWithCharacter {
+		property portal.acceptance = "true";
 		property test.name.skip.portal.instance = "Forms#ViewSelectFromListOptionValueWithCharacter";
 
 		FormsAdmin.addForm();
@@ -2077,6 +2098,8 @@ definition {
 	@description = "Verify that a Form autosaves after 1 minute by default"
 	@priority = "5"
 	test WillAutosaveAfterOneMinute {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
