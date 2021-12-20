@@ -38,6 +38,8 @@ definition {
 	@description = "Verify that the Action label of a Rule changes when the corresponding Field's Label is edited"
 	@priority = "5"
 	test ActionIsUpdatedWhenFieldLabelIsEdited {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -209,6 +211,8 @@ definition {
 	@description = "Verify that a Rule is autosaved when exiting the Form without saving the Rule"
 	@priority = "5"
 	test AreSavedWhenExitingTheForm {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -261,6 +265,8 @@ definition {
 	@description = "Verify that a Rule can be created"
 	@priority = "5"
 	test CanBeCreated {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -385,6 +391,8 @@ definition {
 	@description = "Verify that a Rule can be deleted"
 	@priority = "5"
 	test CanBeDeleted {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -558,6 +566,7 @@ definition {
 	@description = "LPS-89260 - Verify that rules are working for multiple selection fields"
 	@priority = "4"
 	test CanUseRuleOnMultipleSelectionField {
+		property portal.acceptance = "true";
 		property test.name.skip.portal.instance = "FormRules#CanUseRuleOnMultipleSelectionField";
 
 		FormsAdmin.addForm();
@@ -623,6 +632,8 @@ definition {
 	@description = "Verify that the Condition label of a Rule changes when the corresponding Field's Label is edited"
 	@priority = "5"
 	test ConditionIsUpdatedWhenFieldLabelIsEdited {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -683,6 +694,8 @@ definition {
 	@description = "Verify that a Rule creation can be canceled"
 	@priority = "5"
 	test CreationCanBeCanceled {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
