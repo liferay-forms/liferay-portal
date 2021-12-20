@@ -109,6 +109,8 @@ definition {
 	@description = "Verify that a Select From List Field can be created"
 	@priority = "5"
 	test CanBeCreated {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -207,6 +209,8 @@ definition {
 	@description = "Verify that a Select From List Field can be edited"
 	@priority = "5"
 	test CanBeEdited {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -251,6 +255,8 @@ definition {
 	@description = "Verify that a Select From List Field can be required"
 	@priority = "5"
 	test CanBeRequired {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -289,6 +295,8 @@ definition {
 	@description = "Verify that a Select From List Field can be set to repeatable"
 	@priority = "5"
 	test CanBeSetAsRepeatable {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -381,6 +389,7 @@ definition {
 	@description = "Verify that a list can be created using Autofill"
 	@priority = "5"
 	test CanCreateListUsingAutofill {
+		property portal.acceptance = "true";
 		property test.name.skip.portal.instance = "FormsSelectFromListField#CanCreateListUsingAutofill";
 
 		FormsAdminNavigator.enableLocalNetworkDataProvider();
@@ -564,6 +573,8 @@ definition {
 	@description = "Verify that the Field References for the options can be edited"
 	@priority = "5"
 	test FieldReferenceOfOptionsCanBeEdited {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -676,6 +687,8 @@ definition {
 	@description = "Verify that options can be added"
 	@priority = "5"
 	test OptionsCanBeAdded {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -772,6 +785,8 @@ definition {
 	@description = "Verify that options can be rearranged"
 	@priority = "5"
 	test OptionsCanBeRearranged {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
@@ -945,6 +960,8 @@ definition {
 	@description = "Verify that the Field Reference can be Edited"
 	@priority = "5"
 	test ReferenceCanBeEdited {
+		property portal.acceptance = "true";
+
 		FormsAdmin.addForm();
 
 		Form.editName(formName = "Form 1");
