@@ -12,23 +12,35 @@
  * details.
  */
 
+import ClayButton from '@clayui/button';
+import ClayIcon from '@clayui/icon';
 import React from 'react';
 
 import './DefaultPageHeader.scss';
 
 const DefaultPageHeader: React.FC<IProps> = ({description, title}) => {
 	return (
-		<div className="lfr-ddm__default-page-header">
-			<h1 className="lfr-ddm__default-page-header-title">{title}</h1>
+		<>
+			<ClayButton
+				className="hide lfr-ddm__default-page-header-back-button"
+				displayType="link"
+			>
+				<ClayIcon symbol="order-arrow-left" />
 
-			{description && (
-				<span className="lfr-ddm__default-page-header-description">
-					{description}
-				</span>
-			)}
+				{Liferay.Language.get('back')}
+			</ClayButton>
+			<div className="lfr-ddm__default-page-header">
+				<h1 className="lfr-ddm__default-page-header-title">{title}</h1>
 
-			<div className="lfr-ddm__default-page-header-line" />
-		</div>
+				{description && (
+					<span className="lfr-ddm__default-page-header-description">
+						{description}
+					</span>
+				)}
+
+				<div className="lfr-ddm__default-page-header-line" />
+			</div>
+		</>
 	);
 };
 

@@ -258,8 +258,6 @@ long formInstanceId = ddmFormDisplayContext.getFormInstanceId();
 									).put(
 										"formReportDataURL", formReportDataURL.toString()
 									).put(
-										"hasDescription", StringUtils.isNotEmpty(formInstance.getDescription(displayLocale))
-									).put(
 										"title", HtmlUtil.escape(formInstance.getName(displayLocale))
 									).put(
 										"validateCSRFTokenURL", validateCSRFTokenURL.toString()

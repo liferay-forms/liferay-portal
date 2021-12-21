@@ -12,10 +12,7 @@
  * details.
  */
 
-import ClayButton from '@clayui/button';
 import {useResource} from '@clayui/data-provider';
-import ClayIcon from '@clayui/icon';
-import classNames from 'classnames';
 import React, {useEffect} from 'react';
 
 // @ts-ignore
@@ -24,11 +21,7 @@ import FormReport from '../../form-report/index';
 
 import './PartialResults.scss';
 
-const PartialResults: React.FC<IProps> = ({
-	hasDescription,
-	onShow,
-	reportDataURL,
-}) => {
+const PartialResults: React.FC<IProps> = ({reportDataURL}) => {
 	const {
 		data,
 		fields = [],
@@ -58,18 +51,6 @@ const PartialResults: React.FC<IProps> = ({
 
 	return (
 		<>
-			<ClayButton
-				className={classNames('lfr-de__partial-results-back-button', {
-					'lfr-de__partial-results-back-button--description': hasDescription,
-				})}
-				displayType="link"
-				onClick={onShow}
-			>
-				<ClayIcon symbol="order-arrow-left" />
-
-				{Liferay.Language.get('back')}
-			</ClayButton>
-
 			<div className="lfr-de__partial-results-entries">
 				<div className="align-items-center">
 					<span className="lfr-de__partial-results-title text-truncate">
@@ -109,8 +90,6 @@ const PartialResults: React.FC<IProps> = ({
 export default PartialResults;
 
 interface IProps {
-	hasDescription?: boolean;
-	onShow: () => void;
 	reportDataURL: string;
 }
 
