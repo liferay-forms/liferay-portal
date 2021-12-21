@@ -12,6 +12,8 @@
  * details.
  */
 
+import ClayButton from '@clayui/button';
+import ClayIcon from '@clayui/icon';
 import {FormView as DataEngineFormView} from 'data-engine-js-components-web';
 import React from 'react';
 
@@ -20,6 +22,14 @@ import DefaultPageHeader from './components/DefaultPageHeader';
 const FormView: React.FC<IProps> = ({description, title, ...otherProps}) => {
 	return (
 		<>
+			<ClayButton
+				className="hide lfr-de__partial-results-back-button"
+				displayType="link"
+			>
+				<ClayIcon symbol="order-arrow-left" />
+
+				{Liferay.Language.get('back')}
+			</ClayButton>
 			{title && (
 				<DefaultPageHeader description={description} title={title} />
 			)}

@@ -38,13 +38,12 @@ public class FFSubmissionsSettingsConfigurationActivator {
 	}
 
 	public boolean limitToOneSubmissionEnabled() {
-		return _ffSubmissionsSettingsConfiguration.
-			limitToOneSubmissionEnabled();
-	}
+        return true;
+    }
 
-	public boolean showPartialResultsEnabled() {
-		return _ffSubmissionsSettingsConfiguration.showPartialResultsEnabled();
-	}
+    public boolean showPartialResultsEnabled() {
+        return true;
+    }
 
 	@Activate
 	@Modified

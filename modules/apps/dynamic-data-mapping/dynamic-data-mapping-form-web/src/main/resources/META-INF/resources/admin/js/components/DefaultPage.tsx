@@ -13,6 +13,8 @@
  */
 
 import ClayButton from '@clayui/button';
+import ClayIcon from '@clayui/icon';
+import classNames from 'classnames';
 import {PartialResults} from 'data-engine-js-components-web';
 import React, {useState} from 'react';
 
@@ -31,48 +33,67 @@ const DefaultPage: React.FC<IProps> = ({
 	const [showReport, setShowReport] = useState(false);
 
 	return (
-		<div className="container-fluid container-fluid-max-xl lfr-ddm__default-page">
-			<DefaultPageHeader
-				description={formDescription}
-				title={formTitle}
-			/>
+		<>
+			<div className="container-fluid container-fluid-max-xl lfr-ddm__default-page">
+				{showReport && (
+					<ClayButton
+						className={classNames(
+							'lfr-de__partial-results-back-button'
+						)}
+						displayType="link"
+						onClick={() => setShowReport(false)}
+					>
+						<ClayIcon symbol="order-arrow-left" />
 
-			{showReport ? (
-				<PartialResults
-					hasDescription={!!formDescription}
-					onShow={() => setShowReport(false)}
-					reportDataURL={formReportDataURL as string}
+						{Liferay.Language.get('back')}
+					</ClayButton>
+				)}
+
+				<DefaultPageHeader
+					description={formDescription}
+					title={formTitle}
 				/>
-			) : (
-				<div className="lfr-ddm__default-page-container">
-					<h2 className="lfr-ddm__default-page-title">{pageTitle}</h2>
 
-					<p className="lfr-ddm__default-page-description">
-						{pageDescription}
-					</p>
+				{showReport ? (
+					<PartialResults
+						reportDataURL={formReportDataURL as string}
+					/>
+				) : (
+					<div className="lfr-ddm__default-page-container">
+						<h2 className="lfr-ddm__default-page-title">
+							{pageTitle}
+						</h2>
 
-					<div className="lfr-ddm__default-page-buttons">
-						{showSubmitAgainButton && (
-							<ClayButton
-								displayType="secondary"
-								onClick={() => window.location.reload()}
-							>
-								{Liferay.Language.get('submit-again')}
-							</ClayButton>
-						)}
+						<p className="lfr-ddm__default-page-description">
+							{pageDescription}
+						</p>
 
-						{showPartialResultsToRespondents && formReportDataURL && (
-							<ClayButton
-								displayType="secondary"
-								onClick={() => setShowReport(true)}
-							>
-								{Liferay.Language.get('see-partial-results')}
-							</ClayButton>
-						)}
+						<div className="lfr-ddm__default-page-buttons">
+							{showSubmitAgainButton && (
+								<ClayButton
+									displayType="secondary"
+									onClick={() => window.location.reload()}
+								>
+									{Liferay.Language.get('submit-again')}
+								</ClayButton>
+							)}
+
+							{showPartialResultsToRespondents &&
+								formReportDataURL && (
+									<ClayButton
+										displayType="secondary"
+										onClick={() => setShowReport(true)}
+									>
+										{Liferay.Language.get(
+											'see-partial-results'
+										)}
+									</ClayButton>
+								)}
+						</div>
 					</div>
-				</div>
-			)}
-		</div>
+				)}
+			</div>
+		</>
 	);
 };
 
