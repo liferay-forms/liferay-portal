@@ -16,7 +16,7 @@ import ClayButton from '@clayui/button';
 import {useResource} from '@clayui/data-provider';
 import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 
 // @ts-ignore
 
@@ -29,6 +29,13 @@ const PartialResults: React.FC<IProps> = ({
 	onShow,
 	reportDataURL,
 }) => {
+	const [resourceState, setResourceState] = useState(() => ({
+		error: false,
+		loading: true,
+	}));
+
+	const {error, loading} = resourceState;
+
 	const {
 		data,
 		fields = [],
@@ -37,8 +44,14 @@ const PartialResults: React.FC<IProps> = ({
 		portletNamespace,
 		totalItems = 0,
 	} =
-		(useResource({fetch, link: reportDataURL})
-			.resource as IReportDataResponse | null) ?? {};
+		(useResource({
+			link: reportDataURL,
+			onNetworkStatusChange: (status) =>
+				setResourceState({
+					error: status === 5,
+					loading: status < 4,
+				}),
+		}).resource as IReportDataResponse | null) ?? {};
 
 	useEffect(() => {
 		const formsPortlet = document.querySelector('.portlet-forms');
@@ -69,39 +82,47 @@ const PartialResults: React.FC<IProps> = ({
 
 				{Liferay.Language.get('back')}
 			</ClayButton>
+			{error ||
+				(!loading && (
+					<>
+						<div className="lfr-de__partial-results-entries">
+							<div className="align-items-center">
+								<span className="lfr-de__partial-results-title text-truncate">
+									{totalItems === 1
+										? Liferay.Util.sub(
+												Liferay.Language.get('x-entry'),
+												[totalItems]
+										  )
+										: Liferay.Util.sub(
+												Liferay.Language.get(
+													'x-entries'
+												),
+												[totalItems]
+										  )}
+								</span>
+							</div>
 
-			<div className="lfr-de__partial-results-entries">
-				<div className="align-items-center">
-					<span className="lfr-de__partial-results-title text-truncate">
-						{totalItems === 1
-							? Liferay.Util.sub(
-									Liferay.Language.get('x-entry'),
-									[totalItems]
-							  )
-							: Liferay.Util.sub(
-									Liferay.Language.get('x-entries'),
-									[totalItems]
-							  )}
-					</span>
-				</div>
+							<div className="align-items-center">
+								<span className="lfr-de__partial-results-subtitle text-truncate">
+									{totalItems > 0
+										? lastModifiedDate
+										: Liferay.Language.get(
+												'there-are-no-entries'
+										  )}
+								</span>
+							</div>
+						</div>
 
-				<div className="align-items-center">
-					<span className="lfr-de__partial-results-subtitle text-truncate">
-						{totalItems > 0
-							? lastModifiedDate
-							: Liferay.Language.get('there-are-no-entries')}
-					</span>
-				</div>
-			</div>
-
-			<FormReport
-				data={data}
-				fields={fields}
-				formReportRecordsFieldValuesURL={
-					formReportRecordsFieldValuesURL
-				}
-				portletNamespace={portletNamespace}
-			/>
+						<FormReport
+							data={data}
+							fields={fields}
+							formReportRecordsFieldValuesURL={
+								formReportRecordsFieldValuesURL
+							}
+							portletNamespace={portletNamespace}
+						/>
+					</>
+				))}
 		</>
 	);
 };
