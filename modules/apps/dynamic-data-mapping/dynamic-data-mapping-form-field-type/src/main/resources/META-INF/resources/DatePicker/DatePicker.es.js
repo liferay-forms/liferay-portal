@@ -128,18 +128,21 @@ const getInitialValue = (
 	return date;
 };
 
-const getValueForHidden = (value, locale) => {
-	const momentLocale = moment().locale(locale);
+const getValueForHidden = (value, locale, isDatetime) => {
+    const momentLocale = moment().locale(locale);
 
-	const momentLocaleFormatted = momentLocale.localeData().longDateFormat('L');
+    const date = momentLocale.localeData().longDateFormat('L');
+    const time = momentLocale.localeData().longDateFormat('LT');
 
-	const newMoment = moment(value, momentLocaleFormatted, true);
+    let newMoment = moment(value, isDatetime ? `${date} ${time}`: date, true);
 
-	if (newMoment.isValid()) {
-		return newMoment.format('YYYY-MM-DD');
-	}
+    if (newMoment.isValid()) {
+       newMoment = newMoment.format(`YYYY-MM-DD${isDatetime ? ' HH:mm': ''}`);
 
-	return '';
+		return newMoment;
+    }
+
+    return '';
 };
 
 const Months = [
@@ -179,6 +182,8 @@ const DatePicker = ({
 	onChange,
 	onFocus,
 	spritemap,
+	time,
+	use12Hours,
 	value: initialValue,
 }) => {
 	const inputRef = useRef(null);
@@ -293,7 +298,7 @@ const DatePicker = ({
 				aria-hidden="true"
 				name={name}
 				type="hidden"
-				value={getValueForHidden(value, locale)}
+				value={getValueForHidden(value, locale, time)}
 			/>
 			<ClayDatePicker
 				dateFormat={dateMask}
@@ -342,11 +347,13 @@ const DatePicker = ({
 							true
 						).isValid()
 					) {
-						onChange(getValueForHidden(value, locale));
+						onChange(getValueForHidden(value, locale, time));
 					}
 				}}
 				ref={inputRef}
 				spritemap={spritemap}
+				time={time}
+				use12Hours={use12Hours}
 				value={value}
 				weekdaysShort={WeekdayShort}
 				years={years}
@@ -368,37 +375,54 @@ const Main = ({
 	predefinedValue,
 	readOnly,
 	spritemap,
+	type,
 	value,
 	...otherProps
-}) => (
-	<FieldBase
-		{...otherProps}
-		localizedValue={localizedValue}
-		name={name}
-		readOnly={readOnly}
-		spritemap={spritemap}
-	>
-		<DatePicker
-			defaultLanguageId={defaultLanguageId}
-			disabled={readOnly}
-			formatInEditingLocale={
-				localizedValue &&
-				localizedValue[locale] !== undefined &&
-				localizedValue[locale] !== null
-			}
-			locale={locale}
-			localizable={localizable}
+}) => {
+
+	let use12Hours;
+	
+	const isDateTime = type === 'date_time';
+
+	if (isDateTime) {
+		const momentLocale = moment().locale(locale);
+		const time = momentLocale.localeData().longDateFormat('LT');
+		use12Hours = time.endWith('A');
+	  }
+	
+	return (
+	
+		<FieldBase
+			{...otherProps}
 			localizedValue={localizedValue}
 			name={name}
-			onBlur={onBlur}
-			onChange={(value) => onChange({}, value)}
-			onFocus={onFocus}
-			placeholder={placeholder}
+			readOnly={readOnly}
 			spritemap={spritemap}
-			value={value ? value : predefinedValue}
-		/>
-	</FieldBase>
-);
+		>
+			<DatePicker
+				defaultLanguageId={defaultLanguageId}
+				disabled={readOnly}
+				formatInEditingLocale={
+					localizedValue &&
+					localizedValue[locale] !== undefined &&
+					localizedValue[locale] !== null
+				}
+				locale={locale}
+				localizable={localizable}
+				localizedValue={localizedValue}
+				name={name}
+				onBlur={onBlur}
+				onChange={(value) => onChange({}, value)}
+				onFocus={onFocus}
+				placeholder={placeholder}
+				spritemap={spritemap}
+				time={isDateTime}
+				use12Hours={use12Hours}
+				value={value ? value : predefinedValue}
+			/>
+		</FieldBase>
+	);
+};
 
 Main.displayName = 'DatePicker';
 
