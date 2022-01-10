@@ -2260,7 +2260,7 @@ definition {
 
 			SelectFrameTop(value1 = "relative=top");
 
-			SikuliAssertElementPresent(locator1 = "DDMField#IMAGE_PREVIEW_PNG");
+			AssertElementPresent(locator1 = "DDMField#IMAGE_PREVIEW_PNG");
 		}
 
 		if (isSet(webContentText)) {
