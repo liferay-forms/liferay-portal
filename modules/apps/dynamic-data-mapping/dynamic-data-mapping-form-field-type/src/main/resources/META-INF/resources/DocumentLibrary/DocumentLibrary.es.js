@@ -286,10 +286,6 @@ const Main = ({
 	const {pages} = useFormState();
 
 	const [currentValue, setCurrentValue] = useState(value);
-	const [errorMessage, setErrorMessage] = useState(initialErrorMessage);
-	const [displayErrors, setDisplayErrors] = useState(initialDisplayErrors);
-	const [valid, setValid] = useState(initialValid);
-	const [progress, setProgress] = useState(0);
 
 	const isSignedIn = Liferay.ThemeDisplay.isSignedIn();
 
@@ -328,6 +324,13 @@ const Main = ({
 		]
 	);
 
+	const [errorMessage, setErrorMessage] = useState(
+		getErrorMessages(initialErrorMessage, isSignedIn)
+	);
+	const [displayErrors, setDisplayErrors] = useState(initialDisplayErrors);
+	const [progress, setProgress] = useState(0);
+	const [valid, setValid] = useState(initialValid);
+
 	useEffect(() => {
 		if ((!allowGuestUsers && !isSignedIn) || showUploadPermissionMessage) {
 			const ddmFormUploadPermissionMessage = document.querySelector(
@@ -339,15 +342,6 @@ const Main = ({
 			}
 		}
 	}, [allowGuestUsers, isSignedIn, showUploadPermissionMessage]);
-
-	useEffect(() => {
-		setCurrentValue(value);
-		setDisplayErrors(initialDisplayErrors);
-		setErrorMessage(getErrorMessages(initialErrorMessage, isSignedIn));
-		setValid(initialValid);
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [initialDisplayErrors, initialErrorMessage, initialValid, value]);
 
 	const checkMaximumRepetitions = useCallback(() => {
 		const visitor = new PagesVisitor(pages);
@@ -398,11 +392,8 @@ const Main = ({
 
 	const configureErrorMessage = useCallback((message) => {
 		setErrorMessage(message);
-
-		const enable = message ? true : false;
-
-		setDisplayErrors(enable);
-		setValid(!enable);
+		setDisplayErrors(!!message);
+		setValid(!message);
 	}, []);
 
 	const disableSubmitButton = useCallback((disable = true) => {
