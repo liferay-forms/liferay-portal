@@ -331,18 +331,6 @@ const Main = ({
 	const [progress, setProgress] = useState(0);
 	const [valid, setValid] = useState(initialValid);
 
-	useEffect(() => {
-		if ((!allowGuestUsers && !isSignedIn) || showUploadPermissionMessage) {
-			const ddmFormUploadPermissionMessage = document.querySelector(
-				`.ddm-form-upload-permission-message`
-			);
-
-			if (ddmFormUploadPermissionMessage) {
-				ddmFormUploadPermissionMessage.classList.remove('hide');
-			}
-		}
-	}, [allowGuestUsers, isSignedIn, showUploadPermissionMessage]);
-
 	const checkMaximumRepetitions = useCallback(() => {
 		const visitor = new PagesVisitor(pages);
 
@@ -505,6 +493,19 @@ const Main = ({
 			onFocus,
 		]
 	);
+
+	useEffect(() => {
+		if ((!allowGuestUsers && !isSignedIn) || showUploadPermissionMessage) {
+			const ddmFormUploadPermissionMessage = document.querySelector(
+				`.ddm-form-upload-permission-message`
+			);
+
+			if (ddmFormUploadPermissionMessage) {
+				ddmFormUploadPermissionMessage.classList.remove('hide');
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const hasCustomError =
 		(!isSignedIn && !allowGuestUsers) ||
