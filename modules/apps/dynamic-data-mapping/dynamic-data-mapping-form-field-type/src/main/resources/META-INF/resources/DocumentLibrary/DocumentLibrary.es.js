@@ -24,7 +24,7 @@ import {
 	useConfig,
 	useFormState,
 } from 'data-engine-js-components-web';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 
 import {FieldBase} from '../FieldBase/ReactFieldBase.es';
 
@@ -293,33 +293,40 @@ const Main = ({
 
 	const isSignedIn = Liferay.ThemeDisplay.isSignedIn();
 
-	const getErrorMessages = (errorMessage, isSignedIn) => {
-		const errorMessages = [errorMessage];
+	const getErrorMessages = useCallback(
+		(errorMessage, isSignedIn) => {
+			const errorMessages = [errorMessage];
 
-		if (!allowGuestUsers && !isSignedIn) {
-			errorMessages.push(
-				Liferay.Language.get(
-					'you-need-to-be-signed-in-to-edit-this-field'
-				)
-			);
-		}
-		else if (maximumSubmissionLimitReached) {
-			errorMessages.push(
-				Liferay.Language.get(
-					'the-maximum-number-of-submissions-allowed-for-this-form-has-been-reached'
-				)
-			);
-		}
-		else if (showUploadPermissionMessage) {
-			errorMessages.push(
-				Liferay.Language.get(
-					'you-need-to-be-assigned-to-the-same-site-where-the-form-was-created-to-use-this-field'
-				)
-			);
-		}
+			if (!allowGuestUsers && !isSignedIn) {
+				errorMessages.push(
+					Liferay.Language.get(
+						'you-need-to-be-signed-in-to-edit-this-field'
+					)
+				);
+			}
+			else if (maximumSubmissionLimitReached) {
+				errorMessages.push(
+					Liferay.Language.get(
+						'the-maximum-number-of-submissions-allowed-for-this-form-has-been-reached'
+					)
+				);
+			}
+			else if (showUploadPermissionMessage) {
+				errorMessages.push(
+					Liferay.Language.get(
+						'you-need-to-be-assigned-to-the-same-site-where-the-form-was-created-to-use-this-field'
+					)
+				);
+			}
 
-		return errorMessages.join(' ');
-	};
+			return errorMessages.join(' ');
+		},
+		[
+			allowGuestUsers,
+			maximumSubmissionLimitReached,
+			showUploadPermissionMessage,
+		]
+	);
 
 	useEffect(() => {
 		if ((!allowGuestUsers && !isSignedIn) || showUploadPermissionMessage) {
@@ -342,7 +349,7 @@ const Main = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [initialDisplayErrors, initialErrorMessage, initialValid, value]);
 
-	const checkMaximumRepetitions = () => {
+	const checkMaximumRepetitions = useCallback(() => {
 		const visitor = new PagesVisitor(pages);
 
 		let repetitionsCounter = 0;
@@ -358,128 +365,155 @@ const Main = ({
 		);
 
 		return repetitionsCounter === maximumRepetitions;
-	};
+	}, [fieldName, maximumRepetitions, pages]);
 
-	const handleFieldChanged = (selectedItem) => {
-		if (selectedItem?.value) {
-			setCurrentValue(selectedItem.value);
+	const handleFieldChanged = useCallback(
+		(selectedItem) => {
+			if (selectedItem?.value) {
+				setCurrentValue(selectedItem.value);
 
-			onChange(selectedItem, selectedItem.value);
-		}
-	};
+				onChange(selectedItem, selectedItem.value);
+			}
+		},
+		[onChange]
+	);
 
-	const handleSelectButtonClicked = ({portletNamespace}, event) => {
-		onFocus(event);
+	const handleSelectButtonClicked = useCallback(
+		({portletNamespace}, event) => {
+			onFocus(event);
 
-		Liferay.Util.openSelectionModal({
-			onClose: () => onBlur(event),
-			onSelect: handleFieldChanged,
-			selectEventName: `${portletNamespace}selectDocumentLibrary`,
-			title: Liferay.Util.sub(
-				Liferay.Language.get('select-x'),
-				Liferay.Language.get('document')
-			),
-			url: itemSelectorURL,
-		});
-	};
+			Liferay.Util.openSelectionModal({
+				onClose: () => onBlur(event),
+				onSelect: handleFieldChanged,
+				selectEventName: `${portletNamespace}selectDocumentLibrary`,
+				title: Liferay.Util.sub(
+					Liferay.Language.get('select-x'),
+					Liferay.Language.get('document')
+				),
+				url: itemSelectorURL,
+			});
+		},
+		[handleFieldChanged, itemSelectorURL, onBlur, onFocus]
+	);
 
-	const configureErrorMessage = (message) => {
+	const configureErrorMessage = useCallback((message) => {
 		setErrorMessage(message);
 
 		const enable = message ? true : false;
 
 		setDisplayErrors(enable);
 		setValid(!enable);
-	};
+	}, []);
 
-	const disableSubmitButton = (disable = true) => {
+	const disableSubmitButton = useCallback((disable = true) => {
 		document.getElementById('ddm-form-submit').disabled = disable;
-	};
+	}, []);
 
-	const handleGuestUploadFileChanged = (errorMessage, event, value) => {
-		configureErrorMessage(errorMessage);
+	const handleGuestUploadFileChanged = useCallback(
+		(errorMessage, event, value) => {
+			configureErrorMessage(errorMessage);
 
-		setCurrentValue(value);
+			setCurrentValue(value);
 
-		onChange(event, value ? value : '{}');
-	};
+			onChange(event, value ? value : '{}');
+		},
+		[configureErrorMessage, onChange]
+	);
 
-	const isExceededUploadRequestSizeLimit = (fileSize) => {
-		const uploadRequestSizeLimit =
-			Liferay.PropsValues.UPLOAD_SERVLET_REQUEST_IMPL_MAX_SIZE;
+	const isExceededUploadRequestSizeLimit = useCallback(
+		(fileSize) => {
+			const uploadRequestSizeLimit =
+				Liferay.PropsValues.UPLOAD_SERVLET_REQUEST_IMPL_MAX_SIZE;
 
-		if (fileSize <= uploadRequestSizeLimit) {
-			return false;
-		}
+			if (fileSize <= uploadRequestSizeLimit) {
+				return false;
+			}
 
-		const errorMessage = Liferay.Util.sub(
-			Liferay.Language.get(
-				'please-enter-a-file-with-a-valid-file-size-no-larger-than-x'
-			),
-			[Liferay.Util.formatStorage(uploadRequestSizeLimit)]
-		);
+			const errorMessage = Liferay.Util.sub(
+				Liferay.Language.get(
+					'please-enter-a-file-with-a-valid-file-size-no-larger-than-x'
+				),
+				[Liferay.Util.formatStorage(uploadRequestSizeLimit)]
+			);
 
-		handleGuestUploadFileChanged(errorMessage, {}, null);
+			handleGuestUploadFileChanged(errorMessage, {}, null);
 
-		return true;
-	};
+			return true;
+		},
+		[handleGuestUploadFileChanged]
+	);
 
-	const handleUploadSelectButtonClicked = (event) => {
-		onFocus(event);
+	const handleUploadSelectButtonClicked = useCallback(
+		(event) => {
+			onFocus(event);
 
-		const file = event.target.files[0];
+			const file = event.target.files[0];
 
-		if (isExceededUploadRequestSizeLimit(file.size)) {
-			onBlur(event);
-
-			return;
-		}
-
-		const data = {
-			[`${portletNamespace}file`]: file,
-		};
-
-		axios
-			.post(guestUploadURL, convertToFormData(data), {
-				onUploadProgress: (event) => {
-					const progress = Math.round(
-						(event.loaded * 100) / event.total
-					);
-
-					setCurrentValue(null);
-
-					setProgress(progress);
-
-					disableSubmitButton();
-				},
-			})
-			.then((response) => {
-				const {error, file} = response.data;
-
-				disableSubmitButton(false);
-
-				if (error) {
-					handleGuestUploadFileChanged(error.message, event, null);
-				}
-				else {
-					handleGuestUploadFileChanged(
-						'',
-						event,
-						JSON.stringify(file)
-					);
-				}
-
-				setProgress(0);
-			})
-			.catch(() => {
-				disableSubmitButton(false);
-
-				setProgress(0);
-			})
-			.finally(() => {
+			if (isExceededUploadRequestSizeLimit(file.size)) {
 				onBlur(event);
-			});
-	};
+
+				return;
+			}
+
+			const data = {
+				[`${portletNamespace}file`]: file,
+			};
+
+			axios
+				.post(guestUploadURL, convertToFormData(data), {
+					onUploadProgress: (event) => {
+						const progress = Math.round(
+							(event.loaded * 100) / event.total
+						);
+
+						setCurrentValue(null);
+
+						setProgress(progress);
+
+						disableSubmitButton();
+					},
+				})
+				.then((response) => {
+					const {error, file} = response.data;
+
+					disableSubmitButton(false);
+
+					if (error) {
+						handleGuestUploadFileChanged(
+							error.message,
+							event,
+							null
+						);
+					}
+					else {
+						handleGuestUploadFileChanged(
+							'',
+							event,
+							JSON.stringify(file)
+						);
+					}
+
+					setProgress(0);
+				})
+				.catch(() => {
+					disableSubmitButton(false);
+
+					setProgress(0);
+				})
+				.finally(() => {
+					onBlur(event);
+				});
+		},
+		[
+			disableSubmitButton,
+			guestUploadURL,
+			handleGuestUploadFileChanged,
+			isExceededUploadRequestSizeLimit,
+			portletNamespace,
+			onBlur,
+			onFocus,
+		]
+	);
 
 	const hasCustomError =
 		(!isSignedIn && !allowGuestUsers) ||
