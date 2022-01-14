@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.Validator;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -112,8 +111,6 @@ public class DDMFormTemplateContextProcessor {
 			jsonObject.getString("numericInputMask"), ddmFormField);
 		_setDDMFormFieldOptions(
 			jsonObject.getJSONArray("options"), ddmFormField);
-		_setDDMFormFieldPredefinedValue(
-			jsonObject.getString("predefinedValue"), ddmFormField);
 		_setDDMFormFieldPlaceholder(
 			jsonObject.getString("placeholder"), ddmFormField);
 		_setDDMFormFieldProperty(
@@ -398,19 +395,7 @@ public class DDMFormTemplateContextProcessor {
 			_getLocalizedValue(GetterUtil.getString(placeholder)));
 	}
 
-	private void _setDDMFormFieldPredefinedValue(
-		String predefinedValue, DDMFormField ddmFormField) {
-
-		if (Validator.isNull(predefinedValue)) {
-			return;
-		}
-
-		ddmFormField.setProperty(
-			"predefinedValue",
-			_getLocalizedValue(GetterUtil.getString(predefinedValue)));
-	}
-
-	private void _setDDMFormFieldProperty(
+	protected void _setDDMFormFieldProperty(
 		DDMFormField ddmFormField, String propertyName, String propertyValue) {
 
 		if (!Objects.equals(ddmFormField.getType(), "redirect_button")) {
