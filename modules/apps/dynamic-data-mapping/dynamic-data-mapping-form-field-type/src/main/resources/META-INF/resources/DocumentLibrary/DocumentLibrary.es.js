@@ -340,15 +340,6 @@ const Main = ({
 		}
 	}, [allowGuestUsers, isSignedIn, showUploadPermissionMessage]);
 
-	useEffect(() => {
-		setCurrentValue(value);
-		setDisplayErrors(initialDisplayErrors);
-		setErrorMessage(getErrorMessages(initialErrorMessage, isSignedIn));
-		setValid(initialValid);
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [initialDisplayErrors, initialErrorMessage, initialValid, value]);
-
 	const checkMaximumRepetitions = useCallback(() => {
 		const visitor = new PagesVisitor(pages);
 
@@ -396,14 +387,14 @@ const Main = ({
 		[handleFieldChanged, itemSelectorURL, onBlur, onFocus]
 	);
 
-	const configureErrorMessage = useCallback((message) => {
-		setErrorMessage(message);
-
-		const enable = message ? true : false;
-
-		setDisplayErrors(enable);
-		setValid(!enable);
-	}, []);
+	const configureErrorMessage = useCallback(
+		(message) => {
+			setErrorMessage(getErrorMessages(message, isSignedIn));
+			setDisplayErrors(!!message);
+			setValid(!message);
+		},
+		[getErrorMessages, isSignedIn]
+	);
 
 	const disableSubmitButton = useCallback((disable = true) => {
 		document.getElementById('ddm-form-submit').disabled = disable;
