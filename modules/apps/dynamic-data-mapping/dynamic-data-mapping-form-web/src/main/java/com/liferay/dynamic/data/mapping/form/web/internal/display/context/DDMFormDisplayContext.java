@@ -79,6 +79,7 @@ import com.liferay.portal.kernel.util.AggregateResourceBundle;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.CookieKeys;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -295,8 +296,14 @@ public class DDMFormDisplayContext {
 		ddmFormRenderingContext.setShowSubmitButton(isShowSubmitButton());
 		ddmFormRenderingContext.setSubmitLabel(getSubmitLabel());
 
-		return _ddmFormRenderer.getDDMFormTemplateContext(
-			ddmForm, ddmFormLayout, ddmFormRenderingContext);
+		return HashMapBuilder.<String, Object>put(
+			"ffShowPartialResultsEnabled",
+			_ffSubmissionsSettingsConfigurationActivator.
+				showPartialResultsEnabled()
+		).putAll(
+			_ddmFormRenderer.getDDMFormTemplateContext(
+				ddmForm, ddmFormLayout, ddmFormRenderingContext)
+		).build();
 	}
 
 	public DDMFormSuccessPageSettings getDDMFormSuccessPageSettings()
@@ -593,6 +600,11 @@ public class DDMFormDisplayContext {
 	public boolean isExpirationDateEnabled() {
 		return _ffSubmissionsSettingsConfigurationActivator.
 			expirationDateEnabled();
+	}
+
+	public boolean isFFShowPartialResultsEnabled() {
+		return _ffSubmissionsSettingsConfigurationActivator.
+			showPartialResultsEnabled();
 	}
 
 	public boolean isFormAvailable() throws PortalException {

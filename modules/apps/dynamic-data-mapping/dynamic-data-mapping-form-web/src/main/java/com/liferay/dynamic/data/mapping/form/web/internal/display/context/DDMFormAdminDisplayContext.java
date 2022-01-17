@@ -479,7 +479,7 @@ public class DDMFormAdminDisplayContext {
 		DDMFormLayout ddmFormLayout = DDMFormLayoutFactory.create(
 			DDMFormInstanceSettings.class);
 
-		_removeExpirationDateSetting(ddmFormLayout.getDDMFormLayoutPages());
+		_removeSubmissionsSettings(ddmFormLayout.getDDMFormLayoutPages());
 
 		ddmFormLayout.setPaginationMode(DDMFormLayout.TABBED_MODE);
 
@@ -1728,14 +1728,8 @@ public class DDMFormAdminDisplayContext {
 		);
 	}
 
-	private void _removeExpirationDateSetting(
+	private void _removeSubmissionsSettings(
 		List<DDMFormLayoutPage> ddmFormLayoutPages) {
-
-		if (_ffSubmissionsSettingsConfigurationActivator.
-				expirationDateEnabled()) {
-
-			return;
-		}
 
 		DDMFormLayoutPage ddmFormLayoutPage = ddmFormLayoutPages.get(3);
 
@@ -1748,8 +1742,22 @@ public class DDMFormAdminDisplayContext {
 		List<String> ddmFormFieldNames =
 			ddmFormLayoutColumn.getDDMFormFieldNames();
 
-		ddmFormFieldNames.remove("expirationDate");
-		ddmFormFieldNames.remove("neverExpire");
+		if (!_ffSubmissionsSettingsConfigurationActivator.
+				expirationDateEnabled()) {
+
+			ddmFormFieldNames.remove("expirationDate");
+			ddmFormFieldNames.remove("neverExpire");
+		}
+
+		if (!_ffSubmissionsSettingsConfigurationActivator.
+				showPartialResultsEnabled()) {
+
+			ddmFormFieldNames.remove("showPartialResultsToRespondents");
+		}
+
+		if (ddmFormFieldNames.isEmpty()) {
+			ddmFormLayoutPages.remove(3);
+		}
 	}
 
 	private String _serialize(List<DDMFormFieldType> ddmFormFieldTypes) {

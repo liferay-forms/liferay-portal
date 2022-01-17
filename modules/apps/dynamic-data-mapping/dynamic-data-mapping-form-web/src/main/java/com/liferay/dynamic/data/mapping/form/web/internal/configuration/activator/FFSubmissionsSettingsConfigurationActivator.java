@@ -37,6 +37,10 @@ public class FFSubmissionsSettingsConfigurationActivator {
 		return _ffSubmissionsSettingsConfiguration.expirationDateEnabled();
 	}
 
+	public boolean showPartialResultsEnabled() {
+		return _ffSubmissionsSettingsConfiguration.showPartialResultsEnabled();
+	}
+
 	@Activate
 	@Modified
 	protected void activate(Map<String, Object> properties) {

@@ -53,6 +53,7 @@ export function Container({
 	const [showReport, setShowReport] = useState(false);
 
 	const {
+		ffShowPartialResultsEnabled,
 		formReportDataURL,
 		hasDescription,
 		showSubmitButton,
@@ -118,7 +119,11 @@ export function Container({
 
 							{!pages.length && showSubmitButton && (
 								<ClayButton
-									className="float-left"
+									className={
+										ffShowPartialResultsEnabled
+											? 'float-left'
+											: 'float-right'
+									}
 									id="ddm-form-submit"
 									type="submit"
 								>
