@@ -20,6 +20,8 @@ import {removeEmptyValues} from '../../utils/data';
 import Color from '../color/Color';
 import {SidebarContext} from '../sidebar/SidebarContext';
 
+const NOT_DIGIT_REGEX = /[^\d]/;
+
 export default function List({data, field, summary, totalEntries, type}) {
 	const {portletNamespace, toggleSidebar} = useContext(SidebarContext);
 
@@ -28,6 +30,18 @@ export default function List({data, field, summary, totalEntries, type}) {
 
 		return moment(field).locale(locale).format('L');
 	};
+	const formatDateTime = (field) => {
+		const locale = themeDisplay.getLanguageId().split('_', 1).join('');
+
+		const date = moment(field).locale(locale).format('L');
+		const time = moment(field).locale(locale).format('LT');
+
+		const [hourFormat] = time.split(NOT_DIGIT_REGEX, 1);
+
+		const formattedTime = hourFormat.length === 1 ? `0${time}` : time;
+
+		return `${date} ${formattedTime}`;
+	};
 
 	const checkType = (field, type) => {
 		switch (type) {
@@ -35,6 +49,8 @@ export default function List({data, field, summary, totalEntries, type}) {
 				return <Color hexColor={field} />;
 			case 'date':
 				return formatDate(field);
+			case 'date_time':
+				return formatDateTime(field);
 			default:
 				return field;
 		}
