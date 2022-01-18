@@ -27,6 +27,7 @@ import com.liferay.dynamic.data.mapping.model.DDMFormInstanceSettings;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceVersion;
 import com.liferay.dynamic.data.mapping.model.DDMFormSuccessPageSettings;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.impl.DDMFormInstanceImpl;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordService;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordVersionLocalService;
@@ -34,6 +35,7 @@ import com.liferay.dynamic.data.mapping.service.DDMFormInstanceService;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceVersionLocalService;
 import com.liferay.dynamic.data.mapping.storage.DDMStorageAdapterTracker;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesMerger;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -59,6 +61,7 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.util.PropsImpl;
@@ -78,6 +81,7 @@ import javax.portlet.RenderRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -319,6 +323,35 @@ public class DDMFormDisplayContextTest extends PowerMockito {
 
 		Assert.assertEquals(
 			submitLabel, ddmFormDisplayContext.getSubmitLabel());
+	}
+
+	@Test
+	public void testGetFormInstanceWithMissingSettings() throws Exception {
+		DDMFormDisplayContext ddmFormDisplayContext =
+			_createDDMFormDisplayContext();
+
+		DDMFormInstance ddmFormInstance = spy(new DDMFormInstanceImpl());
+
+		String expectedSettings = StringUtil.randomString();
+
+		ddmFormInstance.setSettings(expectedSettings);
+
+		when(
+			_ddmFormInstanceService.fetchFormInstance(Matchers.anyLong())
+		).thenReturn(
+			ddmFormInstance
+		);
+
+		when(
+			_ddmFormInstanceVersion.getSettings()
+		).thenReturn(
+			StringPool.BLANK
+		);
+
+		ddmFormDisplayContext.getFormInstance();
+
+		Assert.assertThat(
+			ddmFormInstance.getSettings(), CoreMatchers.is(expectedSettings));
 	}
 
 	@Test
