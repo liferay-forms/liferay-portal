@@ -34,6 +34,7 @@ definition {
 	@description = "LPS-64798 - Verify that adding the Paragraph Field does not prevent page navigation"
 	@priority = "4"
 	test CanBeAddedWithoutAffectingNavigation {
+		property forms.functional = "test";
 		property portal.acceptance = "true";
 		property test.name.skip.portal.instance = "FormsParagraphField#CanBeAddedWithoutAffectingNavigation";
 		property testray.component.names = "Training";

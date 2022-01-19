@@ -656,7 +656,7 @@
 </tr>
 <tr>
 	<td>TEXT_MULTILINE_FIELD_2</td>
-	<td>//div[contains(@data-field-name,'Text')]//textarea</td>
+	<td>//div[contains(@data-field-name,'${key_fieldName}')]/label/following-sibling::textarea[contains(@class,'ddm-field-text')]</td>
 	<td></td>
 </tr>
 <tr>
