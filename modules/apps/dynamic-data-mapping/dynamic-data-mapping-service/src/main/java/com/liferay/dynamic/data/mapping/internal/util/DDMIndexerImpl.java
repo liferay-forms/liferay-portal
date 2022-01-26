@@ -390,9 +390,19 @@ public class DDMIndexerImpl implements DDMIndexer {
 				}
 				else if (value instanceof Object[]) {
 					Object[] values = (Object[])value;
-
+					String type = field.getType();
+					boolean isRichText = type.equals(DDMFormFieldTypeConstants.RICH_TEXT);
 					for (int i = 0; i < values.length; i++) {
-						sb.append(values[i]);
+						if (isRichText) {
+							String valueString = _getSortableValue(
+								ddmStructure.getDDMFormField(field.getName()),
+								locale, values[i].toString());
+
+							sb.append(HtmlUtil.extractText(valueString));
+						}
+						else {
+							sb.append(values[i]);
+						}
 
 						if (i < (values.length - 1)) {
 							sb.append(StringPool.SPACE);
