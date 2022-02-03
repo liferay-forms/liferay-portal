@@ -20,6 +20,7 @@ import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownGroupItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -269,12 +270,14 @@ public class DDMFormAdminActionDropdownItemsProviderTest extends PowerMockito {
 	}
 
 	private void _assertActionDropdownItemDelete(DropdownItem dropdownItem) {
+		Map<String, Object> dataMap = (Map<String, Object>)dropdownItem.get(
+			"data");
+
 		Assert.assertThat(
-			(Map<String, Object>)dropdownItem.get("data"),
-			IsMapContaining.hasEntry("action", "delete"));
+			dataMap, IsMapContaining.hasEntry("action", "delete"));
 		Assert.assertThat(
-			(Map<String, Object>)dropdownItem.get("data"),
-			IsMapContaining.hasKey("deleteFormInstanceURL"));
+			dataMap, IsMapContaining.hasKey("deleteFormInstanceURL"));
+
 		Assert.assertNull(dropdownItem.get("disabled"));
 		Assert.assertEquals("delete", dropdownItem.get("label"));
 		Assert.assertEquals("times-circle", dropdownItem.get("symbolLeft"));
@@ -297,24 +300,41 @@ public class DDMFormAdminActionDropdownItemsProviderTest extends PowerMockito {
 	}
 
 	private void _assertActionDropdownItemExport(DropdownItem dropdownItem) {
+		Map<String, Object> dataMap = (Map<String, Object>)dropdownItem.get(
+			"data");
+
+		Assert.assertThat(
+			dataMap, IsMapContaining.hasEntry("action", "exportForm"));
+		Assert.assertThat(
+			dataMap, IsMapContaining.hasEntry("csvExport", _CSV_EXPORT));
+		Assert.assertThat(
+			dataMap, IsMapContaining.hasKey("exportFormInstanceURL"));
+		Assert.assertThat(
+			dataMap,
+			IsMapContaining.hasEntry(
+				"fileExtensions", _exportFileExtensionsJSONObject));
+		Assert.assertThat(
+			dataMap,
+			IsMapContaining.hasEntry("portletNamespace", _PORTLET_NAMESPACE));
+
 		Assert.assertEquals(
 			_INVALID_DDM_FORM_INSTANCE, dropdownItem.get("disabled"));
-		Assert.assertTrue(Validator.isNotNull(dropdownItem.get("href")));
 		Assert.assertEquals("export", dropdownItem.get("label"));
 	}
 
 	private void _assertActionDropdownItemPermissions(
 		DropdownItem dropdownItem) {
 
+		Map<String, Object> dataMap = (Map<String, Object>)dropdownItem.get(
+			"data");
+
 		Assert.assertThat(
-			(Map<String, Object>)dropdownItem.get("data"),
-			IsMapContaining.hasEntry("action", "permissions"));
+			dataMap, IsMapContaining.hasEntry("action", "permissions"));
 		Assert.assertThat(
-			(Map<String, Object>)dropdownItem.get("data"),
-			IsMapContaining.hasKey("permissionsFormInstanceURL"));
+			dataMap, IsMapContaining.hasKey("permissionsFormInstanceURL"));
 		Assert.assertThat(
-			(Map<String, Object>)dropdownItem.get("data"),
-			IsMapContaining.hasEntry("useDialog", "true"));
+			dataMap, IsMapContaining.hasEntry("useDialog", "true"));
+
 		Assert.assertNull(dropdownItem.get("disabled"));
 		Assert.assertEquals("permissions", dropdownItem.get("label"));
 	}
@@ -326,7 +346,7 @@ public class DDMFormAdminActionDropdownItemsProviderTest extends PowerMockito {
 			).put(
 				"autocompleteUserURL", _AUTOCOMPLETE_USER_URL
 			).put(
-				"localizedName", JSONUtil.put("en_US", "Test US")
+				"localizedName", _localizedNameJSONObject
 			).put(
 				"portletNamespace", _PORTLET_NAMESPACE
 			).put(
@@ -447,10 +467,11 @@ public class DDMFormAdminActionDropdownItemsProviderTest extends PowerMockito {
 
 		_ddmFormAdminActionDropdownItemsProvider =
 			new DDMFormAdminActionDropdownItemsProvider(
-				_AUTOCOMPLETE_USER_URL, _ddmFormInstance,
+				_AUTOCOMPLETE_USER_URL, _CSV_EXPORT, _ddmFormInstance,
+				_exportFileExtensionsJSONObject,
 				_formInstancePermissionCheckerHelper, formPublished,
 				_mockHttpServletRequest(), _INVALID_DDM_FORM_INSTANCE,
-				JSONUtil.put("en_US", "Test US"), _PUBLISHED_FORM_URL,
+				_localizedNameJSONObject, _PUBLISHED_FORM_URL,
 				new TestMockLiferayPortletRenderResponse(), _SCOPE_GROUP_ID,
 				_SHARE_FORM_INSTANCE_URL);
 	}
@@ -469,6 +490,8 @@ public class DDMFormAdminActionDropdownItemsProviderTest extends PowerMockito {
 
 	private static final String _AUTOCOMPLETE_USER_URL =
 		RandomTestUtil.randomString();
+
+	private static final String _CSV_EXPORT = RandomTestUtil.randomString();
 
 	private static final String _CURRENT_URL = RandomTestUtil.randomString();
 
@@ -494,9 +517,18 @@ public class DDMFormAdminActionDropdownItemsProviderTest extends PowerMockito {
 	@Mock
 	private DDMFormInstance _ddmFormInstance;
 
+	private final JSONObject _exportFileExtensionsJSONObject = JSONUtil.put(
+		"csv", "CSV"
+	).put(
+		"xml", "XML"
+	);
+
 	@Mock
 	private FormInstancePermissionCheckerHelper
 		_formInstancePermissionCheckerHelper;
+
+	private final JSONObject _localizedNameJSONObject = JSONUtil.put(
+		"en_US", "Test US");
 
 	private static class TestMockLiferayPortletRenderResponse
 		extends MockLiferayPortletRenderResponse {
