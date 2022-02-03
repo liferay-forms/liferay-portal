@@ -196,5 +196,3 @@ FormInstancePermissionCheckerHelper formInstancePermissionCheckerHelper = ddmFor
 </clay:container-fluid>
 
 <%@ include file="/admin/copy_form_publish_url.jspf" %>
-
-<%@ include file="/admin/export_form_instance.jspf" %>

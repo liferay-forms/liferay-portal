@@ -18,8 +18,6 @@
 
 <%
 DDMFormViewFormInstanceRecordsDisplayContext ddmFormViewFormInstanceRecordsDisplayContext = ddmFormAdminDisplayContext.getDDMFormViewFormInstanceRecordsDisplayContext();
-
-PortletURL portletURL = ddmFormViewFormInstanceRecordsDisplayContext.getPortletURL();
 %>
 
 <portlet:actionURL name="/dynamic_data_mapping_form/delete_form_instance_record" var="deleteFormInstanceRecordURL">
@@ -62,7 +60,7 @@ PortletURL portletURL = ddmFormViewFormInstanceRecordsDisplayContext.getPortletU
 <clay:container-fluid
 	id='<%= liferayPortletResponse.getNamespace() + "viewEntriesContainer" %>'
 >
-	<aui:form action="<%= portletURL %>" method="post" name="searchContainerForm">
+	<aui:form action="<%= ddmFormViewFormInstanceRecordsDisplayContext.getPortletURL() %>" method="post" name="searchContainerForm">
 		<aui:input name="deleteFormInstanceRecordIds" type="hidden" />
 
 		<liferay-ui:search-container
@@ -192,5 +190,3 @@ PortletURL portletURL = ddmFormViewFormInstanceRecordsDisplayContext.getPortletU
 		searchContainer="<%= ddmFormViewFormInstanceRecordsDisplayContext.getSearch() %>"
 	/>
 </clay:container-fluid>
-
-<%@ include file="/admin/export_form_instance.jspf" %>
