@@ -237,7 +237,8 @@ public class DDMFormAdminDisplayContext {
 		DDMFormAdminActionDropdownItemsProvider
 			ddmFormAdminActionDropdownItemsProvider =
 				new DDMFormAdminActionDropdownItemsProvider(
-					getAutocompleteUserURL(), ddmFormInstance,
+					getAutocompleteUserURL(), getCSVExport(), ddmFormInstance,
+					getExportFileExtensionsJSONObject(),
 					_formInstancePermissionCheckerHelper,
 					isFormPublished(ddmFormInstance),
 					ddmFormAdminRequestHelper.getRequest(),
@@ -275,11 +276,6 @@ public class DDMFormAdminDisplayContext {
 
 	public int getAutosaveInterval() {
 		return _ddmFormWebConfiguration.autosaveInterval();
-	}
-
-	public Map<String, String> getAvailableExportExtensions() {
-		return _ddmFormInstanceRecordWriterTracker.
-			getDDMFormInstanceRecordWriterExtensions();
 	}
 
 	public JSONArray getAvailableLanguageIdsJSONArray() {
@@ -653,6 +649,15 @@ public class DDMFormAdminDisplayContext {
 		return LanguageUtil.get(
 			ddmFormAdminRequestHelper.getRequest(),
 			search.getEmptyResultsMessage());
+	}
+
+	public JSONObject getExportFileExtensionsJSONObject()
+		throws PortalException {
+
+		return jsonFactory.createJSONObject(
+			jsonFactory.looseSerialize(
+				_ddmFormInstanceRecordWriterTracker.
+					getDDMFormInstanceRecordWriterExtensions()));
 	}
 
 	public String getFieldSetDefinitionURL() throws PortalException {

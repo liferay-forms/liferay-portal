@@ -14,6 +14,7 @@
 
 import {openModal} from 'frontend-js-web';
 
+import {openExportFormModal} from './components/export-form/openExportFormModal.es';
 import {openShareFormModal} from './components/share-form/openShareFormModal.es';
 
 const ACTIONS = {
@@ -25,6 +26,21 @@ const ACTIONS = {
 		) {
 			submitForm(document.hrefFm, deleteFormInstanceURL);
 		}
+	},
+
+	exportForm({
+		csvExport,
+		exportFormInstanceURL,
+		fileExtensions,
+		portletNamespace,
+	}) {
+		openExportFormModal({
+			csvExport,
+			exportFormInstanceURL,
+			fileExtensions,
+			portletNamespace,
+			spritemap: `${Liferay.ThemeDisplay.getPathThemeImages()}/clay/icons.svg`,
+		});
 	},
 
 	permissions({permissionsFormInstanceURL}) {
