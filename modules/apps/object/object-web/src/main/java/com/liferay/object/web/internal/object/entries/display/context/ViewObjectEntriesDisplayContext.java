@@ -17,12 +17,18 @@ package com.liferay.object.web.internal.object.entries.display.context;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.object.constants.ObjectActionKeys;
+import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.model.ObjectField;
 import com.liferay.object.scope.ObjectScopeProvider;
+import com.liferay.object.service.ObjectFieldLocalService;
+import com.liferay.object.web.internal.configuration.activator.FFObjectViewConfigurationActivator;
 import com.liferay.object.web.internal.constants.ObjectWebKeys;
 import com.liferay.object.web.internal.display.context.helper.ObjectRequestHelper;
+import com.liferay.object.web.internal.util.ObjectRelationshipNameUtil;
 import com.liferay.petra.portlet.url.builder.PortletURLBuilder;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -31,9 +37,13 @@ import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletURLUtil;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.PortletException;
@@ -47,12 +57,17 @@ import javax.servlet.http.HttpServletRequest;
 public class ViewObjectEntriesDisplayContext {
 
 	public ViewObjectEntriesDisplayContext(
+		FFObjectViewConfigurationActivator ffObjectViewConfigurationActivator,
 		HttpServletRequest httpServletRequest,
+		ObjectFieldLocalService objectFieldLocalService,
 		ObjectScopeProvider objectScopeProvider,
 		PortletResourcePermission portletResourcePermission,
 		String restContextPath) {
 
+		_ffObjectViewConfigurationActivator =
+			ffObjectViewConfigurationActivator;
 		_httpServletRequest = httpServletRequest;
+		_objectFieldLocalService = objectFieldLocalService;
 		_objectScopeProvider = objectScopeProvider;
 		_portletResourcePermission = portletResourcePermission;
 
@@ -67,10 +82,11 @@ public class ViewObjectEntriesDisplayContext {
 			if (!_objectScopeProvider.isGroupAware() ||
 				!_objectScopeProvider.isValidGroupId(groupId)) {
 
-				return _apiURL;
+				return _apiURL + _getNestedFields();
 			}
 
-			return StringBundler.concat(_apiURL, "/scopes/", groupId);
+			return StringBundler.concat(
+				_apiURL, "/scopes/", groupId, _getNestedFields());
 		}
 		catch (PortalException portalException) {
 			if (_log.isDebugEnabled()) {
@@ -147,11 +163,17 @@ public class ViewObjectEntriesDisplayContext {
 	}
 
 	public ObjectDefinition getObjectDefinition() {
+		if (_objectDefinition != null) {
+			return _objectDefinition;
+		}
+
 		HttpServletRequest httpServletRequest =
 			_objectRequestHelper.getRequest();
 
-		return (ObjectDefinition)httpServletRequest.getAttribute(
+		_objectDefinition = (ObjectDefinition)httpServletRequest.getAttribute(
 			ObjectWebKeys.OBJECT_DEFINITION);
+
+		return _objectDefinition;
 	}
 
 	public PortletURL getPortletURL() throws PortletException {
@@ -160,6 +182,36 @@ public class ViewObjectEntriesDisplayContext {
 				_objectRequestHelper.getLiferayPortletRequest(),
 				_objectRequestHelper.getLiferayPortletResponse()),
 			_objectRequestHelper.getLiferayPortletResponse());
+	}
+
+	private String _getNestedFields() {
+		if (!_ffObjectViewConfigurationActivator.enabled()) {
+			return StringPool.BLANK;
+		}
+
+		List<ObjectField> objectFields =
+			_objectFieldLocalService.getObjectFields(
+				_objectDefinition.getObjectDefinitionId());
+
+		Stream<ObjectField> stream = objectFields.stream();
+
+		String nestedFields = stream.filter(
+			objectField -> Objects.equals(
+				objectField.getRelationshipType(),
+				ObjectRelationshipConstants.TYPE_ONE_TO_MANY)
+		).map(
+			objectField -> ObjectRelationshipNameUtil.getRelationshipName(
+				objectField.getName())
+		).distinct(
+		).collect(
+			Collectors.joining("&nestedFields=")
+		);
+
+		if (Validator.isNull(nestedFields)) {
+			return StringPool.BLANK;
+		}
+
+		return "?nestedFields=" + nestedFields;
 	}
 
 	private String _getPermissionsURL() throws Exception {
@@ -191,7 +243,11 @@ public class ViewObjectEntriesDisplayContext {
 		ViewObjectEntriesDisplayContext.class);
 
 	private final String _apiURL;
+	private final FFObjectViewConfigurationActivator
+		_ffObjectViewConfigurationActivator;
 	private final HttpServletRequest _httpServletRequest;
+	private ObjectDefinition _objectDefinition;
+	private final ObjectFieldLocalService _objectFieldLocalService;
 	private final ObjectRequestHelper _objectRequestHelper;
 	private final ObjectScopeProvider _objectScopeProvider;
 	private final PortletResourcePermission _portletResourcePermission;
