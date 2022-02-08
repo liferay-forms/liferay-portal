@@ -105,6 +105,20 @@ public class ObjectViewLocalServiceImpl extends ObjectViewLocalServiceBaseImpl {
 	}
 
 	@Override
+	public ObjectView getFirstDefaultObjectView(long objectDefinitionId) {
+		ObjectView objectView = objectViewPersistence.fetchByODI_DOV_First(
+			objectDefinitionId, true, null);
+
+		if (objectView != null) {
+			objectView.setObjectViewColumns(
+				_objectViewColumnPersistence.findByObjectViewId(
+					objectView.getObjectViewId()));
+		}
+
+		return objectView;
+	}
+
+	@Override
 	public ObjectView getObjectView(long objectViewId) throws PortalException {
 		ObjectView objectView = objectViewPersistence.findByPrimaryKey(
 			objectViewId);
