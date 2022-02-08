@@ -179,7 +179,7 @@ export function AutoSaveProvider({children, interval, location, url}) {
 		getCurrentStateHash,
 		lastKnownHashRef,
 		localizedName,
-		location.pathname,
+		location,
 		pendingRequestRef,
 		portletNamespace,
 		url,
