@@ -23,12 +23,23 @@ import com.liferay.frontend.data.set.view.table.FDSTableSchemaField;
 import com.liferay.frontend.data.set.view.table.StringFDSTableSchemaField;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
+import com.liferay.object.model.ObjectRelationship;
+import com.liferay.object.model.ObjectView;
+import com.liferay.object.model.ObjectViewColumn;
+import com.liferay.object.model.ObjectViewColumnModel;
+import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
-import com.liferay.portal.kernel.util.Validator;
+import com.liferay.object.service.ObjectRelationshipLocalService;
+import com.liferay.object.service.ObjectViewLocalService;
+import com.liferay.object.web.internal.util.ObjectRelationshipNameUtil;
+import com.liferay.petra.string.StringPool;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Marco Leo
@@ -39,11 +50,17 @@ public class ObjectEntriesTableFDSView extends BaseTableFDSView {
 	public ObjectEntriesTableFDSView(
 		FDSTableSchemaBuilderFactory fdsTableSchemaBuilderFactory,
 		ObjectDefinition objectDefinition,
-		ObjectFieldLocalService objectFieldLocalService) {
+		ObjectDefinitionLocalService objectDefinitionLocalService,
+		ObjectFieldLocalService objectFieldLocalService,
+		ObjectRelationshipLocalService objectRelationshipLocalService,
+		ObjectViewLocalService objectViewLocalService) {
 
 		_fdsTableSchemaBuilderFactory = fdsTableSchemaBuilderFactory;
 		_objectDefinition = objectDefinition;
+		_objectDefinitionLocalService = objectDefinitionLocalService;
 		_objectFieldLocalService = objectFieldLocalService;
+		_objectRelationshipLocalService = objectRelationshipLocalService;
+		_objectViewLocalService = objectViewLocalService;
 	}
 
 	@Override
@@ -56,21 +73,7 @@ public class ObjectEntriesTableFDSView extends BaseTableFDSView {
 
 		idFDSTableSchemaField.setContentRenderer("actionLink");
 
-		List<ObjectField> objectFields =
-			_objectFieldLocalService.getObjectFields(
-				_objectDefinition.getObjectDefinitionId());
-
-		for (ObjectField objectField : objectFields) {
-			if (Validator.isNotNull(objectField.getRelationshipType())) {
-				continue;
-			}
-
-			String fieldName = objectField.getName();
-
-			if (objectField.getListTypeDefinitionId() > 0) {
-				fieldName = fieldName + ".name";
-			}
-
+		for (ObjectField objectField : _getObjectFields()) {
 			FDSTableSchemaField fdsTableSchemaField = null;
 
 			if (Objects.equals(objectField.getDBType(), "Clob") ||
@@ -78,7 +81,8 @@ public class ObjectEntriesTableFDSView extends BaseTableFDSView {
 
 				StringFDSTableSchemaField stringFDSTableSchemaField =
 					fdsTableSchemaBuilder.addFDSTableSchemaField(
-						StringFDSTableSchemaField.class, fieldName,
+						StringFDSTableSchemaField.class,
+						_getFieldName(objectField),
 						objectField.getLabel(locale, true));
 
 				stringFDSTableSchemaField.setTruncate(true);
@@ -88,7 +92,8 @@ public class ObjectEntriesTableFDSView extends BaseTableFDSView {
 			else if (Objects.equals(objectField.getDBType(), "Date")) {
 				DateFDSTableSchemaField dateFDSTableSchemaField =
 					fdsTableSchemaBuilder.addFDSTableSchemaField(
-						DateFDSTableSchemaField.class, fieldName,
+						DateFDSTableSchemaField.class,
+						_getFieldName(objectField),
 						objectField.getLabel(locale, true));
 
 				dateFDSTableSchemaField.setFormat("short");
@@ -98,7 +103,8 @@ public class ObjectEntriesTableFDSView extends BaseTableFDSView {
 			else {
 				fdsTableSchemaField =
 					fdsTableSchemaBuilder.addFDSTableSchemaField(
-						fieldName, objectField.getLabel(locale, true));
+						_getFieldName(objectField),
+						objectField.getLabel(locale, true));
 
 				if (Objects.equals(objectField.getDBType(), "Boolean")) {
 					fdsTableSchemaField.setContentRenderer("boolean");
@@ -124,8 +130,70 @@ public class ObjectEntriesTableFDSView extends BaseTableFDSView {
 		return fdsTableSchemaBuilder.build();
 	}
 
+	private String _getFieldName(ObjectField objectField) {
+		if (objectField.getListTypeDefinitionId() > 0) {
+			return objectField.getName() + ".name";
+		}
+		else if (Objects.equals(
+					objectField.getRelationshipType(), "oneToMany")) {
+
+			ObjectRelationship objectRelationship =
+				_objectRelationshipLocalService.
+					fetchObjectRelationshipByObjectFieldId2(
+						objectField.getObjectFieldId());
+
+			ObjectDefinition objectDefinition =
+				_objectDefinitionLocalService.fetchObjectDefinition(
+					objectRelationship.getObjectDefinitionId1());
+
+			ObjectField titleObjectField =
+				_objectFieldLocalService.fetchObjectField(
+					objectDefinition.getTitleObjectFieldId());
+
+			String relationshipName =
+				ObjectRelationshipNameUtil.getRelationshipName(
+					objectField.getName());
+
+			return relationshipName + StringPool.PERIOD +
+				titleObjectField.getName();
+		}
+
+		return objectField.getName();
+	}
+
+	private List<ObjectField> _getObjectFields() {
+		ObjectView defaultObjectView =
+			_objectViewLocalService.getFirstDefaultObjectView(
+				_objectDefinition.getObjectDefinitionId());
+
+		if (defaultObjectView == null) {
+			return _objectFieldLocalService.getObjectFields(
+				_objectDefinition.getObjectDefinitionId());
+		}
+
+		List<ObjectViewColumn> objectViewColumns =
+			defaultObjectView.getObjectViewColumns();
+
+		Stream<ObjectViewColumn> objectViewColumnsStream =
+			objectViewColumns.stream();
+
+		return objectViewColumnsStream.sorted(
+			Comparator.comparingInt(ObjectViewColumnModel::getPriority)
+		).map(
+			objectViewColumn -> _objectFieldLocalService.fetchObjectField(
+				_objectDefinition.getObjectDefinitionId(),
+				objectViewColumn.getObjectFieldName())
+		).collect(
+			Collectors.toList()
+		);
+	}
+
 	private final FDSTableSchemaBuilderFactory _fdsTableSchemaBuilderFactory;
 	private final ObjectDefinition _objectDefinition;
+	private final ObjectDefinitionLocalService _objectDefinitionLocalService;
 	private final ObjectFieldLocalService _objectFieldLocalService;
+	private final ObjectRelationshipLocalService
+		_objectRelationshipLocalService;
+	private final ObjectViewLocalService _objectViewLocalService;
 
 }

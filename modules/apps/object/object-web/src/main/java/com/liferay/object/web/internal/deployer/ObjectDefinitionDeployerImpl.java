@@ -44,6 +44,7 @@ import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectEntryService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
+import com.liferay.object.service.ObjectViewLocalService;
 import com.liferay.object.web.internal.asset.model.ObjectEntryAssetRendererFactory;
 import com.liferay.object.web.internal.info.item.provider.ObjectEntryInfoItemCapabilitiesProvider;
 import com.liferay.object.web.internal.info.item.provider.ObjectEntryInfoItemDetailsProvider;
@@ -113,7 +114,8 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 				FDSView.class,
 				new ObjectEntriesTableFDSView(
 					_fdsTableSchemaBuilderFactory, objectDefinition,
-					_objectFieldLocalService),
+					_objectDefinitionLocalService, _objectFieldLocalService,
+					_objectRelationshipLocalService, _objectViewLocalService),
 				HashMapDictionaryBuilder.put(
 					"frontend.data.set.name", objectDefinition.getPortletId()
 				).build()),
@@ -214,8 +216,8 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 				Portlet.class,
 				new ObjectEntriesPortlet(
 					objectDefinition.getObjectDefinitionId(),
-					_objectDefinitionLocalService, _objectScopeProviderRegistry,
-					_portal,
+					_objectDefinitionLocalService, _objectFieldLocalService,
+					_objectScopeProviderRegistry, _portal,
 					_getPortletResourcePermission(
 						objectDefinition.getResourceName())),
 				HashMapDictionaryBuilder.<String, Object>put(
@@ -376,6 +378,9 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 
 	@Reference
 	private ObjectScopeProviderRegistry _objectScopeProviderRegistry;
+
+	@Reference
+	private ObjectViewLocalService _objectViewLocalService;
 
 	@Reference
 	private Portal _portal;

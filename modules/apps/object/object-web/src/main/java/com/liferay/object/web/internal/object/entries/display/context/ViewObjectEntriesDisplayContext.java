@@ -18,9 +18,12 @@ import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.object.constants.ObjectActionKeys;
 import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.model.ObjectField;
 import com.liferay.object.scope.ObjectScopeProvider;
+import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.web.internal.constants.ObjectWebKeys;
 import com.liferay.object.web.internal.display.context.helper.ObjectRequestHelper;
+import com.liferay.object.web.internal.util.ObjectRelationshipNameUtil;
 import com.liferay.petra.portlet.url.builder.PortletURLBuilder;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -31,9 +34,13 @@ import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletURLUtil;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.PortletException;
@@ -48,11 +55,13 @@ public class ViewObjectEntriesDisplayContext {
 
 	public ViewObjectEntriesDisplayContext(
 		HttpServletRequest httpServletRequest,
+		ObjectFieldLocalService objectFieldLocalService,
 		ObjectScopeProvider objectScopeProvider,
 		PortletResourcePermission portletResourcePermission,
 		String restContextPath) {
 
 		_httpServletRequest = httpServletRequest;
+		_objectFieldLocalService = objectFieldLocalService;
 		_objectScopeProvider = objectScopeProvider;
 		_portletResourcePermission = portletResourcePermission;
 
@@ -64,13 +73,35 @@ public class ViewObjectEntriesDisplayContext {
 		try {
 			long groupId = _objectScopeProvider.getGroupId(_httpServletRequest);
 
+			List<ObjectField> objectFields =
+				_objectFieldLocalService.getObjectFields(
+					_objectDefinition.getObjectDefinitionId());
+
+			Stream<ObjectField> stream = objectFields.stream();
+
+			String nestedFields = stream.filter(
+				objectField -> Objects.equals(
+					objectField.getRelationshipType(), "oneToMany")
+			).map(
+				objectField -> ObjectRelationshipNameUtil.getRelationshipName(
+					objectField.getName())
+			).distinct(
+			).collect(
+				Collectors.joining("&nestedFields=")
+			);
+
+			if (Validator.isNotNull(nestedFields)) {
+				nestedFields = "?nestedFields=" + nestedFields;
+			}
+
 			if (!_objectScopeProvider.isGroupAware() ||
 				!_objectScopeProvider.isValidGroupId(groupId)) {
 
-				return _apiURL;
+				return _apiURL + nestedFields;
 			}
 
-			return StringBundler.concat(_apiURL, "/scopes/", groupId);
+			return StringBundler.concat(
+				_apiURL, "/scopes/", groupId, nestedFields);
 		}
 		catch (PortalException portalException) {
 			if (_log.isDebugEnabled()) {
@@ -147,11 +178,17 @@ public class ViewObjectEntriesDisplayContext {
 	}
 
 	public ObjectDefinition getObjectDefinition() {
+		if (_objectDefinition != null) {
+			return _objectDefinition;
+		}
+
 		HttpServletRequest httpServletRequest =
 			_objectRequestHelper.getRequest();
 
-		return (ObjectDefinition)httpServletRequest.getAttribute(
+		_objectDefinition = (ObjectDefinition)httpServletRequest.getAttribute(
 			ObjectWebKeys.OBJECT_DEFINITION);
+
+		return _objectDefinition;
 	}
 
 	public PortletURL getPortletURL() throws PortletException {
@@ -192,6 +229,8 @@ public class ViewObjectEntriesDisplayContext {
 
 	private final String _apiURL;
 	private final HttpServletRequest _httpServletRequest;
+	private ObjectDefinition _objectDefinition;
+	private final ObjectFieldLocalService _objectFieldLocalService;
 	private final ObjectRequestHelper _objectRequestHelper;
 	private final ObjectScopeProvider _objectScopeProvider;
 	private final PortletResourcePermission _portletResourcePermission;
