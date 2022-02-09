@@ -31,8 +31,10 @@ import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.service.ObjectViewLocalService;
+import com.liferay.object.web.internal.configuration.activator.FFObjectViewConfigurationActivator;
 import com.liferay.object.web.internal.util.ObjectRelationshipNameUtil;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Comparator;
 import java.util.List;
@@ -49,6 +51,7 @@ public class ObjectEntriesTableFDSView extends BaseTableFDSView {
 
 	public ObjectEntriesTableFDSView(
 		FDSTableSchemaBuilderFactory fdsTableSchemaBuilderFactory,
+		FFObjectViewConfigurationActivator ffObjectViewConfigurationActivator,
 		ObjectDefinition objectDefinition,
 		ObjectDefinitionLocalService objectDefinitionLocalService,
 		ObjectFieldLocalService objectFieldLocalService,
@@ -56,6 +59,8 @@ public class ObjectEntriesTableFDSView extends BaseTableFDSView {
 		ObjectViewLocalService objectViewLocalService) {
 
 		_fdsTableSchemaBuilderFactory = fdsTableSchemaBuilderFactory;
+		_ffObjectViewConfigurationActivator =
+			ffObjectViewConfigurationActivator;
 		_objectDefinition = objectDefinition;
 		_objectDefinitionLocalService = objectDefinitionLocalService;
 		_objectFieldLocalService = objectFieldLocalService;
@@ -74,6 +79,12 @@ public class ObjectEntriesTableFDSView extends BaseTableFDSView {
 		idFDSTableSchemaField.setContentRenderer("actionLink");
 
 		for (ObjectField objectField : _getObjectFields()) {
+			if (!_ffObjectViewConfigurationActivator.enabled() &&
+				Validator.isNotNull(objectField.getRelationshipType())) {
+
+				continue;
+			}
+
 			FDSTableSchemaField fdsTableSchemaField = null;
 
 			if (Objects.equals(objectField.getDBType(), "Clob") ||
@@ -162,6 +173,11 @@ public class ObjectEntriesTableFDSView extends BaseTableFDSView {
 	}
 
 	private List<ObjectField> _getObjectFields() {
+		if (!_ffObjectViewConfigurationActivator.enabled()) {
+			return _objectFieldLocalService.getObjectFields(
+				_objectDefinition.getObjectDefinitionId());
+		}
+
 		ObjectView defaultObjectView =
 			_objectViewLocalService.getFirstDefaultObjectView(
 				_objectDefinition.getObjectDefinitionId());
@@ -189,6 +205,8 @@ public class ObjectEntriesTableFDSView extends BaseTableFDSView {
 	}
 
 	private final FDSTableSchemaBuilderFactory _fdsTableSchemaBuilderFactory;
+	private final FFObjectViewConfigurationActivator
+		_ffObjectViewConfigurationActivator;
 	private final ObjectDefinition _objectDefinition;
 	private final ObjectDefinitionLocalService _objectDefinitionLocalService;
 	private final ObjectFieldLocalService _objectFieldLocalService;

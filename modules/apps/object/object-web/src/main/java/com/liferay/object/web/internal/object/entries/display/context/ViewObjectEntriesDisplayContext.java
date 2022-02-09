@@ -21,11 +21,13 @@ import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.scope.ObjectScopeProvider;
 import com.liferay.object.service.ObjectFieldLocalService;
+import com.liferay.object.web.internal.configuration.activator.FFObjectViewConfigurationActivator;
 import com.liferay.object.web.internal.constants.ObjectWebKeys;
 import com.liferay.object.web.internal.display.context.helper.ObjectRequestHelper;
 import com.liferay.object.web.internal.util.ObjectRelationshipNameUtil;
 import com.liferay.petra.portlet.url.builder.PortletURLBuilder;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -54,12 +56,15 @@ import javax.servlet.http.HttpServletRequest;
 public class ViewObjectEntriesDisplayContext {
 
 	public ViewObjectEntriesDisplayContext(
+		FFObjectViewConfigurationActivator ffObjectViewConfigurationActivator,
 		HttpServletRequest httpServletRequest,
 		ObjectFieldLocalService objectFieldLocalService,
 		ObjectScopeProvider objectScopeProvider,
 		PortletResourcePermission portletResourcePermission,
 		String restContextPath) {
 
+		_ffObjectViewConfigurationActivator =
+			ffObjectViewConfigurationActivator;
 		_httpServletRequest = httpServletRequest;
 		_objectFieldLocalService = objectFieldLocalService;
 		_objectScopeProvider = objectScopeProvider;
@@ -73,35 +78,14 @@ public class ViewObjectEntriesDisplayContext {
 		try {
 			long groupId = _objectScopeProvider.getGroupId(_httpServletRequest);
 
-			List<ObjectField> objectFields =
-				_objectFieldLocalService.getObjectFields(
-					_objectDefinition.getObjectDefinitionId());
-
-			Stream<ObjectField> stream = objectFields.stream();
-
-			String nestedFields = stream.filter(
-				objectField -> Objects.equals(
-					objectField.getRelationshipType(), "oneToMany")
-			).map(
-				objectField -> ObjectRelationshipNameUtil.getRelationshipName(
-					objectField.getName())
-			).distinct(
-			).collect(
-				Collectors.joining("&nestedFields=")
-			);
-
-			if (Validator.isNotNull(nestedFields)) {
-				nestedFields = "?nestedFields=" + nestedFields;
-			}
-
 			if (!_objectScopeProvider.isGroupAware() ||
 				!_objectScopeProvider.isValidGroupId(groupId)) {
 
-				return _apiURL + nestedFields;
+				return _apiURL + _getNestedFields();
 			}
 
 			return StringBundler.concat(
-				_apiURL, "/scopes/", groupId, nestedFields);
+				_apiURL, "/scopes/", groupId, _getNestedFields());
 		}
 		catch (PortalException portalException) {
 			if (_log.isDebugEnabled()) {
@@ -199,6 +183,35 @@ public class ViewObjectEntriesDisplayContext {
 			_objectRequestHelper.getLiferayPortletResponse());
 	}
 
+	private String _getNestedFields() {
+		if (!_ffObjectViewConfigurationActivator.enabled()) {
+			return StringPool.BLANK;
+		}
+
+		List<ObjectField> objectFields =
+			_objectFieldLocalService.getObjectFields(
+				_objectDefinition.getObjectDefinitionId());
+
+		Stream<ObjectField> stream = objectFields.stream();
+
+		String nestedFields = stream.filter(
+			objectField -> Objects.equals(
+				objectField.getRelationshipType(), "oneToMany")
+		).map(
+			objectField -> ObjectRelationshipNameUtil.getRelationshipName(
+				objectField.getName())
+		).distinct(
+		).collect(
+			Collectors.joining("&nestedFields=")
+		);
+
+		if (Validator.isNull(nestedFields)) {
+			return StringPool.BLANK;
+		}
+
+		return "?nestedFields=" + nestedFields;
+	}
+
 	private String _getPermissionsURL() throws Exception {
 		ObjectDefinition objectDefinition = getObjectDefinition();
 
@@ -228,6 +241,8 @@ public class ViewObjectEntriesDisplayContext {
 		ViewObjectEntriesDisplayContext.class);
 
 	private final String _apiURL;
+	private final FFObjectViewConfigurationActivator
+		_ffObjectViewConfigurationActivator;
 	private final HttpServletRequest _httpServletRequest;
 	private ObjectDefinition _objectDefinition;
 	private final ObjectFieldLocalService _objectFieldLocalService;

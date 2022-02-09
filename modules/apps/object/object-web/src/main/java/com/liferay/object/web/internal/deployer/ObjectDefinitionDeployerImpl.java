@@ -46,6 +46,7 @@ import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.service.ObjectViewLocalService;
 import com.liferay.object.web.internal.asset.model.ObjectEntryAssetRendererFactory;
+import com.liferay.object.web.internal.configuration.activator.FFObjectViewConfigurationActivator;
 import com.liferay.object.web.internal.info.item.provider.ObjectEntryInfoItemCapabilitiesProvider;
 import com.liferay.object.web.internal.info.item.provider.ObjectEntryInfoItemDetailsProvider;
 import com.liferay.object.web.internal.info.item.provider.ObjectEntryInfoItemFieldValuesProvider;
@@ -113,7 +114,8 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 			_bundleContext.registerService(
 				FDSView.class,
 				new ObjectEntriesTableFDSView(
-					_fdsTableSchemaBuilderFactory, objectDefinition,
+					_fdsTableSchemaBuilderFactory,
+					_ffObjectViewConfigurationActivator, objectDefinition,
 					_objectDefinitionLocalService, _objectFieldLocalService,
 					_objectRelationshipLocalService, _objectViewLocalService),
 				HashMapDictionaryBuilder.put(
@@ -215,6 +217,7 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 			_bundleContext.registerService(
 				Portlet.class,
 				new ObjectEntriesPortlet(
+					_ffObjectViewConfigurationActivator,
 					objectDefinition.getObjectDefinitionId(),
 					_objectDefinitionLocalService, _objectFieldLocalService,
 					_objectScopeProviderRegistry, _portal,
@@ -336,6 +339,10 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 
 	@Reference
 	private FDSTableSchemaBuilderFactory _fdsTableSchemaBuilderFactory;
+
+	@Reference
+	private FFObjectViewConfigurationActivator
+		_ffObjectViewConfigurationActivator;
 
 	@Reference
 	private InfoItemFieldReaderFieldSetProvider
