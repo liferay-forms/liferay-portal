@@ -81,16 +81,7 @@ module.exports = {
 					'data-engine-taglib': {
 						'/': '*',
 					},
-					'dynamic-data-mapping-form-builder': {
-						'/': '*',
-					},
 					'dynamic-data-mapping-form-field-type': {
-						'/': '*',
-					},
-					'dynamic-data-mapping-form-renderer': {
-						'/': '*',
-					},
-					'dynamic-data-mapping-form-web': {
 						'/': '*',
 					},
 					'frontend-editor-ckeditor-web': {
@@ -367,9 +358,7 @@ module.exports = {
 			'commerce-frontend-taglib',
 			'commerce-product-options-web',
 			'data-engine-taglib',
-			'dynamic-data-mapping-form-builder',
 			'dynamic-data-mapping-form-field-type',
-			'dynamic-data-mapping-form-renderer',
 		],
 		imports: {
 			'@liferay/frontend-js-state-web': [],
