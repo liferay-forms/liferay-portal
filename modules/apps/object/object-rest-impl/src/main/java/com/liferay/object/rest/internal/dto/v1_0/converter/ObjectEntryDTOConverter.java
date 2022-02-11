@@ -209,19 +209,16 @@ public class ObjectEntryDTOConverter
 			else if (Objects.equals(
 						objectField.getRelationshipType(), "oneToMany")) {
 
-				String relationshipIdName = objectFieldName.substring(
-					objectFieldName.lastIndexOf(StringPool.UNDERLINE) + 1);
-
 				long objectEntryId = 0;
 
 				if (serializable != null) {
 					objectEntryId = (long)serializable;
 
-					String relationshipName = StringUtil.replaceLast(
-						relationshipIdName, "Id", "");
-
 					Optional<UriInfo> uriInfoOptional =
 						dtoConverterContext.getUriInfoOptional();
+
+					int underlineLastIndex = objectFieldName.lastIndexOf(
+						StringPool.UNDERLINE);
 
 					if ((objectEntryId != 0) &&
 						uriInfoOptional.map(
@@ -231,13 +228,17 @@ public class ObjectEntryDTOConverter
 								"nestedFields")
 						).map(
 							nestedFields -> nestedFields.contains(
-								relationshipName)
+								StringUtil.replaceLast(
+									objectFieldName.substring(
+										underlineLastIndex + 1),
+									"Id", ""))
 						).orElse(
 							false
 						)) {
 
 						map.put(
-							relationshipName,
+							objectFieldName.substring(
+								0, objectFieldName.length() - 2),
 							toDTO(
 								_getDTOConverterContext(
 									dtoConverterContext, objectEntryId),
@@ -246,7 +247,7 @@ public class ObjectEntryDTOConverter
 					}
 				}
 
-				map.put(relationshipIdName, objectEntryId);
+				map.put(objectFieldName, objectEntryId);
 			}
 			else {
 				map.put(objectFieldName, serializable);
