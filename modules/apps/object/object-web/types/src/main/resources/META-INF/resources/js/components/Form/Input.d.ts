@@ -13,7 +13,8 @@
  */
 
 import React from 'react';
-interface IInputProps extends React.HTMLAttributes<HTMLElement> {
+interface IInputProps
+	extends React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
 	disabled?: boolean;
 	error?: string;
 	feedbackMessage?: string;

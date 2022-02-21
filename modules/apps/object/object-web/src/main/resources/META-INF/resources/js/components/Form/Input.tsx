@@ -20,7 +20,8 @@ import ErrorFeedback from './ErrorFeedback';
 import FeedbackMessage from './FeedbackMessage';
 import RequiredMask from './RequiredMask';
 
-interface IInputProps extends React.HTMLAttributes<HTMLElement> {
+interface IInputProps
+	extends React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
 	disabled?: boolean;
 	error?: string;
 	feedbackMessage?: string;
