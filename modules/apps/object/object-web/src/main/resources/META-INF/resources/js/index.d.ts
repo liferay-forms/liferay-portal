@@ -12,18 +12,25 @@
  * details.
  */
 
-/// <reference types="react" />
-
-interface IProps {
-	apiURL: string;
-	ffObjectFieldBusinessTypeConfigurationEnabled: boolean;
-	objectFieldBusinessTypes: ObjectFieldType[];
-	observer: any;
-	onClose: () => void;
+interface ObjectFieldType {
+	businessType: string;
+	dbType: string;
+	description: string;
+	label: string;
 }
-export default function ModalWithProvider({
-	apiURL,
-	ffObjectFieldBusinessTypeConfigurationEnabled,
-	objectFieldBusinessTypes,
-}: IProps): JSX.Element;
-export {};
+
+interface ObjectField {
+	DBType: string;
+	businessType: string;
+	label: string;
+	listTypeDefinitionId: number;
+	name?: string;
+	objectFieldSettings?: ObjectFieldSetting[];
+	required: boolean;
+}
+
+interface ObjectFieldSetting {
+	required: boolean;
+	setting: 'acceptedFileExtensions' | 'fileSource' | 'maximumFileSize';
+	value: unknown;
+}
