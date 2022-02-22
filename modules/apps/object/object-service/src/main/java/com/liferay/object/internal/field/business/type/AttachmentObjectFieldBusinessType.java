@@ -17,13 +17,20 @@ package com.liferay.object.internal.field.business.type;
 import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.dynamic.data.mapping.form.field.type.constants.ObjectDDMFormFieldTypeConstants;
 import com.liferay.object.field.business.type.ObjectFieldBusinessType;
+import com.liferay.object.field.render.ObjectFieldRenderingContext;
+import com.liferay.object.field.upload.AttachmentUploadHelper;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectFieldSetting;
 import com.liferay.object.service.ObjectFieldSettingLocalService;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.List;
 import java.util.Locale;
@@ -76,9 +83,23 @@ public class AttachmentObjectFieldBusinessType
 
 	@Override
 	public Map<String, Object> getProperties(
-		Locale locale, ObjectField objectField) {
+		ObjectField objectField,
+		ObjectFieldRenderingContext objectFieldRenderingContext) {
 
 		Map<String, Object> properties = HashMapBuilder.<String, Object>put(
+			"folderId",
+			() -> {
+				Folder folder = _getFolder(objectFieldRenderingContext);
+
+				if (folder == null) {
+					return null;
+				}
+
+				return folder.getFolderId();
+			}
+		).put(
+			"objectFieldId", objectField.getObjectFieldId()
+		).put(
 			"objectFieldId", objectField.getObjectFieldId()
 		).build();
 
@@ -93,6 +114,31 @@ public class AttachmentObjectFieldBusinessType
 
 		return properties;
 	}
+
+	private Folder _getFolder(
+		ObjectFieldRenderingContext objectFieldRenderingContext) {
+
+		if (Validator.isNull(objectFieldRenderingContext.getPortletId())) {
+			return null;
+		}
+
+		try {
+			_attachmentUploadHelper.getFolder(objectFieldRenderingContext);
+		}
+		catch (PortalException portalException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(portalException);
+			}
+
+			return null;
+		}
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		AttachmentObjectFieldBusinessType.class);
+
+	@Reference
+	private AttachmentUploadHelper _attachmentUploadHelper;
 
 	@Reference
 	private ObjectFieldSettingLocalService _objectFieldSettingLocalService;
