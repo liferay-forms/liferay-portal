@@ -154,7 +154,7 @@ public class DDMFormInstanceRecordExporterImpl
 
 		Stream<DDMFormFieldValue> stream = ddmFormFieldValues.stream();
 
-		return HtmlUtil.extractText(
+		return HtmlUtil.unescape(
 			StringUtil.merge(
 				stream.map(
 					ddmForFieldValue -> ddmFormFieldValueRenderer.render(
