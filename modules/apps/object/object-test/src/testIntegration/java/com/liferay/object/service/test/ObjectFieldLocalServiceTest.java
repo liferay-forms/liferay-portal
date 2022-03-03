@@ -25,8 +25,10 @@ import com.liferay.object.exception.ObjectFieldRelationshipTypeException;
 import com.liferay.object.exception.RequiredObjectFieldException;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
+import com.liferay.object.model.ObjectFieldSetting;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
+import com.liferay.object.service.ObjectFieldSettingLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.util.LocalizedMapUtil;
 import com.liferay.object.util.ObjectFieldUtil;
@@ -394,7 +396,8 @@ public class ObjectFieldLocalServiceTest {
 			TestPropsValues.getUserId(), 0,
 			objectDefinition.getObjectDefinitionId(), "Text", "String", false,
 			true, "", LocalizedMapUtil.getLocalizedMap("baker"), "baker", false,
-			Collections.emptyList());
+			Arrays.asList(
+				_createObjectFieldSetting("helpText", true, "Help Text")));
 
 		ObjectField bakerObjectField =
 			_objectFieldLocalService.fetchObjectField(
@@ -404,6 +407,9 @@ public class ObjectFieldLocalServiceTest {
 
 		Assert.assertTrue(
 			_hasColumn(objectDefinition.getExtensionDBTableName(), "baker_"));
+
+		_assertObjectFieldSetting(
+			bakerObjectField.getObjectFieldId(), "helpText", true, "Help Text");
 
 		try {
 			_objectFieldLocalService.deleteObjectField(
@@ -423,6 +429,10 @@ public class ObjectFieldLocalServiceTest {
 
 		Assert.assertFalse(
 			_hasColumn(objectDefinition.getExtensionDBTableName(), "baker_"));
+
+		Assert.assertNull(
+			_objectFieldSettingLocalService.fetchObjectFieldSetting(
+				bakerObjectField.getObjectFieldId(), "helpText"));
 
 		_objectDefinitionLocalService.deleteObjectDefinition(
 			objectDefinition.getObjectDefinitionId());
@@ -500,7 +510,11 @@ public class ObjectFieldLocalServiceTest {
 			TestPropsValues.getUserId(), 0,
 			objectDefinition.getObjectDefinitionId(), "LongInteger", "Long",
 			false, true, "", LocalizedMapUtil.getLocalizedMap("able"), "able",
-			false, Collections.emptyList());
+			false,
+			Arrays.asList(
+				_createObjectFieldSetting("helpText", true, "Help Text"),
+				_createObjectFieldSetting(
+					"placeholder", false, "Placeholder")));
 
 		Assert.assertEquals("able_", objectField.getDBColumnName());
 		Assert.assertEquals("Long", objectField.getDBType());
@@ -512,11 +526,19 @@ public class ObjectFieldLocalServiceTest {
 			objectField.getLabelMap());
 		Assert.assertEquals("able", objectField.getName());
 		Assert.assertFalse(objectField.isRequired());
+
+		_assertObjectFieldSetting(
+			objectField.getObjectFieldId(), "helpText", true, "Help Text");
+		_assertObjectFieldSetting(
+			objectField.getObjectFieldId(), "placeholder", false,
+			"Placeholder");
 
 		objectField = _objectFieldLocalService.updateCustomObjectField(
 			objectField.getObjectFieldId(), 0, "LongInteger", "Long", false,
 			true, "", LocalizedMapUtil.getLocalizedMap("able"), "able", false,
-			Collections.emptyList());
+			Arrays.asList(
+				_createObjectFieldSetting("helpText", true, "New Help Text"),
+				_createObjectFieldSetting("repeatable", false, "True")));
 
 		Assert.assertEquals("able_", objectField.getDBColumnName());
 		Assert.assertEquals("Long", objectField.getDBType());
@@ -528,6 +550,16 @@ public class ObjectFieldLocalServiceTest {
 			objectField.getLabelMap());
 		Assert.assertEquals("able", objectField.getName());
 		Assert.assertFalse(objectField.isRequired());
+
+		_assertObjectFieldSetting(
+			objectField.getObjectFieldId(), "helpText", true, "New Help Text");
+
+		Assert.assertNull(
+			_objectFieldSettingLocalService.fetchObjectFieldSetting(
+				objectField.getObjectFieldId(), "placeholder"));
+
+		_assertObjectFieldSetting(
+			objectField.getObjectFieldId(), "repeatable", false, "True");
 
 		String indexedLanguageId = LanguageUtil.getLanguageId(
 			LocaleUtil.getDefault());
@@ -575,6 +607,32 @@ public class ObjectFieldLocalServiceTest {
 
 		_objectDefinitionLocalService.deleteObjectDefinition(
 			objectDefinition.getObjectDefinitionId());
+	}
+
+	private void _assertObjectFieldSetting(
+			long objectFieldId, String name, boolean required, String value)
+		throws Exception {
+
+		ObjectFieldSetting objectFieldSetting =
+			_objectFieldSettingLocalService.fetchObjectFieldSetting(
+				objectFieldId, name);
+
+		Assert.assertEquals(name, objectFieldSetting.getName());
+		Assert.assertEquals(value, objectFieldSetting.getValue());
+		Assert.assertEquals(required, objectFieldSetting.isRequired());
+	}
+
+	private ObjectFieldSetting _createObjectFieldSetting(
+		String name, boolean required, String value) {
+
+		ObjectFieldSetting objectFieldSetting =
+			_objectFieldSettingLocalService.createObjectFieldSetting(0L);
+
+		objectFieldSetting.setName(name);
+		objectFieldSetting.setRequired(required);
+		objectFieldSetting.setValue(value);
+
+		return objectFieldSetting;
 	}
 
 	private boolean _hasColumn(String tableName, String columnName)
@@ -683,6 +741,9 @@ public class ObjectFieldLocalServiceTest {
 
 	@Inject
 	private ObjectFieldLocalService _objectFieldLocalService;
+
+	@Inject
+	private ObjectFieldSettingLocalService _objectFieldSettingLocalService;
 
 	@Inject
 	private ObjectRelationshipLocalService _objectRelationshipLocalService;
