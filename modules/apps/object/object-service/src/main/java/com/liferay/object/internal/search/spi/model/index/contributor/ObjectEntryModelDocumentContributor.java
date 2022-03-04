@@ -143,8 +143,11 @@ public class ObjectEntryModelDocumentContributor
 			sb.setIndex(sb.index() - 1);
 		}
 
+		document.add(
+			new Field(
+				Field.getSortableFieldName(Field.ENTRY_CLASS_PK),
+				document.get(Field.ENTRY_CLASS_PK)));
 		document.add(new Field("objectEntryContent", sb.toString()));
-
 		document.add(
 			new Field("objectEntryTitle", objectEntry.getTitleValue()));
 

@@ -174,26 +174,26 @@ public class ObjectEntriesTableFDSView extends BaseTableFDSView {
 
 		if (Objects.equals(fieldName, "creator")) {
 			_addFDSTableSchemaField(
-				null, fdsTableSchemaBuilder, "creator.name", "author", false,
+				null, fdsTableSchemaBuilder, "creator.name", "author", true,
 				null);
 		}
 		else if (Objects.equals(fieldName, "dateCreated")) {
 			_addFDSTableSchemaField(
 				null, fdsTableSchemaBuilder, "dateCreated", "created-date",
-				false, "Date");
+				true, "Date");
 		}
 		else if (Objects.equals(fieldName, "dateModified")) {
 			_addFDSTableSchemaField(
 				null, fdsTableSchemaBuilder, "dateModified", "modified-date",
-				false, "Date");
+				true, "Date");
 		}
 		else if (Objects.equals(fieldName, "id")) {
 			_addFDSTableSchemaField(
-				"actionLink", fdsTableSchemaBuilder, "id", "id", false, null);
+				"actionLink", fdsTableSchemaBuilder, "id", "id", true, null);
 		}
 		else if (Objects.equals(fieldName, "status")) {
 			_addFDSTableSchemaField(
-				"status", fdsTableSchemaBuilder, "status", "status", false,
+				"status", fdsTableSchemaBuilder, "status", "status", true,
 				null);
 		}
 	}
