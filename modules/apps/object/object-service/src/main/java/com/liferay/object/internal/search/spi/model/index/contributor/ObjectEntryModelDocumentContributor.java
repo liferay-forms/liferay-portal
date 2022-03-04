@@ -150,8 +150,6 @@ public class ObjectEntryModelDocumentContributor
 		document.add(new Field("objectEntryContent", sb.toString()));
 		document.add(
 			new Field("objectEntryTitle", objectEntry.getTitleValue()));
-
-		document.remove(Field.USER_NAME);
 	}
 
 	private void _contribute(
