@@ -15,6 +15,7 @@
 package com.liferay.object.rest.internal.odata.entity.v1_0;
 
 import com.liferay.object.model.ObjectField;
+import com.liferay.object.rest.internal.configuration.activator.FFSearchAndSortMetadataColumnsConfigurationActivator;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -39,13 +40,12 @@ import java.util.Optional;
  */
 public class ObjectEntryEntityModel implements EntityModel {
 
-	public ObjectEntryEntityModel(List<ObjectField> objectFields) {
+	public ObjectEntryEntityModel(
+		FFSearchAndSortMetadataColumnsConfigurationActivator
+			ffSearchAndSortMetadataColumnsConfigurationActivator,
+		List<ObjectField> objectFields) {
+
 		_entityFieldsMap = HashMapBuilder.<String, EntityField>put(
-			"creator",
-			new StringEntityField(
-				"creator",
-				locale -> Field.getSortableFieldName(Field.USER_NAME))
-		).put(
 			"creatorId",
 			new IntegerEntityField("creatorId", locale -> Field.USER_ID)
 		).put(
@@ -63,9 +63,7 @@ public class ObjectEntryEntityModel implements EntityModel {
 		).put(
 			"id",
 			new IdEntityField(
-				"id",
-				locale -> Field.getSortableFieldName(Field.ENTRY_CLASS_PK),
-				String::valueOf)
+				"id", locale -> Field.ENTRY_CLASS_PK, String::valueOf)
 		).put(
 			"objectDefinitionId",
 			new IntegerEntityField(
@@ -79,6 +77,20 @@ public class ObjectEntryEntityModel implements EntityModel {
 		).put(
 			"userId", new IntegerEntityField("userId", locale -> Field.USER_ID)
 		).build();
+
+		if (ffSearchAndSortMetadataColumnsConfigurationActivator.enabled()) {
+			_entityFieldsMap.put(
+				"creator",
+				new StringEntityField(
+					"creator",
+					locale -> Field.getSortableFieldName(Field.USER_NAME)));
+			_entityFieldsMap.put(
+				"id",
+				new IdEntityField(
+					"id",
+					locale -> Field.getSortableFieldName(Field.ENTRY_CLASS_PK),
+					String::valueOf));
+		}
 
 		for (ObjectField objectField : objectFields) {
 			if (Objects.equals(

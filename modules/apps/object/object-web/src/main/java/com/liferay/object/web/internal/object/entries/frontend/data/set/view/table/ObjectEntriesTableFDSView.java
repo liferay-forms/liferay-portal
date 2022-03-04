@@ -32,6 +32,7 @@ import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.service.ObjectViewLocalService;
+import com.liferay.object.web.internal.configuration.activator.FFSearchAndSortMetadataColumnsConfigurationActivator;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -51,6 +52,8 @@ public class ObjectEntriesTableFDSView extends BaseTableFDSView {
 
 	public ObjectEntriesTableFDSView(
 		FDSTableSchemaBuilderFactory fdsTableSchemaBuilderFactory,
+		FFSearchAndSortMetadataColumnsConfigurationActivator
+			ffSearchAndSortMetadataColumnsConfigurationActivator,
 		ObjectDefinition objectDefinition,
 		ObjectDefinitionLocalService objectDefinitionLocalService,
 		ObjectFieldLocalService objectFieldLocalService,
@@ -58,6 +61,8 @@ public class ObjectEntriesTableFDSView extends BaseTableFDSView {
 		ObjectViewLocalService objectViewLocalService) {
 
 		_fdsTableSchemaBuilderFactory = fdsTableSchemaBuilderFactory;
+		_ffSearchAndSortMetadataColumnsConfigurationActivator =
+			ffSearchAndSortMetadataColumnsConfigurationActivator;
 		_objectDefinition = objectDefinition;
 		_objectDefinitionLocalService = objectDefinitionLocalService;
 		_objectFieldLocalService = objectFieldLocalService;
@@ -174,26 +179,32 @@ public class ObjectEntriesTableFDSView extends BaseTableFDSView {
 
 		if (Objects.equals(fieldName, "creator")) {
 			_addFDSTableSchemaField(
-				null, fdsTableSchemaBuilder, "creator.name", "author", true,
+				null, fdsTableSchemaBuilder, "creator.name", "author",
+				_ffSearchAndSortMetadataColumnsConfigurationActivator.enabled(),
 				null);
 		}
 		else if (Objects.equals(fieldName, "dateCreated")) {
 			_addFDSTableSchemaField(
 				null, fdsTableSchemaBuilder, "dateCreated", "created-date",
-				true, "Date");
+				_ffSearchAndSortMetadataColumnsConfigurationActivator.enabled(),
+				"Date");
 		}
 		else if (Objects.equals(fieldName, "dateModified")) {
 			_addFDSTableSchemaField(
 				null, fdsTableSchemaBuilder, "dateModified", "modified-date",
-				true, "Date");
+				_ffSearchAndSortMetadataColumnsConfigurationActivator.enabled(),
+				"Date");
 		}
 		else if (Objects.equals(fieldName, "id")) {
 			_addFDSTableSchemaField(
-				"actionLink", fdsTableSchemaBuilder, "id", "id", true, null);
+				"actionLink", fdsTableSchemaBuilder, "id", "id",
+				_ffSearchAndSortMetadataColumnsConfigurationActivator.enabled(),
+				null);
 		}
 		else if (Objects.equals(fieldName, "status")) {
 			_addFDSTableSchemaField(
-				"status", fdsTableSchemaBuilder, "status", "status", true,
+				"status", fdsTableSchemaBuilder, "status", "status",
+				_ffSearchAndSortMetadataColumnsConfigurationActivator.enabled(),
 				null);
 		}
 	}
@@ -262,6 +273,8 @@ public class ObjectEntriesTableFDSView extends BaseTableFDSView {
 	}
 
 	private final FDSTableSchemaBuilderFactory _fdsTableSchemaBuilderFactory;
+	private final FFSearchAndSortMetadataColumnsConfigurationActivator
+		_ffSearchAndSortMetadataColumnsConfigurationActivator;
 	private final ObjectDefinition _objectDefinition;
 	private final ObjectDefinitionLocalService _objectDefinitionLocalService;
 	private final ObjectFieldLocalService _objectFieldLocalService;
