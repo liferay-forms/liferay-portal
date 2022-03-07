@@ -615,7 +615,7 @@ definition {
 
 		Click(locator1 = "FormFields#VALIDATION_ARGUMENT");
 
-		AssertClick(
+		ClickNoError(
 			key_validationArgument = "${validationArgument}",
 			locator1 = "FormFields#VALIDATION_ARGUMENT_OPTION",
 			value1 = "${validationArgument}");
