@@ -848,6 +848,7 @@ definition {
 	@description = "Verify that a Text Field can require Confirmation"
 	@priority = "5"
 	test CanRequireConfirmationWithValidation {
+		property forms.functional = "test";
 		property portal.acceptance = "true";
 
 		FormsAdmin.addForm();
@@ -907,6 +908,7 @@ definition {
 	@description = "Verify that the Confirmation can be placed Horizontally"
 	@priority = "5"
 	test ConfirmationBoxCanBePlacedHorizontally {
+		property forms.functional = "test";
 		property portal.acceptance = "true";
 
 		FormsAdmin.addForm();
@@ -966,6 +968,7 @@ definition {
 	@description = "Verify that the Confirmation Error Message can be edited"
 	@priority = "5"
 	test ConfirmationErrorMessageCanBeEdited {
+		property forms.functional = "test";
 		property portal.acceptance = "true";
 
 		FormsAdmin.addForm();
@@ -1017,6 +1020,7 @@ definition {
 	@description = "Verify that the Confirmation Label can be edited"
 	@priority = "5"
 	test ConfirmationLabelCanBeEdited {
+		property forms.functional = "test";
 		property portal.acceptance = "true";
 
 		FormsAdmin.addForm();
