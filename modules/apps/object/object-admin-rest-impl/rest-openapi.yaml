@@ -163,8 +163,6 @@ components:
                 objectFieldId:
                     format: int64
                     type: integer
-                required:
-                    type: boolean
                 value:
                     type: string
         ObjectLayout:
