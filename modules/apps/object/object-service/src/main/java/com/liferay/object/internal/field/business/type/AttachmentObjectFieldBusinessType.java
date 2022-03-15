@@ -129,6 +129,28 @@ public class AttachmentObjectFieldBusinessType
 		return ObjectFieldConstants.BUSINESS_TYPE_ATTACHMENT;
 	}
 
+	@Override
+	public Map<String, Map<String, Object>> getObjectFieldProperties() {
+		return HashMapBuilder.<String, Map<String, Object>>put(
+			"acceptedFileExtensions",
+			HashMapBuilder.<String, Object>put(
+				"required", true
+			).build()
+		).put(
+			"fileSource",
+			HashMapBuilder.<String, Object>put(
+				"required", true
+			).build()
+		).put(
+			"maximumFileSize",
+			HashMapBuilder.<String, Object>put(
+				"minimum", 0
+			).put(
+				"required", true
+			).build()
+		).build();
+	}
+
 	private Folder _addFolder(
 		long userId, long repositoryId, HttpServletRequest httpServletRequest) {
 
