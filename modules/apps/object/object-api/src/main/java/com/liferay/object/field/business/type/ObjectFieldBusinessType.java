@@ -29,6 +29,13 @@ public interface ObjectFieldBusinessType {
 
 	public String getDBType();
 
+	public default Map<String, Object> getDDMFormFieldProperties(
+		ObjectField objectField,
+		ObjectFieldRenderingContext objectFieldRenderingContext) {
+
+		return Collections.emptyMap();
+	}
+
 	public String getDDMFormFieldTypeName();
 
 	public default String getDescription(Locale locale) {
@@ -40,13 +47,6 @@ public interface ObjectFieldBusinessType {
 	public String getName();
 
 	public default Map<String, Map<String, Object>> getObjectFieldProperties() {
-		return Collections.emptyMap();
-	}
-
-	public default Map<String, Object> getProperties(
-		ObjectField objectField,
-		ObjectFieldRenderingContext objectFieldRenderingContext) {
-
 		return Collections.emptyMap();
 	}
 
