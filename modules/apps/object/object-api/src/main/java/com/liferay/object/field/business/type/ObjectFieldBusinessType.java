@@ -39,6 +39,10 @@ public interface ObjectFieldBusinessType {
 
 	public String getName();
 
+	public default Map<String, Map<String, Object>> getObjectFieldProperties() {
+		return Collections.emptyMap();
+	}
+
 	public default Map<String, Object> getProperties(
 		ObjectField objectField,
 		ObjectFieldRenderingContext objectFieldRenderingContext) {
