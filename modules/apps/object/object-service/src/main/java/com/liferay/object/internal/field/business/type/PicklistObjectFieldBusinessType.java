@@ -53,6 +53,19 @@ public class PicklistObjectFieldBusinessType
 	}
 
 	@Override
+	public Map<String, Object> getDDMFormFieldProperties(
+		ObjectField objectField,
+		ObjectFieldRenderingContext objectFieldRenderingContext) {
+
+		return HashMapBuilder.<String, Object>put(
+			"options",
+			_getDDMFormFieldOptions(
+				GetterUtil.getLong(objectField.getListTypeDefinitionId()),
+				objectFieldRenderingContext.getLocale())
+		).build();
+	}
+
+	@Override
 	public String getDDMFormFieldTypeName() {
 		return DDMFormFieldTypeConstants.SELECT;
 	}
@@ -76,19 +89,6 @@ public class PicklistObjectFieldBusinessType
 	@Override
 	public String getName() {
 		return ObjectFieldConstants.BUSINESS_TYPE_PICKLIST;
-	}
-
-	@Override
-	public Map<String, Object> getProperties(
-		ObjectField objectField,
-		ObjectFieldRenderingContext objectFieldRenderingContext) {
-
-		return HashMapBuilder.<String, Object>put(
-			"options",
-			_getDDMFormFieldOptions(
-				GetterUtil.getLong(objectField.getListTypeDefinitionId()),
-				objectFieldRenderingContext.getLocale())
-		).build();
 	}
 
 	private DDMFormFieldOptions _getDDMFormFieldOptions(
