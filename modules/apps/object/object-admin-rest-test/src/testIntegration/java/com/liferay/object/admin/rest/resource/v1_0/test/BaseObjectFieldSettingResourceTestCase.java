@@ -627,14 +627,6 @@ public abstract class BaseObjectFieldSettingResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("required", additionalAssertFieldName)) {
-				if (objectFieldSetting.getRequired() == null) {
-					valid = false;
-				}
-
-				continue;
-			}
-
 			if (Objects.equals("value", additionalAssertFieldName)) {
 				if (objectFieldSetting.getValue() == null) {
 					valid = false;
@@ -771,17 +763,6 @@ public abstract class BaseObjectFieldSettingResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals("required", additionalAssertFieldName)) {
-				if (!Objects.deepEquals(
-						objectFieldSetting1.getRequired(),
-						objectFieldSetting2.getRequired())) {
-
-					return false;
-				}
-
-				continue;
-			}
-
 			if (Objects.equals("value", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
 						objectFieldSetting1.getValue(),
@@ -909,11 +890,6 @@ public abstract class BaseObjectFieldSettingResourceTestCase {
 				"Invalid entity field " + entityFieldName);
 		}
 
-		if (entityFieldName.equals("required")) {
-			throw new IllegalArgumentException(
-				"Invalid entity field " + entityFieldName);
-		}
-
 		if (entityFieldName.equals("value")) {
 			sb.append("'");
 			sb.append(String.valueOf(objectFieldSetting.getValue()));
@@ -969,7 +945,6 @@ public abstract class BaseObjectFieldSettingResourceTestCase {
 				id = RandomTestUtil.randomLong();
 				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
 				objectFieldId = RandomTestUtil.randomLong();
-				required = RandomTestUtil.randomBoolean();
 				value = StringUtil.toLowerCase(RandomTestUtil.randomString());
 			}
 		};

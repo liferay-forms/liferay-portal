@@ -180,7 +180,7 @@ public abstract class BaseObjectFieldSettingResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'PUT' 'http://localhost:8080/o/object-admin/v1.0/object-field-settings/{objectFieldSettingId}' -d $'{"name": ___, "objectFieldId": ___, "required": ___, "value": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'PUT' 'http://localhost:8080/o/object-admin/v1.0/object-field-settings/{objectFieldSettingId}' -d $'{"name": ___, "objectFieldId": ___, "value": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
@@ -301,7 +301,7 @@ public abstract class BaseObjectFieldSettingResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'POST' 'http://localhost:8080/o/object-admin/v1.0/object-fields/{objectFieldId}/object-field-settings' -d $'{"name": ___, "objectFieldId": ___, "required": ___, "value": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'POST' 'http://localhost:8080/o/object-admin/v1.0/object-fields/{objectFieldId}/object-field-settings' -d $'{"name": ___, "objectFieldId": ___, "value": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
