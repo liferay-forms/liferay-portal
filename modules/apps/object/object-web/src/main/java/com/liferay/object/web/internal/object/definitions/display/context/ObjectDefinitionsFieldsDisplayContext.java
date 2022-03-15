@@ -215,8 +215,6 @@ public class ObjectDefinitionsFieldsDisplayContext {
 				JSONUtil.put(
 					"name", objectFieldSetting.getName()
 				).put(
-					"required", objectFieldSetting.isRequired()
-				).put(
 					"value", objectFieldSetting.getValue()
 				)));
 

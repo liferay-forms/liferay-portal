@@ -59,7 +59,6 @@ public class ObjectFieldSettingResourceImpl
 		return ObjectFieldSettingUtil.toObjectFieldSetting(
 			_objectFieldSettingService.addObjectFieldSetting(
 				objectFieldId, objectFieldSetting.getName(),
-				objectFieldSetting.getRequired(),
 				objectFieldSetting.getValue()));
 	}
 

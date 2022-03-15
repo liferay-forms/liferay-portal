@@ -182,8 +182,7 @@ public class ObjectFieldSettingServiceTest {
 
 		return _objectFieldSettingLocalService.addObjectFieldSetting(
 			user.getUserId(), _objectField.getObjectFieldId(),
-			StringUtil.randomId(), RandomTestUtil.randomBoolean(),
-			RandomTestUtil.randomString());
+			StringUtil.randomId(), RandomTestUtil.randomString());
 	}
 
 	private void _setUser(User user) {
@@ -204,7 +203,6 @@ public class ObjectFieldSettingServiceTest {
 			objectFieldSetting =
 				_objectFieldSettingService.addObjectFieldSetting(
 					objectFieldId, StringUtil.randomId(),
-					RandomTestUtil.randomBoolean(),
 					RandomTestUtil.randomString());
 		}
 		finally {
