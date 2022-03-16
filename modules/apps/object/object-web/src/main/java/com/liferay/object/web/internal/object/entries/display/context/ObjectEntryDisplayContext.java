@@ -554,10 +554,11 @@ public class ObjectEntryDisplayContext {
 
 		ddmFormField.setLabel(ddmFormFieldLabelLocalizedValue);
 
-		Map<String, Object> properties = objectFieldBusinessType.getProperties(
-			objectField, _createObjectFieldRenderingContext());
+		Map<String, Object> ddmFormFieldProperties =
+			objectFieldBusinessType.getDDMFormFieldProperties(
+				objectField, _createObjectFieldRenderingContext());
 
-		properties.forEach(
+		ddmFormFieldProperties.forEach(
 			(key, value) -> ddmFormField.setProperty(key, value));
 
 		if (Validator.isNotNull(objectField.getRelationshipType())) {

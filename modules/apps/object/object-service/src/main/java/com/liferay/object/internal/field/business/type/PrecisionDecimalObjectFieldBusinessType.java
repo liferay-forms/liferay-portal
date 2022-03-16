@@ -49,6 +49,16 @@ public class PrecisionDecimalObjectFieldBusinessType
 	}
 
 	@Override
+	public Map<String, Object> getDDMFormFieldProperties(
+		ObjectField objectField,
+		ObjectFieldRenderingContext objectFieldRenderingContext) {
+
+		return HashMapBuilder.<String, Object>put(
+			FieldConstants.DATA_TYPE, FieldConstants.DOUBLE
+		).build();
+	}
+
+	@Override
 	public String getDDMFormFieldTypeName() {
 		return DDMFormFieldTypeConstants.NUMERIC;
 	}
@@ -72,16 +82,6 @@ public class PrecisionDecimalObjectFieldBusinessType
 	@Override
 	public String getName() {
 		return ObjectFieldConstants.BUSINESS_TYPE_PRECISION_DECIMAL;
-	}
-
-	@Override
-	public Map<String, Object> getProperties(
-		ObjectField objectField,
-		ObjectFieldRenderingContext objectFieldRenderingContext) {
-
-		return HashMapBuilder.<String, Object>put(
-			FieldConstants.DATA_TYPE, FieldConstants.DOUBLE
-		).build();
 	}
 
 }

@@ -62,33 +62,7 @@ public class AttachmentObjectFieldBusinessType
 	}
 
 	@Override
-	public String getDDMFormFieldTypeName() {
-		return ObjectDDMFormFieldTypeConstants.ATTACHMENT;
-	}
-
-	@Override
-	public String getDescription(Locale locale) {
-		return LanguageUtil.get(
-			ResourceBundleUtil.getModuleAndPortalResourceBundle(
-				locale, getClass()),
-			"upload-files-or-select-from-documents-and-media");
-	}
-
-	@Override
-	public String getLabel(Locale locale) {
-		return LanguageUtil.get(
-			ResourceBundleUtil.getModuleAndPortalResourceBundle(
-				locale, getClass()),
-			"attachment");
-	}
-
-	@Override
-	public String getName() {
-		return ObjectFieldConstants.BUSINESS_TYPE_ATTACHMENT;
-	}
-
-	@Override
-	public Map<String, Object> getProperties(
+	public Map<String, Object> getDDMFormFieldProperties(
 		ObjectField objectField,
 		ObjectFieldRenderingContext objectFieldRenderingContext) {
 
@@ -127,6 +101,54 @@ public class AttachmentObjectFieldBusinessType
 				objectFieldSetting.getName(), objectFieldSetting.getValue()));
 
 		return properties;
+	}
+
+	@Override
+	public String getDDMFormFieldTypeName() {
+		return ObjectDDMFormFieldTypeConstants.ATTACHMENT;
+	}
+
+	@Override
+	public String getDescription(Locale locale) {
+		return LanguageUtil.get(
+			ResourceBundleUtil.getModuleAndPortalResourceBundle(
+				locale, getClass()),
+			"upload-files-or-select-from-documents-and-media");
+	}
+
+	@Override
+	public String getLabel(Locale locale) {
+		return LanguageUtil.get(
+			ResourceBundleUtil.getModuleAndPortalResourceBundle(
+				locale, getClass()),
+			"attachment");
+	}
+
+	@Override
+	public String getName() {
+		return ObjectFieldConstants.BUSINESS_TYPE_ATTACHMENT;
+	}
+
+	@Override
+	public Map<String, Map<String, Object>> getObjectFieldProperties() {
+		return HashMapBuilder.<String, Map<String, Object>>put(
+			"acceptedFileExtensions",
+			HashMapBuilder.<String, Object>put(
+				"required", true
+			).build()
+		).put(
+			"fileSource",
+			HashMapBuilder.<String, Object>put(
+				"required", true
+			).build()
+		).put(
+			"maximumFileSize",
+			HashMapBuilder.<String, Object>put(
+				"minimum", 0
+			).put(
+				"required", true
+			).build()
+		).build();
 	}
 
 	private Folder _addFolder(

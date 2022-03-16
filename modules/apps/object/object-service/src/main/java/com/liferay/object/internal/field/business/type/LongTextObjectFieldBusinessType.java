@@ -47,6 +47,16 @@ public class LongTextObjectFieldBusinessType
 	}
 
 	@Override
+	public Map<String, Object> getDDMFormFieldProperties(
+		ObjectField objectField,
+		ObjectFieldRenderingContext objectFieldRenderingContext) {
+
+		return HashMapBuilder.<String, Object>put(
+			"displayStyle", "multiline"
+		).build();
+	}
+
+	@Override
 	public String getDDMFormFieldTypeName() {
 		return DDMFormFieldTypeConstants.TEXT;
 	}
@@ -70,16 +80,6 @@ public class LongTextObjectFieldBusinessType
 	@Override
 	public String getName() {
 		return ObjectFieldConstants.BUSINESS_TYPE_LONG_TEXT;
-	}
-
-	@Override
-	public Map<String, Object> getProperties(
-		ObjectField objectField,
-		ObjectFieldRenderingContext objectFieldRenderingContext) {
-
-		return HashMapBuilder.<String, Object>put(
-			"displayStyle", "multiline"
-		).build();
 	}
 
 }
