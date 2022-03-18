@@ -21,6 +21,7 @@ import com.liferay.object.field.business.type.ObjectFieldBusinessType;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -43,6 +44,10 @@ public class TextObjectFieldBusinessType implements ObjectFieldBusinessType {
 
 	@Override
 	public Set<String> getAllowedSettings() {
+		if (!_FEATURE_FLAG) {
+			return ObjectFieldBusinessType.super.getAllowedSettings();
+		}
+
 		return SetUtil.fromArray("maxLength");
 	}
 
@@ -85,6 +90,10 @@ public class TextObjectFieldBusinessType implements ObjectFieldBusinessType {
 		ObjectFieldBusinessType.super.validateObjectFieldSettings(
 			objectFieldName, objectFieldSettings);
 
+		if (!_FEATURE_FLAG) {
+			return;
+		}
+
 		String maxLengthString = objectFieldSettings.get("maxLength");
 
 		if (Validator.isNotNull(maxLengthString)) {
@@ -97,5 +106,8 @@ public class TextObjectFieldBusinessType implements ObjectFieldBusinessType {
 			}
 		}
 	}
+
+	private static final boolean _FEATURE_FLAG = GetterUtil.getBoolean(
+		PropsUtil.get("feature.flag.LPS-146889"));
 
 }
