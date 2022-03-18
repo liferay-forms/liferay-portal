@@ -24,6 +24,7 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.PropsUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,7 +77,21 @@ public class TextDDMFormFieldTemplateContextContributor
 				"hideField",
 				GetterUtil.getBoolean(ddmFormField.getProperty("hideField"))
 			).put(
-				"maxLength", ddmFormField.getProperty("maxLength")
+				"maxLength",
+				() -> {
+					try {
+						if (!GetterUtil.getBoolean(
+								PropsUtil.get("feature.flag.LPS-146889"))) {
+
+							return null;
+						}
+
+						return ddmFormField.getProperty("maxLength");
+					}
+					catch (NullPointerException nullPointerException) {
+						return null;
+					}
+				}
 			).put(
 				"placeholder",
 				DDMFormFieldTypeUtil.getPropertyValue(
