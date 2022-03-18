@@ -24,6 +24,7 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,6 +77,17 @@ public class TextDDMFormFieldTemplateContextContributor
 				"hideField",
 				GetterUtil.getBoolean(ddmFormField.getProperty("hideField"))
 			).put(
+				"maxLength",
+				() -> {
+					Object maxLength = ddmFormField.getProperty("maxLength");
+
+					if (Validator.isNotNull(maxLength)) {
+						return GetterUtil.getInteger(maxLength);
+					}
+
+					return null;
+				}
+			).put(
 				"placeholder",
 				DDMFormFieldTypeUtil.getPropertyValue(
 					ddmFormField, locale, "placeholder")
@@ -83,6 +95,18 @@ public class TextDDMFormFieldTemplateContextContributor
 				"requireConfirmation",
 				GetterUtil.getBoolean(
 					ddmFormField.getProperty("requireConfirmation"))
+			).put(
+				"showCounter",
+				() -> {
+					Object showCounter = ddmFormField.getProperty(
+						"showCounter");
+
+					if (showCounter != null) {
+						return GetterUtil.getBoolean(showCounter);
+					}
+
+					return null;
+				}
 			).put(
 				"tooltip",
 				DDMFormFieldTypeUtil.getPropertyValue(
