@@ -12,7 +12,7 @@
  * details.
  */
 
-type ObjectFieldBusinessType = 'Attachment' | 'Picklist';
+type ObjectFieldBusinessType = 'Attachment' | 'LongText' | 'Picklist' | 'Text';
 
 interface ObjectFieldType {
 	businessType: ObjectFieldBusinessType;
@@ -44,4 +44,6 @@ interface ObjectFieldSetting {
 type ObjectFieldSettingName =
 	| 'acceptedFileExtensions'
 	| 'fileSource'
-	| 'maximumFileSize';
+	| 'maximumFileSize'
+	| 'maxLengthValue'
+	| 'showMaxLength';

@@ -50,6 +50,23 @@ function closeSidePanel() {
 	parentWindow.Liferay.fire('close-side-panel');
 }
 
+function getObjectFieldSettings(
+	objectFieldSettings: {
+		name: ObjectFieldSettingName;
+		value: string | number;
+	}[]
+) {
+	const settings: {
+		[key in ObjectFieldSettingName]?: string | number;
+	} = {};
+
+	objectFieldSettings.forEach(({name, value}) => {
+		settings[name] = value;
+	});
+
+	return settings;
+}
+
 export default function EditObjectField({
 	isApproved,
 	objectField: initialValues,
@@ -142,6 +159,19 @@ export default function EditObjectField({
 					{values.businessType === 'Attachment' && (
 						<AttachmentProperties
 							errors={errors}
+							objectFieldSettings={
+								values.objectFieldSettings as ObjectFieldSetting[]
+							}
+							setValues={setValues}
+						/>
+					)}
+
+					{(values.businessType === 'Text' ||
+						values.businessType === 'LongText') && (
+						<MaxLengthProperties
+							disabled={disabled}
+							errors={errors}
+							objectField={values}
 							objectFieldSettings={
 								values.objectFieldSettings as ObjectFieldSetting[]
 							}
@@ -270,16 +300,101 @@ function SearchableContainer({
 	);
 }
 
+function MaxLengthProperties({
+	disabled,
+	errors,
+	objectField,
+	objectFieldSettings,
+	setValues,
+}: IMaxLengthPropertiesProps) {
+	const defaultMaxLength = objectField.businessType === 'Text' ? 280 : 65000;
+
+	const settings = getObjectFieldSettings(objectFieldSettings);
+
+	const handleChange = ({
+		target: {name, value},
+	}: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+		setValues({
+			objectFieldSettings: objectFieldSettings.map((setting) =>
+				setting.name === name ? {...setting, value} : setting
+			),
+		});
+
+	return (
+		<>
+			<ClayForm.Group>
+				<ClayToggle
+					disabled={disabled}
+					label={Liferay.Language.get(
+						'set-the-maximum-number-of-characters'
+					)}
+					name="showMaxLength"
+					onToggle={(showMaxLength) => {
+						setValues({
+							objectFieldSettings: objectFieldSettings.map(
+								(setting) => {
+									const newValue = showMaxLength
+										? 'true'
+										: 'false';
+									switch (setting.name) {
+										case 'showMaxLength':
+											return {
+												...setting,
+												value: newValue,
+											};
+
+										case 'maxLengthValue':
+											return {
+												...setting,
+												value: defaultMaxLength,
+											};
+
+										default:
+											return setting;
+									}
+								}
+							),
+						});
+					}}
+					toggled={settings.showMaxLength === 'true'}
+				/>
+			</ClayForm.Group>
+			<ClayForm.Group>
+				{settings.showMaxLength === 'true' && (
+					<Input
+						error={errors.maxLengthValue}
+						feedbackMessage={
+							objectField.businessType === 'Text'
+								? Liferay.Language.get(
+										'set-the-maximum-number-of-characters-accepted-this-value-cant-be-less-than-1-or-greater-than-280'
+								  )
+								: Liferay.Language.get(
+										'set-the-maximum-number-of-characters-accepted-this-value-cant-be-less-than-1-or-greater-than-65000'
+								  )
+						}
+						label={Liferay.Language.get(
+							'maximum-number-of-characters'
+						)}
+						max={defaultMaxLength}
+						min={1}
+						name="maxLengthValue"
+						onChange={handleChange}
+						required
+						type="number"
+						value={settings.maxLengthValue}
+					/>
+				)}
+			</ClayForm.Group>
+		</>
+	);
+}
+
 function AttachmentProperties({
 	errors,
 	objectFieldSettings,
 	setValues,
 }: IAttachmentPropertiesProps) {
-	const settings: {[key in ObjectFieldSettingName]?: string | number} = {};
-
-	objectFieldSettings.forEach(({name, value}) => {
-		settings[name] = value;
-	});
+	const settings = getObjectFieldSettings(objectFieldSettings);
 
 	const handleChange = ({
 		target: {name, value},
@@ -323,6 +438,14 @@ function AttachmentProperties({
 
 interface IAttachmentPropertiesProps {
 	errors: ObjectFieldErrors;
+	objectFieldSettings: ObjectFieldSetting[];
+	setValues: (values: Partial<ObjectField>) => void;
+}
+
+interface IMaxLengthPropertiesProps {
+	disabled: boolean;
+	errors: ObjectFieldErrors;
+	objectField: Partial<ObjectField>;
 	objectFieldSettings: ObjectFieldSetting[];
 	setValues: (values: Partial<ObjectField>) => void;
 }

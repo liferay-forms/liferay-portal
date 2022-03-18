@@ -101,6 +101,32 @@ export default function ObjectFieldFormBase({
 							value: 100,
 						},
 				  ]
+				: option.businessType === 'Text'
+				? [
+						{
+							name: 'showMaxLength',
+							required: false,
+							value: 'false',
+						},
+						{
+							name: 'maxLengthValue',
+							required: true,
+							value: 280,
+						},
+				  ]
+				: option.businessType === 'LongText'
+				? [
+						{
+							name: 'showMaxLength',
+							required: false,
+							value: 'false',
+						},
+						{
+							name: 'maxLengthValue',
+							required: true,
+							value: 65000,
+						},
+				  ]
 				: undefined;
 
 		const isSearchableByText =
@@ -203,7 +229,7 @@ export function useObjectFieldForm({
 		if (!field.businessType) {
 			errors.businessType = REQUIRED_MSG;
 		}
-		else if (field.businessType === 'Attachment') {
+		else if (field.objectFieldSettings) {
 			const settings: {
 				[key in ObjectFieldSettingName]?: string | number;
 			} = {};
@@ -212,14 +238,24 @@ export function useObjectFieldForm({
 				settings[name] = value;
 			});
 
-			if (!settings.acceptedFileExtensions) {
-				errors.acceptedFileExtensions = REQUIRED_MSG;
+			if (field.businessType === 'Attachment') {
+				if (!settings.acceptedFileExtensions) {
+					errors.acceptedFileExtensions = REQUIRED_MSG;
+				}
+				if (!settings.fileSource) {
+					errors.fileSource = REQUIRED_MSG;
+				}
+				if (!settings.maximumFileSize) {
+					errors.maximumFileSize = REQUIRED_MSG;
+				}
 			}
-			if (!settings.fileSource) {
-				errors.fileSource = REQUIRED_MSG;
-			}
-			if (!settings.maximumFileSize) {
-				errors.maximumFileSize = REQUIRED_MSG;
+			else if (
+				field.businessType === 'Text' ||
+				field.businessType === 'LongText'
+			) {
+				if (!settings.maxLengthValue) {
+					errors.maxLengthValue = REQUIRED_MSG;
+				}
 			}
 		}
 		else if (field.businessType === 'Picklist') {
