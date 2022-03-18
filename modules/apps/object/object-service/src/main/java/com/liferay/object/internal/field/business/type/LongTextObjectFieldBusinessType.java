@@ -102,6 +102,10 @@ public class LongTextObjectFieldBusinessType
 			"displayStyle", "multiline"
 		).build();
 
+		if (!_FEATURE_FLAG) {
+			return properties;
+		}
+
 		List<ObjectFieldSetting> objectFieldSettings =
 			_objectFieldSettingLocalService.getObjectFieldSettings(
 				objectField.getObjectFieldId());
