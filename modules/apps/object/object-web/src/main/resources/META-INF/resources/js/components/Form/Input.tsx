@@ -20,52 +20,64 @@ import ErrorFeedback from './ErrorFeedback';
 import FeedbackMessage from './FeedbackMessage';
 import RequiredMask from './RequiredMask';
 
-export default function Input({
-	className,
-	component,
-	disabled = false,
-	error,
-	feedbackMessage,
-	id,
-	label,
-	name,
-	onChange,
-	required = false,
-	type,
-	value,
-	...otherProps
-}: IProps) {
-	return (
-		<ClayForm.Group
-			className={classNames(className, {
-				'has-error': error,
-			})}
-		>
-			<label className={classNames({disabled})} htmlFor={id}>
-				{label}
+const Input: React.ForwardRefExoticComponent<
+	IProps & React.RefAttributes<HTMLInputElement>
+> = React.forwardRef(
+	(
+		{
+			className,
+			component,
+			disabled = false,
+			error,
+			feedbackMessage,
+			id,
+			label,
+			name,
+			onChange,
+			onInput,
+			required = false,
+			type,
+			value,
+			...otherProps
+		},
+		forwardRef
+	) => {
+		return (
+			<ClayForm.Group
+				className={classNames(className, {
+					'has-error': error,
+				})}
+			>
+				<label className={classNames({disabled})} htmlFor={id}>
+					{label}
 
-				{required && <RequiredMask />}
-			</label>
+					{required && <RequiredMask />}
+				</label>
 
-			<ClayInput
-				{...otherProps}
-				component={component}
-				disabled={disabled}
-				id={id}
-				name={name}
-				onChange={onChange}
-				type={type}
-				value={value}
-			/>
+				<ClayInput
+					{...otherProps}
+					component={component}
+					disabled={disabled}
+					id={id}
+					name={name}
+					onChange={onChange}
+					onInput={onInput}
+					ref={forwardRef}
+					type={type}
+					value={value}
+				/>
 
-			{error && <ErrorFeedback error={error} />}
+				{error && <ErrorFeedback error={error} />}
 
-			{feedbackMessage && (
-				<FeedbackMessage feedbackMessage={feedbackMessage} />
-			)}
-		</ClayForm.Group>
-	);
-}
+				{feedbackMessage && (
+					<FeedbackMessage feedbackMessage={feedbackMessage} />
+				)}
+			</ClayForm.Group>
+		);
+	}
+);
+
+export default Input;
 
 interface IProps
 	extends React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
@@ -75,7 +87,7 @@ interface IProps
 	feedbackMessage?: string;
 	id?: string;
 	label: string;
-	name: string;
+	name?: string;
 	required?: boolean;
 	type?: 'number' | 'text';
 	value?: string | number | string[];
