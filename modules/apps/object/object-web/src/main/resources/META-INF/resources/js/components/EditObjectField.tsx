@@ -64,6 +64,7 @@ function normalizeFieldSettings(objectFieldSettings: ObjectFieldSetting[]) {
 }
 
 export default function EditObjectField({
+	allowMaxLength,
 	isApproved,
 	objectField: initialValues,
 	objectFieldTypes,
@@ -174,19 +175,20 @@ export default function EditObjectField({
 						/>
 					)}
 
-					{(values.businessType === 'Text' ||
-						values.businessType === 'LongText') && (
-						<MaxLengthProperties
-							disabled={readOnly}
-							errors={errors}
-							objectField={values}
-							objectFieldSettings={
-								values.objectFieldSettings as ObjectFieldSetting[]
-							}
-							onSettingsChange={handleSettingsChange}
-							setValues={setValues}
-						/>
-					)}
+					{allowMaxLength &&
+						(values.businessType === 'Text' ||
+							values.businessType === 'LongText') && (
+							<MaxLengthProperties
+								disabled={readOnly}
+								errors={errors}
+								objectField={values}
+								objectFieldSettings={
+									values.objectFieldSettings as ObjectFieldSetting[]
+								}
+								onSettingsChange={handleSettingsChange}
+								setValues={setValues}
+							/>
+						)}
 				</ObjectFieldFormBase>
 			</div>
 
@@ -468,6 +470,7 @@ interface IMaxLengthPropertiesProps {
 }
 
 interface IProps {
+	allowMaxLength?: boolean;
 	isApproved: boolean;
 	objectField: ObjectField;
 	objectFieldTypes: ObjectFieldType[];
