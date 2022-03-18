@@ -19,6 +19,8 @@ import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderer;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidationExpression;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutColumn;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutPage;
@@ -35,6 +37,7 @@ import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItemList;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.ItemSelectorReturnType;
 import com.liferay.item.selector.criteria.info.item.criterion.InfoItemItemSelectorCriterion;
+import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.exception.NoSuchObjectLayoutException;
 import com.liferay.object.field.business.type.ObjectFieldBusinessType;
 import com.liferay.object.field.business.type.ObjectFieldBusinessTypeServicesTracker;
@@ -57,6 +60,7 @@ import com.liferay.object.web.internal.constants.ObjectWebKeys;
 import com.liferay.object.web.internal.display.context.helper.ObjectRequestHelper;
 import com.liferay.object.web.internal.item.selector.ObjectEntryItemSelectorReturnType;
 import com.liferay.petra.portlet.url.builder.PortletURLBuilder;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -88,6 +92,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -545,6 +550,14 @@ public class ObjectEntryDisplayContext {
 			objectField.getName(),
 			objectFieldBusinessType.getDDMFormFieldTypeName());
 
+		Map<String, Object> properties = objectFieldBusinessType.getProperties(
+			objectField, _createObjectFieldRenderingContext());
+
+		ddmFormField.setDDMFormFieldValidation(
+			_getDDMFormFieldValidation(
+				objectField.getBusinessType(), objectField.getName(),
+				properties));
+
 		LocalizedValue ddmFormFieldLabelLocalizedValue = new LocalizedValue(
 			_objectRequestHelper.getLocale());
 
@@ -553,9 +566,6 @@ public class ObjectEntryDisplayContext {
 			objectField.getLabel(_objectRequestHelper.getLocale()));
 
 		ddmFormField.setLabel(ddmFormFieldLabelLocalizedValue);
-
-		Map<String, Object> properties = objectFieldBusinessType.getProperties(
-			objectField, _createObjectFieldRenderingContext());
 
 		properties.forEach(
 			(key, value) -> ddmFormField.setProperty(key, value));
@@ -575,6 +585,46 @@ public class ObjectEntryDisplayContext {
 		ddmFormField.setRequired(objectField.isRequired());
 
 		return ddmFormField;
+	}
+
+	private DDMFormFieldValidation _getDDMFormFieldValidation(
+		String businessType, String objectFieldName,
+		Map<String, Object> properties) {
+
+		int defaultMaxLength = 0;
+
+		if (Objects.equals(
+				businessType, ObjectFieldConstants.BUSINESS_TYPE_LONG_TEXT)) {
+
+			defaultMaxLength = 65000;
+		}
+		else if (Objects.equals(
+					businessType, ObjectFieldConstants.BUSINESS_TYPE_TEXT)) {
+
+			defaultMaxLength = 280;
+		}
+
+		if (defaultMaxLength > 0) {
+			DDMFormFieldValidation ddmFormFieldValidation =
+				new DDMFormFieldValidation();
+
+			DDMFormFieldValidationExpression ddmFormFieldValidationExpression =
+				new DDMFormFieldValidationExpression();
+
+			int maxLength = GetterUtil.getInteger(
+				properties.get("maxLength"), defaultMaxLength);
+
+			ddmFormFieldValidationExpression.setValue(
+				StringBundler.concat(
+					"length(getValue(", objectFieldName, ")) <= ", maxLength));
+
+			ddmFormFieldValidation.setDDMFormFieldValidationExpression(
+				ddmFormFieldValidationExpression);
+
+			return ddmFormFieldValidation;
+		}
+
+		return null;
 	}
 
 	private DDMFormLayout _getDDMFormLayout(
