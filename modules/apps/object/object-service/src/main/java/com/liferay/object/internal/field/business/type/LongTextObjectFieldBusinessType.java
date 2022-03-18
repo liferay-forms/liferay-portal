@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -53,6 +54,11 @@ public class LongTextObjectFieldBusinessType
 
 	@Override
 	public Set<String> getAllowedObjectFieldSettingsNames() {
+		if (!_FEATURE_FLAG) {
+			return ObjectFieldBusinessType.super.
+				getAllowedObjectFieldSettingsNames();
+		}
+
 		return SetUtil.fromArray("maxLength");
 	}
 
@@ -99,6 +105,11 @@ public class LongTextObjectFieldBusinessType
 
 	@Override
 	public Set<String> getRequiredObjectFieldSettingsNames() {
+		if (!_FEATURE_FLAG) {
+			return ObjectFieldBusinessType.super.
+				getRequiredObjectFieldSettingsNames();
+		}
+
 		return SetUtil.fromArray("showCounter");
 	}
 
@@ -110,6 +121,10 @@ public class LongTextObjectFieldBusinessType
 
 		ObjectFieldBusinessType.super.validateObjectFieldSettings(
 			objectFieldName, objectFieldSettings);
+
+		if (!_FEATURE_FLAG) {
+			return;
+		}
 
 		for (ObjectFieldSetting objectFieldSetting : objectFieldSettings) {
 			if (Objects.equals(objectFieldSetting.getName(), "maxLength") &&
@@ -137,5 +152,8 @@ public class LongTextObjectFieldBusinessType
 			}
 		}
 	}
+
+	private static final boolean _FEATURE_FLAG = GetterUtil.getBoolean(
+		PropsUtil.get("feature.flag.LPS-146889"));
 
 }
