@@ -21,11 +21,13 @@ import com.liferay.object.field.business.type.ObjectFieldBusinessType;
 import com.liferay.object.field.render.ObjectFieldRenderingContext;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectFieldSetting;
+import com.liferay.object.service.ObjectFieldSettingLocalService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.SetUtil;
@@ -38,6 +40,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Marcela Cunha
@@ -98,9 +101,20 @@ public class LongTextObjectFieldBusinessType
 		ObjectField objectField,
 		ObjectFieldRenderingContext objectFieldRenderingContext) {
 
-		return HashMapBuilder.<String, Object>put(
+		Map<String, Object> properties = HashMapBuilder.<String, Object>put(
 			"displayStyle", "multiline"
 		).build();
+
+		List<ObjectFieldSetting> objectFieldSettings =
+			_objectFieldSettingLocalService.getObjectFieldSettings(
+				objectField.getObjectFieldId());
+
+		ListUtil.isNotEmptyForEach(
+			objectFieldSettings,
+			objectFieldSetting -> properties.put(
+				objectFieldSetting.getName(), objectFieldSetting.getValue()));
+
+		return properties;
 	}
 
 	@Override
@@ -155,5 +169,8 @@ public class LongTextObjectFieldBusinessType
 
 	private static final boolean _FEATURE_FLAG = GetterUtil.getBoolean(
 		PropsUtil.get("feature.flag.LPS-146889"));
+
+	@Reference
+	private ObjectFieldSettingLocalService _objectFieldSettingLocalService;
 
 }
