@@ -76,6 +76,8 @@ public class TextDDMFormFieldTemplateContextContributor
 				"hideField",
 				GetterUtil.getBoolean(ddmFormField.getProperty("hideField"))
 			).put(
+				"maxLength", ddmFormField.getProperty("maxLength")
+			).put(
 				"placeholder",
 				DDMFormFieldTypeUtil.getPropertyValue(
 					ddmFormField, locale, "placeholder")
