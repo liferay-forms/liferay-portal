@@ -98,6 +98,11 @@ public class TextObjectFieldBusinessType implements ObjectFieldBusinessType {
 		ObjectField objectField,
 		ObjectFieldRenderingContext objectFieldRenderingContext) {
 
+		if (!_FEATURE_FLAG) {
+			return ObjectFieldBusinessType.super.getProperties(
+				objectField, objectFieldRenderingContext);
+		}
+
 		Map<String, Object> properties = new HashMap<>();
 
 		List<ObjectFieldSetting> objectFieldSettings =
