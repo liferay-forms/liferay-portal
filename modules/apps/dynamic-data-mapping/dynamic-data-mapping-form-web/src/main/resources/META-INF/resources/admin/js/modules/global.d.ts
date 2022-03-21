@@ -46,6 +46,7 @@ type LocalizedTextKey =
 	| 'understood'
 	| 'x-entries'
 	| 'x-entry'
+	| 'respondents-can-see-all-submitted-form-data'
 	| 'your-responses-will-be-visible-to-all-form-respondents';
 
 type LocalizedValue<T> = {
