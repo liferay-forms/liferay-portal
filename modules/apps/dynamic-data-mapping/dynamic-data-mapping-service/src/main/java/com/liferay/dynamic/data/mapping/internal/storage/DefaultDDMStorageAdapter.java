@@ -35,7 +35,8 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	property = {
-		"ddm.storage.adapter.type=default", "service.ranking:Integer=100"
+		"ddm.storage.adapter.type=default", "ddm.storage.adapter.type=json",
+		"service.ranking:Integer=100"
 	},
 	service = DDMStorageAdapter.class
 )

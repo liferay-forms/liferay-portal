@@ -37,7 +37,10 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	immediate = true,
-	property = {"data.storage.type=default", "service.ranking:Integer=100"},
+	property = {
+		"data.storage.type=default", "data.storage.type=json",
+		"service.ranking:Integer=100"
+	},
 	service = DataStorage.class
 )
 public class DefaultDataStorage implements DataStorage {
