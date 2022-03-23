@@ -14,6 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.service.impl;
 
+import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
 import com.liferay.dynamic.data.mapping.model.DDMField;
 import com.liferay.dynamic.data.mapping.model.DDMFieldAttribute;
 import com.liferay.dynamic.data.mapping.model.DDMFieldAttributeTable;
@@ -51,6 +52,9 @@ import com.liferay.portal.kernel.json.JSONSerializer;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.sanitizer.SanitizerException;
+import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
+import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 
@@ -499,9 +503,10 @@ public class DDMFieldLocalServiceImpl extends DDMFieldLocalServiceBaseImpl {
 	}
 
 	private void _collectDDMFieldInfos(
-		Map<String, DDMFieldInfo> ddmFieldInfoMap,
-		Map<String, DDMFormField> ddmFormFieldMap,
-		List<DDMFormFieldValue> ddmFormValues, String parentInstanceId) {
+			Map<String, DDMFieldInfo> ddmFieldInfoMap,
+			Map<String, DDMFormField> ddmFormFieldMap,
+			List<DDMFormFieldValue> ddmFormValues, String parentInstanceId)
+		throws SanitizerException {
 
 		for (DDMFormFieldValue ddmFormFieldValue : ddmFormValues) {
 			DDMFormField ddmFormField = ddmFormFieldMap.get(
@@ -533,10 +538,13 @@ public class DDMFieldLocalServiceImpl extends DDMFieldLocalServiceBaseImpl {
 					String languageId = LanguageUtil.getLanguageId(
 						entry.getKey());
 
+					String sanitizedValue = _sanitize(
+						ddmFormField.getType(), entry.getValue());
+
 					ddmFieldInfo._ddmFieldAttributeInfos.put(
 						languageId,
 						_getDDMFieldAttributeInfos(
-							ddmFieldInfo, languageId, entry.getValue()));
+							ddmFieldInfo, languageId, sanitizedValue));
 				}
 			}
 
@@ -787,6 +795,20 @@ public class DDMFieldLocalServiceImpl extends DDMFieldLocalServiceBaseImpl {
 		JSONSerializer jsonSerializer = _jsonFactory.createJSONSerializer();
 
 		return jsonSerializer.serialize(map);
+	}
+
+	private String _sanitize(String ddmFormFieldType, String value)
+		throws SanitizerException {
+
+		if (Objects.equals(
+				ddmFormFieldType, DDMFormFieldTypeConstants.RICH_TEXT)) {
+
+			return SanitizerUtil.sanitize(
+				0, 0, 0, DDMFieldAttribute.class.getName(), 0,
+				ContentTypes.TEXT_HTML, value);
+		}
+
+		return value;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
