@@ -1,46 +1,5 @@
 definition {
 
-	@summary = "This calls the JSON WS API to add an object"
-	macro addObject {
-		var portalURL = JSONCompany.getPortalURL();
-
-		if (!(isSet(userEmailAddress))) {
-			var userEmailAddress = "test@liferay.com";
-		}
-
-		if (!(isSet(userPassword))) {
-			var userPassword = "test";
-		}
-
-		if (!(isSet(panelCategoryKey))) {
-			var panelCategoryKey = "control_panel.object";
-		}
-
-		if (!(isSet(scope))) {
-			var scope = "company";
-		}
-
-		var curl = '''
-			${portalURL}/o/object-admin/v1.0/object-definitions \
-			-H 'Content-Type: application/json' \
-			-u ${userEmailAddress}:${userPassword} \
-			-d '{
-			"label": {
-				"en_US": "${labelName}"
-			},
-			"name": "${objectName}",
-			"objectFields": [],
-			"panelCategoryKey": "${panelCategoryKey}",
-			"pluralLabel": {
-				"en_US": "${pluralLabelName}"
-			},
-			"scope": "${scope}"
-			}'
-		''';
-
-		JSONCurlUtil.post("${curl}");
-	}
-
 	@summary = "This calls the JSON WS API to add a field in an object"
 	macro addObjectField {
 		var portalURL = JSONCompany.getPortalURL();
@@ -49,6 +8,14 @@ definition {
 			objectName = "${objectName}",
 			userEmailAddress = "${userEmailAddress}",
 			userPassword = "${userPassword}");
+
+		if (("${fieldBusinessType}" == "Text") || ("${fieldBusinessType}" == "LongText")) {
+			var objectFieldSettings = '''[{
+						"name": "showCounter",
+						"objectFieldId": 0,
+						"value": "false"
+					}]''';
+		}
 
 		if (!(isSet(userEmailAddress))) {
 			var userEmailAddress = "test@liferay.com";
@@ -76,7 +43,28 @@ definition {
 			var indexedAsKeyword = "true";
 		}
 
-		var curl = '''
+		if (("${fieldBusinessType}" == "Text") || ("${fieldBusinessType}" == "LongText")) {
+			var curl = '''
+			${portalURL}/o/object-admin/v1.0/object-definitions/${objectId}/object-fields \
+			-H 'Content-Type: application/json' \
+			-u ${userEmailAddress}:${userPassword} \
+			-d '{
+			"DBType": "${fieldType}",
+			"businessType": "${fieldBusinessType}",
+			"indexed": ${indexed},
+			"indexedAsKeyword": ${indexedAsKeyword},
+			"label": {
+				"en_US": "${fieldLabelName}"
+			},
+			"listTypeDefinitionId": ${picklistId},
+			"name": "${fieldName}",
+			"objectFieldSettings": ${objectFieldSettings},
+			"required": ${isRequired}
+			}'
+		''';
+		}
+		else {
+			var curl = '''
 			${portalURL}/o/object-admin/v1.0/object-definitions/${objectId}/object-fields \
 			-H 'Content-Type: application/json' \
 			-u ${userEmailAddress}:${userPassword} \
@@ -93,6 +81,7 @@ definition {
 			"required": ${isRequired}
 			}'
 		''';
+		}
 
 		JSONCurlUtil.post("${curl}");
 	}

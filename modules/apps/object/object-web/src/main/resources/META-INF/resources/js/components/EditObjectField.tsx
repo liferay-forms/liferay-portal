@@ -58,7 +58,6 @@ function closeSidePanel() {
 }
 
 export default function EditObjectField({
-	allowMaxLength,
 	isApproved,
 	objectField: initialValues,
 	objectFieldTypes,
@@ -149,7 +148,6 @@ export default function EditObjectField({
 				/>
 
 				<ObjectFieldFormBase
-					allowMaxLength={allowMaxLength}
 					disabled={disabled}
 					errors={errors}
 					handleChange={handleChange}
@@ -168,20 +166,19 @@ export default function EditObjectField({
 						/>
 					)}
 
-					{allowMaxLength &&
-						(values.businessType === 'Text' ||
-							values.businessType === 'LongText') && (
-							<MaxLengthProperties
-								disabled={readOnly}
-								errors={errors}
-								objectField={values}
-								objectFieldSettings={
-									values.objectFieldSettings as ObjectFieldSetting[]
-								}
-								onSettingsChange={handleSettingsChange}
-								setValues={setValues}
-							/>
-						)}
+					{(values.businessType === 'Text' ||
+						values.businessType === 'LongText') && (
+						<MaxLengthProperties
+							disabled={readOnly}
+							errors={errors}
+							objectField={values}
+							objectFieldSettings={
+								values.objectFieldSettings as ObjectFieldSetting[]
+							}
+							onSettingsChange={handleSettingsChange}
+							setValues={setValues}
+						/>
+					)}
 				</ObjectFieldFormBase>
 			</div>
 
@@ -464,7 +461,6 @@ interface IMaxLengthPropertiesProps {
 }
 
 interface IProps {
-	allowMaxLength?: boolean;
 	isApproved: boolean;
 	objectField: ObjectField;
 	objectFieldTypes: ObjectFieldType[];

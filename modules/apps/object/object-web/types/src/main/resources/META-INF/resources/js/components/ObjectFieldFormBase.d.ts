@@ -15,7 +15,6 @@
 import React, {ChangeEventHandler, ReactNode} from 'react';
 import {FormError} from '../hooks/useForm';
 export default function ObjectFieldFormBase({
-	allowMaxLength,
 	children,
 	disabled,
 	errors,
@@ -48,7 +47,6 @@ interface IUseObjectFieldForm {
 	onSubmit: (field: ObjectField) => void;
 }
 interface IProps {
-	allowMaxLength?: boolean;
 	children?: ReactNode;
 	disabled?: boolean;
 	errors: ObjectFieldErrors;
