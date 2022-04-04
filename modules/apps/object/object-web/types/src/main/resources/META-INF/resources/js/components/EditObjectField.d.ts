@@ -16,7 +16,6 @@
 
 import './EditObjectField.scss';
 export default function EditObjectField({
-	allowMaxLength,
 	isApproved,
 	objectField: initialValues,
 	objectFieldTypes,
@@ -24,7 +23,6 @@ export default function EditObjectField({
 	showDocumentsAndMediaOption,
 }: IProps): JSX.Element;
 interface IProps {
-	allowMaxLength?: boolean;
 	isApproved: boolean;
 	objectField: ObjectField;
 	objectFieldTypes: ObjectFieldType[];

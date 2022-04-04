@@ -80,16 +80,6 @@ public class TextDDMFormFieldTemplateContextContributor
 			).put(
 				"maxLength",
 				() -> {
-					try {
-						if (!GetterUtil.getBoolean(
-								PropsUtil.get("feature.flag.LPS-146889"))) {
-
-							return null;
-						}
-					}
-					catch (NullPointerException nullPointerException) {
-						return null;
-					}
 
 					Object maxLength = ddmFormField.getProperty("maxLength");
 
@@ -110,17 +100,6 @@ public class TextDDMFormFieldTemplateContextContributor
 			).put(
 				"showCounter",
 				() -> {
-					try {
-						if (!GetterUtil.getBoolean(
-								PropsUtil.get("feature.flag.LPS-146889"))) {
-
-							return null;
-						}
-					}
-					catch (NullPointerException nullPointerException) {
-						return null;
-					}
-
 					Object showCounter = ddmFormField.getProperty(
 						"showCounter");
 

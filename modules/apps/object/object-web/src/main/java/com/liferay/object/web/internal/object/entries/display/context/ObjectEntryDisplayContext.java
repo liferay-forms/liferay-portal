@@ -597,9 +597,6 @@ public class ObjectEntryDisplayContext {
 		String businessType, String objectFieldName,
 		Map<String, Object> properties) {
 
-		if (!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-146889"))) {
-			return null;
-		}
 
 		int defaultMaxLength = 0;
 
