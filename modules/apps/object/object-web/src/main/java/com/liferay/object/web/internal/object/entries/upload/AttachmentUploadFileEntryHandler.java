@@ -14,11 +14,12 @@
 
 package com.liferay.object.web.internal.object.entries.upload;
 
+import com.liferay.document.library.kernel.exception.InvalidFileException;
+import com.liferay.object.field.business.type.attachment.AttachmentObjectFieldBusinessTypeHelper;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
-import com.liferay.object.web.internal.object.entries.upload.util.AttachmentValidator;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepository;
 import com.liferay.portal.kernel.repository.model.FileEntry;
@@ -62,6 +63,14 @@ public class AttachmentUploadFileEntryHandler
 			_folderModelResourcePermission, themeDisplay.getPermissionChecker(),
 			themeDisplay.getScopeGroupId(), folderId, ActionKeys.ADD_DOCUMENT);
 
+		String fileName = uploadPortletRequest.getFileName("file");
+
+		long objectFieldId = ParamUtil.getLong(
+			uploadPortletRequest, "objectFieldId");
+
+		_attachmentObjectFieldBusinessTypeHelper.validateFileExtension(
+			fileName, objectFieldId);
+
 		File file = null;
 
 		try (InputStream inputStream = uploadPortletRequest.getFileAsStream(
@@ -69,15 +78,12 @@ public class AttachmentUploadFileEntryHandler
 
 			file = FileUtil.createTempFile(inputStream);
 
-			String fileName = uploadPortletRequest.getFileName("file");
+			if (file == null) {
+				throw new InvalidFileException("File is null for " + fileName);
+			}
 
-			long objectFieldId = ParamUtil.getLong(
-				uploadPortletRequest, "objectFieldId");
-
-			_attachmentValidator.validateFileSize(
-				file, fileName, objectFieldId);
-
-			_attachmentValidator.validateFileExtension(fileName, objectFieldId);
+			_attachmentObjectFieldBusinessTypeHelper.validateFileSize(
+				fileName, file.length(), objectFieldId);
 
 			ObjectDefinition objectDefinition = _getObjectDefinition(
 				objectFieldId);
@@ -106,7 +112,8 @@ public class AttachmentUploadFileEntryHandler
 	}
 
 	@Reference
-	private AttachmentValidator _attachmentValidator;
+	private AttachmentObjectFieldBusinessTypeHelper
+		_attachmentObjectFieldBusinessTypeHelper;
 
 	@Reference(
 		target = "(model.class.name=com.liferay.portal.kernel.repository.model.Folder)"

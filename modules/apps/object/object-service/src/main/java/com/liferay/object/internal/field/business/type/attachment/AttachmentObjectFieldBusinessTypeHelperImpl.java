@@ -12,11 +12,11 @@
  * details.
  */
 
-package com.liferay.object.web.internal.object.entries.upload.util;
+package com.liferay.object.internal.field.business.type.attachment;
 
 import com.liferay.document.library.kernel.exception.FileExtensionException;
 import com.liferay.document.library.kernel.exception.FileSizeException;
-import com.liferay.document.library.kernel.exception.InvalidFileException;
+import com.liferay.object.field.business.type.attachment.AttachmentObjectFieldBusinessTypeHelper;
 import com.liferay.object.model.ObjectFieldSetting;
 import com.liferay.object.service.ObjectFieldSettingLocalService;
 import com.liferay.petra.string.StringBundler;
@@ -24,19 +24,17 @@ import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 
-import java.io.File;
-
-import java.util.Arrays;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Carolina Barbosa
  */
-@Component(service = AttachmentValidator.class)
-public class AttachmentValidator {
+@Component(service = AttachmentObjectFieldBusinessTypeHelper.class)
+public class AttachmentObjectFieldBusinessTypeHelperImpl
+	implements AttachmentObjectFieldBusinessTypeHelper {
 
+	@Override
 	public String[] getAcceptedFileExtensions(long objectFieldId) {
 		ObjectFieldSetting objectFieldSetting =
 			_objectFieldSettingLocalService.fetchObjectFieldSetting(
@@ -49,6 +47,7 @@ public class AttachmentValidator {
 		return StringUtil.split(objectFieldSetting.getValue());
 	}
 
+	@Override
 	public long getMaximumFileSize(long objectFieldId) {
 		ObjectFieldSetting objectFieldSetting =
 			_objectFieldSettingLocalService.fetchObjectFieldSetting(
@@ -62,7 +61,8 @@ public class AttachmentValidator {
 			_FILE_LENGTH_MB;
 	}
 
-	public void validateFileExtension(String fileName, long objectFielId)
+	@Override
+	public void validateFileExtension(String fileName, long objectFieldId)
 		throws FileExtensionException {
 
 		boolean validFileExtension = false;
@@ -70,7 +70,7 @@ public class AttachmentValidator {
 		String fileExtension = FileUtil.getExtension(fileName);
 
 		for (String acceptedFileExtension :
-				Arrays.asList(getAcceptedFileExtensions(objectFielId))) {
+				getAcceptedFileExtensions(objectFieldId)) {
 
 			if (StringUtil.equalsIgnoreCase(
 					fileExtension, StringUtil.trim(acceptedFileExtension))) {
@@ -87,16 +87,14 @@ public class AttachmentValidator {
 		}
 	}
 
-	public void validateFileSize(File file, String fileName, long objectFielId)
-		throws FileSizeException, InvalidFileException {
+	@Override
+	public void validateFileSize(
+			String fileName, long fileSize, long objectFieldId)
+		throws FileSizeException {
 
-		if (file == null) {
-			throw new InvalidFileException("File is null for " + fileName);
-		}
+		long maximumFileSize = getMaximumFileSize(objectFieldId);
 
-		long maximumFileSize = getMaximumFileSize(objectFielId);
-
-		if ((maximumFileSize > 0) && (file.length() > maximumFileSize)) {
+		if ((maximumFileSize > 0) && (fileSize > maximumFileSize)) {
 			throw new FileSizeException(
 				StringBundler.concat(
 					"File ", fileName,

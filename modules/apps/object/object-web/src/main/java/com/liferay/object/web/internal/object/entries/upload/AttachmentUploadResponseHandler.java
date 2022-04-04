@@ -17,7 +17,7 @@ package com.liferay.object.web.internal.object.entries.upload;
 import com.liferay.document.library.kernel.exception.FileExtensionException;
 import com.liferay.document.library.kernel.exception.FileSizeException;
 import com.liferay.document.library.kernel.exception.InvalidFileException;
-import com.liferay.object.web.internal.object.entries.upload.util.AttachmentValidator;
+import com.liferay.object.field.business.type.attachment.AttachmentObjectFieldBusinessTypeHelper;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -59,15 +59,16 @@ public class AttachmentUploadResponseHandler implements UploadResponseHandler {
 			errorMessage = themeDisplay.translate(
 				"please-enter-a-file-with-a-valid-extension-x",
 				StringUtil.merge(
-					_attachmentValidator.getAcceptedFileExtensions(
-						ParamUtil.getLong(portletRequest, "objectFieldId")),
+					_attachmentObjectFieldBusinessTypeHelper.
+						getAcceptedFileExtensions(
+							ParamUtil.getLong(portletRequest, "objectFieldId")),
 					StringPool.COMMA_AND_SPACE));
 		}
 		else if (portalException instanceof FileSizeException) {
 			errorMessage = themeDisplay.translate(
 				"please-enter-a-file-with-a-valid-file-size-no-larger-than-x",
 				LanguageUtil.formatStorageSize(
-					_attachmentValidator.getMaximumFileSize(
+					_attachmentObjectFieldBusinessTypeHelper.getMaximumFileSize(
 						ParamUtil.getLong(portletRequest, "objectFieldId")),
 					themeDisplay.getLocale()));
 		}
@@ -92,7 +93,8 @@ public class AttachmentUploadResponseHandler implements UploadResponseHandler {
 	}
 
 	@Reference
-	private AttachmentValidator _attachmentValidator;
+	private AttachmentObjectFieldBusinessTypeHelper
+		_attachmentObjectFieldBusinessTypeHelper;
 
 	@Reference(target = "(upload.response.handler.system.default=true)")
 	private UploadResponseHandler _defaultUploadResponseHandler;
