@@ -21,6 +21,10 @@ import com.liferay.portal.kernel.exception.PortalException;
  */
 public class ObjectEntryValuesException extends PortalException {
 
+	public ObjectEntryValuesException(Throwable throwable) {
+		super(throwable);
+	}
+
 	public static class Exceeds280Characters
 		extends ObjectEntryValuesException {
 

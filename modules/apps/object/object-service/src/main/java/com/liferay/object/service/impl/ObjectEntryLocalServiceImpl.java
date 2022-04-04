@@ -18,6 +18,9 @@ import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetLinkConstants;
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.asset.kernel.service.AssetLinkLocalService;
+import com.liferay.document.library.kernel.exception.FileExtensionException;
+import com.liferay.document.library.kernel.exception.FileSizeException;
+import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.list.type.model.ListTypeEntry;
 import com.liferay.list.type.service.ListTypeEntryLocalService;
@@ -26,6 +29,7 @@ import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.exception.NoSuchObjectFieldException;
 import com.liferay.object.exception.ObjectDefinitionScopeException;
 import com.liferay.object.exception.ObjectEntryValuesException;
+import com.liferay.object.field.business.type.attachment.AttachmentObjectFieldBusinessTypeHelper;
 import com.liferay.object.internal.petra.sql.dsl.DynamicObjectDefinitionTable;
 import com.liferay.object.internal.petra.sql.dsl.DynamicObjectRelationshipMappingTable;
 import com.liferay.object.model.ObjectDefinition;
@@ -1611,6 +1615,34 @@ public class ObjectEntryLocalServiceImpl
 		}
 	}
 
+	private void _validateDLFileEntry(long dlFileEntryId, long objectFieldId)
+		throws PortalException {
+
+		DLFileEntry dlFileEntry = _dlFileEntryLocalService.fetchDLFileEntry(
+			dlFileEntryId);
+
+		if (dlFileEntry == null) {
+			return;
+		}
+
+		try {
+			_attachmentObjectFieldBusinessTypeHelper.validateFileExtension(
+				dlFileEntry.getFileName(), objectFieldId);
+		}
+		catch (FileExtensionException fileExtensionException) {
+			throw new ObjectEntryValuesException(fileExtensionException);
+		}
+
+		try {
+			_attachmentObjectFieldBusinessTypeHelper.validateFileSize(
+				dlFileEntry.getFileName(), dlFileEntry.getSize(),
+				objectFieldId);
+		}
+		catch (FileSizeException fileSizeException) {
+			throw new ObjectEntryValuesException(fileSizeException);
+		}
+	}
+
 	private void _validateGroupId(long groupId, String scope)
 		throws PortalException {
 
@@ -1728,9 +1760,18 @@ public class ObjectEntryLocalServiceImpl
 			return;
 		}
 
-		String dbType = objectField.getDBType();
+		if (StringUtil.equals(
+				objectField.getBusinessType(),
+				ObjectFieldConstants.BUSINESS_TYPE_ATTACHMENT)) {
 
-		if (StringUtil.equals(dbType, "Integer")) {
+			_validateDLFileEntry(
+				GetterUtil.getLong(entry.getValue()),
+				objectField.getObjectFieldId());
+		}
+		else if (StringUtil.equals(
+					objectField.getDBType(),
+					ObjectFieldConstants.DB_TYPE_INTEGER)) {
+
 			Serializable entryValue = entry.getValue();
 
 			String entryValueString = entryValue.toString();
@@ -1745,7 +1786,10 @@ public class ObjectEntryLocalServiceImpl
 				}
 			}
 		}
-		else if (StringUtil.equals(dbType, "Long")) {
+		else if (StringUtil.equals(
+					objectField.getDBType(),
+					ObjectFieldConstants.DB_TYPE_LONG)) {
+
 			Serializable entryValue = entry.getValue();
 
 			String entryValueString = entryValue.toString();
@@ -1766,7 +1810,10 @@ public class ObjectEntryLocalServiceImpl
 				}
 			}
 		}
-		else if (StringUtil.equals(dbType, "String")) {
+		else if (StringUtil.equals(
+					objectField.getDBType(),
+					ObjectFieldConstants.DB_TYPE_STRING)) {
+
 			String value = (String)entry.getValue();
 
 			if ((value != null) && (value.length() > 280)) {
@@ -1803,6 +1850,10 @@ public class ObjectEntryLocalServiceImpl
 
 	@Reference
 	private AssetLinkLocalService _assetLinkLocalService;
+
+	@Reference
+	private AttachmentObjectFieldBusinessTypeHelper
+		_attachmentObjectFieldBusinessTypeHelper;
 
 	@Reference
 	private CurrentConnection _currentConnection;
