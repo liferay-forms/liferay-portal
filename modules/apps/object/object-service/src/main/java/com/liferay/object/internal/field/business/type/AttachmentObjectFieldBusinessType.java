@@ -14,7 +14,10 @@
 
 package com.liferay.object.internal.field.business.type;
 
+import com.liferay.document.library.kernel.model.DLFolder;
 import com.liferay.document.library.kernel.model.DLFolderConstants;
+import com.liferay.document.library.kernel.service.DLAppLocalService;
+import com.liferay.document.library.kernel.service.DLFolderLocalService;
 import com.liferay.document.library.kernel.util.DLValidatorUtil;
 import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.dynamic.data.mapping.form.field.type.constants.ObjectDDMFormFieldTypeConstants;
@@ -36,7 +39,7 @@ import com.liferay.portal.kernel.model.Repository;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepository;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.service.ServiceContextFactory;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -57,8 +60,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -68,7 +69,9 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	property = "object.field.business.type.key=" + ObjectFieldConstants.BUSINESS_TYPE_ATTACHMENT,
-	service = ObjectFieldBusinessType.class
+	service = {
+		AttachmentObjectFieldBusinessType.class, ObjectFieldBusinessType.class
+	}
 )
 public class AttachmentObjectFieldBusinessType
 	implements ObjectFieldBusinessType {
@@ -102,6 +105,29 @@ public class AttachmentObjectFieldBusinessType
 			"upload-files-or-select-from-documents-and-media");
 	}
 
+	public DLFolder getFolder(
+		long companyId, long groupId, String portletId,
+		ServiceContext serviceContext, boolean showFilesInDocumentsAndMedia,
+		String storageDLFolderPath, long userId) {
+
+		Long dlFolderId;
+
+		if (showFilesInDocumentsAndMedia) {
+			dlFolderId = _getStorageDLFolderId(
+				companyId, groupId, serviceContext, storageDLFolderPath);
+		}
+		else {
+			dlFolderId = _getObjectsRepositoryFolderId(
+				companyId, groupId, portletId, serviceContext, userId);
+		}
+
+		if (dlFolderId == null) {
+			return null;
+		}
+
+		return _dlFolderLocalService.fetchDLFolder(dlFolderId);
+	}
+
 	@Override
 	public String getLabel(Locale locale) {
 		return LanguageUtil.get(
@@ -121,25 +147,6 @@ public class AttachmentObjectFieldBusinessType
 		ObjectFieldRenderingContext objectFieldRenderingContext) {
 
 		Map<String, Object> properties = HashMapBuilder.<String, Object>put(
-			"folderId",
-			() -> {
-				if (Validator.isNull(
-						objectFieldRenderingContext.getPortletId())) {
-
-					return null;
-				}
-
-				Folder folder = _getFolder(objectFieldRenderingContext);
-
-				if (folder == null) {
-					return null;
-				}
-
-				return folder.getFolderId();
-			}
-		).put(
-			"objectEntryId", objectFieldRenderingContext.getObjectEntryId()
-		).put(
 			"objectFieldId", objectField.getObjectFieldId()
 		).put(
 			"portletId", objectFieldRenderingContext.getPortletId()
@@ -150,6 +157,9 @@ public class AttachmentObjectFieldBusinessType
 				objectField.getObjectFieldId()),
 			objectFieldSetting -> properties.put(
 				objectFieldSetting.getName(), objectFieldSetting.getValue()));
+
+		properties.remove("showFilesInDocumentsAndMedia");
+		properties.remove("storageDLFolderPath");
 
 		return properties;
 	}
@@ -184,57 +194,8 @@ public class AttachmentObjectFieldBusinessType
 			objectFieldSettingsValuesMap.get("maximumFileSize"));
 	}
 
-	private Folder _addFolder(
-		long userId, long repositoryId, HttpServletRequest httpServletRequest) {
-
-		try {
-			return _portletFileRepository.addPortletFolder(
-				userId, repositoryId,
-				DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
-				String.valueOf(userId),
-				ServiceContextFactory.getInstance(httpServletRequest));
-		}
-		catch (PortalException portalException) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(portalException);
-			}
-
-			return null;
-		}
-	}
-
-	private Folder _getFolder(
-		ObjectFieldRenderingContext objectFieldRenderingContext) {
-
-		Repository repository = _getRepository(
-			objectFieldRenderingContext.getGroupId(),
-			objectFieldRenderingContext.getPortletId(),
-			objectFieldRenderingContext.getHttpServletRequest());
-
-		if (repository == null) {
-			return null;
-		}
-
-		try {
-			return _portletFileRepository.getPortletFolder(
-				repository.getRepositoryId(),
-				DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
-				String.valueOf(objectFieldRenderingContext.getUserId()));
-		}
-		catch (PortalException portalException) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(portalException);
-			}
-
-			return _addFolder(
-				objectFieldRenderingContext.getUserId(),
-				repository.getRepositoryId(),
-				objectFieldRenderingContext.getHttpServletRequest());
-		}
-	}
-
-	private Repository _getRepository(
-		long groupId, String portletId, HttpServletRequest httpServletRequest) {
+	private Repository _getObjectsRepository(
+		long groupId, String portletId, ServiceContext serviceContext) {
 
 		Repository repository = _portletFileRepository.fetchPortletRepository(
 			groupId, portletId);
@@ -244,12 +205,6 @@ public class AttachmentObjectFieldBusinessType
 		}
 
 		try {
-			ServiceContext serviceContext = ServiceContextFactory.getInstance(
-				httpServletRequest);
-
-			serviceContext.setAddGroupPermissions(true);
-			serviceContext.setAddGuestPermissions(true);
-
 			return _portletFileRepository.addPortletRepository(
 				groupId, portletId, serviceContext);
 		}
@@ -260,6 +215,84 @@ public class AttachmentObjectFieldBusinessType
 
 			return null;
 		}
+	}
+
+	private Long _getObjectsRepositoryFolderId(
+		long companyId, long groupId, String portletId,
+		ServiceContext serviceContext, long userId) {
+
+		if (Validator.isNull(portletId)) {
+			return null;
+		}
+
+		Repository repository = _getObjectsRepository(
+			groupId, portletId, serviceContext);
+
+		if (repository == null) {
+			return null;
+		}
+
+		DLFolder dlFolder = _dlFolderLocalService.fetchFolder(
+			repository.getGroupId(), repository.getDlFolderId(),
+			String.valueOf(userId));
+
+		if (dlFolder != null) {
+			return dlFolder.getFolderId();
+		}
+
+		try {
+			dlFolder = _dlFolderLocalService.addFolder(
+				_userLocalService.getDefaultUserId(companyId),
+				repository.getGroupId(), repository.getRepositoryId(), false,
+				repository.getDlFolderId(), String.valueOf(userId), null, false,
+				serviceContext);
+
+			return dlFolder.getFolderId();
+		}
+		catch (PortalException portalException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(portalException);
+			}
+
+			return null;
+		}
+	}
+
+	private Long _getStorageDLFolderId(
+		long companyId, long groupId, ServiceContext serviceContext,
+		String storageDLFolderPath) {
+
+		long storageDLFolderId = DLFolderConstants.DEFAULT_PARENT_FOLDER_ID;
+
+		for (String folderName :
+				StringUtil.split(storageDLFolderPath, CharPool.FORWARD_SLASH)) {
+
+			DLFolder dlFolder = _dlFolderLocalService.fetchFolder(
+				groupId, storageDLFolderId, folderName);
+
+			if (dlFolder != null) {
+				storageDLFolderId = dlFolder.getFolderId();
+
+				continue;
+			}
+
+			try {
+				Folder folder = _dlAppLocalService.addFolder(
+					_userLocalService.getDefaultUserId(companyId), groupId,
+					storageDLFolderId, folderName, null, serviceContext);
+
+				storageDLFolderId = folder.getFolderId();
+			}
+			catch (PortalException portalException) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(portalException);
+				}
+
+				return null;
+			}
+		}
+
+		return storageDLFolderId;
 	}
 
 	private void _validateObjectFieldSettingFileSource(
@@ -385,9 +418,18 @@ public class AttachmentObjectFieldBusinessType
 		AttachmentObjectFieldBusinessType.class);
 
 	@Reference
+	private DLAppLocalService _dlAppLocalService;
+
+	@Reference
+	private DLFolderLocalService _dlFolderLocalService;
+
+	@Reference
 	private ObjectFieldSettingLocalService _objectFieldSettingLocalService;
 
 	@Reference
 	private PortletFileRepository _portletFileRepository;
+
+	@Reference
+	private UserLocalService _userLocalService;
 
 }
