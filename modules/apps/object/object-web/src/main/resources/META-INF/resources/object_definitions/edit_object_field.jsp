@@ -20,6 +20,14 @@
 ObjectDefinition objectDefinition = (ObjectDefinition)request.getAttribute(ObjectWebKeys.OBJECT_DEFINITION);
 ObjectDefinitionsFieldsDisplayContext objectDefinitionsFieldsDisplayContext = (ObjectDefinitionsFieldsDisplayContext)request.getAttribute(WebKeys.PORTLET_DISPLAY_CONTEXT);
 ObjectField objectField = (ObjectField)request.getAttribute(ObjectWebKeys.OBJECT_FIELD);
+
+String[] forbiddenLastChars = PropsUtil.getArray(PropsKeys.DL_CHAR_LAST_BLACKLIST);
+
+for (int i = 0; i < forbiddenLastChars.length; i++) {
+	if (forbiddenLastChars[i].startsWith(UnicodeFormatter.UNICODE_PREFIX)) {
+		forbiddenLastChars[i] = UnicodeFormatter.parseString(forbiddenLastChars[i]);
+	}
+}
 %>
 
 <liferay-frontend:side-panel-content
@@ -35,7 +43,7 @@ ObjectField objectField = (ObjectField)request.getAttribute(ObjectWebKeys.OBJECT
 			).put(
 				"forbiddenChars", PropsUtil.getArray(PropsKeys.DL_CHAR_BLACKLIST)
 			).put(
-				"forbiddenLastChars", PropsUtil.getArray(PropsKeys.DL_CHAR_LAST_BLACKLIST)
+				"forbiddenLastChars", forbiddenLastChars
 			).put(
 				"forbiddenNames", PropsUtil.getArray(PropsKeys.DL_NAME_BLACKLIST)
 			).put(

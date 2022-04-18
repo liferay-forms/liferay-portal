@@ -27,6 +27,14 @@ portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(backURL);
 
 renderResponse.setTitle(objectDefinition.getLabel(locale, true));
+
+String[] forbiddenLastChars = PropsUtil.getArray(PropsKeys.DL_CHAR_LAST_BLACKLIST);
+
+for (int i = 0; i < forbiddenLastChars.length; i++) {
+	if (forbiddenLastChars[i].startsWith(UnicodeFormatter.UNICODE_PREFIX)) {
+		forbiddenLastChars[i] = UnicodeFormatter.parseString(forbiddenLastChars[i]);
+	}
+}
 %>
 
 <frontend-data-set:headless-display
@@ -55,7 +63,7 @@ renderResponse.setTitle(objectDefinition.getLabel(locale, true));
 			).put(
 				"forbiddenChars", PropsUtil.getArray(PropsKeys.DL_CHAR_BLACKLIST)
 			).put(
-				"forbiddenLastChars", PropsUtil.getArray(PropsKeys.DL_CHAR_LAST_BLACKLIST)
+				"forbiddenLastChars", forbiddenLastChars
 			).put(
 				"forbiddenNames", PropsUtil.getArray(PropsKeys.DL_NAME_BLACKLIST)
 			).put(
