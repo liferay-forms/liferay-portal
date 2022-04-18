@@ -112,7 +112,9 @@ public class AttachmentObjectFieldBusinessType
 
 		Long dlFolderId;
 
-		if (showFilesInDocumentsAndMedia) {
+		if (GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-148112")) &&
+			showFilesInDocumentsAndMedia) {
+
 			dlFolderId = _getStorageDLFolderId(
 				companyId, groupId, serviceContext, storageDLFolderPath);
 		}

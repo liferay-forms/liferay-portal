@@ -101,6 +101,7 @@ import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -839,13 +840,19 @@ public class ObjectEntryLocalServiceImpl
 				continue;
 			}
 
-			objectFieldSetting = _objectFieldSettingPersistence.fetchByOFI_N(
-				objectField.getObjectFieldId(), "showFilesInDocumentsAndMedia");
+			if (GetterUtil.getBoolean(
+					PropsUtil.get("feature.flag.LPS-148112"))) {
 
-			if (StringUtil.equalsIgnoreCase(
-					objectFieldSetting.getValue(), StringPool.TRUE)) {
+				objectFieldSetting =
+					_objectFieldSettingPersistence.fetchByOFI_N(
+						objectField.getObjectFieldId(),
+						"showFilesInDocumentsAndMedia");
 
-				continue;
+				if (StringUtil.equalsIgnoreCase(
+						objectFieldSetting.getValue(), StringPool.TRUE)) {
+
+					continue;
+				}
 			}
 
 			try {
@@ -1753,7 +1760,9 @@ public class ObjectEntryLocalServiceImpl
 		long maximumFileSize = GetterUtil.getLong(
 			objectFieldSetting.getValue());
 
-		if (_objectConfiguration.guestMaximumFileSize() < maximumFileSize) {
+		if (GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-148112")) &&
+			(_objectConfiguration.guestMaximumFileSize() < maximumFileSize)) {
+
 			maximumFileSize = _objectConfiguration.guestMaximumFileSize();
 		}
 
@@ -1857,7 +1866,9 @@ public class ObjectEntryLocalServiceImpl
 	private void _validateSubmissionLimit(long objectDefinitionId, User user)
 		throws PortalException {
 
-		if (!user.isDefaultUser()) {
+		if (!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-148112")) ||
+			!user.isDefaultUser()) {
+
 			return;
 		}
 
