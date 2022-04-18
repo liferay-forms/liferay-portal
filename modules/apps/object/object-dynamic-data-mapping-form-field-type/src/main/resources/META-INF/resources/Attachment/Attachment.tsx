@@ -232,19 +232,8 @@ export default function Attachment({
 		}
 	};
 
-	const tip = Liferay.Util.sub(
-		Liferay.Language.get('upload-a-x-no-larger-than-x-mb'),
-		acceptedFileExtensions,
-		maximumFileSize
-	);
-
 	return (
-		<FieldBase
-			tip={tip}
-			warningMessage={warningMessage}
-			{...otherProps}
-			{...error}
-		>
+		<FieldBase warningMessage={warningMessage} {...otherProps} {...error}>
 			<div className="inline-item lfr-objects__attachment">
 				<ClayButton
 					className="lfr-objects__attachment-button"

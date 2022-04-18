@@ -91,6 +91,15 @@ public class AttachmentDDMFormFieldTemplateContextContributor
 					maximumFileSize
 				})
 		).put(
+			"tip",
+			LanguageUtil.format(
+				ddmFormFieldRenderingContext.getLocale(),
+				"upload-a-x-no-larger-than-x-mb",
+				new Object[] {
+					ddmFormField.getProperty("acceptedFileExtensions"),
+					ddmFormField.getProperty("maximumFileSize")
+				})
+		).put(
 			"url", _getURL(ddmFormField, ddmFormFieldRenderingContext)
 		).putAll(
 			_getFileEntryAttributes(
