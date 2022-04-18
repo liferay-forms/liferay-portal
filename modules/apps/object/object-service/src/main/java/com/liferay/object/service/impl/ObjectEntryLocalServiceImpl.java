@@ -19,14 +19,21 @@ import com.liferay.asset.kernel.model.AssetLinkConstants;
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.asset.kernel.service.AssetLinkLocalService;
 import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.model.DLFolder;
+import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
+import com.liferay.document.library.kernel.service.DLFolderLocalService;
+import com.liferay.document.library.kernel.util.DLUtil;
 import com.liferay.list.type.model.ListTypeEntry;
 import com.liferay.list.type.service.ListTypeEntryLocalService;
+import com.liferay.object.configuration.ObjectConfiguration;
 import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.exception.NoSuchObjectFieldException;
 import com.liferay.object.exception.ObjectDefinitionScopeException;
+import com.liferay.object.exception.ObjectEntrySubmissionLimitException;
 import com.liferay.object.exception.ObjectEntryValuesException;
+import com.liferay.object.internal.field.business.type.AttachmentObjectFieldBusinessType;
 import com.liferay.object.internal.petra.sql.dsl.DynamicObjectDefinitionTable;
 import com.liferay.object.internal.petra.sql.dsl.DynamicObjectRelationshipMappingTable;
 import com.liferay.object.model.ObjectDefinition;
@@ -55,6 +62,7 @@ import com.liferay.petra.sql.dsl.spi.ast.DefaultASTNodeListener;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
+import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.dao.jdbc.postgresql.PostgreSQLJDBCUtil;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
@@ -72,6 +80,7 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Indexer;
@@ -89,9 +98,11 @@ import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.DateUtil;
+import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
@@ -136,7 +147,9 @@ import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -144,6 +157,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Brian Wing Shun Chan
  */
 @Component(
+	configurationPid = "com.liferay.object.configuration.ObjectConfiguration",
 	property = "model.class.name=com.liferay.object.model.ObjectEntry",
 	service = AopService.class
 )
@@ -159,9 +173,15 @@ public class ObjectEntryLocalServiceImpl
 		ObjectDefinition objectDefinition =
 			_objectDefinitionPersistence.findByPrimaryKey(objectDefinitionId);
 
+		User user = _userLocalService.getUser(userId);
+
+		_validateSubmissionLimit(objectDefinitionId, user);
+
 		_validateGroupId(groupId, objectDefinition.getScope());
 
-		_validateValues(objectDefinitionId, values);
+		_validateValues(
+			objectDefinitionId, objectDefinition.getPortletId(), serviceContext,
+			userId, values);
 
 		long objectEntryId = counterLocalService.increment();
 
@@ -175,9 +195,6 @@ public class ObjectEntryLocalServiceImpl
 		ObjectEntry objectEntry = objectEntryPersistence.create(objectEntryId);
 
 		objectEntry.setGroupId(groupId);
-
-		User user = _userLocalService.getUser(userId);
-
 		objectEntry.setCompanyId(user.getCompanyId());
 		objectEntry.setUserId(user.getUserId());
 		objectEntry.setUserName(user.getFullName());
@@ -712,7 +729,13 @@ public class ObjectEntryLocalServiceImpl
 		ObjectEntry objectEntry = objectEntryPersistence.findByPrimaryKey(
 			objectEntryId);
 
-		_validateValues(objectEntry.getObjectDefinitionId(), values);
+		ObjectDefinition objectDefinition =
+			_objectDefinitionPersistence.findByPrimaryKey(
+				objectEntry.getObjectDefinitionId());
+
+		_validateValues(
+			objectEntry.getObjectDefinitionId(),
+			objectDefinition.getPortletId(), serviceContext, userId, values);
 
 		Map<String, Serializable> transientValues = objectEntry.getValues();
 
@@ -778,6 +801,13 @@ public class ObjectEntryLocalServiceImpl
 		return objectEntry;
 	}
 
+	@Activate
+	@Modified
+	protected void activate(Map<String, Object> properties) {
+		_objectConfiguration = ConfigurableUtil.createConfigurable(
+			ObjectConfiguration.class, properties);
+	}
+
 	private void _deleteFileEntries(
 		Map<String, Serializable> newValues, long objectDefinitionId,
 		Map<String, Serializable> oldValues) {
@@ -805,6 +835,15 @@ public class ObjectEntryLocalServiceImpl
 
 			if (!Objects.equals(
 					objectFieldSetting.getValue(), "userComputer")) {
+
+				continue;
+			}
+
+			objectFieldSetting = _objectFieldSettingPersistence.fetchByOFI_N(
+				objectField.getObjectFieldId(), "showFilesInDocumentsAndMedia");
+
+			if (StringUtil.equalsIgnoreCase(
+					objectFieldSetting.getValue(), StringPool.TRUE)) {
 
 				continue;
 			}
@@ -1275,6 +1314,73 @@ public class ObjectEntryLocalServiceImpl
 		return results;
 	}
 
+	private void _persistTempAttachment(
+			DLFileEntry dlFileEntry, Map.Entry<String, Serializable> entry,
+			List<ObjectFieldSetting> objectFieldSettings, String portletId,
+			ServiceContext serviceContext, long userId)
+		throws PortalException {
+
+		try {
+			String fileSource = null;
+			boolean showFilesInDocumentsAndMedia = false;
+			String storageDLFolderPath = null;
+
+			for (ObjectFieldSetting objectFieldSetting : objectFieldSettings) {
+				if (Objects.equals(
+						objectFieldSetting.getName(), "fileSource")) {
+
+					fileSource = objectFieldSetting.getValue();
+				}
+				else if (Objects.equals(
+							objectFieldSetting.getName(),
+							"showFilesInDocumentsAndMedia")) {
+
+					showFilesInDocumentsAndMedia = GetterUtil.getBoolean(
+						objectFieldSetting.getValue());
+				}
+				else if (Objects.equals(
+							objectFieldSetting.getName(),
+							"storageDLFolderPath")) {
+
+					storageDLFolderPath = objectFieldSetting.getValue();
+				}
+			}
+
+			if (Objects.equals("documentsAndMedia", fileSource)) {
+				return;
+			}
+
+			DLFolder dlFolder = _attachmentObjectFieldBusinessType.getFolder(
+				dlFileEntry.getCompanyId(), dlFileEntry.getGroupId(), portletId,
+				serviceContext, showFilesInDocumentsAndMedia,
+				storageDLFolderPath, userId);
+
+			String originalFileName = TempFileEntryUtil.getOriginalTempFileName(
+				dlFileEntry.getFileName());
+
+			FileEntry fileEntry = _dlAppLocalService.addFileEntry(
+				null, userId, dlFolder.getRepositoryId(),
+				dlFolder.getFolderId(),
+				DLUtil.getUniqueFileName(
+					dlFileEntry.getGroupId(), dlFolder.getFolderId(),
+					originalFileName, true),
+				dlFileEntry.getMimeType(),
+				DLUtil.getUniqueTitle(
+					dlFileEntry.getGroupId(), dlFolder.getFolderId(),
+					FileUtil.stripExtension(originalFileName)),
+				StringPool.BLANK, null, null, dlFileEntry.getContentStream(),
+				dlFileEntry.getSize(), null, null, serviceContext);
+
+			entry.setValue(fileEntry.getFileEntryId());
+		}
+		finally {
+			if (dlFileEntry != null) {
+				TempFileEntryUtil.deleteTempFileEntry(
+					dlFileEntry.getFileEntryId());
+			}
+		}
+	}
+
 	private void _putValue(
 		Column<?, ?> column, String name, Object object,
 		Map<String, Serializable> values) {
@@ -1647,6 +1753,10 @@ public class ObjectEntryLocalServiceImpl
 		long maximumFileSize = GetterUtil.getLong(
 			objectFieldSetting.getValue());
 
+		if (_objectConfiguration.guestMaximumFileSize() < maximumFileSize) {
+			maximumFileSize = _objectConfiguration.guestMaximumFileSize();
+		}
+
 		if ((maximumFileSize > 0) &&
 			(fileSize > (maximumFileSize * 1024 * 1024))) {
 
@@ -1744,6 +1854,25 @@ public class ObjectEntryLocalServiceImpl
 		}
 	}
 
+	private void _validateSubmissionLimit(long objectDefinitionId, User user)
+		throws PortalException {
+
+		if (!user.isDefaultUser()) {
+			return;
+		}
+
+		int objectEntriesCount = objectEntryPersistence.countByODI_U(
+			user.getUserId(), objectDefinitionId);
+
+		if (objectEntriesCount >=
+				_objectConfiguration.guestMaximumEntrySubmissionsPerObject()) {
+
+			throw new ObjectEntrySubmissionLimitException(
+				"The maximum number of submissions allowed for this object " +
+					"has been reached");
+		}
+	}
+
 	private void _validateTextMaxLength(
 			int defaultMaxLength, String objectEntryValue, long objectFieldId,
 			String objectFieldName)
@@ -1766,16 +1895,21 @@ public class ObjectEntryLocalServiceImpl
 	}
 
 	private void _validateValues(
-			long objectDefinitionId, Map<String, Serializable> values)
+			long objectDefinitionId, String portletId,
+			ServiceContext serviceContext, long userId,
+			Map<String, Serializable> values)
 		throws PortalException {
 
 		for (Map.Entry<String, Serializable> entry : values.entrySet()) {
-			_validateValues(entry, objectDefinitionId, values);
+			_validateValues(
+				entry, objectDefinitionId, portletId, serviceContext, userId,
+				values);
 		}
 	}
 
 	private void _validateValues(
 			Map.Entry<String, Serializable> entry, long objectDefinitionId,
+			String portletId, ServiceContext serviceContext, long userId,
 			Map<String, Serializable> values)
 		throws PortalException {
 
@@ -1807,6 +1941,10 @@ public class ObjectEntryLocalServiceImpl
 				_validateFileSize(
 					dlFileEntry.getSize(), objectField.getObjectFieldId(),
 					objectField.getName());
+
+				_persistTempAttachment(
+					dlFileEntry, entry, objectField.getObjectFieldSettings(),
+					portletId, serviceContext, userId);
 
 				return;
 			}
@@ -1906,10 +2044,20 @@ public class ObjectEntryLocalServiceImpl
 	private AssetLinkLocalService _assetLinkLocalService;
 
 	@Reference
+	private AttachmentObjectFieldBusinessType
+		_attachmentObjectFieldBusinessType;
+
+	@Reference
 	private CurrentConnection _currentConnection;
 
 	@Reference
+	private DLAppLocalService _dlAppLocalService;
+
+	@Reference
 	private DLFileEntryLocalService _dlFileEntryLocalService;
+
+	@Reference
+	private DLFolderLocalService _dlFolderLocalService;
 
 	@Reference
 	private GroupLocalService _groupLocalService;
@@ -1919,6 +2067,8 @@ public class ObjectEntryLocalServiceImpl
 
 	@Reference
 	private ListTypeEntryLocalService _listTypeEntryLocalService;
+
+	private volatile ObjectConfiguration _objectConfiguration;
 
 	@Reference
 	private ObjectDefinitionPersistence _objectDefinitionPersistence;
