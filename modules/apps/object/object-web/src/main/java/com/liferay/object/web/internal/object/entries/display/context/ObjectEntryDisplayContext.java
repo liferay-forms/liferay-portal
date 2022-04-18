@@ -503,6 +503,8 @@ public class ObjectEntryDisplayContext {
 		ObjectFieldRenderingContext objectFieldRenderingContext =
 			new ObjectFieldRenderingContext();
 
+		objectFieldRenderingContext.setCompanyId(
+			_objectRequestHelper.getCompanyId());
 		objectFieldRenderingContext.setGroupId(
 			_objectRequestHelper.getScopeGroupId());
 		objectFieldRenderingContext.setHttpServletRequest(
@@ -518,7 +520,7 @@ public class ObjectEntryDisplayContext {
 
 		objectFieldRenderingContext.setPortletId(
 			_objectRequestHelper.getPortletId());
-		objectFieldRenderingContext.setUserId(_objectRequestHelper.getUserId());
+		objectFieldRenderingContext.setUser(_objectRequestHelper.getUser());
 
 		return objectFieldRenderingContext;
 	}

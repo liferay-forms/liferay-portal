@@ -14,6 +14,8 @@
 
 package com.liferay.object.field.render;
 
+import com.liferay.portal.kernel.model.User;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -25,6 +27,10 @@ import javax.servlet.http.HttpServletResponse;
  * @author Carolina Barbosa
  */
 public class ObjectFieldRenderingContext {
+
+	public long getCompanyId() {
+		return _companyId;
+	}
 
 	public long getGroupId() {
 		return _groupId;
@@ -58,8 +64,16 @@ public class ObjectFieldRenderingContext {
 		return _properties.get(name);
 	}
 
+	public User getUser() {
+		return _user;
+	}
+
 	public long getUserId() {
-		return _userId;
+		return _user.getUserId();
+	}
+
+	public void setCompanyId(long companyId) {
+		_companyId = companyId;
 	}
 
 	public void setGroupId(long groupId) {
@@ -96,10 +110,11 @@ public class ObjectFieldRenderingContext {
 		_properties.put(name, value);
 	}
 
-	public void setUserId(long userId) {
-		_userId = userId;
+	public void setUser(User user) {
+		_user = user;
 	}
 
+	private long _companyId;
 	private long _groupId;
 	private HttpServletRequest _httpServletRequest;
 	private HttpServletResponse _httpServletResponse;
@@ -107,6 +122,6 @@ public class ObjectFieldRenderingContext {
 	private long _objectEntryId;
 	private String _portletId;
 	private final Map<String, Object> _properties = new HashMap<>();
-	private long _userId;
+	private User _user;
 
 }
