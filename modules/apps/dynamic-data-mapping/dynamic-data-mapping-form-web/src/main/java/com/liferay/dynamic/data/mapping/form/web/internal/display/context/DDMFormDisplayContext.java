@@ -563,56 +563,47 @@ public class DDMFormDisplayContext {
 	}
 
 	public boolean isFormAvailable() throws PortalException {
-		if (isPreview()) {
-			return true;
+		DDMFormInstance ddmFormInstance = getFormInstance();
+
+		if ((ddmFormInstance == null) || !isFormPublished()) {
+			return false;
 		}
 
-		DDMFormInstance formInstance = getFormInstance();
+		Group group = _groupLocalService.getGroup(ddmFormInstance.getGroupId());
 
-		if (formInstance != null) {
-			Group group = _groupLocalService.getGroup(
-				formInstance.getGroupId());
+		Group scopeGroup = _groupLocalService.getGroup(
+			_portal.getScopeGroupId(_renderRequest));
 
-			Group scopeGroup = _groupLocalService.getGroup(
-				_portal.getScopeGroupId(_renderRequest));
+		if ((group != null) && (scopeGroup != null) && group.isStagingGroup() &&
+			!scopeGroup.isStagingGroup()) {
 
-			if ((group != null) && (scopeGroup != null) &&
-				group.isStagingGroup() && !scopeGroup.isStagingGroup()) {
+			return false;
+		}
+
+		if ((group != null) && group.isStagedRemotely()) {
+			ThemeDisplay themeDisplay = getThemeDisplay();
+
+			Role role = _roleLocalService.getRole(
+				themeDisplay.getCompanyId(), RoleConstants.ADMINISTRATOR);
+
+			List<User> users = _userLocalService.getRoleUsers(role.getRoleId());
+
+			if (!DDMFormInstanceStagingUtil.isFormInstancePublishedToRemoteLive(
+					group, users.get(0), ddmFormInstance.getUuid())) {
 
 				return false;
-			}
-
-			if ((group != null) && group.isStagedRemotely()) {
-				ThemeDisplay themeDisplay = getThemeDisplay();
-
-				Role role = _roleLocalService.getRole(
-					themeDisplay.getCompanyId(), RoleConstants.ADMINISTRATOR);
-
-				List<User> users = _userLocalService.getRoleUsers(
-					role.getRoleId());
-
-				if (!DDMFormInstanceStagingUtil.
-						isFormInstancePublishedToRemoteLive(
-							group, users.get(0), formInstance.getUuid())) {
-
-					return false;
-				}
 			}
 		}
 
 		if (isSharedURL()) {
-			if (isFormPublished() && isFormShared()) {
+			if (isFormShared()) {
 				return true;
 			}
 
 			return false;
 		}
 
-		if (formInstance != null) {
-			return true;
-		}
-
-		return false;
+		return true;
 	}
 
 	public boolean isFormShared() {
