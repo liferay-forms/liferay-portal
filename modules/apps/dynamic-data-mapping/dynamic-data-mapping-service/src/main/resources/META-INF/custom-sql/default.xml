@@ -42,7 +42,7 @@
 				DDMDataProviderInstance.dataProviderInstanceId DESC
 		]]>
 	</sql>
-	<sql id="com.liferay.dynamic.data.mapping.service.persistence.DDMFormInstanceFinder.countByC_G_N_D">
+	<sql id="com.liferay.dynamic.data.mapping.service.persistence.DDMFormInstanceFinder.countByC_G_N_D_P">
 		<![CDATA[
 			SELECT
 				COUNT(DISTINCT DDMFormInstance.formInstanceId) AS COUNT_VALUE
@@ -55,9 +55,10 @@
 					(LOWER(DDMFormInstance.name) LIKE ? [$AND_OR_NULL_CHECK$]) [$AND_OR_CONNECTOR$]
 					(DDMFormInstance.description LIKE ? [$AND_OR_NULL_CHECK$])
 				)
+				[DDMFormInstanceSettingsFilterPublished]
 		]]>
 	</sql>
-	<sql id="com.liferay.dynamic.data.mapping.service.persistence.DDMFormInstanceFinder.countByC_G_N_D_S">
+	<sql id="com.liferay.dynamic.data.mapping.service.persistence.DDMFormInstanceFinder.countByC_G_N_D_P_S">
 		<![CDATA[
 			SELECT
 				COUNT(DISTINCT DDMFormInstance.formInstanceId) AS COUNT_VALUE
@@ -72,9 +73,10 @@
 					(DDMFormInstance.description LIKE ? [$AND_OR_NULL_CHECK$])
 				) AND
 				(DDMFormInstanceVersion.status = ?)
+				[DDMFormInstanceSettingsFilterPublished]
 		]]>
 	</sql>
-	<sql id="com.liferay.dynamic.data.mapping.service.persistence.DDMFormInstanceFinder.findByC_G_N_D">
+	<sql id="com.liferay.dynamic.data.mapping.service.persistence.DDMFormInstanceFinder.findByC_G_N_D_P">
 		<![CDATA[
 			SELECT
 				{DDMFormInstance.*}
@@ -91,6 +93,7 @@
 							(LOWER(DDMFormInstance.name) LIKE ? [$AND_OR_NULL_CHECK$]) [$AND_OR_CONNECTOR$]
 							(DDMFormInstance.description LIKE ? [$AND_OR_NULL_CHECK$])
 						)
+						[DDMFormInstanceSettingsFilterPublished]
 				)
 				TEMP_TABLE
 					INNER JOIN
@@ -100,7 +103,7 @@
 				DDMFormInstance.formInstanceId DESC
 		]]>
 	</sql>
-	<sql id="com.liferay.dynamic.data.mapping.service.persistence.DDMFormInstanceFinder.findByC_G_N_D_S">
+	<sql id="com.liferay.dynamic.data.mapping.service.persistence.DDMFormInstanceFinder.findByC_G_N_D_P_S">
 		<![CDATA[
 			SELECT
 				{DDMFormInstance.*}
@@ -119,6 +122,7 @@
 							(DDMFormInstance.description LIKE ? [$AND_OR_NULL_CHECK$])
 						) AND
 						(DDMFormInstanceVersion.status = ?)
+						[DDMFormInstanceSettingsFilterPublished]
 				)
 				TEMP_TABLE
 					INNER JOIN

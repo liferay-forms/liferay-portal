@@ -51,9 +51,9 @@ public class DDMFormInstanceServiceImpl extends DDMFormInstanceServiceBaseImpl {
 
 	@Override
 	public DDMFormInstance addFormInstance(
-			long groupId, long ddmStructureId, Map<Locale, String> nameMap,
-			Map<Locale, String> descriptionMap,
-			DDMFormValues settingsDDMFormValues, ServiceContext serviceContext)
+		long groupId, long ddmStructureId, Map<Locale, String> nameMap,
+		Map<Locale, String> descriptionMap,
+		DDMFormValues settingsDDMFormValues, ServiceContext serviceContext)
 		throws PortalException {
 
 		_portletResourcePermission.check(
@@ -66,10 +66,10 @@ public class DDMFormInstanceServiceImpl extends DDMFormInstanceServiceBaseImpl {
 
 	@Override
 	public DDMFormInstance addFormInstance(
-			long groupId, Map<Locale, String> nameMap,
-			Map<Locale, String> descriptionMap, DDMForm ddmForm,
-			DDMFormLayout ddmFormLayout, DDMFormValues settingsDDMFormValues,
-			ServiceContext serviceContext)
+		long groupId, Map<Locale, String> nameMap,
+		Map<Locale, String> descriptionMap, DDMForm ddmForm,
+		DDMFormLayout ddmFormLayout, DDMFormValues settingsDDMFormValues,
+		ServiceContext serviceContext)
 		throws PortalException {
 
 		_portletResourcePermission.check(
@@ -82,9 +82,9 @@ public class DDMFormInstanceServiceImpl extends DDMFormInstanceServiceBaseImpl {
 
 	@Override
 	public DDMFormInstance copyFormInstance(
-			long groupId, Map<Locale, String> nameMap,
-			DDMFormInstance ddmFormInstance,
-			DDMFormValues settingsDDMFormValues, ServiceContext serviceContext)
+		long groupId, Map<Locale, String> nameMap,
+		DDMFormInstance ddmFormInstance,
+		DDMFormValues settingsDDMFormValues, ServiceContext serviceContext)
 		throws PortalException {
 
 		_portletResourcePermission.check(
@@ -117,8 +117,8 @@ public class DDMFormInstanceServiceImpl extends DDMFormInstanceServiceBaseImpl {
 		}
 
 		if (_ddmFormInstanceModelResourcePermission.contains(
-				getPermissionChecker(), ddmFormInstance.getFormInstanceId(),
-				DDMActionKeys.ADD_FORM_INSTANCE_RECORD)) {
+			getPermissionChecker(), ddmFormInstance.getFormInstanceId(),
+			DDMActionKeys.ADD_FORM_INSTANCE_RECORD)) {
 
 			return ddmFormInstance;
 		}
@@ -135,8 +135,8 @@ public class DDMFormInstanceServiceImpl extends DDMFormInstanceServiceBaseImpl {
 		throws PortalException {
 
 		if (_ddmFormInstanceModelResourcePermission.contains(
-				getPermissionChecker(), ddmFormInstanceId,
-				DDMActionKeys.ADD_FORM_INSTANCE_RECORD)) {
+			getPermissionChecker(), ddmFormInstanceId,
+			DDMActionKeys.ADD_FORM_INSTANCE_RECORD)) {
 
 			return ddmFormInstanceLocalService.getFormInstance(
 				ddmFormInstanceId);
@@ -168,6 +168,28 @@ public class DDMFormInstanceServiceImpl extends DDMFormInstanceServiceBaseImpl {
 
 	@Override
 	public List<DDMFormInstance> search(
+		long companyId, long groupId, String keywords, boolean publish,
+		int status, int start, int end,
+		OrderByComparator<DDMFormInstance> orderByComparator) {
+
+		return ddmFormInstanceFinder.filterFindByKeywords(
+			companyId, groupId, keywords, publish, status, start, end,
+			orderByComparator);
+	}
+
+	@Override
+	public List<DDMFormInstance> search(
+		long companyId, long groupId, String keywords, boolean publish,
+		int start, int end,
+		OrderByComparator<DDMFormInstance> orderByComparator) {
+
+		return ddmFormInstanceFinder.filterFindByKeywords(
+			companyId, groupId, keywords, publish, start, end,
+			orderByComparator);
+	}
+
+	@Override
+	public List<DDMFormInstance> search(
 		long companyId, long groupId, String keywords, int status, int start,
 		int end, OrderByComparator<DDMFormInstance> orderByComparator) {
 
@@ -183,6 +205,17 @@ public class DDMFormInstanceServiceImpl extends DDMFormInstanceServiceBaseImpl {
 
 		return ddmFormInstanceFinder.filterFindByKeywords(
 			companyId, groupId, keywords, start, end, orderByComparator);
+	}
+
+	@Override
+	public List<DDMFormInstance> search(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean publish, boolean andOperator, int start, int end,
+		OrderByComparator<DDMFormInstance> orderByComparator) {
+
+		return ddmFormInstanceFinder.filterFindByC_G_N_D_P(
+			companyId, groupId, names, descriptions, publish, andOperator,
+			start, end, orderByComparator);
 	}
 
 	@Override
@@ -204,6 +237,23 @@ public class DDMFormInstanceServiceImpl extends DDMFormInstanceServiceBaseImpl {
 
 	@Override
 	public int searchCount(
+		long companyId, long groupId, String keywords, boolean publish) {
+
+		return ddmFormInstanceFinder.filterCountByKeywords(
+			companyId, groupId, keywords, publish);
+	}
+
+	@Override
+	public int searchCount(
+		long companyId, long groupId, String keywords, boolean publish,
+		int status) {
+
+		return ddmFormInstanceFinder.filterCountByKeywords(
+			companyId, groupId, keywords, publish, status);
+	}
+
+	@Override
+	public int searchCount(
 		long companyId, long groupId, String keywords, int status) {
 
 		return ddmFormInstanceFinder.filterCountByKeywords(
@@ -220,9 +270,18 @@ public class DDMFormInstanceServiceImpl extends DDMFormInstanceServiceBaseImpl {
 	}
 
 	@Override
+	public int searchCount(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean publish, boolean andOperator) {
+
+		return ddmFormInstanceFinder.filterCountByC_G_N_D_P(
+			companyId, groupId, names, descriptions, publish, andOperator);
+	}
+
+	@Override
 	public void sendEmail(
-			long formInstanceId, String message, String subject,
-			String[] toEmailAddresses)
+		long formInstanceId, String message, String subject,
+		String[] toEmailAddresses)
 		throws Exception {
 
 		_ddmFormInstanceModelResourcePermission.check(
@@ -244,7 +303,7 @@ public class DDMFormInstanceServiceImpl extends DDMFormInstanceServiceBaseImpl {
 	 */
 	@Override
 	public DDMFormInstance updateFormInstance(
-			long formInstanceId, DDMFormValues settingsDDMFormValues)
+		long formInstanceId, DDMFormValues settingsDDMFormValues)
 		throws PortalException {
 
 		_ddmFormInstanceModelResourcePermission.check(
@@ -256,10 +315,10 @@ public class DDMFormInstanceServiceImpl extends DDMFormInstanceServiceBaseImpl {
 
 	@Override
 	public DDMFormInstance updateFormInstance(
-			long ddmFormInstanceId, Map<Locale, String> nameMap,
-			Map<Locale, String> descriptionMap, DDMForm ddmForm,
-			DDMFormLayout ddmFormLayout, DDMFormValues settingsDDMFormValues,
-			ServiceContext serviceContext)
+		long ddmFormInstanceId, Map<Locale, String> nameMap,
+		Map<Locale, String> descriptionMap, DDMForm ddmForm,
+		DDMFormLayout ddmFormLayout, DDMFormValues settingsDDMFormValues,
+		ServiceContext serviceContext)
 		throws PortalException {
 
 		_ddmFormInstanceModelResourcePermission.check(

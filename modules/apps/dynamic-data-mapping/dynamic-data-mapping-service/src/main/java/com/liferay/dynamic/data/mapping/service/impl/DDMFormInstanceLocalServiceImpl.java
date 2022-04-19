@@ -87,9 +87,9 @@ public class DDMFormInstanceLocalServiceImpl
 
 	@Override
 	public DDMFormInstance addFormInstance(
-			long userId, long groupId, long ddmStructureId,
-			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
-			DDMFormValues settingsDDMFormValues, ServiceContext serviceContext)
+		long userId, long groupId, long ddmStructureId,
+		Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
+		DDMFormValues settingsDDMFormValues, ServiceContext serviceContext)
 		throws PortalException {
 
 		Locale defaultLocale = getDDMFormDefaultLocale(ddmStructureId);
@@ -123,7 +123,7 @@ public class DDMFormInstanceLocalServiceImpl
 			ddmFormInstance, settingsDDMFormValues, serviceContext);
 
 		if (GetterUtil.getBoolean(
-				serviceContext.getAttribute("addResources"), true)) {
+			serviceContext.getAttribute("addResources"), true)) {
 
 			if (serviceContext.isAddGroupPermissions() ||
 				serviceContext.isAddGuestPermissions()) {
@@ -147,10 +147,10 @@ public class DDMFormInstanceLocalServiceImpl
 
 	@Override
 	public DDMFormInstance addFormInstance(
-			long userId, long groupId, long ddmStructureId,
-			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
-			String serializedSettingsDDMFormValues,
-			ServiceContext serviceContext)
+		long userId, long groupId, long ddmStructureId,
+		Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
+		String serializedSettingsDDMFormValues,
+		ServiceContext serviceContext)
 		throws PortalException {
 
 		DDMFormValues settingsDDMFormValues = getFormInstanceSettingsFormValues(
@@ -163,10 +163,10 @@ public class DDMFormInstanceLocalServiceImpl
 
 	@Override
 	public DDMFormInstance addFormInstance(
-			long userId, long groupId, Map<Locale, String> nameMap,
-			Map<Locale, String> descriptionMap, DDMForm ddmForm,
-			DDMFormLayout ddmFormLayout, DDMFormValues settingsDDMFormValues,
-			ServiceContext serviceContext)
+		long userId, long groupId, Map<Locale, String> nameMap,
+		Map<Locale, String> descriptionMap, DDMForm ddmForm,
+		DDMFormLayout ddmFormLayout, DDMFormValues settingsDDMFormValues,
+		ServiceContext serviceContext)
 		throws PortalException {
 
 		DDMStructure ddmStructure = _ddmStructureLocalService.addStructure(
@@ -183,8 +183,8 @@ public class DDMFormInstanceLocalServiceImpl
 
 	@Override
 	public void addFormInstanceResources(
-			DDMFormInstance ddmFormInstance, boolean addGroupPermissions,
-			boolean addGuestPermissions)
+		DDMFormInstance ddmFormInstance, boolean addGroupPermissions,
+		boolean addGuestPermissions)
 		throws PortalException {
 
 		_resourceLocalService.addResources(
@@ -196,7 +196,7 @@ public class DDMFormInstanceLocalServiceImpl
 
 	@Override
 	public void addFormInstanceResources(
-			DDMFormInstance ddmFormInstance, ModelPermissions modelPermissions)
+		DDMFormInstance ddmFormInstance, ModelPermissions modelPermissions)
 		throws PortalException {
 
 		_resourceLocalService.addModelResources(
@@ -207,9 +207,9 @@ public class DDMFormInstanceLocalServiceImpl
 
 	@Override
 	public DDMFormInstance copyFormInstance(
-			long userId, long groupId, Map<Locale, String> nameMap,
-			DDMFormInstance ddmFormInstance,
-			DDMFormValues settingsDDMFormValues, ServiceContext serviceContext)
+		long userId, long groupId, Map<Locale, String> nameMap,
+		DDMFormInstance ddmFormInstance,
+		DDMFormValues settingsDDMFormValues, ServiceContext serviceContext)
 		throws PortalException {
 
 		DDMStructure ddmStructure = ddmFormInstance.getStructure();
@@ -321,7 +321,7 @@ public class DDMFormInstanceLocalServiceImpl
 
 	@Override
 	public DDMFormValues getFormInstanceSettingsFormValues(
-			DDMFormInstance formInstance)
+		DDMFormInstance formInstance)
 		throws PortalException {
 
 		return getFormInstanceSettingsFormValues(formInstance.getSettings());
@@ -329,7 +329,7 @@ public class DDMFormInstanceLocalServiceImpl
 
 	@Override
 	public DDMFormInstanceSettings getFormInstanceSettingsModel(
-			DDMFormInstance formInstance)
+		DDMFormInstance formInstance)
 		throws PortalException {
 
 		DDMFormValues formValues = getFormInstanceSettingsFormValues(
@@ -341,11 +341,33 @@ public class DDMFormInstanceLocalServiceImpl
 
 	@Override
 	public List<DDMFormInstance> search(
+		long companyId, long groupId, String keywords, Boolean publish,
+		int start, int end,
+		OrderByComparator<DDMFormInstance> orderByComparator) {
+
+		return ddmFormInstanceFinder.findByKeywords(
+			companyId, groupId, keywords, publish, start, end,
+			orderByComparator);
+	}
+
+	@Override
+	public List<DDMFormInstance> search(
 		long companyId, long groupId, String keywords, int start, int end,
 		OrderByComparator<DDMFormInstance> orderByComparator) {
 
 		return ddmFormInstanceFinder.findByKeywords(
 			companyId, groupId, keywords, start, end, orderByComparator);
+	}
+
+	@Override
+	public List<DDMFormInstance> search(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean publish, boolean andOperator, int start, int end,
+		OrderByComparator<DDMFormInstance> orderByComparator) {
+
+		return ddmFormInstanceFinder.findByC_G_N_D_P(
+			companyId, groupId, names, descriptions, publish, andOperator,
+			start, end, orderByComparator);
 	}
 
 	@Override
@@ -367,6 +389,14 @@ public class DDMFormInstanceLocalServiceImpl
 
 	@Override
 	public int searchCount(
+		long companyId, long groupId, String keywords, boolean publish) {
+
+		return ddmFormInstanceFinder.countByKeywords(
+			companyId, groupId, keywords, publish);
+	}
+
+	@Override
+	public int searchCount(
 		long companyId, long groupId, String[] names, String[] descriptions,
 		boolean andOperator) {
 
@@ -375,9 +405,18 @@ public class DDMFormInstanceLocalServiceImpl
 	}
 
 	@Override
+	public int searchCount(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean publish, boolean andOperator) {
+
+		return ddmFormInstanceFinder.countByC_G_N_D_P(
+			companyId, groupId, names, descriptions, publish, andOperator);
+	}
+
+	@Override
 	public void sendEmail(
-			long userId, String message, String subject,
-			String[] toEmailAddresses)
+		long userId, String message, String subject,
+		String[] toEmailAddresses)
 		throws Exception {
 
 		User user = _userLocalService.getUser(userId);
@@ -399,7 +438,7 @@ public class DDMFormInstanceLocalServiceImpl
 
 	@Override
 	public DDMFormInstance updateFormInstance(
-			long formInstanceId, DDMFormValues settingsDDMFormValues)
+		long formInstanceId, DDMFormValues settingsDDMFormValues)
 		throws PortalException {
 
 		Date date = new Date();
@@ -417,10 +456,10 @@ public class DDMFormInstanceLocalServiceImpl
 
 	@Override
 	public DDMFormInstance updateFormInstance(
-			long userId, long ddmFormInstanceId, Map<Locale, String> nameMap,
-			Map<Locale, String> descriptionMap, DDMForm ddmForm,
-			DDMFormLayout ddmFormLayout, DDMFormValues settingsDDMFormValues,
-			ServiceContext serviceContext)
+		long userId, long ddmFormInstanceId, Map<Locale, String> nameMap,
+		Map<Locale, String> descriptionMap, DDMForm ddmForm,
+		DDMFormLayout ddmFormLayout, DDMFormValues settingsDDMFormValues,
+		ServiceContext serviceContext)
 		throws PortalException {
 
 		DDMFormInstance ddmFormInstance =
@@ -438,9 +477,9 @@ public class DDMFormInstanceLocalServiceImpl
 
 	@Override
 	public DDMFormInstance updateFormInstance(
-			long ddmFormInstanceId, long ddmStructureId,
-			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
-			DDMFormValues settingsDDMFormValues, ServiceContext serviceContext)
+		long ddmFormInstanceId, long ddmStructureId,
+		Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
+		DDMFormValues settingsDDMFormValues, ServiceContext serviceContext)
 		throws PortalException {
 
 		DDMFormInstance ddmFormInstance =
@@ -452,9 +491,9 @@ public class DDMFormInstanceLocalServiceImpl
 	}
 
 	protected DDMFormInstanceVersion addFormInstanceVersion(
-			long ddmStructureVersionId, User user,
-			DDMFormInstance ddmFormInstance, String version,
-			ServiceContext serviceContext)
+		long ddmStructureVersionId, User user,
+		DDMFormInstance ddmFormInstance, String version,
+		ServiceContext serviceContext)
 		throws PortalException {
 
 		long ddmFormInstanceVersionId = counterLocalService.increment();
@@ -487,10 +526,10 @@ public class DDMFormInstanceLocalServiceImpl
 	}
 
 	protected DDMFormInstance doUpdateFormInstance(
-			long userId, long ddmStructureId, Map<Locale, String> nameMap,
-			Map<Locale, String> descriptionMap,
-			DDMFormValues settingsDDMFormValues, ServiceContext serviceContext,
-			DDMFormInstance ddmFormInstance)
+		long userId, long ddmStructureId, Map<Locale, String> nameMap,
+		Map<Locale, String> descriptionMap,
+		DDMFormValues settingsDDMFormValues, ServiceContext serviceContext,
+		DDMFormInstance ddmFormInstance)
 		throws PortalException {
 
 		Locale defaultLocale = getDDMFormDefaultLocale(ddmStructureId);
@@ -512,7 +551,7 @@ public class DDMFormInstanceLocalServiceImpl
 		boolean updateVersion = false;
 
 		if ((latestDDMFormInstanceVersion.getStatus() ==
-				WorkflowConstants.STATUS_DRAFT) &&
+			 WorkflowConstants.STATUS_DRAFT) &&
 			(status == WorkflowConstants.STATUS_DRAFT)) {
 
 			updateVersion = true;
@@ -580,7 +619,7 @@ public class DDMFormInstanceLocalServiceImpl
 	}
 
 	protected DDMFormValues getFormInstanceSettingsFormValues(
-			String serializedSettingsDDMFormValues)
+		String serializedSettingsDDMFormValues)
 		throws PortalException {
 
 		DDMForm ddmForm = DDMFormFactory.create(DDMFormInstanceSettings.class);
@@ -591,7 +630,7 @@ public class DDMFormInstanceLocalServiceImpl
 
 		DDMFormValuesDeserializerDeserializeResponse
 			ddmFormValuesDeserializerDeserializeResponse =
-				_jsonDDMFormValuesDeserializer.deserialize(builder.build());
+			_jsonDDMFormValuesDeserializer.deserialize(builder.build());
 
 		return ddmFormValuesDeserializerDeserializeResponse.getDDMFormValues();
 	}
@@ -653,14 +692,14 @@ public class DDMFormInstanceLocalServiceImpl
 
 		DDMFormValuesSerializerSerializeResponse
 			ddmFormValuesSerializerSerializeResponse =
-				_jsonDDMFormValuesSerializer.serialize(builder.build());
+			_jsonDDMFormValuesSerializer.serialize(builder.build());
 
 		return ddmFormValuesSerializerSerializeResponse.getContent();
 	}
 
 	protected void updateFormInstanceVersion(
-			long ddmStructureVersionId, User user,
-			DDMFormInstance ddmFormInstance)
+		long ddmStructureVersionId, User user,
+		DDMFormInstance ddmFormInstance)
 		throws PortalException {
 
 		DDMFormInstanceVersion ddmFormInstanceVersion =
@@ -681,8 +720,8 @@ public class DDMFormInstanceLocalServiceImpl
 	}
 
 	protected void updateWorkflowDefinitionLink(
-			DDMFormInstance formInstance, DDMFormValues settingsDDMFormValues,
-			ServiceContext serviceContext)
+		DDMFormInstance formInstance, DDMFormValues settingsDDMFormValues,
+		ServiceContext serviceContext)
 		throws PortalException {
 
 		String workflowDefinition = getWorkflowDefinition(
@@ -699,7 +738,7 @@ public class DDMFormInstanceLocalServiceImpl
 
 			latestWorkflowDefinition =
 				workflowDefinition + StringPool.AT +
-					kaleoDefinition.getVersion();
+				kaleoDefinition.getVersion();
 		}
 
 		_workflowDefinitionLinkLocalService.updateWorkflowDefinitionLink(
@@ -709,9 +748,9 @@ public class DDMFormInstanceLocalServiceImpl
 	}
 
 	protected void validate(
-			long ddmStructureId, Locale defaultLocale,
-			Map<Locale, String> nameMap, DDMFormValues settingsDDMFormValues,
-			TimeZone timeZone)
+		long ddmStructureId, Locale defaultLocale,
+		Map<Locale, String> nameMap, DDMFormValues settingsDDMFormValues,
+		TimeZone timeZone)
 		throws PortalException {
 
 		validateStructureId(ddmStructureId);
@@ -722,14 +761,14 @@ public class DDMFormInstanceLocalServiceImpl
 	}
 
 	protected void validateFormInstanceSettings(
-			DDMFormValues settingsDDMFormValues, String timeZoneId)
+		DDMFormValues settingsDDMFormValues, String timeZoneId)
 		throws PortalException {
 
 		_ddmFormValuesValidator.validate(settingsDDMFormValues, timeZoneId);
 	}
 
 	protected void validateName(
-			Map<Locale, String> nameMap, Locale defaultLocale)
+		Map<Locale, String> nameMap, Locale defaultLocale)
 		throws PortalException {
 
 		String name = nameMap.get(defaultLocale);
@@ -749,7 +788,7 @@ public class DDMFormInstanceLocalServiceImpl
 		if (ddmStructure == null) {
 			throw new FormInstanceStructureIdException(
 				"No DDM structure exists with the DDM structure ID " +
-					ddmStructureId);
+				ddmStructureId);
 		}
 	}
 
