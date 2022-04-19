@@ -341,11 +341,33 @@ public class DDMFormInstanceLocalServiceImpl
 
 	@Override
 	public List<DDMFormInstance> search(
+		long companyId, long groupId, String keywords, boolean published,
+		int start, int end,
+		OrderByComparator<DDMFormInstance> orderByComparator) {
+
+		return ddmFormInstanceFinder.findByKeywords(
+			companyId, groupId, keywords, published, start, end,
+			orderByComparator);
+	}
+
+	@Override
+	public List<DDMFormInstance> search(
 		long companyId, long groupId, String keywords, int start, int end,
 		OrderByComparator<DDMFormInstance> orderByComparator) {
 
 		return ddmFormInstanceFinder.findByKeywords(
 			companyId, groupId, keywords, start, end, orderByComparator);
+	}
+
+	@Override
+	public List<DDMFormInstance> search(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean published, boolean andOperator, int start, int end,
+		OrderByComparator<DDMFormInstance> orderByComparator) {
+
+		return ddmFormInstanceFinder.findByC_G_N_D_P(
+			companyId, groupId, names, descriptions, published, andOperator,
+			start, end, orderByComparator);
 	}
 
 	@Override
@@ -367,11 +389,28 @@ public class DDMFormInstanceLocalServiceImpl
 
 	@Override
 	public int searchCount(
+		long companyId, long groupId, String keywords, boolean published) {
+
+		return ddmFormInstanceFinder.countByKeywords(
+			companyId, groupId, keywords, published);
+	}
+
+	@Override
+	public int searchCount(
 		long companyId, long groupId, String[] names, String[] descriptions,
 		boolean andOperator) {
 
 		return ddmFormInstanceFinder.countByC_G_N_D(
 			companyId, groupId, names, descriptions, andOperator);
+	}
+
+	@Override
+	public int searchCount(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean published, boolean andOperator) {
+
+		return ddmFormInstanceFinder.countByC_G_N_D_P(
+			companyId, groupId, names, descriptions, published, andOperator);
 	}
 
 	@Override

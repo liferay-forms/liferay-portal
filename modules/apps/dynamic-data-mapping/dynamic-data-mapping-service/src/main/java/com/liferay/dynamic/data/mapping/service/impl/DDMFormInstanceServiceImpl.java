@@ -168,6 +168,28 @@ public class DDMFormInstanceServiceImpl extends DDMFormInstanceServiceBaseImpl {
 
 	@Override
 	public List<DDMFormInstance> search(
+		long companyId, long groupId, String keywords, boolean published,
+		int status, int start, int end,
+		OrderByComparator<DDMFormInstance> orderByComparator) {
+
+		return ddmFormInstanceFinder.filterFindByKeywords(
+			companyId, groupId, keywords, published, status, start, end,
+			orderByComparator);
+	}
+
+	@Override
+	public List<DDMFormInstance> search(
+		long companyId, long groupId, String keywords, boolean published,
+		int start, int end,
+		OrderByComparator<DDMFormInstance> orderByComparator) {
+
+		return ddmFormInstanceFinder.filterFindByKeywords(
+			companyId, groupId, keywords, published, start, end,
+			orderByComparator);
+	}
+
+	@Override
+	public List<DDMFormInstance> search(
 		long companyId, long groupId, String keywords, int status, int start,
 		int end, OrderByComparator<DDMFormInstance> orderByComparator) {
 
@@ -183,6 +205,17 @@ public class DDMFormInstanceServiceImpl extends DDMFormInstanceServiceBaseImpl {
 
 		return ddmFormInstanceFinder.filterFindByKeywords(
 			companyId, groupId, keywords, start, end, orderByComparator);
+	}
+
+	@Override
+	public List<DDMFormInstance> search(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean published, boolean andOperator, int start, int end,
+		OrderByComparator<DDMFormInstance> orderByComparator) {
+
+		return ddmFormInstanceFinder.filterFindByC_G_N_D_P(
+			companyId, groupId, names, descriptions, published, andOperator,
+			start, end, orderByComparator);
 	}
 
 	@Override
@@ -204,6 +237,23 @@ public class DDMFormInstanceServiceImpl extends DDMFormInstanceServiceBaseImpl {
 
 	@Override
 	public int searchCount(
+		long companyId, long groupId, String keywords, boolean published) {
+
+		return ddmFormInstanceFinder.filterCountByKeywords(
+			companyId, groupId, keywords, published);
+	}
+
+	@Override
+	public int searchCount(
+		long companyId, long groupId, String keywords, boolean published,
+		int status) {
+
+		return ddmFormInstanceFinder.filterCountByKeywords(
+			companyId, groupId, keywords, published, status);
+	}
+
+	@Override
+	public int searchCount(
 		long companyId, long groupId, String keywords, int status) {
 
 		return ddmFormInstanceFinder.filterCountByKeywords(
@@ -217,6 +267,15 @@ public class DDMFormInstanceServiceImpl extends DDMFormInstanceServiceBaseImpl {
 
 		return ddmFormInstanceFinder.filterCountByC_G_N_D(
 			companyId, groupId, names, descriptions, andOperator);
+	}
+
+	@Override
+	public int searchCount(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean published, boolean andOperator) {
+
+		return ddmFormInstanceFinder.filterCountByC_G_N_D_P(
+			companyId, groupId, names, descriptions, published, andOperator);
 	}
 
 	@Override
