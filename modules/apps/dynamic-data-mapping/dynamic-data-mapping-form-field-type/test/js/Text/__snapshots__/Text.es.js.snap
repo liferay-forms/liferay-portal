@@ -10,6 +10,7 @@ exports[`Field Text has a helptext 1`] = `
   >
     <input
       class="form-control ddm-field-text"
+      id="textField"
       name="textField"
       type="text"
       value=""
@@ -52,6 +53,7 @@ exports[`Field Text has a label 1`] = `
     </label>
     <input
       class="form-control ddm-field-text"
+      id="textField"
       name="textField"
       type="text"
       value=""
@@ -76,6 +78,7 @@ exports[`Field Text has a placeholder 1`] = `
   >
     <input
       class="form-control ddm-field-text"
+      id="textField"
       name="textField"
       placeholder="Placeholder"
       type="text"
@@ -101,6 +104,7 @@ exports[`Field Text has a value 1`] = `
   >
     <input
       class="form-control ddm-field-text"
+      id="textField"
       name="textField"
       type="text"
       value="value"
@@ -150,6 +154,7 @@ exports[`Field Text is not readOnly 1`] = `
   >
     <input
       class="form-control ddm-field-text"
+      id="textField"
       name="textField"
       type="text"
       value=""
@@ -174,6 +179,7 @@ exports[`Field Text is not required 1`] = `
   >
     <input
       class="form-control ddm-field-text"
+      id="textField"
       name="textField"
       type="text"
       value=""
@@ -199,6 +205,7 @@ exports[`Field Text is readOnly 1`] = `
     <input
       class="form-control ddm-field-text"
       disabled=""
+      id="textField"
       name="textField"
       type="text"
       value=""
@@ -228,6 +235,7 @@ exports[`Field Text renders Label if showLabel is true 1`] = `
     </label>
     <input
       class="form-control ddm-field-text"
+      id="textField"
       name="textField"
       type="text"
       value=""
