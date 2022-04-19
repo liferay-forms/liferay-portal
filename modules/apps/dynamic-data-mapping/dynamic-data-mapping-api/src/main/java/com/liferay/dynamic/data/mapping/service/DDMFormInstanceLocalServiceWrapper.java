@@ -554,12 +554,36 @@ public class DDMFormInstanceLocalServiceWrapper
 
 	@Override
 	public java.util.List<DDMFormInstance> search(
+		long companyId, long groupId, String keywords, Boolean publish,
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<DDMFormInstance>
+			orderByComparator) {
+
+		return _ddmFormInstanceLocalService.search(
+			companyId, groupId, keywords, publish, start, end,
+			orderByComparator);
+	}
+
+	@Override
+	public java.util.List<DDMFormInstance> search(
 		long companyId, long groupId, String keywords, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMFormInstance>
 			orderByComparator) {
 
 		return _ddmFormInstanceLocalService.search(
 			companyId, groupId, keywords, start, end, orderByComparator);
+	}
+
+	@Override
+	public java.util.List<DDMFormInstance> search(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean publish, boolean andOperator, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<DDMFormInstance>
+			orderByComparator) {
+
+		return _ddmFormInstanceLocalService.search(
+			companyId, groupId, names, descriptions, publish, andOperator,
+			start, end, orderByComparator);
 	}
 
 	@Override
@@ -582,11 +606,28 @@ public class DDMFormInstanceLocalServiceWrapper
 
 	@Override
 	public int searchCount(
+		long companyId, long groupId, String keywords, boolean publish) {
+
+		return _ddmFormInstanceLocalService.searchCount(
+			companyId, groupId, keywords, publish);
+	}
+
+	@Override
+	public int searchCount(
 		long companyId, long groupId, String[] names, String[] descriptions,
 		boolean andOperator) {
 
 		return _ddmFormInstanceLocalService.searchCount(
 			companyId, groupId, names, descriptions, andOperator);
+	}
+
+	@Override
+	public int searchCount(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean publish, boolean andOperator) {
+
+		return _ddmFormInstanceLocalService.searchCount(
+			companyId, groupId, names, descriptions, publish, andOperator);
 	}
 
 	@Override

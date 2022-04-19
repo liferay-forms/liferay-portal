@@ -136,6 +136,30 @@ public class DDMFormInstanceServiceWrapper
 
 	@Override
 	public java.util.List<DDMFormInstance> search(
+		long companyId, long groupId, String keywords, boolean publish,
+		int status, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<DDMFormInstance>
+			orderByComparator) {
+
+		return _ddmFormInstanceService.search(
+			companyId, groupId, keywords, publish, status, start, end,
+			orderByComparator);
+	}
+
+	@Override
+	public java.util.List<DDMFormInstance> search(
+		long companyId, long groupId, String keywords, boolean publish,
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<DDMFormInstance>
+			orderByComparator) {
+
+		return _ddmFormInstanceService.search(
+			companyId, groupId, keywords, publish, start, end,
+			orderByComparator);
+	}
+
+	@Override
+	public java.util.List<DDMFormInstance> search(
 		long companyId, long groupId, String keywords, int status, int start,
 		int end,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMFormInstance>
@@ -159,6 +183,18 @@ public class DDMFormInstanceServiceWrapper
 	@Override
 	public java.util.List<DDMFormInstance> search(
 		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean publish, boolean andOperator, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<DDMFormInstance>
+			orderByComparator) {
+
+		return _ddmFormInstanceService.search(
+			companyId, groupId, names, descriptions, publish, andOperator,
+			start, end, orderByComparator);
+	}
+
+	@Override
+	public java.util.List<DDMFormInstance> search(
+		long companyId, long groupId, String[] names, String[] descriptions,
 		boolean andOperator, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<DDMFormInstance>
 			orderByComparator) {
@@ -176,6 +212,23 @@ public class DDMFormInstanceServiceWrapper
 
 	@Override
 	public int searchCount(
+		long companyId, long groupId, String keywords, boolean publish) {
+
+		return _ddmFormInstanceService.searchCount(
+			companyId, groupId, keywords, publish);
+	}
+
+	@Override
+	public int searchCount(
+		long companyId, long groupId, String keywords, boolean publish,
+		int status) {
+
+		return _ddmFormInstanceService.searchCount(
+			companyId, groupId, keywords, publish, status);
+	}
+
+	@Override
+	public int searchCount(
 		long companyId, long groupId, String keywords, int status) {
 
 		return _ddmFormInstanceService.searchCount(
@@ -189,6 +242,15 @@ public class DDMFormInstanceServiceWrapper
 
 		return _ddmFormInstanceService.searchCount(
 			companyId, groupId, names, descriptions, andOperator);
+	}
+
+	@Override
+	public int searchCount(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean publish, boolean andOperator) {
+
+		return _ddmFormInstanceService.searchCount(
+			companyId, groupId, names, descriptions, publish, andOperator);
 	}
 
 	@Override

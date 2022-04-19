@@ -490,11 +490,31 @@ public class DDMFormInstanceLocalServiceUtil {
 	}
 
 	public static List<DDMFormInstance> search(
+		long companyId, long groupId, String keywords, Boolean publish,
+		int start, int end,
+		OrderByComparator<DDMFormInstance> orderByComparator) {
+
+		return getService().search(
+			companyId, groupId, keywords, publish, start, end,
+			orderByComparator);
+	}
+
+	public static List<DDMFormInstance> search(
 		long companyId, long groupId, String keywords, int start, int end,
 		OrderByComparator<DDMFormInstance> orderByComparator) {
 
 		return getService().search(
 			companyId, groupId, keywords, start, end, orderByComparator);
+	}
+
+	public static List<DDMFormInstance> search(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean publish, boolean andOperator, int start, int end,
+		OrderByComparator<DDMFormInstance> orderByComparator) {
+
+		return getService().search(
+			companyId, groupId, names, descriptions, publish, andOperator,
+			start, end, orderByComparator);
 	}
 
 	public static List<DDMFormInstance> search(
@@ -514,11 +534,25 @@ public class DDMFormInstanceLocalServiceUtil {
 	}
 
 	public static int searchCount(
+		long companyId, long groupId, String keywords, boolean publish) {
+
+		return getService().searchCount(companyId, groupId, keywords, publish);
+	}
+
+	public static int searchCount(
 		long companyId, long groupId, String[] names, String[] descriptions,
 		boolean andOperator) {
 
 		return getService().searchCount(
 			companyId, groupId, names, descriptions, andOperator);
+	}
+
+	public static int searchCount(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean publish, boolean andOperator) {
+
+		return getService().searchCount(
+			companyId, groupId, names, descriptions, publish, andOperator);
 	}
 
 	public static void sendEmail(

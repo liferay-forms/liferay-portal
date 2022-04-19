@@ -406,7 +406,19 @@ public interface DDMFormInstanceLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<DDMFormInstance> search(
+		long companyId, long groupId, String keywords, Boolean publish,
+		int start, int end,
+		OrderByComparator<DDMFormInstance> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DDMFormInstance> search(
 		long companyId, long groupId, String keywords, int start, int end,
+		OrderByComparator<DDMFormInstance> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DDMFormInstance> search(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean publish, boolean andOperator, int start, int end,
 		OrderByComparator<DDMFormInstance> orderByComparator);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
@@ -420,8 +432,17 @@ public interface DDMFormInstanceLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int searchCount(
+		long companyId, long groupId, String keywords, boolean publish);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int searchCount(
 		long companyId, long groupId, String[] names, String[] descriptions,
 		boolean andOperator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int searchCount(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean publish, boolean andOperator);
 
 	public void sendEmail(
 			long userId, String message, String subject,

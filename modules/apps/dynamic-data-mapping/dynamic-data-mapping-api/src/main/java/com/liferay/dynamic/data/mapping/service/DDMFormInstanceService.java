@@ -109,12 +109,30 @@ public interface DDMFormInstanceService extends BaseService {
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<DDMFormInstance> search(
+		long companyId, long groupId, String keywords, boolean publish,
+		int status, int start, int end,
+		OrderByComparator<DDMFormInstance> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DDMFormInstance> search(
+		long companyId, long groupId, String keywords, boolean publish,
+		int start, int end,
+		OrderByComparator<DDMFormInstance> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DDMFormInstance> search(
 		long companyId, long groupId, String keywords, int status, int start,
 		int end, OrderByComparator<DDMFormInstance> orderByComparator);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<DDMFormInstance> search(
 		long companyId, long groupId, String keywords, int start, int end,
+		OrderByComparator<DDMFormInstance> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DDMFormInstance> search(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean publish, boolean andOperator, int start, int end,
 		OrderByComparator<DDMFormInstance> orderByComparator);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
@@ -128,12 +146,26 @@ public interface DDMFormInstanceService extends BaseService {
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int searchCount(
+		long companyId, long groupId, String keywords, boolean publish);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int searchCount(
+		long companyId, long groupId, String keywords, boolean publish,
+		int status);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int searchCount(
 		long companyId, long groupId, String keywords, int status);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int searchCount(
 		long companyId, long groupId, String[] names, String[] descriptions,
 		boolean andOperator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int searchCount(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean publish, boolean andOperator);
 
 	public void sendEmail(
 			long formInstanceId, String message, String subject,

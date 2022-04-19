@@ -25,12 +25,26 @@ public interface DDMFormInstanceFinder {
 
 	public int countByKeywords(long companyId, long groupId, String keywords);
 
+	public int countByKeywords(
+		long companyId, long groupId, String keywords, Boolean publish);
+
 	public int countByC_G_N_D(
 		long companyId, long groupId, String[] names, String[] descriptions,
 		boolean andOperator);
 
+	public int countByC_G_N_D_P(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		Boolean publish, boolean andOperator);
+
 	public int filterCountByKeywords(
 		long companyId, long groupId, String keywords);
+
+	public int filterCountByKeywords(
+		long companyId, long groupId, String keywords, Boolean publish);
+
+	public int filterCountByKeywords(
+		long companyId, long groupId, String keywords, Boolean publish,
+		int status);
 
 	public int filterCountByKeywords(
 		long companyId, long groupId, String keywords, int status);
@@ -40,6 +54,28 @@ public interface DDMFormInstanceFinder {
 	public int filterCountByC_G_N_D(
 		long companyId, long groupId, String[] names, String[] descriptions,
 		boolean andOperator);
+
+	public int filterCountByC_G_N_D_P(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		Boolean publish, boolean andOperator);
+
+	public java.util.List
+		<com.liferay.dynamic.data.mapping.model.DDMFormInstance>
+			filterFindByKeywords(
+				long companyId, long groupId, String keywords, Boolean publish,
+				int status, int start, int end,
+				com.liferay.portal.kernel.util.OrderByComparator
+					<com.liferay.dynamic.data.mapping.model.DDMFormInstance>
+						orderByComparator);
+
+	public java.util.List
+		<com.liferay.dynamic.data.mapping.model.DDMFormInstance>
+			filterFindByKeywords(
+				long companyId, long groupId, String keywords, Boolean publish,
+				int start, int end,
+				com.liferay.portal.kernel.util.OrderByComparator
+					<com.liferay.dynamic.data.mapping.model.DDMFormInstance>
+						orderByComparator);
 
 	public java.util.List
 		<com.liferay.dynamic.data.mapping.model.DDMFormInstance>
@@ -74,6 +110,16 @@ public interface DDMFormInstanceFinder {
 
 	public java.util.List
 		<com.liferay.dynamic.data.mapping.model.DDMFormInstance>
+			filterFindByC_G_N_D_P(
+				long companyId, long groupId, String[] names,
+				String[] descriptions, Boolean publish, boolean andOperator,
+				int start, int end,
+				com.liferay.portal.kernel.util.OrderByComparator
+					<com.liferay.dynamic.data.mapping.model.DDMFormInstance>
+						orderByComparator);
+
+	public java.util.List
+		<com.liferay.dynamic.data.mapping.model.DDMFormInstance>
 			filterFindByC_G_N_D_S(
 				long companyId, long groupId, String[] names,
 				String[] descriptions, int status, boolean andOperator,
@@ -81,6 +127,24 @@ public interface DDMFormInstanceFinder {
 				com.liferay.portal.kernel.util.OrderByComparator
 					<com.liferay.dynamic.data.mapping.model.DDMFormInstance>
 						orderByComparator);
+
+	public java.util.List
+		<com.liferay.dynamic.data.mapping.model.DDMFormInstance>
+			filterFindByC_G_N_D_P_S(
+				long companyId, long groupId, String[] names,
+				String[] descriptions, Boolean publish, int status,
+				boolean andOperator, int start, int end,
+				com.liferay.portal.kernel.util.OrderByComparator
+					<com.liferay.dynamic.data.mapping.model.DDMFormInstance>
+						orderByComparator);
+
+	public java.util.List
+		<com.liferay.dynamic.data.mapping.model.DDMFormInstance> findByKeywords(
+			long companyId, long groupId, String keywords, Boolean publish,
+			int start, int end,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<com.liferay.dynamic.data.mapping.model.DDMFormInstance>
+					orderByComparator);
 
 	public java.util.List
 		<com.liferay.dynamic.data.mapping.model.DDMFormInstance> findByKeywords(
@@ -96,5 +160,15 @@ public interface DDMFormInstanceFinder {
 			com.liferay.portal.kernel.util.OrderByComparator
 				<com.liferay.dynamic.data.mapping.model.DDMFormInstance>
 					orderByComparator);
+
+	public java.util.List
+		<com.liferay.dynamic.data.mapping.model.DDMFormInstance>
+			findByC_G_N_D_P(
+				long companyId, long groupId, String[] names,
+				String[] descriptions, Boolean publish, boolean andOperator,
+				int start, int end,
+				com.liferay.portal.kernel.util.OrderByComparator
+					<com.liferay.dynamic.data.mapping.model.DDMFormInstance>
+						orderByComparator);
 
 }
