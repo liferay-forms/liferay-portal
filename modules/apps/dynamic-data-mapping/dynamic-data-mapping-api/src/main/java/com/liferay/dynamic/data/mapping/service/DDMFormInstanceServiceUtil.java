@@ -126,6 +126,26 @@ public class DDMFormInstanceServiceUtil {
 	}
 
 	public static List<DDMFormInstance> search(
+		long companyId, long groupId, String keywords, boolean published,
+		int status, int start, int end,
+		OrderByComparator<DDMFormInstance> orderByComparator) {
+
+		return getService().search(
+			companyId, groupId, keywords, published, status, start, end,
+			orderByComparator);
+	}
+
+	public static List<DDMFormInstance> search(
+		long companyId, long groupId, String keywords, boolean published,
+		int start, int end,
+		OrderByComparator<DDMFormInstance> orderByComparator) {
+
+		return getService().search(
+			companyId, groupId, keywords, published, start, end,
+			orderByComparator);
+	}
+
+	public static List<DDMFormInstance> search(
 		long companyId, long groupId, String keywords, int status, int start,
 		int end, OrderByComparator<DDMFormInstance> orderByComparator) {
 
@@ -140,6 +160,16 @@ public class DDMFormInstanceServiceUtil {
 
 		return getService().search(
 			companyId, groupId, keywords, start, end, orderByComparator);
+	}
+
+	public static List<DDMFormInstance> search(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean published, boolean andOperator, int start, int end,
+		OrderByComparator<DDMFormInstance> orderByComparator) {
+
+		return getService().search(
+			companyId, groupId, names, descriptions, published, andOperator,
+			start, end, orderByComparator);
 	}
 
 	public static List<DDMFormInstance> search(
@@ -159,6 +189,21 @@ public class DDMFormInstanceServiceUtil {
 	}
 
 	public static int searchCount(
+		long companyId, long groupId, String keywords, boolean published) {
+
+		return getService().searchCount(
+			companyId, groupId, keywords, published);
+	}
+
+	public static int searchCount(
+		long companyId, long groupId, String keywords, boolean published,
+		int status) {
+
+		return getService().searchCount(
+			companyId, groupId, keywords, published, status);
+	}
+
+	public static int searchCount(
 		long companyId, long groupId, String keywords, int status) {
 
 		return getService().searchCount(companyId, groupId, keywords, status);
@@ -170,6 +215,14 @@ public class DDMFormInstanceServiceUtil {
 
 		return getService().searchCount(
 			companyId, groupId, names, descriptions, andOperator);
+	}
+
+	public static int searchCount(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean published, boolean andOperator) {
+
+		return getService().searchCount(
+			companyId, groupId, names, descriptions, published, andOperator);
 	}
 
 	public static void sendEmail(
