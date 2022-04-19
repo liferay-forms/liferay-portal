@@ -121,7 +121,7 @@ boolean limitToOneSubmissionPerUser = DDMFormInstanceSubmissionLimitStatusUtil.i
 					%>'
 				/>
 			</c:when>
-			<c:when test="<%= ddmFormDisplayContext.isFormAvailable() %>">
+			<c:when test="<%= ddmFormDisplayContext.isFormAvailable() || preview %>">
 				<portlet:actionURL name="/dynamic_data_mapping_form/add_form_instance_record" var="addFormInstanceRecordActionURL" />
 
 				<div class="portlet-forms">

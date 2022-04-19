@@ -563,56 +563,43 @@ public class DDMFormDisplayContext {
 	}
 
 	public boolean isFormAvailable() throws PortalException {
-		if (isPreview()) {
-			return true;
-		}
-
 		DDMFormInstance formInstance = getFormInstance();
 
-		if (formInstance != null) {
-			Group group = _groupLocalService.getGroup(
-				formInstance.getGroupId());
-
-			Group scopeGroup = _groupLocalService.getGroup(
-				_portal.getScopeGroupId(_renderRequest));
-
-			if ((group != null) && (scopeGroup != null) &&
-				group.isStagingGroup() && !scopeGroup.isStagingGroup()) {
-
-				return false;
-			}
-
-			if ((group != null) && group.isStagedRemotely()) {
-				ThemeDisplay themeDisplay = getThemeDisplay();
-
-				Role role = _roleLocalService.getRole(
-					themeDisplay.getCompanyId(), RoleConstants.ADMINISTRATOR);
-
-				List<User> users = _userLocalService.getRoleUsers(
-					role.getRoleId());
-
-				if (!DDMFormInstanceStagingUtil.
-						isFormInstancePublishedToRemoteLive(
-							group, users.get(0), formInstance.getUuid())) {
-
-					return false;
-				}
-			}
+		if (formInstance == null) {
+			return false;
 		}
 
-		if (isSharedURL()) {
-			if (isFormPublished() && isFormShared()) {
-				return true;
-			}
+		if (!isFormPublished() && (!isFormShared() || !isSharedURL())) {
+			return false;
+		}
+
+		Group group = _groupLocalService.getGroup(formInstance.getGroupId());
+
+		Group scopeGroup = _groupLocalService.getGroup(
+			_portal.getScopeGroupId(_renderRequest));
+
+		if ((group != null) && (scopeGroup != null) && group.isStagingGroup() &&
+			!scopeGroup.isStagingGroup()) {
 
 			return false;
 		}
 
-		if (formInstance != null) {
-			return true;
+		if ((group != null) && group.isStagedRemotely()) {
+			ThemeDisplay themeDisplay = getThemeDisplay();
+
+			Role role = _roleLocalService.getRole(
+				themeDisplay.getCompanyId(), RoleConstants.ADMINISTRATOR);
+
+			List<User> users = _userLocalService.getRoleUsers(role.getRoleId());
+
+			if (!DDMFormInstanceStagingUtil.isFormInstancePublishedToRemoteLive(
+					group, users.get(0), formInstance.getUuid())) {
+
+				return false;
+			}
 		}
 
-		return false;
+		return true;
 	}
 
 	public boolean isFormShared() {
