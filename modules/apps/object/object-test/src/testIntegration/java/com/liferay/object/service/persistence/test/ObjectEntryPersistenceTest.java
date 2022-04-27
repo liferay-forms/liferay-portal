@@ -246,6 +246,14 @@ public class ObjectEntryPersistenceTest {
 	}
 
 	@Test
+	public void testCountByODI_U() throws Exception {
+		_persistence.countByODI_U(
+			RandomTestUtil.nextLong(), RandomTestUtil.nextLong());
+
+		_persistence.countByODI_U(0L, 0L);
+	}
+
+	@Test
 	public void testCountByODI_NotS() throws Exception {
 		_persistence.countByODI_NotS(
 			RandomTestUtil.nextLong(), RandomTestUtil.nextInt());
