@@ -111,6 +111,9 @@ export function handleAction(
 
 		window.open(url);
 	}
+	else if (target === 'event') {
+		Liferay.fire(url, {itemId});
+	}
 	else if (onClick) {
 		event.preventDefault();
 
@@ -431,6 +434,7 @@ ActionsDropdownRenderer.propTypes = {
 			onClick: PropTypes.string,
 			target: PropTypes.oneOf([
 				'async',
+				'event',
 				'headless',
 				'inlineEdit',
 				'link',
