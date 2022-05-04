@@ -60,3 +60,14 @@ renderResponse.setTitle(objectDefinition.getLabel(locale, true));
 		%>'
 	/>
 </div>
+
+<div id="<portlet:namespace />DeleteObjectRelationship">
+	<react:component
+		module="js/components/ModalDeleteObjectRelationship"
+		props='<%=
+			HashMapBuilder.<String, Object>put(
+				"isApproved", objectDefinition.isApproved()
+			).build()
+		%>'
+	/>
+</div>
