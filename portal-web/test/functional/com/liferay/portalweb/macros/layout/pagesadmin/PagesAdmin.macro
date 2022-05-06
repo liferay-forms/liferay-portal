@@ -382,6 +382,44 @@ definition {
 			vocabularyName = "${vocabularyName}");
 	}
 
+	macro addPage {
+		if (IsTextNotEqual(locator1 = "ControlMenu#HEADING", value1 = "Pages")) {
+			ProductMenu.gotoPortlet(
+				category = "Site Builder",
+				portlet = "Pages");
+		}
+
+		if (IsElementPresent(locator1 = "Message#EMPTY_INFO_TAGLIB")) {
+			PagesAdmin.gotoAddFirstPage(pageType = "Page");
+		}
+		else {
+			AssertClick(
+				key_breadcrumbName = "Page",
+				locator1 = "Breadcrumb#BREADCRUMB_ENTRY_EXACT_MATCH",
+				value1 = "Page");
+
+			LexiconEntry.gotoAddMenuItem(menuItem = "Page");
+		}
+
+		PagesAdmin._addPage(
+			assertCheckboxMissing = "${assertCheckboxMissing}",
+			categoryName = "${categoryName}",
+			collectionName = "${collectionName}",
+			componentName = "${componentName}",
+			customDescription = "${customDescription}",
+			customTitle = "${customTitle}",
+			inheritChanges = "${inheritChanges}",
+			linkPageName = "${linkPageName}",
+			navigationMenus = "${navigationMenus}",
+			openGraph = "${openGraph}",
+			pageName = "${pageName}",
+			pageTemplateName = "${pageTemplateName}",
+			pageTypeURL = "${pageTypeURL}",
+			portlet = "${portlet}",
+			sitePageType = "${sitePageType}",
+			vocabularyName = "${vocabularyName}");
+	}
+
 	macro addPageUnderSitePagesVariation {
 		LexiconEntry.gotoAddMenuItem(menuItem = "Page");
 
@@ -471,44 +509,6 @@ definition {
 			pageTemplateName = "${pageTemplateName}",
 			parentPageName = "${parentPageName}",
 			sitePageType = "${sitePageType}");
-	}
-
-	macro addPublicPage {
-		if (IsTextNotEqual(locator1 = "ControlMenu#HEADING", value1 = "Pages")) {
-			ProductMenu.gotoPortlet(
-				category = "Site Builder",
-				portlet = "Pages");
-		}
-
-		if (IsElementPresent(locator1 = "Message#EMPTY_INFO_TAGLIB")) {
-			PagesAdmin.gotoAddFirstPage(pageType = "Page");
-		}
-		else {
-			AssertClick(
-				key_breadcrumbName = "Pages",
-				locator1 = "Breadcrumb#BREADCRUMB_ENTRY_EXACT_MATCH",
-				value1 = "Pages");
-
-			LexiconEntry.gotoAddMenuItem(menuItem = "Page");
-		}
-
-		PagesAdmin._addPage(
-			assertCheckboxMissing = "${assertCheckboxMissing}",
-			categoryName = "${categoryName}",
-			collectionName = "${collectionName}",
-			componentName = "${componentName}",
-			customDescription = "${customDescription}",
-			customTitle = "${customTitle}",
-			inheritChanges = "${inheritChanges}",
-			linkPageName = "${linkPageName}",
-			navigationMenus = "${navigationMenus}",
-			openGraph = "${openGraph}",
-			pageName = "${pageName}",
-			pageTemplateName = "${pageTemplateName}",
-			pageTypeURL = "${pageTypeURL}",
-			portlet = "${portlet}",
-			sitePageType = "${sitePageType}",
-			vocabularyName = "${vocabularyName}");
 	}
 
 	macro addPublicPageUnderSitePagesVariation {
