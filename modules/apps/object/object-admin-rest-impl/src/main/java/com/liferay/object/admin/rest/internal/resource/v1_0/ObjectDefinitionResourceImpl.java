@@ -194,9 +194,7 @@ public class ObjectDefinitionResourceImpl
 				actions = HashMapBuilder.put(
 					"delete",
 					() -> {
-						if (objectDefinition.isApproved() ||
-							objectDefinition.isSystem()) {
-
+						if (objectDefinition.isSystem()) {
 							return null;
 						}
 
