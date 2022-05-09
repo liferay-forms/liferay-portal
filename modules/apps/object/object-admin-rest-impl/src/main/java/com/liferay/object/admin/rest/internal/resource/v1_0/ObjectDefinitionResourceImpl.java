@@ -45,6 +45,7 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.language.LanguageResources;
 import com.liferay.portal.odata.entity.EntityModel;
+import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.vulcan.aggregation.Aggregation;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
@@ -194,7 +195,11 @@ public class ObjectDefinitionResourceImpl
 				actions = HashMapBuilder.put(
 					"delete",
 					() -> {
-						if (objectDefinition.isSystem()) {
+						if ((!GetterUtil.getBoolean(
+								PropsUtil.get("feature.flag.LPS-150886")) &&
+							 objectDefinition.isApproved()) ||
+							objectDefinition.isSystem()) {
+
 							return null;
 						}
 

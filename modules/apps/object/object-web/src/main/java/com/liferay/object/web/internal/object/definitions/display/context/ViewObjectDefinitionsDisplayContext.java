@@ -27,7 +27,9 @@ import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletURLUtil;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.util.PropsUtil;
 
 import java.util.Arrays;
 import java.util.List;
@@ -82,6 +84,17 @@ public class ViewObjectDefinitionsDisplayContext {
 	public List<FDSActionDropdownItem> getFDSActionDropdownItems()
 		throws Exception {
 
+		FDSActionDropdownItem fdsActionDropdownItem = new FDSActionDropdownItem(
+			getAPIURL() + "/{id}", "trash", "delete",
+			LanguageUtil.get(_objectRequestHelper.getRequest(), "delete"),
+			"delete", "delete", "async");
+
+		if (GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-150886"))) {
+			fdsActionDropdownItem.setHref(null);
+			fdsActionDropdownItem.setId("deleteObjectDefinition");
+			fdsActionDropdownItem.setTarget(null);
+		}
+
 		return Arrays.asList(
 			new FDSActionDropdownItem(
 				PortletURLBuilder.create(
@@ -106,10 +119,7 @@ public class ViewObjectDefinitionsDisplayContext {
 				LanguageUtil.get(
 					_objectRequestHelper.getRequest(), "export-as-json"),
 				"get", null, null),
-			new FDSActionDropdownItem(
-				null, "trash", "deleteObjectDefinition",
-				LanguageUtil.get(_objectRequestHelper.getRequest(), "delete"),
-				"delete", "delete", null),
+			fdsActionDropdownItem,
 			new FDSActionDropdownItem(
 				_getPermissionsURL(), null, "permissions",
 				LanguageUtil.get(
