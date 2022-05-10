@@ -420,6 +420,10 @@ public class ObjectDefinitionLocalServiceUtil {
 		return getService().getSystemObjectDefinitions();
 	}
 
+	public static boolean hasObjectRelationship(long objectDefinitionId) {
+		return getService().hasObjectRelationship(objectDefinitionId);
+	}
+
 	public static ObjectDefinition publishCustomObjectDefinition(
 			long userId, long objectDefinitionId)
 		throws PortalException {
