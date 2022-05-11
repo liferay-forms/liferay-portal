@@ -132,6 +132,8 @@ public class ObjectDefinitionsActionsDisplayContext
 		return JSONUtil.put(
 			"active", objectAction.isActive()
 		).put(
+			"condition", objectAction.getCondition()
+		).put(
 			"description", objectAction.getDescription()
 		).put(
 			"id", objectAction.getObjectActionId()

@@ -40,8 +40,8 @@ public class ObjectActionServiceImpl extends ObjectActionServiceBaseImpl {
 
 	@Override
 	public ObjectAction addObjectAction(
-			long objectDefinitionId, boolean active, String description,
-			String name, String objectActionExecutorKey,
+			long objectDefinitionId, boolean active, String condition,
+			String description, String name, String objectActionExecutorKey,
 			String objectActionTriggerKey,
 			UnicodeProperties parametersUnicodeProperties)
 		throws PortalException {
@@ -50,8 +50,8 @@ public class ObjectActionServiceImpl extends ObjectActionServiceBaseImpl {
 			getPermissionChecker(), objectDefinitionId, ActionKeys.UPDATE);
 
 		return objectActionLocalService.addObjectAction(
-			getUserId(), objectDefinitionId, active, description, name,
-			objectActionExecutorKey, objectActionTriggerKey,
+			getUserId(), objectDefinitionId, active, condition, description,
+			name, objectActionExecutorKey, objectActionTriggerKey,
 			parametersUnicodeProperties);
 	}
 
@@ -85,8 +85,9 @@ public class ObjectActionServiceImpl extends ObjectActionServiceBaseImpl {
 
 	@Override
 	public ObjectAction updateObjectAction(
-			long objectActionId, boolean active, String description,
-			String name, UnicodeProperties parametersUnicodeProperties)
+			long objectActionId, boolean active, String condition,
+			String description, String name,
+			UnicodeProperties parametersUnicodeProperties)
 		throws PortalException {
 
 		ObjectAction objectAction = objectActionPersistence.findByPrimaryKey(
@@ -97,7 +98,7 @@ public class ObjectActionServiceImpl extends ObjectActionServiceBaseImpl {
 			ActionKeys.UPDATE);
 
 		return objectActionLocalService.updateObjectAction(
-			objectActionId, active, description, name,
+			objectActionId, active, condition, description, name,
 			parametersUnicodeProperties);
 	}
 
