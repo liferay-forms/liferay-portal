@@ -114,6 +114,7 @@ public class ObjectActionLocalServiceTest {
 			TestPropsValues.getUserId(),
 			_objectDefinition.getObjectDefinitionId(), true,
 			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+			RandomTestUtil.randomString(),
 			ObjectActionExecutorConstants.KEY_WEBHOOK,
 			ObjectActionTriggerConstants.KEY_ON_AFTER_ADD,
 			UnicodePropertiesBuilder.put(
@@ -125,6 +126,7 @@ public class ObjectActionLocalServiceTest {
 			TestPropsValues.getUserId(),
 			_objectDefinition.getObjectDefinitionId(), true,
 			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+			RandomTestUtil.randomString(),
 			ObjectActionExecutorConstants.KEY_WEBHOOK,
 			ObjectActionTriggerConstants.KEY_ON_AFTER_DELETE,
 			UnicodePropertiesBuilder.put(
@@ -136,6 +138,7 @@ public class ObjectActionLocalServiceTest {
 			TestPropsValues.getUserId(),
 			_objectDefinition.getObjectDefinitionId(), true,
 			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+			RandomTestUtil.randomString(),
 			ObjectActionExecutorConstants.KEY_WEBHOOK,
 			ObjectActionTriggerConstants.KEY_ON_AFTER_UPDATE,
 			UnicodePropertiesBuilder.put(
@@ -332,14 +335,16 @@ public class ObjectActionLocalServiceTest {
 	public void testUpdateObjectAction() throws Exception {
 		ObjectAction objectAction = _objectActionLocalService.addObjectAction(
 			TestPropsValues.getUserId(),
-			_objectDefinition.getObjectDefinitionId(), true, "Able Description",
-			"Able", ObjectActionExecutorConstants.KEY_WEBHOOK,
+			_objectDefinition.getObjectDefinitionId(), true, "Able Condition",
+			"Able Description", "Able",
+			ObjectActionExecutorConstants.KEY_WEBHOOK,
 			ObjectActionTriggerConstants.KEY_ON_AFTER_ADD,
 			UnicodePropertiesBuilder.put(
 				"secret", "0123456789"
 			).build());
 
 		Assert.assertTrue(objectAction.isActive());
+		Assert.assertEquals("Able Condition", objectAction.getCondition());
 		Assert.assertEquals("Able Description", objectAction.getDescription());
 		Assert.assertEquals("Able", objectAction.getName());
 		Assert.assertEquals(
@@ -349,13 +354,14 @@ public class ObjectActionLocalServiceTest {
 			objectAction.getParametersUnicodeProperties());
 
 		objectAction = _objectActionLocalService.updateObjectAction(
-			objectAction.getObjectActionId(), false, "Baker Description",
-			"Baker",
+			objectAction.getObjectActionId(), false, "Baker Condition",
+			"Baker Description", "Baker",
 			UnicodePropertiesBuilder.put(
 				"secret", "30624700"
 			).build());
 
 		Assert.assertFalse(objectAction.isActive());
+		Assert.assertEquals("Baker Condition", objectAction.getCondition());
 		Assert.assertEquals("Baker Description", objectAction.getDescription());
 		Assert.assertEquals("Baker", objectAction.getName());
 		Assert.assertEquals(
