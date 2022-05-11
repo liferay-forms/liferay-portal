@@ -14,6 +14,10 @@
 
 package com.liferay.object.internal.action.engine;
 
+import com.liferay.dynamic.data.mapping.expression.CreateExpressionRequest;
+import com.liferay.dynamic.data.mapping.expression.DDMExpression;
+import com.liferay.dynamic.data.mapping.expression.DDMExpressionException;
+import com.liferay.dynamic.data.mapping.expression.DDMExpressionFactory;
 import com.liferay.object.action.engine.ObjectActionEngine;
 import com.liferay.object.action.executor.ObjectActionExecutor;
 import com.liferay.object.action.executor.ObjectActionExecutorRegistry;
@@ -26,8 +30,10 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.List;
+import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -51,6 +57,32 @@ public class ObjectActionEngineImpl implements ObjectActionEngine {
 		}
 		catch (Exception exception) {
 			_log.error(exception);
+		}
+	}
+
+	private boolean _evaluateObjectActionCondition(
+		String condition, JSONObject objectEntryJSONObject) {
+
+		if (Validator.isNull(condition)) {
+			return true;
+		}
+
+		try {
+			DDMExpression<Boolean> ddmExpression =
+				_ddmExpressionFactory.createExpression(
+					CreateExpressionRequest.Builder.newBuilder(
+						condition
+					).build());
+
+			ddmExpression.setVariables(
+				(Map<String, Object>)objectEntryJSONObject.get("values"));
+
+			return ddmExpression.evaluate();
+		}
+		catch (DDMExpressionException ddmExpressionException) {
+			_log.error(ddmExpressionException);
+
+			return false;
 		}
 	}
 
@@ -89,6 +121,13 @@ public class ObjectActionEngineImpl implements ObjectActionEngine {
 				objectActionTriggerKey);
 
 		for (ObjectAction objectAction : objectActions) {
+			if (!_evaluateObjectActionCondition(
+					objectAction.getCondition(),
+					payloadJSONObject.getJSONObject("objectEntry"))) {
+
+				continue;
+			}
+
 			ObjectActionExecutor objectActionExecutor =
 				_objectActionExecutorRegistry.getObjectActionExecutor(
 					objectAction.getObjectActionExecutorKey());
@@ -101,6 +140,9 @@ public class ObjectActionEngineImpl implements ObjectActionEngine {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ObjectActionEngineImpl.class);
+
+	@Reference
+	private DDMExpressionFactory _ddmExpressionFactory;
 
 	@Reference
 	private ObjectActionExecutorRegistry _objectActionExecutorRegistry;
