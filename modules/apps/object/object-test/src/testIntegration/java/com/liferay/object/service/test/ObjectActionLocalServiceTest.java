@@ -345,6 +345,12 @@ public class ObjectActionLocalServiceTest {
 		Assert.assertEquals("Able Description", objectAction.getDescription());
 		Assert.assertEquals("Able", objectAction.getName());
 		Assert.assertEquals(
+			ObjectActionExecutorConstants.KEY_WEBHOOK,
+			objectAction.getObjectActionExecutorKey());
+		Assert.assertEquals(
+			ObjectActionTriggerConstants.KEY_ON_AFTER_ADD,
+			objectAction.getObjectActionTriggerKey());
+		Assert.assertEquals(
 			UnicodePropertiesBuilder.put(
 				"secret", "0123456789"
 			).build(),
@@ -353,6 +359,8 @@ public class ObjectActionLocalServiceTest {
 		objectAction = _objectActionLocalService.updateObjectAction(
 			objectAction.getObjectActionId(), false, "Baker Condition",
 			"Baker Description", "Baker",
+			ObjectActionExecutorConstants.KEY_GROOVY,
+			ObjectActionTriggerConstants.KEY_ON_AFTER_DELETE,
 			UnicodePropertiesBuilder.put(
 				"secret", "30624700"
 			).build());
@@ -361,6 +369,12 @@ public class ObjectActionLocalServiceTest {
 		Assert.assertEquals("Baker Condition", objectAction.getCondition());
 		Assert.assertEquals("Baker Description", objectAction.getDescription());
 		Assert.assertEquals("Baker", objectAction.getName());
+		Assert.assertEquals(
+			ObjectActionExecutorConstants.KEY_GROOVY,
+			objectAction.getObjectActionExecutorKey());
+		Assert.assertEquals(
+			ObjectActionTriggerConstants.KEY_ON_AFTER_DELETE,
+			objectAction.getObjectActionTriggerKey());
 		Assert.assertEquals(
 			UnicodePropertiesBuilder.put(
 				"secret", "30624700"

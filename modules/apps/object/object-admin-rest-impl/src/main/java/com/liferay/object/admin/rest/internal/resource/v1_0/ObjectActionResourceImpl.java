@@ -123,6 +123,8 @@ public class ObjectActionResourceImpl
 				objectActionId, objectAction.getActive(),
 				objectAction.getCondition(), objectAction.getDescription(),
 				objectAction.getName(),
+				objectAction.getObjectActionExecutorKey(),
+				objectAction.getObjectActionTriggerKey(),
 				UnicodePropertiesBuilder.create(
 					(Map<String, String>)objectAction.getParameters(), true
 				).build()));
