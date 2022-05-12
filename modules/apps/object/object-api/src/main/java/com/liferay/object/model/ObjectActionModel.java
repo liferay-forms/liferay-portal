@@ -240,6 +240,21 @@ public interface ObjectActionModel
 	public void setActive(boolean active);
 
 	/**
+	 * Returns the condition of this object action.
+	 *
+	 * @return the condition of this object action
+	 */
+	@AutoEscape
+	public String getCondition();
+
+	/**
+	 * Sets the condition of this object action.
+	 *
+	 * @param condition the condition of this object action
+	 */
+	public void setCondition(String condition);
+
+	/**
 	 * Returns the description of this object action.
 	 *
 	 * @return the description of this object action
