@@ -79,6 +79,27 @@ public class ObjectAction implements Cloneable, Serializable {
 
 	protected Boolean active;
 
+	public String getCondition() {
+		return condition;
+	}
+
+	public void setCondition(String condition) {
+		this.condition = condition;
+	}
+
+	public void setCondition(
+		UnsafeSupplier<String, Exception> conditionUnsafeSupplier) {
+
+		try {
+			condition = conditionUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected String condition;
+
 	public Date getDateCreated() {
 		return dateCreated;
 	}
