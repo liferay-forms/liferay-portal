@@ -73,7 +73,8 @@ public interface ObjectActionService extends BaseService {
 
 	public ObjectAction updateObjectAction(
 			long objectActionId, boolean active, String condition,
-			String description, String name,
+			String description, String name, String objectActionExecutorKey,
+			String objectActionTriggerKey,
 			UnicodeProperties parametersUnicodeProperties)
 		throws PortalException;
 

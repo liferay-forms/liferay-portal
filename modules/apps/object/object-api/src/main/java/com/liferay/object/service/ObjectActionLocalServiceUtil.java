@@ -340,13 +340,15 @@ public class ObjectActionLocalServiceUtil {
 
 	public static ObjectAction updateObjectAction(
 			long objectActionId, boolean active, String condition,
-			String description, String name,
+			String description, String name, String objectActionExecutorKey,
+			String objectActionTriggerKey,
 			com.liferay.portal.kernel.util.UnicodeProperties
 				parametersUnicodeProperties)
 		throws PortalException {
 
 		return getService().updateObjectAction(
 			objectActionId, active, condition, description, name,
+			objectActionExecutorKey, objectActionTriggerKey,
 			parametersUnicodeProperties);
 	}
 

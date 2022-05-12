@@ -179,6 +179,7 @@ public class ObjectActionServiceHttp {
 	public static com.liferay.object.model.ObjectAction updateObjectAction(
 			HttpPrincipal httpPrincipal, long objectActionId, boolean active,
 			String condition, String description, String name,
+			String objectActionExecutorKey, String objectActionTriggerKey,
 			com.liferay.portal.kernel.util.UnicodeProperties
 				parametersUnicodeProperties)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -190,6 +191,7 @@ public class ObjectActionServiceHttp {
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, objectActionId, active, condition, description, name,
+				objectActionExecutorKey, objectActionTriggerKey,
 				parametersUnicodeProperties);
 
 			Object returnObj = null;
@@ -236,6 +238,7 @@ public class ObjectActionServiceHttp {
 	private static final Class<?>[] _updateObjectActionParameterTypes3 =
 		new Class[] {
 			long.class, boolean.class, String.class, String.class, String.class,
+			String.class, String.class,
 			com.liferay.portal.kernel.util.UnicodeProperties.class
 		};
 
