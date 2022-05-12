@@ -356,6 +356,8 @@ public class ObjectActionLocalServiceTest {
 		objectAction = _objectActionLocalService.updateObjectAction(
 			objectAction.getObjectActionId(), false, "Baker Condition",
 			"Baker Description", "Baker",
+			ObjectActionExecutorConstants.KEY_WEBHOOK,
+			ObjectActionTriggerConstants.KEY_ON_AFTER_ADD,
 			UnicodePropertiesBuilder.put(
 				"secret", "30624700"
 			).build());

@@ -143,7 +143,8 @@ public class ObjectActionLocalServiceImpl
 	@Override
 	public ObjectAction updateObjectAction(
 			long objectActionId, boolean active, String condition,
-			String description, String name,
+			String description, String name, String objectActionExecutorKey,
+			String objectActionTriggerKey,
 			UnicodeProperties parametersUnicodeProperties)
 		throws PortalException {
 
@@ -156,6 +157,8 @@ public class ObjectActionLocalServiceImpl
 		objectAction.setCondition(condition);
 		objectAction.setDescription(description);
 		objectAction.setName(name);
+		objectAction.setObjectActionExecutorKey(objectActionExecutorKey);
+		objectAction.setObjectActionTriggerKey(objectActionTriggerKey);
 		objectAction.setParameters(parametersUnicodeProperties.toString());
 
 		return objectActionPersistence.update(objectAction);
