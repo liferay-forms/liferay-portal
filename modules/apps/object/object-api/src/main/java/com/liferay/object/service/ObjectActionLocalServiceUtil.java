@@ -46,14 +46,14 @@ public class ObjectActionLocalServiceUtil {
 	 */
 	public static ObjectAction addObjectAction(
 			long userId, long objectDefinitionId, boolean active,
-			String description, String name, String objectActionExecutorKey,
-			String objectActionTriggerKey,
+			String condition, String description, String name,
+			String objectActionExecutorKey, String objectActionTriggerKey,
 			com.liferay.portal.kernel.util.UnicodeProperties
 				parametersUnicodeProperties)
 		throws PortalException {
 
 		return getService().addObjectAction(
-			userId, objectDefinitionId, active, description, name,
+			userId, objectDefinitionId, active, condition, description, name,
 			objectActionExecutorKey, objectActionTriggerKey,
 			parametersUnicodeProperties);
 	}
@@ -339,14 +339,14 @@ public class ObjectActionLocalServiceUtil {
 	}
 
 	public static ObjectAction updateObjectAction(
-			long objectActionId, boolean active, String description,
-			String name,
+			long objectActionId, boolean active, String condition,
+			String description, String name,
 			com.liferay.portal.kernel.util.UnicodeProperties
 				parametersUnicodeProperties)
 		throws PortalException {
 
 		return getService().updateObjectAction(
-			objectActionId, active, description, name,
+			objectActionId, active, condition, description, name,
 			parametersUnicodeProperties);
 	}
 
