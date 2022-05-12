@@ -30,6 +30,8 @@ ObjectAction objectAction = objectDefinitionsActionsDisplayContext.getObjectActi
 		).put(
 			"objectActionExecutors", objectDefinitionsActionsDisplayContext.getObjectActionExecutorsJSONArray()
 		).put(
+			"objectActionSidebarElements", objectDefinitionsActionsDisplayContext.getObjectActionSidebarElements()
+		).put(
 			"objectActionTriggers", objectDefinitionsActionsDisplayContext.getObjectActionTriggersJSONArray()
 		).put(
 			"readOnly", !objectDefinitionsActionsDisplayContext.hasUpdateObjectDefinitionPermission()

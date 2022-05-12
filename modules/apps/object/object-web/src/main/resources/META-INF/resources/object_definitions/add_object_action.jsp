@@ -28,6 +28,8 @@ ObjectDefinitionsActionsDisplayContext objectDefinitionsActionsDisplayContext = 
 		).put(
 			"objectActionExecutors", objectDefinitionsActionsDisplayContext.getObjectActionExecutorsJSONArray()
 		).put(
+			"objectActionSidebarElements", objectDefinitionsActionsDisplayContext.getObjectActionSidebarElements()
+		).put(
 			"objectActionTriggers", objectDefinitionsActionsDisplayContext.getObjectActionTriggersJSONArray()
 		).build()
 	%>'

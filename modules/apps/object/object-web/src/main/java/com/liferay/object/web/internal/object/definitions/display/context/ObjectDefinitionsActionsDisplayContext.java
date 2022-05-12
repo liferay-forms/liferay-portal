@@ -14,6 +14,7 @@
 
 package com.liferay.object.web.internal.object.definitions.display.context;
 
+import com.liferay.dynamic.data.mapping.util.DDMExpressionBuilderUtil;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.object.action.executor.ObjectActionExecutor;
@@ -22,9 +23,11 @@ import com.liferay.object.action.trigger.ObjectActionTrigger;
 import com.liferay.object.action.trigger.ObjectActionTriggerRegistry;
 import com.liferay.object.model.ObjectAction;
 import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.web.internal.constants.ObjectWebKeys;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.portlet.url.builder.PortletURLBuilder;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -32,9 +35,12 @@ import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
+import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.ListUtil;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -50,12 +56,14 @@ public class ObjectDefinitionsActionsDisplayContext
 		ObjectActionTriggerRegistry objectActionTriggerRegistry,
 		ModelResourcePermission<ObjectDefinition>
 			objectDefinitionModelResourcePermission,
+		ObjectFieldLocalService objectFieldLocalService,
 		JSONFactory jsonFactory) {
 
 		super(httpServletRequest, objectDefinitionModelResourcePermission);
 
 		_objectActionExecutorRegistry = objectActionExecutorRegistry;
 		_objectActionTriggerRegistry = objectActionTriggerRegistry;
+		_objectFieldLocalService = objectFieldLocalService;
 		_jsonFactory = jsonFactory;
 	}
 
@@ -148,6 +156,19 @@ public class ObjectDefinitionsActionsDisplayContext
 		);
 	}
 
+	public List<Map<String, Object>> getObjectActionSidebarElements() {
+		return ListUtil.concat(
+			Arrays.asList(
+				HashMapBuilder.<String, Object>put(
+					"items", _getObjectFieldsItems()
+				).put(
+					"label",
+					LanguageUtil.get(objectRequestHelper.getLocale(), "fields")
+				).build()),
+			DDMExpressionBuilderUtil.getDDMExpressionBuilderElements(
+				objectRequestHelper.getLocale()));
+	}
+
 	public JSONArray getObjectActionTriggersJSONArray() {
 		JSONArray objectActionTriggersJSONArray =
 			_jsonFactory.createJSONArray();
@@ -212,8 +233,21 @@ public class ObjectDefinitionsActionsDisplayContext
 		};
 	}
 
+	private List<Map<String, String>> _getObjectFieldsItems() {
+		return ListUtil.toList(
+			_objectFieldLocalService.getObjectFields(getObjectDefinitionId()),
+			objectField -> HashMapBuilder.put(
+				"content", objectField.getName()
+			).put(
+				"label", objectField.getLabel(objectRequestHelper.getLocale())
+			).put(
+				"tooltip", StringPool.BLANK
+			).build());
+	}
+
 	private final JSONFactory _jsonFactory;
 	private final ObjectActionExecutorRegistry _objectActionExecutorRegistry;
 	private final ObjectActionTriggerRegistry _objectActionTriggerRegistry;
+	private final ObjectFieldLocalService _objectFieldLocalService;
 
 }
