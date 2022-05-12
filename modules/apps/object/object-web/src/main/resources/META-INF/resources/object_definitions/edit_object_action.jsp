@@ -26,6 +26,8 @@ ObjectAction objectAction = objectDefinitionsActionsDisplayContext.getObjectActi
 	module="js/components/EditObjectAction"
 	props='<%=
 		HashMapBuilder.<String, Object>put(
+			"ddmExpressionBuilderElements", objectDefinitionsActionsDisplayContext.getDDMExpressionBuilderElements()
+		).put(
 			"objectAction", objectDefinitionsActionsDisplayContext.getObjectActionJSONObject(objectAction)
 		).put(
 			"objectActionExecutors", objectDefinitionsActionsDisplayContext.getObjectActionExecutorsJSONArray()

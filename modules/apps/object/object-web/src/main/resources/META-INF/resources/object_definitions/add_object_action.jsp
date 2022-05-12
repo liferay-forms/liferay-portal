@@ -26,6 +26,8 @@ ObjectDefinitionsActionsDisplayContext objectDefinitionsActionsDisplayContext = 
 		HashMapBuilder.<String, Object>put(
 			"apiURL", objectDefinitionsActionsDisplayContext.getAPIURL()
 		).put(
+			"ddmExpressionBuilderElements", objectDefinitionsActionsDisplayContext.getDDMExpressionBuilderElements()
+		).put(
 			"objectActionExecutors", objectDefinitionsActionsDisplayContext.getObjectActionExecutorsJSONArray()
 		).put(
 			"objectActionTriggers", objectDefinitionsActionsDisplayContext.getObjectActionTriggersJSONArray()
