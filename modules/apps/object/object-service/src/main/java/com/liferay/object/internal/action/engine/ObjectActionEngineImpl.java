@@ -33,6 +33,8 @@ import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.vulcan.dto.converter.DTOConverter;
+import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 
 import java.util.List;
 import java.util.Map;
@@ -63,7 +65,8 @@ public class ObjectActionEngineImpl implements ObjectActionEngine {
 	}
 
 	private boolean _evaluateObjectActionCondition(
-		String condition, JSONObject objectEntryJSONObject) {
+		String condition, ObjectDefinition objectDefinition,
+		JSONObject payloadJSONObject) {
 
 		if (Validator.isNull(condition)) {
 			return true;
@@ -76,8 +79,22 @@ public class ObjectActionEngineImpl implements ObjectActionEngine {
 						condition
 					).build());
 
-			ddmExpression.setVariables(
-				(Map<String, Object>)objectEntryJSONObject.get("values"));
+			if (objectDefinition.isSystem()) {
+				String dtoConverterType = _getDTOConverterType(
+					objectDefinition.getClass());
+				//TODO
+				ddmExpression.setVariables(
+					(Map<String, Object>)payloadJSONObject.get(
+						"modelDTOUserAccount"));
+			}
+			else {
+				ddmExpression.setVariables(
+					(Map<String, Object>)payloadJSONObject.getJSONObject(
+						"objectEntry"
+					).get(
+						"values"
+					));
+			}
 
 			return ddmExpression.evaluate();
 		}
@@ -126,8 +143,8 @@ public class ObjectActionEngineImpl implements ObjectActionEngine {
 			if (GetterUtil.getBoolean(
 					PropsUtil.get("feature.flag.LPS-152181")) &&
 				!_evaluateObjectActionCondition(
-					objectAction.getCondition(),
-					payloadJSONObject.getJSONObject("objectEntry"))) {
+					objectAction.getCondition(), objectDefinition,
+					payloadJSONObject)) {
 
 				continue;
 			}
@@ -142,11 +159,26 @@ public class ObjectActionEngineImpl implements ObjectActionEngine {
 		}
 	}
 
+	private <T> String _getDTOConverterType(Class<?> modelClass) {
+		DTOConverter<T, ?> dtoConverter =
+			(DTOConverter<T, ?>)_dtoConverterRegistry.getDTOConverter(
+				modelClass.getName());
+
+		if (dtoConverter == null) {
+			return modelClass.getSimpleName();
+		}
+
+		return dtoConverter.getContentType();
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		ObjectActionEngineImpl.class);
 
 	@Reference
 	private DDMExpressionFactory _ddmExpressionFactory;
+
+	@Reference
+	private DTOConverterRegistry _dtoConverterRegistry;
 
 	@Reference
 	private ObjectActionExecutorRegistry _objectActionExecutorRegistry;
