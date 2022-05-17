@@ -14,6 +14,7 @@
 
 package com.liferay.object.web.internal.object.definitions.display.context;
 
+import com.liferay.dynamic.data.mapping.util.DDMExpressionBuilderUtil;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.object.constants.ObjectValidationRuleConstants;
@@ -37,7 +38,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -198,16 +198,9 @@ public class ObjectDefinitionsValidationsDisplayContext
 				"fields"));
 
 		if (engine.equals(ObjectValidationRuleConstants.ENGINE_TYPE_DDM)) {
-			objectValidationRuleElements.add(
-				_createObjectValidationRuleElement(
-					DDMExpressionOperator.getItems(
-						objectRequestHelper.getLocale()),
-					"operators"));
-			objectValidationRuleElements.add(
-				_createObjectValidationRuleElement(
-					DDMExpressionFunction.getItems(
-						objectRequestHelper.getLocale()),
-					"functions"));
+			objectValidationRuleElements.addAll(
+				DDMExpressionBuilderUtil.getDDMExpressionBuilderElements(
+					objectRequestHelper.getLocale()));
 		}
 
 		return objectValidationRuleElements;
@@ -215,98 +208,5 @@ public class ObjectDefinitionsValidationsDisplayContext
 
 	private final ObjectValidationRuleEngineServicesTracker
 		_objectValidationRuleEngineServicesTracker;
-
-	private enum DDMExpressionFunction {
-
-		COMPARE_DATES("compareDates(field_name, parameter)", "compare-dates"),
-		CONCAT("concat(parameter1, parameter2, parameterN)", "concat"),
-		CONDITION("condition(condition, parameter1, parameter2)", "condition"),
-		CONTAINS("contains(field_name, parameter)", "contains"),
-		DOES_NOT_CONTAIN(
-			"NOT(contains(field_name, parameter))", "does-not-contain"),
-		FUTURE_DATES("futureDates(field_name, parameter)", "future-dates"),
-		IS_A_URL("isURL(field_name)", "is-a-url"),
-		IS_AN_EMAIL("isEmailAddress(field_name)", "is-an-email"),
-		IS_DECIMAL("isDecimal(parameter)", "is-decimal"),
-		IS_EMPTY("isEmpty(parameter)", "is-empty"),
-		IS_EQUAL_TO("field_name == parameter", "is-equal-to"),
-		IS_GREATER_THAN("field_name > parameter", "is-greater-than"),
-		IS_GREATER_THAN_OR_EQUAL_TO(
-			"field_name >= parameter", "is-greater-than-or-equal-to"),
-		IS_INTEGER("isInteger(parameter)", "is-integer"),
-		IS_LESS_THAN("field_name < parameter", "is-less-than"),
-		IS_LESS_THAN_OR_EQUAL_TO(
-			"field_name <= parameter", "is-less-than-or-equal-to"),
-		IS_NOT_EQUAL_TO("field_name != parameter", "is-not-equal-to"),
-		MATCH("match(field_name, parameter)", "match"),
-		PAST_DATES("pastDates(field_name, parameter)", "past-dates"),
-		RANGE(
-			"futureDates(field_name, parameter) AND pastDates(" +
-				"field_name, parameter)",
-			"range"),
-		SUM("sum(parameter1, parameter2, parameterN)", "sum");
-
-		public static List<HashMap<String, String>> getItems(Locale locale) {
-			List<HashMap<String, String>> values = new ArrayList<>();
-
-			for (DDMExpressionFunction ddmExpressionFunction : values()) {
-				values.add(
-					HashMapBuilder.put(
-						"content", ddmExpressionFunction._content
-					).put(
-						"label",
-						LanguageUtil.get(locale, ddmExpressionFunction._key)
-					).put(
-						"tooltip", StringPool.BLANK
-					).build());
-			}
-
-			return values;
-		}
-
-		private DDMExpressionFunction(String content, String key) {
-			_content = content;
-			_key = key;
-		}
-
-		private String _content;
-		private String _key;
-
-	}
-
-	private enum DDMExpressionOperator {
-
-		AND("AND", "and"), DIVIDED_BY("field_name / field_name2", "divided-by"),
-		MINUS("field_name - field_name2", "minus"), OR("OR", "or"),
-		PLUS("field_name + field_name2", "plus"),
-		TIMES("field_name * field_name2", "times");
-
-		public static List<HashMap<String, String>> getItems(Locale locale) {
-			List<HashMap<String, String>> values = new ArrayList<>();
-
-			for (DDMExpressionOperator ddmExpressionOperator : values()) {
-				values.add(
-					HashMapBuilder.put(
-						"content", ddmExpressionOperator._content
-					).put(
-						"label",
-						LanguageUtil.get(locale, ddmExpressionOperator._key)
-					).put(
-						"tooltip", StringPool.BLANK
-					).build());
-			}
-
-			return values;
-		}
-
-		private DDMExpressionOperator(String content, String key) {
-			_content = content;
-			_key = key;
-		}
-
-		private String _content;
-		private String _key;
-
-	}
 
 }
