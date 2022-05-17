@@ -14,6 +14,10 @@
 
 package com.liferay.object.internal.action.engine;
 
+import com.liferay.dynamic.data.mapping.expression.CreateExpressionRequest;
+import com.liferay.dynamic.data.mapping.expression.DDMExpression;
+import com.liferay.dynamic.data.mapping.expression.DDMExpressionException;
+import com.liferay.dynamic.data.mapping.expression.DDMExpressionFactory;
 import com.liferay.object.action.engine.ObjectActionEngine;
 import com.liferay.object.action.executor.ObjectActionExecutor;
 import com.liferay.object.action.executor.ObjectActionExecutorRegistry;
@@ -26,8 +30,12 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.vulcan.dto.converter.DTOConverter;
+import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 
 import java.util.List;
+import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -51,6 +59,34 @@ public class ObjectActionEngineImpl implements ObjectActionEngine {
 		}
 		catch (Exception exception) {
 			_log.error(exception);
+		}
+	}
+
+	private boolean _evaluateObjectActionCondition(
+		String condition, ObjectDefinition objectDefinition,
+		JSONObject payloadJSONObject) {
+
+		if (Validator.isNull(condition)) {
+			return true;
+		}
+
+		try {
+			DDMExpression<Boolean> ddmExpression =
+				_ddmExpressionFactory.createExpression(
+					CreateExpressionRequest.Builder.newBuilder(
+						condition
+					).build());
+
+			ddmExpression.setVariables(
+				_getDDMExpressionVariables(
+					objectDefinition, payloadJSONObject));
+
+			return ddmExpression.evaluate();
+		}
+		catch (DDMExpressionException ddmExpressionException) {
+			_log.error(ddmExpressionException);
+
+			return false;
 		}
 	}
 
@@ -89,6 +125,13 @@ public class ObjectActionEngineImpl implements ObjectActionEngine {
 				objectActionTriggerKey);
 
 		for (ObjectAction objectAction : objectActions) {
+			if (!_evaluateObjectActionCondition(
+					objectAction.getCondition(), objectDefinition,
+					payloadJSONObject)) {
+
+				continue;
+			}
+
 			ObjectActionExecutor objectActionExecutor =
 				_objectActionExecutorRegistry.getObjectActionExecutor(
 					objectAction.getObjectActionExecutorKey());
@@ -99,8 +142,33 @@ public class ObjectActionEngineImpl implements ObjectActionEngine {
 		}
 	}
 
+	private Map<String, Object> _getDDMExpressionVariables(
+		ObjectDefinition objectDefinition, JSONObject payloadJSONObject) {
+
+		if (!objectDefinition.isSystem()) {
+			JSONObject objectEntryJSONObject = payloadJSONObject.getJSONObject(
+				"objectEntry");
+
+			return (Map<String, Object>)objectEntryJSONObject.get("values");
+		}
+
+		DTOConverter<?, ?> dtoConverter = _dtoConverterRegistry.getDTOConverter(
+			objectDefinition.getClassName());
+
+		JSONObject modelDTOJSONObject = payloadJSONObject.getJSONObject(
+			"modelDTO" + dtoConverter.getContentType());
+
+		return modelDTOJSONObject.toMap();
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		ObjectActionEngineImpl.class);
+
+	@Reference
+	private DDMExpressionFactory _ddmExpressionFactory;
+
+	@Reference
+	private DTOConverterRegistry _dtoConverterRegistry;
 
 	@Reference
 	private ObjectActionExecutorRegistry _objectActionExecutorRegistry;
