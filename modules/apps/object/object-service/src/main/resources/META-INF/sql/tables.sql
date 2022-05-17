@@ -9,7 +9,7 @@ create table ObjectAction (
 	modifiedDate DATE null,
 	objectDefinitionId LONG,
 	active_ BOOLEAN,
-	condition_ VARCHAR(75) null,
+	condition_ TEXT null,
 	description VARCHAR(75) null,
 	name VARCHAR(75) null,
 	objectActionExecutorKey VARCHAR(75) null,
