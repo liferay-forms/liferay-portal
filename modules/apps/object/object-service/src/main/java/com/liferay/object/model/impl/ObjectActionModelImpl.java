@@ -78,8 +78,8 @@ public class ObjectActionModelImpl
 		{"userId", Types.BIGINT}, {"userName", Types.VARCHAR},
 		{"createDate", Types.TIMESTAMP}, {"modifiedDate", Types.TIMESTAMP},
 		{"objectDefinitionId", Types.BIGINT}, {"active_", Types.BOOLEAN},
-		{"description", Types.VARCHAR}, {"name", Types.VARCHAR},
-		{"objectActionExecutorKey", Types.VARCHAR},
+		{"condition_", Types.VARCHAR}, {"description", Types.VARCHAR},
+		{"name", Types.VARCHAR}, {"objectActionExecutorKey", Types.VARCHAR},
 		{"objectActionTriggerKey", Types.VARCHAR}, {"parameters", Types.CLOB}
 	};
 
@@ -97,6 +97,7 @@ public class ObjectActionModelImpl
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("objectDefinitionId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("active_", Types.BOOLEAN);
+		TABLE_COLUMNS_MAP.put("condition_", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("description", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("name", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("objectActionExecutorKey", Types.VARCHAR);
@@ -105,7 +106,7 @@ public class ObjectActionModelImpl
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table ObjectAction (mvccVersion LONG default 0 not null,uuid_ VARCHAR(75) null,objectActionId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,objectDefinitionId LONG,active_ BOOLEAN,description VARCHAR(75) null,name VARCHAR(75) null,objectActionExecutorKey VARCHAR(75) null,objectActionTriggerKey VARCHAR(75) null,parameters TEXT null)";
+		"create table ObjectAction (mvccVersion LONG default 0 not null,uuid_ VARCHAR(75) null,objectActionId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,objectDefinitionId LONG,active_ BOOLEAN,condition_ VARCHAR(75) null,description VARCHAR(75) null,name VARCHAR(75) null,objectActionExecutorKey VARCHAR(75) null,objectActionTriggerKey VARCHAR(75) null,parameters TEXT null)";
 
 	public static final String TABLE_SQL_DROP = "drop table ObjectAction";
 
@@ -311,6 +312,10 @@ public class ObjectActionModelImpl
 		attributeSetterBiConsumers.put(
 			"active",
 			(BiConsumer<ObjectAction, Boolean>)ObjectAction::setActive);
+		attributeGetterFunctions.put("condition", ObjectAction::getCondition);
+		attributeSetterBiConsumers.put(
+			"condition",
+			(BiConsumer<ObjectAction, String>)ObjectAction::setCondition);
 		attributeGetterFunctions.put(
 			"description", ObjectAction::getDescription);
 		attributeSetterBiConsumers.put(
@@ -572,6 +577,26 @@ public class ObjectActionModelImpl
 
 	@JSON
 	@Override
+	public String getCondition() {
+		if (_condition == null) {
+			return "";
+		}
+		else {
+			return _condition;
+		}
+	}
+
+	@Override
+	public void setCondition(String condition) {
+		if (_columnOriginalValues == Collections.EMPTY_MAP) {
+			_setColumnOriginalValues();
+		}
+
+		_condition = condition;
+	}
+
+	@JSON
+	@Override
 	public String getDescription() {
 		if (_description == null) {
 			return "";
@@ -751,6 +776,7 @@ public class ObjectActionModelImpl
 		objectActionImpl.setModifiedDate(getModifiedDate());
 		objectActionImpl.setObjectDefinitionId(getObjectDefinitionId());
 		objectActionImpl.setActive(isActive());
+		objectActionImpl.setCondition(getCondition());
 		objectActionImpl.setDescription(getDescription());
 		objectActionImpl.setName(getName());
 		objectActionImpl.setObjectActionExecutorKey(
@@ -785,6 +811,8 @@ public class ObjectActionModelImpl
 			this.<Long>getColumnOriginalValue("objectDefinitionId"));
 		objectActionImpl.setActive(
 			this.<Boolean>getColumnOriginalValue("active_"));
+		objectActionImpl.setCondition(
+			this.<String>getColumnOriginalValue("condition_"));
 		objectActionImpl.setDescription(
 			this.<String>getColumnOriginalValue("description"));
 		objectActionImpl.setName(this.<String>getColumnOriginalValue("name"));
@@ -917,6 +945,14 @@ public class ObjectActionModelImpl
 		objectActionCacheModel.objectDefinitionId = getObjectDefinitionId();
 
 		objectActionCacheModel.active = isActive();
+
+		objectActionCacheModel.condition = getCondition();
+
+		String condition = objectActionCacheModel.condition;
+
+		if ((condition != null) && (condition.length() == 0)) {
+			objectActionCacheModel.condition = null;
+		}
 
 		objectActionCacheModel.description = getDescription();
 
@@ -1069,6 +1105,7 @@ public class ObjectActionModelImpl
 	private boolean _setModifiedDate;
 	private long _objectDefinitionId;
 	private boolean _active;
+	private String _condition;
 	private String _description;
 	private String _name;
 	private String _objectActionExecutorKey;
@@ -1114,6 +1151,7 @@ public class ObjectActionModelImpl
 		_columnOriginalValues.put("modifiedDate", _modifiedDate);
 		_columnOriginalValues.put("objectDefinitionId", _objectDefinitionId);
 		_columnOriginalValues.put("active_", _active);
+		_columnOriginalValues.put("condition_", _condition);
 		_columnOriginalValues.put("description", _description);
 		_columnOriginalValues.put("name", _name);
 		_columnOriginalValues.put(
@@ -1130,6 +1168,7 @@ public class ObjectActionModelImpl
 
 		attributeNames.put("uuid_", "uuid");
 		attributeNames.put("active_", "active");
+		attributeNames.put("condition_", "condition");
 
 		_attributeNames = Collections.unmodifiableMap(attributeNames);
 	}
@@ -1165,15 +1204,17 @@ public class ObjectActionModelImpl
 
 		columnBitmasks.put("active_", 512L);
 
-		columnBitmasks.put("description", 1024L);
+		columnBitmasks.put("condition_", 1024L);
 
-		columnBitmasks.put("name", 2048L);
+		columnBitmasks.put("description", 2048L);
 
-		columnBitmasks.put("objectActionExecutorKey", 4096L);
+		columnBitmasks.put("name", 4096L);
 
-		columnBitmasks.put("objectActionTriggerKey", 8192L);
+		columnBitmasks.put("objectActionExecutorKey", 8192L);
 
-		columnBitmasks.put("parameters", 16384L);
+		columnBitmasks.put("objectActionTriggerKey", 16384L);
+
+		columnBitmasks.put("parameters", 32768L);
 
 		_columnBitmasks = Collections.unmodifiableMap(columnBitmasks);
 	}

@@ -52,7 +52,7 @@ public class ObjectActionServiceHttp {
 
 	public static com.liferay.object.model.ObjectAction addObjectAction(
 			HttpPrincipal httpPrincipal, long objectDefinitionId,
-			boolean active, String description, String name,
+			boolean active, String condition, String description, String name,
 			String objectActionExecutorKey, String objectActionTriggerKey,
 			com.liferay.portal.kernel.util.UnicodeProperties
 				parametersUnicodeProperties)
@@ -64,8 +64,8 @@ public class ObjectActionServiceHttp {
 				_addObjectActionParameterTypes0);
 
 			MethodHandler methodHandler = new MethodHandler(
-				methodKey, objectDefinitionId, active, description, name,
-				objectActionExecutorKey, objectActionTriggerKey,
+				methodKey, objectDefinitionId, active, condition, description,
+				name, objectActionExecutorKey, objectActionTriggerKey,
 				parametersUnicodeProperties);
 
 			Object returnObj = null;
@@ -178,7 +178,8 @@ public class ObjectActionServiceHttp {
 
 	public static com.liferay.object.model.ObjectAction updateObjectAction(
 			HttpPrincipal httpPrincipal, long objectActionId, boolean active,
-			String description, String name,
+			String condition, String description, String name,
+			String objectActionExecutorKey, String objectActionTriggerKey,
 			com.liferay.portal.kernel.util.UnicodeProperties
 				parametersUnicodeProperties)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -189,7 +190,8 @@ public class ObjectActionServiceHttp {
 				_updateObjectActionParameterTypes3);
 
 			MethodHandler methodHandler = new MethodHandler(
-				methodKey, objectActionId, active, description, name,
+				methodKey, objectActionId, active, condition, description, name,
+				objectActionExecutorKey, objectActionTriggerKey,
 				parametersUnicodeProperties);
 
 			Object returnObj = null;
@@ -226,7 +228,8 @@ public class ObjectActionServiceHttp {
 	private static final Class<?>[] _addObjectActionParameterTypes0 =
 		new Class[] {
 			long.class, boolean.class, String.class, String.class, String.class,
-			String.class, com.liferay.portal.kernel.util.UnicodeProperties.class
+			String.class, String.class,
+			com.liferay.portal.kernel.util.UnicodeProperties.class
 		};
 	private static final Class<?>[] _deleteObjectActionParameterTypes1 =
 		new Class[] {long.class};
@@ -234,7 +237,8 @@ public class ObjectActionServiceHttp {
 		new Class[] {long.class};
 	private static final Class<?>[] _updateObjectActionParameterTypes3 =
 		new Class[] {
-			long.class, boolean.class, String.class, String.class,
+			long.class, boolean.class, String.class, String.class, String.class,
+			String.class, String.class,
 			com.liferay.portal.kernel.util.UnicodeProperties.class
 		};
 
