@@ -25,6 +25,13 @@ const ACTIONS = {
 		}
 	},
 
+	importAndOverrideDDMStructure(itemData) {
+		Liferay.fire('openImportAndOverrideFormModal', {
+			importAndOverrideDDMStructureURL:
+				itemData.importAndOverrideDDMStructureURL,
+		});
+	},
+
 	permissionsDDMStructure(itemData) {
 		openModal({
 			title: Liferay.Language.get('permissions'),
