@@ -36,7 +36,9 @@ ViewObjectDefinitionsDisplayContext viewObjectDefinitionsDisplayContext = (ViewO
 		props='<%=
 			HashMapBuilder.<String, Object>put(
 				"apiURL", viewObjectDefinitionsDisplayContext.getAPIURL()
-			).build()
+			).put(
+                "storageTypes", viewObjectDefinitionsDisplayContext.getObjectEntryManagerStorageTypes()
+            ).build()
 		%>'
 	/>
 </div>
