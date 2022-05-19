@@ -27,6 +27,7 @@ import {
 	removeAllSpecialCharacters,
 } from '../utils/string';
 import Input from './Form/Input';
+import Select from './Form/Select';
 
 const headers = new Headers({
 	'Accept': 'application/json',
@@ -43,6 +44,11 @@ const normalizeName: TNormalizeName = (str) => {
 	return removeAllSpecialCharacters(join);
 };
 
+const storageTypes = [
+	Liferay.Language.get('default'),
+	Liferay.Language.get('object-definition-salesforce'),
+];
+
 const ModalAddObjectDefinition: React.FC<IProps> = ({
 	apiURL,
 	observer,
@@ -52,10 +58,16 @@ const ModalAddObjectDefinition: React.FC<IProps> = ({
 		label: '',
 		name: undefined,
 		pluralLabel: '',
+		storageType: 'default',
 	};
 	const [error, setError] = useState<string>('');
 
-	const onSubmit = async ({label, name, pluralLabel}: TInitialValues) => {
+	const onSubmit = async ({
+		label,
+		name,
+		pluralLabel,
+		storageType,
+	}: TInitialValues) => {
 		const response = await fetch(apiURL, {
 			body: JSON.stringify({
 				label: {
@@ -67,6 +79,7 @@ const ModalAddObjectDefinition: React.FC<IProps> = ({
 					[defaultLanguageId]: pluralLabel,
 				},
 				scope: 'company',
+				storageType,
 			}),
 			headers,
 			method: 'POST',
@@ -107,11 +120,16 @@ const ModalAddObjectDefinition: React.FC<IProps> = ({
 		return errors;
 	};
 
-	const {errors, handleChange, handleSubmit, values} = useForm({
+	const {errors, handleChange, handleSubmit, setValues, values} = useForm({
 		initialValues,
 		onSubmit,
 		validate,
 	});
+
+	const selectedStorageType = (storageType: string) =>
+		storageTypes
+			.map((type) => type.toLowerCase())
+			.indexOf(storageType.toLowerCase());
 
 	return (
 		<ClayModal observer={observer}>
@@ -154,6 +172,23 @@ const ModalAddObjectDefinition: React.FC<IProps> = ({
 						required
 						value={values.name ?? normalizeName(values.label)}
 					/>
+
+					<Select
+						id="objectDefinitionStorageType"
+						label={Liferay.Language.get('storage-type')}
+						name="storageType"
+						onChange={({target: {value}}: any) => {
+							setValues({
+								...values,
+								storageType: storageTypes[value],
+							});
+						}}
+						options={storageTypes}
+						tooltip={Liferay.Language.get(
+							'object-definition-storage-type-tooltip'
+						)}
+						value={selectedStorageType(values.storageType)}
+					/>
 				</ClayModal.Body>
 
 				<ClayModal.Footer
@@ -187,6 +222,7 @@ type TInitialValues = {
 	label: string;
 	name?: string;
 	pluralLabel: string;
+	storageType: string;
 };
 
 type TNormalizeName = (str: string) => string;
