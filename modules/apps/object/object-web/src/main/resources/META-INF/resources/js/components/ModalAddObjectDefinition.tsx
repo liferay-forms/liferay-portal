@@ -16,6 +16,7 @@ import ClayAlert from '@clayui/alert';
 import ClayButton from '@clayui/button';
 import ClayForm from '@clayui/form';
 import ClayModal, {ClayModalProvider, useModal} from '@clayui/modal';
+import {useFeatureFlag} from 'data-engine-js-components-web';
 import {fetch} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
 
@@ -54,6 +55,7 @@ const ModalAddObjectDefinition: React.FC<IProps> = ({
 	observer,
 	onClose,
 }) => {
+	const flags = useFeatureFlag();
 	const initialValues: TInitialValues = {
 		label: '',
 		name: undefined,
@@ -68,19 +70,26 @@ const ModalAddObjectDefinition: React.FC<IProps> = ({
 		pluralLabel,
 		storageType,
 	}: TInitialValues) => {
-		const response = await fetch(apiURL, {
-			body: JSON.stringify({
-				label: {
-					[defaultLanguageId]: label,
-				},
-				name: name || normalizeName(label),
-				objectFields: [],
-				pluralLabel: {
-					[defaultLanguageId]: pluralLabel,
-				},
-				scope: 'company',
+		let objectDefinition: any = {
+			label: {
+				[defaultLanguageId]: label,
+			},
+			name: name || normalizeName(label),
+			objectFields: [],
+			pluralLabel: {
+				[defaultLanguageId]: pluralLabel,
+			},
+			scope: 'company',
+		};
+
+		if (flags['LPS-135430']) {
+			objectDefinition = {
+				...objectDefinition,
 				storageType,
-			}),
+			};
+		}
+		const response = await fetch(apiURL, {
+			body: JSON.stringify(objectDefinition),
 			headers,
 			method: 'POST',
 		});
@@ -173,22 +182,24 @@ const ModalAddObjectDefinition: React.FC<IProps> = ({
 						value={values.name ?? normalizeName(values.label)}
 					/>
 
-					<Select
-						id="objectDefinitionStorageType"
-						label={Liferay.Language.get('storage-type')}
-						name="storageType"
-						onChange={({target: {value}}: any) => {
-							setValues({
-								...values,
-								storageType: storageTypes[value],
-							});
-						}}
-						options={storageTypes}
-						tooltip={Liferay.Language.get(
-							'object-definition-storage-type-tooltip'
-						)}
-						value={selectedStorageType(values.storageType)}
-					/>
+					{flags['LPS-135430'] && (
+						<Select
+							id="objectDefinitionStorageType"
+							label={Liferay.Language.get('storage-type')}
+							name="storageType"
+							onChange={({target: {value}}: any) => {
+								setValues({
+									...values,
+									storageType: storageTypes[value],
+								});
+							}}
+							options={storageTypes}
+							tooltip={Liferay.Language.get(
+								'object-definition-storage-type-tooltip'
+							)}
+							value={selectedStorageType(values.storageType)}
+						/>
+					)}
 				</ClayModal.Body>
 
 				<ClayModal.Footer
