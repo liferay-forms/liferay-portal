@@ -96,7 +96,8 @@
 									"priority": 0
 								}
 							],
-							"priority": 0
+							"priority": 0,
+							"type": "regular"
 						}
 					],
 					"priority": 0
