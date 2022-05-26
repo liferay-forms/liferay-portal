@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.portlet.PortletURLUtil;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.vulcan.util.TransformUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -126,9 +127,12 @@ public class ViewObjectDefinitionsDisplayContext {
 	}
 
 	public List<String> getObjectEntryManagerStorageTypes() {
-		List<String> objectEntryManagerStorageTypes = new ArrayList<>(
+		List<String> objectEntryManagerStorageTypes = TransformUtil.transform(
 			_objectEntryManagerServicesTracker.
-				getObjectEntryManagerStorageTypes());
+				getObjectEntryManagerStorageTypes(),
+			objectEntryManagerStorageType -> LanguageUtil.get(
+				_objectRequestHelper.getLocale(),
+				objectEntryManagerStorageType));
 
 		Collections.sort(objectEntryManagerStorageTypes);
 
