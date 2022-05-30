@@ -95,13 +95,12 @@ public class DDMFormValuesFactoryImpl implements DDMFormValuesFactory {
 		_setDDMFormValuesAvailableLocales(
 			httpServletRequest, ddmForm, ddmFormValues);
 
-		Set<String> ddmFormFieldParameterNames = _getDDMFormFieldParameterNames(
-			httpServletRequest, ddmForm);
+		for (String ddmFormFieldParameterName :
+				_getDDMFormFieldParameterNames(httpServletRequest, ddmForm)) {
 
-		for (String ddmFormFieldParameterName : ddmFormFieldParameterNames) {
 			if (_hasDDMFormValueEdited(
-					httpServletRequest, ddmFormValues,
-					ddmFormFieldParameterName)) {
+					httpServletRequest, ddmFormFieldParameterName,
+					ddmFormValues)) {
 
 				return true;
 			}
@@ -458,8 +457,8 @@ public class DDMFormValuesFactoryImpl implements DDMFormValuesFactory {
 	}
 
 	private boolean _hasDDMFormValueEdited(
-		HttpServletRequest httpServletRequest, DDMFormValues ddmFormValues,
-		String ddmFormFieldParameterName) {
+		HttpServletRequest httpServletRequest, String ddmFormFieldParameterName,
+		DDMFormValues ddmFormValues) {
 
 		for (Locale availableLocale : ddmFormValues.getAvailableLocales()) {
 			String fullDDMFormFieldParameterName =
@@ -477,6 +476,16 @@ public class DDMFormValuesFactoryImpl implements DDMFormValuesFactory {
 
 				return true;
 			}
+		}
+
+		return false;
+	}
+	
+	private boolean _isDDMFormFieldParameter(String parameterName) {
+		if (parameterName.startsWith(
+				DDMFormRendererConstants.DDM_FORM_FIELD_NAME_PREFIX)) {
+	
+			return true;
 		}
 
 		return false;
