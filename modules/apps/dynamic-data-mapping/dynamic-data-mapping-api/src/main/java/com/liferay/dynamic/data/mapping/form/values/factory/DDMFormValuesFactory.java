@@ -31,7 +31,7 @@ public interface DDMFormValuesFactory {
 
 	public DDMFormValues create(PortletRequest portletRequest, DDMForm ddmForm);
 
-	public boolean isAnyDDMFormValueEdited(
+	public boolean hasDDMFormValueEdited(
 		HttpServletRequest httpServletRequest, DDMForm ddmForm);
 
 }

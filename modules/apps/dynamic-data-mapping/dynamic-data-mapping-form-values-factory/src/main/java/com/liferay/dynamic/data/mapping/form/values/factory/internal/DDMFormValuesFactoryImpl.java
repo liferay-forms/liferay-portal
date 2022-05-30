@@ -86,7 +86,8 @@ public class DDMFormValuesFactoryImpl implements DDMFormValuesFactory {
 		return create(_portal.getHttpServletRequest(portletRequest), ddmForm);
 	}
 
-	public boolean isAnyDDMFormValueEdited(
+	@Override
+	public boolean hasDDMFormValueEdited(
 		HttpServletRequest httpServletRequest, DDMForm ddmForm) {
 
 		DDMFormValues ddmFormValues = new DDMFormValues(ddmForm);
@@ -98,7 +99,7 @@ public class DDMFormValuesFactoryImpl implements DDMFormValuesFactory {
 			httpServletRequest, ddmForm);
 
 		for (String ddmFormFieldParameterName : ddmFormFieldParameterNames) {
-			if (_isDDMFormValueEdited(
+			if (_hasDDMFormValueEdited(
 					httpServletRequest, ddmFormValues,
 					ddmFormFieldParameterName)) {
 
@@ -456,17 +457,7 @@ public class DDMFormValuesFactoryImpl implements DDMFormValuesFactory {
 			LocaleUtil.toLanguageId(locale));
 	}
 
-	private boolean _isDDMFormFieldParameter(String parameterName) {
-		if (parameterName.startsWith(
-				DDMFormRendererConstants.DDM_FORM_FIELD_NAME_PREFIX)) {
-
-			return true;
-		}
-
-		return false;
-	}
-
-	private boolean _isDDMFormValueEdited(
+	private boolean _hasDDMFormValueEdited(
 		HttpServletRequest httpServletRequest, DDMFormValues ddmFormValues,
 		String ddmFormFieldParameterName) {
 
