@@ -708,16 +708,15 @@ public class JournalEditArticleDisplayContext {
 			return _ddmFormValues;
 		}
 
-		DDMFormValuesFactory ddmFormValuesFactory = _getDDMFormValuesFactory();
-
-		if (ddmFormValuesFactory.isAnyDDMFormValueEdited(
-				_httpServletRequest, ddmStructure.getDDMForm())) {
-
-			return ddmFormValuesFactory.create(
+		DDMFormValues ddmFormValues =
+			_getDDMFormValuesFactory().createIfValuesEdited(
 				_httpServletRequest, ddmStructure.getDDMForm());
+
+		if (ddmFormValues == null) {
+			ddmFormValues = getDDMFormValues(ddmStructure);
 		}
 
-		return getDDMFormValues(ddmStructure);
+		return ddmFormValues;
 	}
 
 	public double getVersion() {
