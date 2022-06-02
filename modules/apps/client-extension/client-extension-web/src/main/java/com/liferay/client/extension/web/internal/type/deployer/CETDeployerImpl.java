@@ -31,7 +31,6 @@ import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.FriendlyURLMapper;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.ArrayList;
@@ -118,9 +117,11 @@ public class CETDeployerImpl implements CETDeployer {
 	}
 
 	private String _getPortletId(CET cet) {
+		String primaryKey = cet.getPrimaryKey();
+
 		return "com_liferay_client_extension_web_internal_portlet_" +
 			"ClientExtensionEntryPortlet_" +
-				_portal.getJsSafePortletId(cet.getPrimaryKey());
+			   primaryKey.replaceAll("[^a-zA-Z0-9_]", StringPool.UNDERLINE);
 	}
 
 	private ServiceRegistration<ConfigurationAction>
@@ -217,9 +218,6 @@ public class CETDeployerImpl implements CETDeployer {
 
 	@Reference
 	private NPMResolver _npmResolver;
-
-	@Reference
-	private Portal _portal;
 
 	@Reference(
 		target = "(&(release.bundle.symbolic.name=com.liferay.client.extension.web)(release.schema.version>=2.0.0))"
