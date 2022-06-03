@@ -33,8 +33,6 @@ import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.GroupLocalService;
-import com.liferay.portal.kernel.service.PersistedModelLocalService;
-import com.liferay.portal.kernel.service.PersistedModelLocalServiceRegistry;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -80,7 +78,6 @@ public class AddObjectEntryObjectActionExecutorImpl
 			return;
 		}
 
-		long classPK = payloadJSONObject.getLong("classPK");
 		long defaultUserId = _userLocalService.getDefaultUserId(companyId);
 		ObjectDefinition sourceObjectDefinition =
 			_objectDefinitionLocalService.fetchObjectDefinition(
@@ -89,7 +86,7 @@ public class AddObjectEntryObjectActionExecutorImpl
 		ObjectEntry objectEntry = _objectEntryLocalService.addObjectEntry(
 			defaultUserId,
 			_getGroupId(
-				classPK, companyId, sourceObjectDefinition,
+				companyId, payloadJSONObject, sourceObjectDefinition,
 				targetObjectDefinition),
 			targetObjectDefinition.getObjectDefinitionId(),
 			_getValues(
@@ -117,7 +114,8 @@ public class AddObjectEntryObjectActionExecutorImpl
 			_objectRelationshipLocalService.
 				addObjectRelationshipMappingTableValues(
 					userId, objectRelationship.getObjectRelationshipId(),
-					classPK, objectEntry.getObjectEntryId(),
+					payloadJSONObject.getLong("classPK"),
+					objectEntry.getObjectEntryId(),
 					_getServiceContext(companyId, userId));
 		}
 	}
@@ -143,7 +141,7 @@ public class AddObjectEntryObjectActionExecutorImpl
 	}
 
 	private long _getGroupId(
-			long classPK, long companyId,
+			long companyId, JSONObject payloadJSONObject,
 			ObjectDefinition sourceObjectDefinition,
 			ObjectDefinition targetObjectDefinition)
 		throws Exception {
@@ -167,29 +165,19 @@ public class AddObjectEntryObjectActionExecutorImpl
 			return companyGroup.getGroupId();
 		}
 
+		String key = "objectEntry";
+
 		if (sourceObjectDefinition.isSystem()) {
-			return _getPersistedModelGroupId(
-				sourceObjectDefinition.getClassName(), classPK);
+			Class<?> clazz = Class.forName(
+				sourceObjectDefinition.getClassName());
+
+			key = "model" + clazz.getSimpleName();
 		}
 
-		ObjectEntry objectEntry = _objectEntryLocalService.getObjectEntry(
-			classPK);
+		Map<String, Object> map = (Map<String, Object>)payloadJSONObject.get(
+			key);
 
-		return objectEntry.getGroupId();
-	}
-
-	private long _getPersistedModelGroupId(String className, long classPK)
-		throws Exception {
-
-		PersistedModelLocalService persistedModelLocalService =
-			_persistedModelLocalServiceRegistry.getPersistedModelLocalService(
-				className);
-
-		JSONObject jsonObject = _jsonFactory.createJSONObject(
-			_jsonFactory.looseSerialize(
-				persistedModelLocalService.getPersistedModel(classPK)));
-
-		return jsonObject.getLong("groupId");
+		return GetterUtil.getLong(map.get("groupId"));
 	}
 
 	private ServiceContext _getServiceContext(long companyId, long userId) {
@@ -253,10 +241,6 @@ public class AddObjectEntryObjectActionExecutorImpl
 
 	@Reference
 	private ObjectScopeProviderRegistry _objectScopeProviderRegistry;
-
-	@Reference
-	private PersistedModelLocalServiceRegistry
-		_persistedModelLocalServiceRegistry;
 
 	@Reference
 	private UserLocalService _userLocalService;
