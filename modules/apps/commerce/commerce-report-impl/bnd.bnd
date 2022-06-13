@@ -13,7 +13,7 @@ Import-Package:\
 	\
 	!com.keypoint.*,\
 	\
-	!com.lowagie.toolbox.*,\
+	!com.lowagie.*,\
 	\
 	!com.thoughtworks.*,\
 	\
