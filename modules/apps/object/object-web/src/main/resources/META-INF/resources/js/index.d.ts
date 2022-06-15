@@ -31,6 +31,7 @@ interface ObjectAction {
 		secret?: string;
 		url?: string;
 	};
+	script?: string;
 }
 
 interface ObjectActionParameters {

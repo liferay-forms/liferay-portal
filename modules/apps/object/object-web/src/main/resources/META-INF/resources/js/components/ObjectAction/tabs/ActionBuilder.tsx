@@ -15,7 +15,7 @@
 import ClayForm, {ClayToggle} from '@clayui/form';
 import {
 	Card,
-	CodeMirrorEditor,
+	CodeEditor,
 	CustomItem,
 	ExpressionBuilder,
 	FormCustomSelect,
@@ -255,7 +255,8 @@ export default function ActionBuilder({
 				)}
 
 				{values.objectActionExecutorKey === 'groovy' && (
-					<CodeMirrorEditor
+					<CodeEditor
+						error={errors.script}
 						fixed
 						mode="groovy"
 						onChange={(script) =>

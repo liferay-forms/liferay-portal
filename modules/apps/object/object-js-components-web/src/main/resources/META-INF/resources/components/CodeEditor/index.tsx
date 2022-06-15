@@ -48,9 +48,17 @@ const CodeEditor = React.forwardRef<CodeMirror.Editor, IProps>(
 		};
 
 		return (
-			<div className={classNames('lfr-objects__code-editor', className)}>
+			<div
+				className={classNames(
+					{'lfr-objects__code-editor': !options.fixed},
+					className
+				)}
+			>
 				<FieldBase
-					className="lfr-objects__code-editor-source"
+					className={classNames(
+						{'lfr-objects__code-editor-source': !options.fixed},
+						className
+					)}
 					errorMessage={error}
 				>
 					<CodeMirrorEditor
