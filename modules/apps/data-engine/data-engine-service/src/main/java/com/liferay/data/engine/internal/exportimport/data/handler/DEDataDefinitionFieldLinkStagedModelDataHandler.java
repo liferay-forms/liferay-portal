@@ -28,6 +28,7 @@ import com.liferay.exportimport.staged.model.repository.StagedModelRepository;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.xml.Element;
 
 import java.util.Map;
@@ -146,19 +147,27 @@ public class DEDataDefinitionFieldLinkStagedModelDataHandler
 					"link-class-name")));
 		importedDEDataDefinitionFieldLink.setDdmStructureId(ddmStructureId);
 
-		DDMStructure ddmStructure = _ddmStructureLocalService.getDDMStructure(
-			ddmStructureId);
+		if (StringUtil.equals(
+				importedDEDataDefinitionFieldLink.getClassName(),
+				DDMStructureLayout.class.getName())) {
 
-		DDMStructureVersion structureVersion =
-			ddmStructure.getStructureVersion();
+			DDMStructureLayout structureLayout =
+				_ddmStructureLayoutLocalService.getStructureLayout(
+					importedDEDataDefinitionFieldLink.getClassPK());
 
-		DDMStructureLayout structureLayout =
-			_ddmStructureLayoutLocalService.
-				getStructureLayoutByStructureVersionId(
-					structureVersion.getStructureVersionId());
+			DDMStructure ddmStructure = structureLayout.getDDMStructure();
 
-		importedDEDataDefinitionFieldLink.setClassPK(
-			structureLayout.getStructureLayoutId());
+			DDMStructureVersion structureVersion =
+				ddmStructure.getStructureVersion();
+
+			structureLayout =
+				_ddmStructureLayoutLocalService.
+					getStructureLayoutByStructureVersionId(
+						structureVersion.getStructureVersionId());
+
+			importedDEDataDefinitionFieldLink.setClassPK(
+				structureLayout.getStructureLayoutId());
+		}
 
 		DEDataDefinitionFieldLink existingDEDataDefinitionFieldLink =
 			_stagedModelRepository.fetchStagedModelByUuidAndGroupId(
