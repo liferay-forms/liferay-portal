@@ -29,6 +29,7 @@ export declare function ExpressionBuilder({
 	onInput,
 	onOpenModal,
 	required,
+	showFeedback,
 	type,
 	value,
 	...otherProps
@@ -50,6 +51,7 @@ interface IProps extends React.InputHTMLAttributes<HTMLInputElement> {
 	name?: string;
 	onOpenModal: () => void;
 	required?: boolean;
+	showFeedback?: boolean;
 	type?: 'number' | 'text';
 	value?: string | number | string[];
 }
