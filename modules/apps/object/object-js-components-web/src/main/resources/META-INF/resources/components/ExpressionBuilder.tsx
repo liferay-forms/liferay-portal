@@ -37,6 +37,7 @@ export function ExpressionBuilder({
 	onInput,
 	onOpenModal,
 	required,
+	showFeedback,
 	type,
 	value,
 	...otherProps
@@ -50,6 +51,7 @@ export function ExpressionBuilder({
 			id={id}
 			label={label}
 			required={required}
+			showFeedback={showFeedback}
 		>
 			<ClayInput.Group>
 				<ClayInput.GroupItem prepend>
@@ -211,6 +213,7 @@ interface IProps extends React.InputHTMLAttributes<HTMLInputElement> {
 	name?: string;
 	onOpenModal: () => void;
 	required?: boolean;
+	showFeedback?: boolean;
 	type?: 'number' | 'text';
 	value?: string | number | string[];
 }
