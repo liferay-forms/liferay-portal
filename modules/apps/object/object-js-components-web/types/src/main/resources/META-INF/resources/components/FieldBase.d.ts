@@ -23,6 +23,7 @@ export declare function FieldBase({
 	id,
 	label,
 	required,
+	hideFeedback,
 	tooltip,
 	warningMessage,
 }: IProps): JSX.Element;
@@ -35,6 +36,7 @@ interface IProps {
 	id?: string;
 	label?: string;
 	required?: boolean;
+	hideFeedback?: boolean;
 	tooltip?: string;
 	warningMessage?: string;
 }
