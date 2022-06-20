@@ -22,6 +22,7 @@ export default function ActionBuilder({
 	objectActionExecutors,
 	objectActionTriggers,
 	objectDefinitionsRelationshipsURL,
+	predefinedValuesErrors,
 	setValues,
 	validateExpressionURL,
 	values,
@@ -32,6 +33,10 @@ interface IProps {
 	objectActionExecutors: CustomItem[];
 	objectActionTriggers: CustomItem[];
 	objectDefinitionsRelationshipsURL: string;
+	predefinedValuesErrors: Array<{
+		fieldName: string;
+		message: string;
+	}>;
 	setValues: (values: Partial<ObjectAction>) => void;
 	validateExpressionURL: string;
 	values: Partial<ObjectAction>;

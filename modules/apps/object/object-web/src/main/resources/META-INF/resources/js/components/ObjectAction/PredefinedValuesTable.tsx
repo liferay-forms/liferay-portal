@@ -29,12 +29,13 @@ import './PredefinedValuesTable.scss';
 
 export default function PredefinedValuesTable({
 	currentObjectDefinitionFields,
+	errors,
 	objectFieldsMap,
+	setShowErrorAlert,
 	setValues,
 	values,
 }: IProps) {
 	const {predefinedValues = []} = values.parameters as ObjectActionParameters;
-
 	const getSelectedFields = () => {
 		const objectFields: ObjectField[] = [];
 
@@ -57,7 +58,16 @@ export default function PredefinedValuesTable({
 
 			return updatedPredefinedValues;
 		};
+
+		const fieldNameErrors = errors?.map(({fieldName}) => fieldName);
+
+		setShowErrorAlert(!!fieldNameErrors.length);
+
 		const rows = predefinedValues.map((item) => {
+			const hasError = fieldNameErrors?.find(
+				(fieldName) => fieldName === item.name
+			);
+
 			return (
 				<ClayTable.Row key={item.name}>
 					<ClayTable.Cell className="lfr-object-web__predefined-values-table-cell-field">
@@ -120,6 +130,11 @@ export default function PredefinedValuesTable({
 						<div className="lfr-object-web__predefined-values-table-new-value">
 							<ExpressionBuilder
 								buttonDisabled={item.inputAsValue}
+								error={
+									hasError
+										? Liferay.Language.get('syntax-error')
+										: ''
+								}
 								onChange={({target: {value}}: any) => {
 									const {name} = item;
 									setValues({
@@ -162,6 +177,7 @@ export default function PredefinedValuesTable({
 												'input-a-value-or-create-an-expression'
 										  )
 								}
+								showFeedback={false}
 								value={item.value}
 							/>
 						</div>
@@ -212,7 +228,14 @@ export default function PredefinedValuesTable({
 		});
 
 		return rows;
-	}, [objectFieldsMap, predefinedValues, setValues, values.parameters]);
+	}, [
+		errors,
+		objectFieldsMap,
+		predefinedValues,
+		setShowErrorAlert,
+		setValues,
+		values.parameters,
+	]);
 
 	const handleAddFields = () => {
 		const parentWindow = Liferay.Util.getOpener();
@@ -302,8 +325,10 @@ export default function PredefinedValuesTable({
 
 interface IProps {
 	currentObjectDefinitionFields: ObjectField[];
+	errors: Array<{fieldName: string; message: string}>;
 	objectFieldsMap: Map<string, ObjectField>;
 	predefinedValues?: PredefinedValue[];
+	setShowErrorAlert: (boolean: boolean) => void;
 	setValues: (params: Partial<ObjectAction>) => void;
 	values: Partial<ObjectAction>;
 }
