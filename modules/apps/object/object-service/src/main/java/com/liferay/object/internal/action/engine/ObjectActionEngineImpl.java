@@ -21,6 +21,7 @@ import com.liferay.object.action.engine.ObjectActionEngine;
 import com.liferay.object.action.executor.ObjectActionExecutor;
 import com.liferay.object.action.executor.ObjectActionExecutorRegistry;
 import com.liferay.object.constants.ObjectActionConstants;
+import com.liferay.object.internal.action.util.ObjectActionThreadLocal;
 import com.liferay.object.internal.action.util.ObjectActionVariablesUtil;
 import com.liferay.object.model.ObjectAction;
 import com.liferay.object.model.ObjectDefinition;
@@ -122,6 +123,15 @@ public class ObjectActionEngineImpl implements ObjectActionEngine {
 
 		for (ObjectAction objectAction : objectActions) {
 			try {
+				if (ObjectActionThreadLocal.hasObjectActionExecuted(
+						objectAction.getObjectActionId())) {
+
+					continue;
+				}
+
+				ObjectActionThreadLocal.addObjectActionId(
+					objectAction.getObjectActionId());
+
 				if (!_evaluateConditionExpression(
 						objectAction.getConditionExpression(), variables)) {
 
