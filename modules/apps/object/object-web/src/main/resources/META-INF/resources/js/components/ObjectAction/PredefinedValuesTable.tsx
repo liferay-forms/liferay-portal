@@ -32,6 +32,7 @@ export default function PredefinedValuesTable({
 	errors,
 	objectFieldsMap,
 	setShowErrorAlert,
+	setShowRequiredFieldsAlert,
 	setValues,
 	values,
 }: IProps) {
@@ -61,7 +62,43 @@ export default function PredefinedValuesTable({
 
 		const fieldNameErrors = errors?.map(({fieldName}) => fieldName);
 
-		setShowErrorAlert(!!fieldNameErrors.length);
+		const predefinedValueSet = new Set(
+			predefinedValues.map(({name}) => name)
+		);
+
+		const requiredFields = new Set(
+			currentObjectDefinitionFields.map(({name, required}) => {
+				if (required === true) {
+					return name;
+				}
+			})
+		);
+
+		fieldNameErrors.forEach((name) => {
+			const emptyValues = values.parameters?.predefinedValues?.filter(
+				(field) => field.value === '' && field.name === name
+			);
+
+			if (
+				emptyValues &&
+				emptyValues.length > 0 &&
+				requiredFields.has(name)
+			) {
+				setShowErrorAlert(false);
+				setShowRequiredFieldsAlert(true);
+
+				return;
+			}
+
+			const hasSyntaxError =
+				fieldNameErrors.filter((name) => predefinedValueSet.has(name))
+					.length > 0;
+
+			if (hasSyntaxError) {
+				setShowErrorAlert(true);
+				setShowRequiredFieldsAlert(false);
+			}
+		});
 
 		const rows = predefinedValues.map((item) => {
 			const hasError = fieldNameErrors?.find(
@@ -229,10 +266,12 @@ export default function PredefinedValuesTable({
 
 		return rows;
 	}, [
+		currentObjectDefinitionFields,
 		errors,
 		objectFieldsMap,
 		predefinedValues,
 		setShowErrorAlert,
+		setShowRequiredFieldsAlert,
 		setValues,
 		values.parameters,
 	]);
@@ -329,6 +368,7 @@ interface IProps {
 	objectFieldsMap: Map<string, ObjectField>;
 	predefinedValues?: PredefinedValue[];
 	setShowErrorAlert: (boolean: boolean) => void;
+	setShowRequiredFieldsAlert: (boolean: boolean) => void;
 	setValues: (params: Partial<ObjectAction>) => void;
 	values: Partial<ObjectAction>;
 }

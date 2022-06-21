@@ -72,6 +72,9 @@ export default function ActionBuilder({
 	}, [notificationTemplates, values.parameters]);
 
 	const [showErrorAlert, setShowErrorAlert] = useState<boolean>(false);
+	const [showRequiredFieldsAlert, setShowRequiredFieldsAlert] = useState<
+		boolean
+	>(false);
 
 	const [relationships, setRelationships] = useState<
 		ObjectDefinitionsRelationship[]
@@ -308,6 +311,23 @@ export default function ActionBuilder({
 				</ClayAlert>
 			)}
 
+			{showRequiredFieldsAlert && (
+				<ClayAlert
+					className="lfr-objects__side-panel-content-container"
+					displayType="danger"
+					onClose={
+						showRequiredFieldsAlert
+							? () => setShowRequiredFieldsAlert(false)
+							: undefined
+					}
+					title={`${Liferay.Language.get('error')}:`}
+				>
+					{Liferay.Language.get(
+						'required-fields-must-have-predefined-values'
+					)}
+				</ClayAlert>
+			)}
+
 			<Card title={Liferay.Language.get('trigger')}>
 				<Card
 					title={Liferay.Language.get('when[object]')}
@@ -496,6 +516,9 @@ export default function ActionBuilder({
 							errors={predefinedValuesErrors}
 							objectFieldsMap={objectFieldsMap}
 							setShowErrorAlert={setShowErrorAlert}
+							setShowRequiredFieldsAlert={
+								setShowRequiredFieldsAlert
+							}
 							setValues={setValues}
 							values={values}
 						/>

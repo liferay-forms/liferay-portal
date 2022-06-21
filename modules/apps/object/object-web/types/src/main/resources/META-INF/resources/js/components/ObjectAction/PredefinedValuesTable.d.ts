@@ -20,6 +20,7 @@ export default function PredefinedValuesTable({
 	errors,
 	objectFieldsMap,
 	setShowErrorAlert,
+	setShowRequiredFieldsAlert,
 	setValues,
 	values,
 }: IProps): JSX.Element;
@@ -32,6 +33,7 @@ interface IProps {
 	objectFieldsMap: Map<string, ObjectField>;
 	predefinedValues?: PredefinedValue[];
 	setShowErrorAlert: (boolean: boolean) => void;
+	setShowRequiredFieldsAlert: (boolean: boolean) => void;
 	setValues: (params: Partial<ObjectAction>) => void;
 	values: Partial<ObjectAction>;
 }
