@@ -12,32 +12,36 @@
  * details.
  */
 
-import {ReactNode} from 'react';
-import './FieldBase.scss';
-export declare function FieldBase({
-	children,
+import {ClaySelect} from '@clayui/form';
+import React from 'react';
+export declare function SelectWithOption({
+	ariaLabel,
 	className,
 	disabled,
-	errorMessage,
-	helpMessage,
+	error,
+	feedbackMessage,
 	id,
 	label,
 	required,
-	showFeedback,
 	tooltip,
-	warningMessage,
+	...otherProps
 }: IProps): JSX.Element;
-interface IProps {
-	children: ReactNode;
-	className?: string;
+interface IProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+	ariaLabel?: string;
 	disabled?: boolean;
-	errorMessage?: string;
-	helpMessage?: string;
-	id?: string;
+	error?: string;
+	feedbackMessage?: string;
 	label?: string;
+	options: Array<
+		(
+			| React.ComponentProps<typeof ClaySelect.Option>
+			| React.ComponentProps<typeof ClaySelect.OptGroup>
+		) & {
+			options?: Array<React.ComponentProps<typeof ClaySelect.Option>>;
+			type?: 'group';
+		}
+	>;
 	required?: boolean;
-	showFeedback?: boolean;
 	tooltip?: string;
-	warningMessage?: string;
 }
 export {};

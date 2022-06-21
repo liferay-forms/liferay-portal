@@ -24,6 +24,7 @@ import {FieldBase} from './FieldBase';
 import './ExpressionBuilder.scss';
 
 export function ExpressionBuilder({
+	buttonDisabled,
 	className,
 	component,
 	disabled,
@@ -36,6 +37,7 @@ export function ExpressionBuilder({
 	onInput,
 	onOpenModal,
 	required,
+	showFeedback,
 	type,
 	value,
 	...otherProps
@@ -49,6 +51,7 @@ export function ExpressionBuilder({
 			id={id}
 			label={label}
 			required={required}
+			showFeedback={showFeedback}
 		>
 			<ClayInput.Group>
 				<ClayInput.GroupItem prepend>
@@ -67,6 +70,7 @@ export function ExpressionBuilder({
 
 				<ClayInput.GroupItem append shrink>
 					<ClayButtonWithIcon
+						disabled={buttonDisabled}
 						displayType="secondary"
 						onClick={onOpenModal}
 						symbol="code"
@@ -199,6 +203,7 @@ interface IModalProps {
 	sidebarElements: SidebarCategory[];
 }
 interface IProps extends React.InputHTMLAttributes<HTMLInputElement> {
+	buttonDisabled?: boolean;
 	component?: 'input' | 'textarea' | React.ForwardRefExoticComponent<any>;
 	disabled?: boolean;
 	error?: string;
@@ -208,6 +213,7 @@ interface IProps extends React.InputHTMLAttributes<HTMLInputElement> {
 	name?: string;
 	onOpenModal: () => void;
 	required?: boolean;
+	showFeedback?: boolean;
 	type?: 'number' | 'text';
 	value?: string | number | string[];
 }

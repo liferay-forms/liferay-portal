@@ -12,23 +12,30 @@
  * details.
  */
 
-/// <reference types="react" />
-
-import {CustomItem} from '@liferay/object-js-components-web';
-export default function AddObjectAction({
-	apiURL,
-	ffNotificationTemplates,
-	objectActionExecutors,
-	objectActionTriggers,
-	objectDefinitionsRelationshipsURL,
-	validateExpressionURL,
-}: IProps): JSX.Element;
-interface IProps {
-	apiURL: string;
-	ffNotificationTemplates: boolean;
-	objectActionExecutors: CustomItem[];
-	objectActionTriggers: CustomItem[];
-	objectDefinitionsRelationshipsURL: string;
-	validateExpressionURL: string;
+import React from 'react';
+import './ModalAddColumns.scss';
+declare function ModalAddColumns<T extends ModalItem>({
+	disableRequired,
+	getName,
+	items,
+	observer,
+	onClose,
+	onSave,
+	selected,
+}: IProps<T>): JSX.Element;
+export default ModalAddColumns;
+interface ModalItem {
+	id?: unknown;
+	label: LocalizedValue<string>;
+	required?: boolean;
 }
-export {};
+interface IProps<T extends ModalItem>
+	extends React.HTMLAttributes<HTMLElement> {
+	disableRequired?: boolean;
+	getName: (label: T) => string;
+	items: T[];
+	observer: any;
+	onClose: () => void;
+	onSave: (selected: T[]) => void;
+	selected?: T[];
+}

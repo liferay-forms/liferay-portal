@@ -14,23 +14,25 @@
 
 /// <reference types="react" />
 
-import {CustomItem} from '@liferay/object-js-components-web';
-export default function EditObjectAction({
-	ffNotificationTemplates,
-	objectAction: {id, ...values},
-	objectActionExecutors,
-	objectActionTriggers,
-	objectDefinitionsRelationshipsURL,
-	readOnly,
-	validateExpressionURL,
+import './PredefinedValuesTable.scss';
+export default function PredefinedValuesTable({
+	currentObjectDefinitionFields,
+	errors,
+	objectFieldsMap,
+	setShowErrorAlert,
+	setValues,
+	values,
 }: IProps): JSX.Element;
 interface IProps {
-	ffNotificationTemplates: boolean;
-	objectAction: ObjectAction;
-	objectActionExecutors: CustomItem[];
-	objectActionTriggers: CustomItem[];
-	objectDefinitionsRelationshipsURL: string;
-	readOnly?: boolean;
-	validateExpressionURL: string;
+	currentObjectDefinitionFields: ObjectField[];
+	errors: Array<{
+		fieldName: string;
+		message: string;
+	}>;
+	objectFieldsMap: Map<string, ObjectField>;
+	predefinedValues?: PredefinedValue[];
+	setShowErrorAlert: (boolean: boolean) => void;
+	setValues: (params: Partial<ObjectAction>) => void;
+	values: Partial<ObjectAction>;
 }
 export {};
