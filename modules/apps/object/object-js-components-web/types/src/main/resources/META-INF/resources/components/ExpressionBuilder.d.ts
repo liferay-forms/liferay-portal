@@ -16,6 +16,7 @@ import React from 'react';
 import {SidebarCategory} from './CodeEditor/index';
 import './ExpressionBuilder.scss';
 export declare function ExpressionBuilder({
+	buttonDisabled,
 	className,
 	component,
 	disabled,
@@ -28,6 +29,7 @@ export declare function ExpressionBuilder({
 	onInput,
 	onOpenModal,
 	required,
+	showFeedback,
 	type,
 	value,
 	...otherProps
@@ -39,6 +41,7 @@ interface IModalProps {
 	sidebarElements: SidebarCategory[];
 }
 interface IProps extends React.InputHTMLAttributes<HTMLInputElement> {
+	buttonDisabled?: boolean;
 	component?: 'input' | 'textarea' | React.ForwardRefExoticComponent<any>;
 	disabled?: boolean;
 	error?: string;
@@ -48,6 +51,7 @@ interface IProps extends React.InputHTMLAttributes<HTMLInputElement> {
 	name?: string;
 	onOpenModal: () => void;
 	required?: boolean;
+	showFeedback?: boolean;
 	type?: 'number' | 'text';
 	value?: string | number | string[];
 }

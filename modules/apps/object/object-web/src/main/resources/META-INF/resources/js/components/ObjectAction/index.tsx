@@ -42,11 +42,16 @@ export default function Action({
 	objectAction: initialValues,
 	objectActionExecutors,
 	objectActionTriggers,
+	objectDefinitionsRelationshipsURL,
 	readOnly,
 	requestParams: {method, url},
 	successMessage,
 	validateExpressionURL,
 }: IProps) {
+	const [errorMessage, setErrorMessage] = useState<
+		FormError<ObjectAction & ObjectActionParameters>
+	>({});
+	const [predefinedValueErrors, setPredefinedValueErrors] = useState([]);
 	const onSubmit = async (objectAction: ObjectAction) => {
 		const response = await fetch(url, {
 			body: JSON.stringify(objectAction),
@@ -66,8 +71,32 @@ export default function Action({
 
 		const {
 			title = Liferay.Language.get('an-error-occurred'),
-		} = (await response.json()) as {title?: string};
+			detail,
+		} = (await response.json()) as {detail: string; title?: string};
 
+		const errorMessages: any = {};
+		const predefinedErrorsMessages: any = {};
+		JSON.parse(detail).forEach(
+			({
+				fieldName,
+				message,
+				messages,
+			}: {
+				fieldName: keyof ObjectAction;
+				message: string;
+				messages: {fieldName: string; message: string}[];
+			}) => {
+				if (fieldName === 'predefinedValues') {
+					predefinedErrorsMessages[fieldName] = messages;
+				}
+				else {
+					errorMessages[fieldName] = message;
+				}
+			}
+		);
+
+		setErrorMessage(errorMessages);
+		setPredefinedValueErrors(predefinedErrorsMessages.predefinedValues);
 		openToast({message: title, type: 'danger'});
 	};
 
@@ -111,10 +140,18 @@ export default function Action({
 
 				<ClayTabs.TabPane>
 					<ActionBuilder
-						errors={errors}
+						errors={
+							Object.keys(errors).length !== 0
+								? errors
+								: errorMessage
+						}
 						ffNotificationTemplates={ffNotificationTemplates}
 						objectActionExecutors={objectActionExecutors}
 						objectActionTriggers={objectActionTriggers}
+						objectDefinitionsRelationshipsURL={
+							objectDefinitionsRelationshipsURL
+						}
+						predefinedValuesErrors={predefinedValueErrors}
 						setValues={setValues}
 						validateExpressionURL={validateExpressionURL}
 						values={values}
@@ -144,6 +181,12 @@ function useObjectActionForm({initialValues, onSubmit}: IUseObjectActionForm) {
 			invalidateRequired(values.parameters?.url)
 		) {
 			errors.url = REQUIRED_MSG;
+		}
+		else if (
+			values.objectActionExecutorKey === 'add-object-entry' &&
+			!values.parameters?.objectDefinitionId
+		) {
+			errors.objectDefinitionId = REQUIRED_MSG;
 		}
 
 		if (
@@ -175,6 +218,7 @@ interface IProps {
 	objectAction: Partial<ObjectAction>;
 	objectActionExecutors: CustomItem[];
 	objectActionTriggers: CustomItem[];
+	objectDefinitionsRelationshipsURL: string;
 	readOnly?: boolean;
 	requestParams: {
 		method: 'GET' | 'POST' | 'DELETE' | 'PUT';

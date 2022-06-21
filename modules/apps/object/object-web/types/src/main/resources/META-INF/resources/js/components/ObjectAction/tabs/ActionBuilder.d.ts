@@ -21,6 +21,8 @@ export default function ActionBuilder({
 	ffNotificationTemplates,
 	objectActionExecutors,
 	objectActionTriggers,
+	objectDefinitionsRelationshipsURL,
+	predefinedValuesErrors,
 	setValues,
 	validateExpressionURL,
 	values,
@@ -30,6 +32,11 @@ interface IProps {
 	ffNotificationTemplates: boolean;
 	objectActionExecutors: CustomItem[];
 	objectActionTriggers: CustomItem[];
+	objectDefinitionsRelationshipsURL: string;
+	predefinedValuesErrors: Array<{
+		fieldName: string;
+		message: string;
+	}>;
 	setValues: (values: Partial<ObjectAction>) => void;
 	validateExpressionURL: string;
 	values: Partial<ObjectAction>;
