@@ -74,6 +74,25 @@
 		<column localized="true" name="subject" type="String" />
 		<column localized="true" name="to" type="String" />
 	</entity>
+	<entity local-service="true" name="NotificationTemplateAttachment" remote-service="false" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="notificationTemplateAttachmentId" primary="true" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="notificationTemplateId" type="long" />
+		<column name="objectFieldId" type="long" />
+	</entity>
 	<exceptions>
 		<exception>NotificationTemplateFrom</exception>
 		<exception>NotificationTemplateName</exception>
