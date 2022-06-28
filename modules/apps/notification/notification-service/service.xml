@@ -63,6 +63,7 @@
 
 		<!-- Other fields -->
 
+		<column name="objectDefinitionId" type="long" />
 		<column name="bcc" type="String" />
 		<column localized="true" name="body" type="String" />
 		<column name="cc" type="String" />
