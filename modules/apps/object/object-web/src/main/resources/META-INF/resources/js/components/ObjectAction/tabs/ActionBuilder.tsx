@@ -182,6 +182,14 @@ export default function ActionBuilder({
 		setValues({conditionExpression});
 	};
 
+	const isValidField = (field: ObjectField) => {
+		return (
+			field.businessType !== 'Aggregation' &&
+			field.businessType !== 'Relationship' &&
+			!field.system
+		);
+	};
+
 	const fetchObjectDefinitionFields = async () => {
 		const response = await fetch(
 			`/o/object-admin/v1.0/object-definitions/${values.parameters?.objectDefinitionId}/object-fields`,
@@ -193,43 +201,38 @@ export default function ActionBuilder({
 
 		const {items} = (await response.json()) as {items: ObjectField[]};
 
-		const allFields: ObjectField[] = [];
+		const validFields: ObjectField[] = [];
 
 		items.forEach((field) => {
-			if (
-				field.businessType !== 'Aggregation' &&
-				field.businessType !== 'Relationship' &&
-				!field.system
-			) {
-				allFields.push(field);
+			if (isValidField(field)) {
+				validFields.push(field);
 			}
 		});
 
-		setCurrentObjectDefinitionFields(allFields);
+		setCurrentObjectDefinitionFields(validFields);
 
 		const {
 			predefinedValues = [],
 		} = values.parameters as ObjectActionParameters;
 
+		const predefinedValuesMap = new Map<string, PredefinedValue>();
+
+		predefinedValues.forEach((field) => {
+			predefinedValuesMap.set(field.name, field);
+		});
+
 		const newPredefinedValues: PredefinedValue[] = [];
 
-		allFields.forEach((field) => {
-			let hasValue;
-			predefinedValues.forEach((item) => {
-				if (item.name === field.name) {
-					hasValue = item;
+		validFields.forEach(({name, required}) => {
+			const value = predefinedValuesMap.get(name);
 
-					return;
-				}
-			});
-
-			if (hasValue) {
-				newPredefinedValues.push(hasValue);
+			if (value) {
+				newPredefinedValues.push(value);
 			}
-			else if (field.required) {
+			else if (required) {
 				newPredefinedValues.push({
 					inputAsValue: false,
-					name: field.name,
+					name,
 					value: '',
 				});
 			}
@@ -268,15 +271,11 @@ export default function ActionBuilder({
 
 		const {items} = (await response.json()) as {items: ObjectField[]};
 
-		const allFields: ObjectField[] = [];
+		const validFields: ObjectField[] = [];
 
 		items.forEach((field) => {
-			if (
-				field.businessType !== 'Aggregation' &&
-				field.businessType !== 'Relationship' &&
-				!field.system
-			) {
-				allFields.push(field);
+			if (isValidField(field)) {
+				validFields.push(field);
 
 				if (field.required) {
 					(parameters.predefinedValues as PredefinedValue[]).push({
@@ -288,7 +287,7 @@ export default function ActionBuilder({
 			}
 		});
 
-		setCurrentObjectDefinitionFields(allFields);
+		setCurrentObjectDefinitionFields(validFields);
 
 		const normalizedParameters = {...values.parameters};
 
