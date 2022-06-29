@@ -464,7 +464,7 @@ public class ObjectRelatedModelsProviderTest {
 		return _objectRelationshipLocalService.addObjectRelationship(
 			TestPropsValues.getUserId(),
 			_objectDefinition1.getObjectDefinitionId(),
-			_objectDefinition2.getObjectDefinitionId(),
+			_objectDefinition2.getObjectDefinitionId(), 0,
 			ObjectRelationshipConstants.DELETION_TYPE_PREVENT,
 			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 			StringUtil.randomId(), relationshipType);
@@ -500,7 +500,7 @@ public class ObjectRelatedModelsProviderTest {
 			_objectRelationshipLocalService.addObjectRelationship(
 				TestPropsValues.getUserId(),
 				_objectDefinition2.getObjectDefinitionId(),
-				systemObjectDefinition.getObjectDefinitionId(),
+				systemObjectDefinition.getObjectDefinitionId(), 0,
 				ObjectRelationshipConstants.DELETION_TYPE_PREVENT,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				StringUtil.randomId(),
@@ -582,7 +582,7 @@ public class ObjectRelatedModelsProviderTest {
 
 		objectRelationship =
 			_objectRelationshipLocalService.updateObjectRelationship(
-				objectRelationship.getObjectRelationshipId(),
+				objectRelationship.getObjectRelationshipId(), 0,
 				ObjectRelationshipConstants.DELETION_TYPE_DISASSOCIATE,
 				objectRelationship.getLabelMap());
 
@@ -597,7 +597,7 @@ public class ObjectRelatedModelsProviderTest {
 
 		objectRelationship =
 			_objectRelationshipLocalService.updateObjectRelationship(
-				objectRelationship.getObjectRelationshipId(),
+				objectRelationship.getObjectRelationshipId(), 0,
 				ObjectRelationshipConstants.DELETION_TYPE_CASCADE,
 				objectRelationship.getLabelMap());
 
@@ -676,7 +676,7 @@ public class ObjectRelatedModelsProviderTest {
 			_objectRelationshipLocalService.addObjectRelationship(
 				TestPropsValues.getUserId(),
 				_objectDefinition1.getObjectDefinitionId(),
-				systemObjectDefinition.getObjectDefinitionId(),
+				systemObjectDefinition.getObjectDefinitionId(), 0,
 				ObjectRelationshipConstants.DELETION_TYPE_PREVENT,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				StringUtil.randomId(),
@@ -771,7 +771,7 @@ public class ObjectRelatedModelsProviderTest {
 
 		objectRelationship =
 			_objectRelationshipLocalService.updateObjectRelationship(
-				objectRelationship.getObjectRelationshipId(),
+				objectRelationship.getObjectRelationshipId(), 0,
 				ObjectRelationshipConstants.DELETION_TYPE_DISASSOCIATE,
 				objectRelationship.getLabelMap());
 
@@ -809,7 +809,7 @@ public class ObjectRelatedModelsProviderTest {
 
 		objectRelationship =
 			_objectRelationshipLocalService.updateObjectRelationship(
-				objectRelationship.getObjectRelationshipId(),
+				objectRelationship.getObjectRelationshipId(), 0,
 				ObjectRelationshipConstants.DELETION_TYPE_CASCADE,
 				objectRelationship.getLabelMap());
 

@@ -1205,7 +1205,7 @@ public class ObjectDefinitionLocalServiceTest {
 			_objectRelationshipLocalService.addObjectRelationship(
 				TestPropsValues.getUserId(),
 				objectDefinition1.getObjectDefinitionId(),
-				objectDefinition2.getObjectDefinitionId(),
+				objectDefinition2.getObjectDefinitionId(), 0,
 				ObjectRelationshipConstants.DELETION_TYPE_PREVENT,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				StringUtil.randomId(),
