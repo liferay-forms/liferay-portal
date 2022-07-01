@@ -197,6 +197,7 @@
 		<field name="objectDefinitionId1" type="long" />
 		<field name="objectDefinitionId2" type="long" />
 		<field name="objectFieldId2" type="long" />
+		<field name="parameterObjectFieldId" type="long" />
 		<field name="deletionType" type="String" />
 		<field name="DBTableName" type="String" />
 		<field localized="true" name="label" type="String" />
