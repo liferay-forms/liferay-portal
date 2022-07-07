@@ -143,11 +143,15 @@ ViewListTypeEntriesDisplayContext viewListTypeEntriesDisplayContext = (ViewListT
 							'<%= LanguageUtil.get(request, "the-picklist-was-updated-successfully") %>',
 						type: 'success',
 					});
+					const parentWindow = Liferay.Util.getOpener();
 
 					setTimeout(() => {
-						const parentWindow = Liferay.Util.getOpener();
 						parentWindow.Liferay.fire('close-side-panel');
 					}, 1500);
+
+					setTimeout(() => {
+						parentWindow.location.reload();
+					}, 2000);
 				}
 				else {
 					return response.json();
