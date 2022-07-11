@@ -129,8 +129,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>RESET_FILTERS</td>
-	<td>//*[contains(@class,'management-bar')]//*[@type='button' and contains(text(), 'Reset Filters')]</td>
+	<td>CLEAR_FILTERS</td>
+	<td>//*[contains(@class,'management-bar')]//*[@type='button' and contains(text(), 'Clear Filters')]</td>
 	<td></td>
 </tr>
 <tr>

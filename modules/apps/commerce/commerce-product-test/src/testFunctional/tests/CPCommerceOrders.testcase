@@ -1862,7 +1862,7 @@ definition {
 			key_productName = "Commerce Account 1",
 			locator1 = "CommerceOrders#ORDER_DETAILS_PRODUCT_NAME");
 
-		Button.click(button = "Reset Filters");
+		Button.click(button = "Clear Filters");
 
 		Click(locator1 = "CommerceEntry#FILTER_DROPDOWN_MENU");
 
@@ -1880,7 +1880,7 @@ definition {
 			key_productName = "Commerce Account 2",
 			locator1 = "CommerceOrders#ORDER_DETAILS_PRODUCT_NAME");
 
-		Button.click(button = "Reset Filters");
+		Button.click(button = "Clear Filters");
 
 		Click(locator1 = "CommerceEntry#FILTER_DROPDOWN_MENU");
 
@@ -1902,7 +1902,7 @@ definition {
 			key_productName = "Commerce Account 2",
 			locator1 = "CommerceOrders#ORDER_DETAILS_PRODUCT_NAME");
 
-		Button.click(button = "Reset Filters");
+		Button.click(button = "Clear Filters");
 
 		Click(locator1 = "CommerceEntry#FILTER_DROPDOWN_MENU");
 
@@ -1918,7 +1918,7 @@ definition {
 			key_productName = "Commerce Account 2",
 			locator1 = "CommerceOrders#ORDER_DETAILS_PRODUCT_NAME");
 
-		Button.click(button = "Reset Filters");
+		Button.click(button = "Clear Filters");
 
 		Click(locator1 = "CommerceEntry#FILTER_DROPDOWN_MENU");
 
@@ -1942,7 +1942,7 @@ definition {
 			key_productName = "Commerce Account 2",
 			locator1 = "CommerceOrders#ORDER_DETAILS_PRODUCT_NAME");
 
-		Button.click(button = "Reset Filters");
+		Button.click(button = "Clear Filters");
 
 		Click(locator1 = "CommerceEntry#FILTER_DROPDOWN_MENU");
 
