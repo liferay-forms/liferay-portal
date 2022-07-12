@@ -235,14 +235,7 @@ const NumericInputMask: React.FC<IProps> = ({
 							min={MIN_DECIMAL_PLACES}
 							name="decimal_places"
 							onBlur={(event: any) => {
-								let {value: newValue} = event.target;
-
-								newValue = limitValue({
-									defaultValue: DEFAULT_DECIMAL_PLACES,
-									max: MAX_DECIMAL_PLACES,
-									min: MIN_DECIMAL_PLACES,
-									value: newValue,
-								});
+								const {value: newValue} = event.target;
 
 								setDecimalPlaces(newValue);
 								handleChange(
@@ -256,16 +249,15 @@ const NumericInputMask: React.FC<IProps> = ({
 									? newValue.replace('-', '')
 									: newValue;
 
-								if (newValue <= MAX_DECIMAL_PLACES) {
-									newValue =
-										newValue === 0
-											? ''
-											: parseInt(newValue, 10);
+								newValue = limitValue({
+									defaultValue: DEFAULT_DECIMAL_PLACES,
+									max: MAX_DECIMAL_PLACES,
+									min: MIN_DECIMAL_PLACES,
+									value: newValue === '' ? 0 : newValue,
+								});
+								setDecimalPlaces(newValue);
 
-									setDecimalPlaces(newValue);
-
-									handleChange('decimalPlaces', newValue);
-								}
+								handleChange('decimalPlaces', newValue);
 							}}
 							type="number"
 							value={decimalPlaces}

@@ -25,7 +25,7 @@ export function limitValue({
 	min: number;
 	value: number;
 }) {
-	if (isNaN(value) || value < min) {
+	if (value === 0 || isNaN(value) || value < min) {
 		return defaultValue;
 	}
 	else if (value > max) {
