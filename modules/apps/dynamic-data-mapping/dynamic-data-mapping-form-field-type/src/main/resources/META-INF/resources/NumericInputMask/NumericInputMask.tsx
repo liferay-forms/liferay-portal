@@ -255,12 +255,14 @@ const NumericInputMask: React.FC<IProps> = ({
 								newValue = newValue.includes('-')
 									? newValue.replace('-', '')
 									: newValue;
+								if (newValue === '0' || newValue === '') {
+									setDecimalPlaces(DEFAULT_DECIMAL_PLACES);
+
+									return;
+								}
 
 								if (newValue <= MAX_DECIMAL_PLACES) {
-									newValue =
-										newValue === 0
-											? ''
-											: parseInt(newValue, 10);
+									newValue = parseInt(newValue, 10);
 
 									setDecimalPlaces(newValue);
 
