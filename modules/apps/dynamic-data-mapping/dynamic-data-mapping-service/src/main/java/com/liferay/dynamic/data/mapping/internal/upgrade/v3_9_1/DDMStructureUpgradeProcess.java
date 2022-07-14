@@ -24,7 +24,6 @@ import com.liferay.dynamic.data.mapping.util.DDMFormDeserializeUtil;
 import com.liferay.dynamic.data.mapping.util.DDMFormSerializeUtil;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.petra.string.StringBundler;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.jdbc.AutoBatchPreparedStatementUtil;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -68,9 +67,7 @@ public class DDMStructureUpgradeProcess extends UpgradeProcess {
 
 		ddmFormFieldOptionsValues.forEach(
 			ddmFormFieldOptionsValue -> ddmFormFieldOptions.addOptionReference(
-				ddmFormFieldOptionsValue,
-				ddmFormFieldOptionsValue.replaceAll(
-					"([\\p{Punct}|\\p{Space}$]|_)+", StringPool.BLANK)));
+				ddmFormFieldOptionsValue, ddmFormFieldOptionsValue));
 	}
 
 	private void _upgradeDDMFormFieldReference(DDMFormField ddmFormField) {
