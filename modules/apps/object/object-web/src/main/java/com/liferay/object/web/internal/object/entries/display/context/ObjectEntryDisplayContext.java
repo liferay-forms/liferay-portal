@@ -666,10 +666,7 @@ public class ObjectEntryDisplayContext {
 			long parameterObjectFieldId =
 				objectRelationship.getParameterObjectFieldId();
 
-			if (GetterUtil.getBoolean(
-					PropsUtil.get("feature.flag.LPS-155537")) &&
-				(parameterObjectFieldId > 0)) {
-
+			if (parameterObjectFieldId > 0) {
 				ObjectField parameterObjectField =
 					_objectFieldLocalService.getObjectField(
 						parameterObjectFieldId);
