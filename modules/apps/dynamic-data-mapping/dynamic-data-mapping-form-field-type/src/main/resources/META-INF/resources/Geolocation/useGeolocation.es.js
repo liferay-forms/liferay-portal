@@ -110,7 +110,7 @@ export function useGeolocation({
 	const eventHandlerPositionChanged = useCallback(
 		(event) => {
 			const {
-				newVal: {location, address},
+				newVal: {address, location},
 			} = event;
 
 			const locationNode = document.getElementById(`address_label_${instanceId}`);
