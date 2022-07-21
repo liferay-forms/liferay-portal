@@ -101,7 +101,7 @@ public class ExtensionProviderRegistryTest {
 
 		@Override
 		public Map<String, Serializable> getExtendedProperties(
-			long companyId, Object entity) {
+			long companyId, String className, Object entity) {
 
 			return null;
 		}
@@ -133,7 +133,7 @@ public class ExtensionProviderRegistryTest {
 
 		@Override
 		public void setExtendedProperties(
-			long companyId, Object entity,
+			long companyId, String className, Object entity,
 			Map<String, Serializable> extendedProperties) {
 		}
 
