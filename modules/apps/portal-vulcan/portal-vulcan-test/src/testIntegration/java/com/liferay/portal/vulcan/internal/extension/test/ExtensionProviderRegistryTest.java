@@ -133,7 +133,7 @@ public class ExtensionProviderRegistryTest {
 
 		@Override
 		public void setExtendedProperties(
-			long companyId, String className, Object entity,
+			long companyId, long userId, String className, Object entity,
 			Map<String, Serializable> extendedProperties) {
 		}
 
