@@ -2106,7 +2106,7 @@ public class ObjectEntryLocalServiceImpl
 		}
 		else if (sqlType == Types.DECIMAL) {
 			preparedStatement.setBigDecimal(
-				index, (BigDecimal)GetterUtil.get(value, BigDecimal.ZERO));
+				index, new BigDecimal(value.toString()));
 		}
 		else if (sqlType == Types.DOUBLE) {
 			preparedStatement.setDouble(index, GetterUtil.getDouble(value));
