@@ -23,6 +23,7 @@ import com.liferay.object.model.ObjectField;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
+import com.liferay.portal.vulcan.extension.PropertyDefinition;
 
 import java.util.Locale;
 import java.util.Map;
@@ -80,6 +81,11 @@ public class DecimalObjectFieldBusinessType implements ObjectFieldBusinessType {
 		return HashMapBuilder.<String, Object>put(
 			FieldConstants.DATA_TYPE, FieldConstants.DOUBLE
 		).build();
+	}
+
+	@Override
+	public PropertyDefinition.PropertyType getPropertyType() {
+		return PropertyDefinition.PropertyType.DOUBLE;
 	}
 
 }

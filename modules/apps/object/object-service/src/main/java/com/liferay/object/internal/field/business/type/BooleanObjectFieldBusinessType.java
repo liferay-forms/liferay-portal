@@ -19,6 +19,7 @@ import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.field.business.type.ObjectFieldBusinessType;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
+import com.liferay.portal.vulcan.extension.PropertyDefinition;
 
 import java.util.Locale;
 
@@ -65,6 +66,11 @@ public class BooleanObjectFieldBusinessType implements ObjectFieldBusinessType {
 	@Override
 	public String getName() {
 		return ObjectFieldConstants.BUSINESS_TYPE_BOOLEAN;
+	}
+
+	@Override
+	public PropertyDefinition.PropertyType getPropertyType() {
+		return PropertyDefinition.PropertyType.BOOLEAN;
 	}
 
 }
