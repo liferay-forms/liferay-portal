@@ -391,8 +391,30 @@ boolean showHeader = ParamUtil.getBoolean(request, "showHeader", true);
 
 	<aui:button-row>
 		<aui:script>
+			var expression = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+			var regex = new RegExp(expression);
+			var urlInput = document.querySelector(
+				'.field.lfr-ddm-small-image-value.form-control.lfr-input-text'
+			);
+			var checkboxButton = document.querySelector(
+				".form-group.form-inline.input-boolean-wrapper input[type = 'checkbox']"
+			);
+
 			Liferay.after('<portlet:namespace />saveTemplate', () => {
-				submitForm(document.<portlet:namespace />fm);
+				if (
+					!checkboxButton.checked ||
+					(checkboxButton.checked && urlInput.value.match(regex))
+				) {
+					submitForm(document.<portlet:namespace />fm);
+				}
+				else {
+					Liferay.Util.openToast({
+						message: Liferay.Util.sub(
+							'<liferay-ui:message key="an-error-occurred" />'
+						),
+						type: 'danger',
+					});
+				}
 			});
 
 			function <portlet:namespace />saveDraftTemplate() {
