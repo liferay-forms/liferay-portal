@@ -80,6 +80,17 @@ public class ObjectEntryLocalServiceUtil {
 			serviceContext);
 	}
 
+	public static void addOrUpdateSystemObjectExtendedProperties(
+			long userId,
+			com.liferay.object.model.ObjectDefinition objectDefinition,
+			long primaryKey, Map<String, Serializable> values,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws PortalException {
+
+		getService().addOrUpdateSystemObjectExtendedProperties(
+			userId, objectDefinition, primaryKey, values, serviceContext);
+	}
+
 	/**
 	 * Creates a new object entry with the primary key. Does not add the object entry to the database.
 	 *
@@ -158,6 +169,15 @@ public class ObjectEntryLocalServiceUtil {
 
 		getService().deleteRelatedObjectEntries(
 			groupId, objectDefinitionId, primaryKey);
+	}
+
+	public static void deleteSystemObjectExtendedProperties(
+			com.liferay.object.model.ObjectDefinition objectDefinition,
+			long primaryKey)
+		throws PortalException {
+
+		getService().deleteSystemObjectExtendedProperties(
+			objectDefinition, primaryKey);
 	}
 
 	public static <T> T dslQuery(DSLQuery dslQuery) {
@@ -462,11 +482,20 @@ public class ObjectEntryLocalServiceUtil {
 
 	public static Map<String, Object> getSystemModelAttributes(
 			com.liferay.object.model.ObjectDefinition objectDefinition,
-			long objectEntryId)
+			long primaryKey)
 		throws PortalException {
 
 		return getService().getSystemModelAttributes(
-			objectDefinition, objectEntryId);
+			objectDefinition, primaryKey);
+	}
+
+	public static Map<String, Serializable> getSystemObjectExtendedProperties(
+			com.liferay.object.model.ObjectDefinition objectDefinition,
+			long primaryKey)
+		throws PortalException {
+
+		return getService().getSystemObjectExtendedProperties(
+			objectDefinition, primaryKey);
 	}
 
 	public static Map<String, Serializable> getValues(long objectEntryId)

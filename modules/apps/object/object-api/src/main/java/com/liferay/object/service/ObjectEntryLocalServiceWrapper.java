@@ -78,6 +78,18 @@ public class ObjectEntryLocalServiceWrapper
 			serviceContext);
 	}
 
+	@Override
+	public void addOrUpdateSystemObjectExtendedProperties(
+			long userId,
+			com.liferay.object.model.ObjectDefinition objectDefinition,
+			long primaryKey, java.util.Map<String, java.io.Serializable> values,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		_objectEntryLocalService.addOrUpdateSystemObjectExtendedProperties(
+			userId, objectDefinition, primaryKey, values, serviceContext);
+	}
+
 	/**
 	 * Creates a new object entry with the primary key. Does not add the object entry to the database.
 	 *
@@ -167,6 +179,16 @@ public class ObjectEntryLocalServiceWrapper
 
 		_objectEntryLocalService.deleteRelatedObjectEntries(
 			groupId, objectDefinitionId, primaryKey);
+	}
+
+	@Override
+	public void deleteSystemObjectExtendedProperties(
+			com.liferay.object.model.ObjectDefinition objectDefinition,
+			long primaryKey)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		_objectEntryLocalService.deleteSystemObjectExtendedProperties(
+			objectDefinition, primaryKey);
 	}
 
 	@Override
@@ -525,11 +547,22 @@ public class ObjectEntryLocalServiceWrapper
 	@Override
 	public java.util.Map<String, Object> getSystemModelAttributes(
 			com.liferay.object.model.ObjectDefinition objectDefinition,
-			long objectEntryId)
+			long primaryKey)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _objectEntryLocalService.getSystemModelAttributes(
-			objectDefinition, objectEntryId);
+			objectDefinition, primaryKey);
+	}
+
+	@Override
+	public java.util.Map<String, java.io.Serializable>
+			getSystemObjectExtendedProperties(
+				com.liferay.object.model.ObjectDefinition objectDefinition,
+				long primaryKey)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _objectEntryLocalService.getSystemObjectExtendedProperties(
+			objectDefinition, primaryKey);
 	}
 
 	@Override
