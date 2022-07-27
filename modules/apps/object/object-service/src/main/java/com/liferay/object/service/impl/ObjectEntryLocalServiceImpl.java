@@ -282,6 +282,26 @@ public class ObjectEntryLocalServiceImpl
 	}
 
 	@Override
+	public void addOrUpdateSystemObjectExtendedProperties(
+			long userId, ObjectDefinition objectDefinition, long primaryKey,
+			Map<String, Serializable> values, ServiceContext serviceContext)
+		throws PortalException {
+
+		if (!objectDefinition.isSystem()) {
+			return;
+		}
+
+		User user = _userLocalService.getUser(userId);
+
+		_validateValues(
+			user.isDefaultUser(), objectDefinition.getObjectDefinitionId(),
+			objectDefinition.getClassName(), serviceContext, userId, values);
+
+		insertIntoOrUpdateExtensionTable(
+			objectDefinition.getObjectDefinitionId(), primaryKey, values);
+	}
+
+	@Override
 	public ObjectEntry deleteObjectEntry(long objectEntryId)
 		throws PortalException {
 
