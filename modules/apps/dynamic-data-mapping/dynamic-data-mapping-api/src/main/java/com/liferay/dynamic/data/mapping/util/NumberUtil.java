@@ -14,6 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.util;
 
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 
 /**
@@ -22,13 +23,13 @@ import com.liferay.petra.string.StringPool;
 public class NumberUtil {
 
 	public static int getDecimalSeparatorIndex(String value) {
-		int index = value.indexOf(StringPool.PERIOD);
-
-		if (index == -1) {
-			index = value.indexOf(StringPool.COMMA);
+		for (int i = 0; i < value.length(); i++) {
+			if (_DECIMAL_SEPARATORS.indexOf(value.charAt(i)) >= 0) {
+				return i;
+			}
 		}
 
-		return index;
+		return -1;
 	}
 
 	public static boolean hasDecimalSeparator(String value) {
@@ -38,5 +39,9 @@ public class NumberUtil {
 
 		return true;
 	}
+
+	private static final String _DECIMAL_SEPARATORS = StringBundler.concat(
+		StringPool.PERIOD, StringPool.COMMA,
+		StringPool.ARABIC_DECIMAL_SEPARATOR);
 
 }
