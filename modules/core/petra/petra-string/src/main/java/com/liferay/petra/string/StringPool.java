@@ -29,6 +29,8 @@ public class StringPool {
 
 	public static final String APOSTROPHE_ENCODED = "&apos;";
 
+	public static final String ARABIC_DECIMAL_SEPARATOR = "٫";
+
 	public static final String[] ASCII_TABLE = new String[128];
 
 	public static final String AT = "@";
