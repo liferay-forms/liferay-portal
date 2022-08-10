@@ -16,7 +16,7 @@
 			/>
 		</#if>
 
-		${fieldValue}
+		${escape(fieldValue)}
 	</#if>
 
 	${fieldStructure.children}
