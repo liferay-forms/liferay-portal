@@ -369,7 +369,16 @@ public class DDMFormBuilderContextFactoryHelper {
 				return formContext.get("pages");
 			}
 		).put(
-			"paginationMode", ddmFormLayout.getPaginationMode()
+			"paginationMode",
+			() -> {
+				String paginationMode = ddmFormLayout.getPaginationMode();
+
+				if (Objects.equals(paginationMode, "paginated")) {
+					return ddmFormLayout.MULTI_PAGES;
+				}
+
+				return paginationMode;
+			}
 		).put(
 			"rules", new ArrayList<>()
 		).put(
