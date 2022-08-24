@@ -37,7 +37,7 @@ public class IsURLFunction
 			return false;
 		}
 
-		return Validator.isUrl(parameter.toString());
+		return Validator.isUrl(parameter.toString(), true);
 	}
 
 	@Override
