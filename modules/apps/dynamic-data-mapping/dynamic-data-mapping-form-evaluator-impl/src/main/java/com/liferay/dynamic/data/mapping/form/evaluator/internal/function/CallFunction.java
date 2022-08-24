@@ -196,6 +196,14 @@ public class CallFunction
 
 			String ddmFormFieldName = entry.getKey();
 
+			String inputValue = getDDMFormFieldValue(ddmFormFieldName);
+
+			if(!inputValue.isEmpty()){
+				_setDDMFormFieldValue(ddmFormFieldName, inputValue);
+
+				continue;
+			}
+
 			Optional<List<KeyValuePair>> optionsOptional =
 				ddmDataProviderResponse.getOutputOptional(
 					outputName, List.class);
