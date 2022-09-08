@@ -20,12 +20,21 @@ import com.liferay.dynamic.data.mapping.exception.TemplateCreationDisabledExcept
 import com.liferay.dynamic.data.mapping.exception.TemplateDuplicateTemplateKeyException;
 import com.liferay.dynamic.data.mapping.exception.TemplateNameException;
 import com.liferay.dynamic.data.mapping.exception.TemplateScriptException;
+<<<<<<< Updated upstream
+import com.liferay.dynamic.data.mapping.exception.TemplateSmallImageInvalidURLException;
+=======
+<<<<<<< Updated upstream
+=======
+import com.liferay.dynamic.data.mapping.exception.TemplateSmallImageURLException;
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.util.comparator.TemplateIdComparator;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.test.util.ConfigurationTemporarySwapper;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.template.TemplateConstants;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -502,9 +511,33 @@ public class DDMTemplateLocalServiceTest extends BaseDDMServiceTestCase {
 		Assert.assertEquals(3, count);
 	}
 
-	@Test
+	@Test(expected = TemplateSmallImageURLException.class)
 	public void testSmallImageWithInvalidURL() throws Exception {
+<<<<<<< Updated upstream
+		try {
+			addTemplate(
+				_classNameId, 0, _resourceClassNameId,
+				StringUtil.randomString(), StringUtil.randomString(),
+				StringUtil.randomString(),
+				DDMTemplateConstants.TEMPLATE_TYPE_FORM,
+				DDMTemplateConstants.TEMPLATE_MODE_CREATE,
+				TemplateConstants.LANG_TYPE_VM,
+				getTestTemplateScript(TemplateConstants.LANG_TYPE_VM),
+				WorkflowConstants.STATUS_APPROVED, true, "foo");
+
+			Assert.fail();
+		}
+		catch (PortalException portalException) {
+			Assert.assertTrue(
+				portalException instanceof
+					TemplateSmallImageInvalidURLException);
+		}
+=======
+<<<<<<< Updated upstream
 		DDMTemplate template = addTemplate(
+=======
+		addTemplate(
+>>>>>>> Stashed changes
 			_classNameId, 0, _resourceClassNameId, StringUtil.randomString(),
 			StringUtil.randomString(), StringUtil.randomString(),
 			DDMTemplateConstants.TEMPLATE_TYPE_FORM,
@@ -512,8 +545,12 @@ public class DDMTemplateLocalServiceTest extends BaseDDMServiceTestCase {
 			TemplateConstants.LANG_TYPE_VM,
 			getTestTemplateScript(TemplateConstants.LANG_TYPE_VM),
 			WorkflowConstants.STATUS_APPROVED, true, "foo");
+<<<<<<< Updated upstream
 
 		Assert.assertFalse(template.isSmallImage());
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 	}
 
 	@Test
