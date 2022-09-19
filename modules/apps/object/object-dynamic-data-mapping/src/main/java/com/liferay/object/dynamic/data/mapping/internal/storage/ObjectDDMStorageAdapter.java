@@ -434,6 +434,18 @@ public class ObjectDDMStorageAdapter implements DDMStorageAdapter {
 		}
 		else if (StringUtil.equals(
 					ddmFormFieldValue.getType(),
+					DDMFormFieldTypeConstants.DOCUMENT_LIBRARY) ||
+				 StringUtil.equals(
+					 ddmFormFieldValue.getType(),
+					 DDMFormFieldTypeConstants.IMAGE)) {
+
+			JSONObject fileEntryValueJSONObject = _jsonFactory.createJSONObject(
+				value.getString(value.getDefaultLocale()));
+
+			return fileEntryValueJSONObject.getString("fileEntryId");
+		}
+		else if (StringUtil.equals(
+					ddmFormFieldValue.getType(),
 					DDMFormFieldTypeConstants.GRID)) {
 
 			DDMFormFieldOptions columnsDDMFormFieldOptions =
