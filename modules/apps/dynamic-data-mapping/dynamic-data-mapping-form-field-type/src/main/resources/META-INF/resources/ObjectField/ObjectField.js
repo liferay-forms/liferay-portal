@@ -89,6 +89,13 @@ const ObjectField = ({
 				else if (relationshipType || system) {
 					return false;
 				}
+				else if (
+					(focusedFieldType === 'document_library' ||
+						focusedFieldType === 'image') &&
+					type === 'Long'
+				) {
+					return true;
+				}
 
 				return normalizedDataType.includes(type.toLowerCase());
 			}
