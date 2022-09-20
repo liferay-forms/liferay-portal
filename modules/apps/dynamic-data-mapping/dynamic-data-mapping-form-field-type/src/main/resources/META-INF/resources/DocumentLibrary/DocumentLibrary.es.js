@@ -273,6 +273,7 @@ const Main = ({
 	maximumSubmissionLimitReached,
 	message,
 	name,
+	objectFieldAcceptedFileExtensions,
 	onBlur,
 	onChange,
 	onFocus,
@@ -294,7 +295,7 @@ const Main = ({
 
 	const isSignedIn = Liferay.ThemeDisplay.isSignedIn();
 
-	const getErrorMessages = (errorMessage, isSignedIn) => {
+	const getErrorMessages = (errorMessage, invalidExtension, isSignedIn) => {
 		const errorMessages = [errorMessage];
 
 		if (!allowGuestUsers && !isSignedIn) {
@@ -318,6 +319,16 @@ const Main = ({
 				)
 			);
 		}
+		else if (invalidExtension) {
+			errorMessages.push(
+				Liferay.Util.sub(
+					Liferay.Language.get(
+						'please-enter-a-file-with-a-valid-extension-x'
+					),
+					objectFieldAcceptedFileExtensions
+				)
+			);
+		}
 
 		return errorMessages.join(' ');
 	};
@@ -335,10 +346,14 @@ const Main = ({
 	}, [allowGuestUsers, isSignedIn, showUploadPermissionMessage]);
 
 	useEffect(() => {
-		setCurrentValue(value);
-		setDisplayErrors(initialDisplayErrors);
-		setErrorMessage(getErrorMessages(initialErrorMessage, isSignedIn));
-		setValid(initialValid);
+		const invalidExtension = isInvalidExtension(value);
+
+		setCurrentValue(invalidExtension ? null : value);
+		setDisplayErrors(invalidExtension ? true : initialDisplayErrors);
+		setErrorMessage(
+			getErrorMessages(initialErrorMessage, invalidExtension, isSignedIn)
+		);
+		setValid(invalidExtension ? false : initialValid);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [initialDisplayErrors, initialErrorMessage, initialValid, value]);
@@ -384,8 +399,15 @@ const Main = ({
 		});
 	};
 
-	const configureErrorMessage = (message) => {
-		setErrorMessage(message);
+	const configureErrorMessage = (message, invalidFileExtension) => {
+		if (invalidFileExtension) {
+			setErrorMessage(
+				getErrorMessages(initialErrorMessage, true, isSignedIn)
+			);
+		}
+		else {
+			setErrorMessage(message);
+		}
 
 		const enable = message ? true : false;
 
@@ -401,8 +423,13 @@ const Main = ({
 		}
 	};
 
-	const handleGuestUploadFileChanged = (errorMessage, event, value) => {
-		configureErrorMessage(errorMessage);
+	const handleGuestUploadFileChanged = (
+		errorMessage,
+		errorInvalidFileExtension,
+		event,
+		value
+	) => {
+		configureErrorMessage(errorMessage, errorInvalidFileExtension);
 
 		setCurrentValue(value);
 
@@ -424,7 +451,33 @@ const Main = ({
 			[formatStorage(uploadRequestSizeLimit)]
 		);
 
-		handleGuestUploadFileChanged(errorMessage, {}, null);
+		handleGuestUploadFileChanged(errorMessage, false, {}, null);
+
+		return true;
+	};
+
+	const isInvalidExtension = (value) => {
+		if (!value || !objectFieldAcceptedFileExtensions) {
+			return false;
+		}
+
+		const fileEntryJSON = JSON.parse(value);
+
+		const fileExtension = fileEntryJSON.mimeType
+			? fileEntryJSON.mimeType.split('/')[1]
+			: fileEntryJSON.extension;
+
+		if (!fileExtension) {
+			return false;
+		}
+
+		const supportedExtensions = objectFieldAcceptedFileExtensions.split(
+			', '
+		);
+
+		if (supportedExtensions.includes(fileExtension)) {
+			return false;
+		}
 
 		return true;
 	};
@@ -459,16 +512,22 @@ const Main = ({
 				},
 			})
 			.then((response) => {
-				const {error, file} = response.data;
+				const {error, file, invalidFileExtension} = response.data;
 
 				disableSubmitButton(false);
 
 				if (error) {
-					handleGuestUploadFileChanged(error.message, event, null);
+					handleGuestUploadFileChanged(
+						error.message,
+						invalidFileExtension,
+						event,
+						null
+					);
 				}
 				else {
 					handleGuestUploadFileChanged(
 						'',
+						false,
 						event,
 						JSON.stringify(file)
 					);
