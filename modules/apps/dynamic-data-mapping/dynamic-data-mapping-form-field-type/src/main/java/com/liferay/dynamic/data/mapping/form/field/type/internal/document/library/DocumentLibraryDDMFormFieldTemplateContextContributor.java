@@ -31,8 +31,10 @@ import com.liferay.item.selector.criteria.file.criterion.FileItemSelectorCriteri
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
@@ -121,6 +123,8 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributor
 			_getMessage(
 				ddmFormFieldRenderingContext.getLocale(),
 				ddmFormFieldRenderingContext.getValue())
+		).put(
+			"objectFieldName", _getObjectFieldName(ddmFormField)
 		).put(
 			"value",
 			() -> {
@@ -504,6 +508,27 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributor
 		}
 
 		return StringPool.BLANK;
+	}
+
+	private String _getObjectFieldName(DDMFormField ddmFormField) {
+		try {
+			String objectFieldName = (String)ddmFormField.getProperty(
+				"objectFieldName");
+
+			if (Validator.isNotNull(objectFieldName)) {
+				JSONArray jsonArray = JSONFactoryUtil.createJSONArray(
+					objectFieldName);
+
+				return GetterUtil.getString(jsonArray.get(0));
+			}
+		}
+		catch (PortalException portalException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(portalException);
+			}
+		}
+
+		return null;
 	}
 
 	private long _getPrivateUserFolderId(

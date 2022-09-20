@@ -66,6 +66,8 @@ public class DDMFormUploadResponseHandler implements UploadResponseHandler {
 				StringUtil.merge(
 					_ddmFormUploadValidator.getGuestUploadFileExtensions(),
 					StringPool.COMMA_AND_SPACE));
+
+			jsonObject.put("invalidFileExtension", true);
 		}
 		else if (portalException instanceof FileNameException) {
 			errorMessage = themeDisplay.translate(
