@@ -122,6 +122,10 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributor
 				ddmFormFieldRenderingContext.getLocale(),
 				ddmFormFieldRenderingContext.getValue())
 		).put(
+			"objectFieldAcceptedFileExtensions",
+			GetterUtil.getString(
+				ddmFormField.getProperty("objectFieldAcceptedFileExtensions"))
+		).put(
 			"value",
 			() -> {
 				String value = ddmFormFieldRenderingContext.getValue();

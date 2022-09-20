@@ -50,6 +50,7 @@ import com.liferay.dynamic.data.mapping.storage.DDMStorageAdapterTracker;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesMerger;
 import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver;
 import com.liferay.object.model.ObjectField;
+import com.liferay.object.model.ObjectFieldSetting;
 import com.liferay.object.model.ObjectRelationship;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
@@ -240,6 +241,15 @@ public class DDMFormDisplayContext {
 						"maximumRepetitions",
 						_ddmFormWebConfiguration.
 							maximumRepetitionsForUploadFields());
+				}
+
+				if (Objects.equals(
+						ddmFormInstance.getStorageType(), "object")) {
+
+					ddmFormField.setProperty(
+						"objectFieldAcceptedFileExtensions",
+						_getObjectAcceptedFileExtensions(
+							ddmFormField, ddmFormInstance));
 				}
 			}
 			else if (Objects.equals(
@@ -1030,6 +1040,31 @@ public class DDMFormDisplayContext {
 				WorkflowConstants.STATUS_APPROVED);
 
 		return _latestDDMFormInstanceVersion;
+	}
+
+	private String _getObjectAcceptedFileExtensions(
+			DDMFormField ddmFormField, DDMFormInstance ddmFormInstance)
+		throws Exception {
+
+		DDMFormInstanceSettings ddmFormInstanceSettings =
+			ddmFormInstance.getSettingsModel();
+
+		ObjectField objectField = _objectFieldLocalService.getObjectField(
+			GetterUtil.getLong(ddmFormInstanceSettings.objectDefinitionId()),
+			_getObjectFieldName(ddmFormField));
+
+		List<ObjectFieldSetting> objectFieldSettings =
+			objectField.getObjectFieldSettings();
+
+		for (ObjectFieldSetting objectFieldSetting : objectFieldSettings) {
+			String name = objectFieldSetting.getName();
+
+			if (name.equals("acceptedFileExtensions")) {
+				return objectFieldSetting.getValue();
+			}
+		}
+
+		return "";
 	}
 
 	private long _getObjectDefinitionId(
