@@ -55,6 +55,7 @@ import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -134,6 +135,22 @@ public class DDMFormEvaluatorHelper {
 		}
 
 		_evaluateDDMFormRules(ddmFormRules, false);
+
+		List<DDMFormEvaluatorFieldContextKey> fieldContextKeys =
+			new ArrayList<>();
+
+		_ddmFormFieldsPropertyChanges.forEach(
+			(ddmFormFieldContextKey, ddmFormFieldProperties) -> {
+				if (!_ddmFormEvaluatorEvaluateRequest.isViewMode() &&
+					!_isFieldNative(ddmFormFieldContextKey)) {
+
+					fieldContextKeys.add(ddmFormFieldContextKey);
+				}
+			});
+
+		fieldContextKeys.forEach(
+			ddmFormFieldContextKey -> _ddmFormFieldsPropertyChanges.remove(
+				ddmFormFieldContextKey));
 
 		_evaluateDDMFormRules(ddmFormRules, true);
 
