@@ -40,6 +40,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -123,6 +124,28 @@ public class DDMFormViewFormInstanceRecordDisplayContext {
 		_updateDDMFormFields(
 			ddmForm, latestApprovedStructureVersion.getDDMForm());
 
+		DDMForm latestForm = latestApprovedStructureVersion.getDDMForm();
+
+		List<DDMFormField> latestVersion = ddmForm.getDDMFormFields();
+
+		if (!Objects.equals(ddmForm, latestForm)) {
+			List<DDMFormField> latestFormField = latestForm.getDDMFormFields();
+
+			List<DDMFormField> lastForm = ddmForm.getDDMFormFields();
+
+			for (DDMFormField formField : latestFormField) {
+				if (!lastForm.contains(formField)) {
+					latestVersion.add(formField);
+				}
+			}
+
+			if (latestVersion != null) {
+				ddmForm.setDDMFormFields(latestVersion);
+			}
+		}
+
+		ddmForm.setDDMFormFields(latestVersion);
+
 		Map<String, DDMFormField> ddmFormFieldsMap =
 			ddmForm.getDDMFormFieldsMap(true);
 
@@ -133,7 +156,7 @@ public class DDMFormViewFormInstanceRecordDisplayContext {
 		}
 
 		return _ddmFormRenderer.getDDMFormTemplateContext(
-			ddmForm, structureVersion.getDDMFormLayout(),
+			ddmForm, latestApprovedStructureVersion.getDDMFormLayout(),
 			ddmFormRenderingContext);
 	}
 
