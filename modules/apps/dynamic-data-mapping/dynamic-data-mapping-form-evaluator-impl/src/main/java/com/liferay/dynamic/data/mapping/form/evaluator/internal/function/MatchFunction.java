@@ -34,7 +34,7 @@ public class MatchFunction
 		try {
 			Pattern pattern = Pattern.compile(regex);
 
-			Matcher matcher = pattern.matcher(value);
+			Matcher matcher = pattern.matcher(new TimedCharSequence(value));
 
 			return matcher.matches();
 		}
@@ -53,5 +53,42 @@ public class MatchFunction
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(MatchFunction.class);
+
+	private static class TimedCharSequence implements CharSequence {
+
+		public TimedCharSequence(CharSequence charSequence) {
+			_charSequence = charSequence;
+
+			_startTime = System.currentTimeMillis();
+		}
+
+		@Override
+		public char charAt(int index) {
+			if ((System.currentTimeMillis() - _startTime) > 500) {
+				throw new RuntimeException("Timeout TimedCharSequence");
+			}
+
+			return _charSequence.charAt(index);
+		}
+
+		@Override
+		public int length() {
+			return _charSequence.length();
+		}
+
+		@Override
+		public CharSequence subSequence(int start, int end) {
+			return new TimedCharSequence(_charSequence.subSequence(start, end));
+		}
+
+		@Override
+		public String toString() {
+			return _charSequence.toString();
+		}
+
+		private final CharSequence _charSequence;
+		private final long _startTime;
+
+	}
 
 }
