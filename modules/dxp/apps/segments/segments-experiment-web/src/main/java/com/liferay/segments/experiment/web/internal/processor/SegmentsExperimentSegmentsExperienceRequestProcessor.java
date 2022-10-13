@@ -15,6 +15,8 @@
 package com.liferay.segments.experiment.web.internal.processor;
 
 import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.cookies.CookiesManagerUtil;
+import com.liferay.portal.kernel.cookies.constants.CookiesConstants;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
@@ -339,13 +341,13 @@ public class SegmentsExperimentSegmentsExperienceRequestProcessor
 			_AB_TEST_VARIANT_ID_COOKIE_NAME,
 			_getSegmentsExperienceKey(segmentsExperienceId));
 
-		String domain = CookieKeys.getDomain(httpServletRequest);
+		String domain = CookiesManagerUtil.getDomain(httpServletRequest);
 
 		if (Validator.isNotNull(domain)) {
 			abTestVariantIdCookie.setDomain(domain);
 		}
 
-		abTestVariantIdCookie.setMaxAge(CookieKeys.MAX_AGE);
+		abTestVariantIdCookie.setMaxAge(CookiesConstants.MAX_AGE);
 		abTestVariantIdCookie.setPath(path);
 
 		CookieKeys.addCookie(
@@ -365,7 +367,7 @@ public class SegmentsExperimentSegmentsExperienceRequestProcessor
 
 		Cookie cookie = cookieOptional.get();
 
-		String domain = CookieKeys.getDomain(httpServletRequest);
+		String domain = CookiesManagerUtil.getDomain(httpServletRequest);
 
 		if (Validator.isNotNull(domain)) {
 			cookie.setDomain(domain);
