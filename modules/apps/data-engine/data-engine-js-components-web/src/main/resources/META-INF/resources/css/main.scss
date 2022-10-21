@@ -195,6 +195,9 @@ body .ddm-user-view-content {
 
 	.row {
 		min-height: auto;
+		.col-ddm {
+			min-width: 50%;
+		}
 	}
 
 	.has-error {
