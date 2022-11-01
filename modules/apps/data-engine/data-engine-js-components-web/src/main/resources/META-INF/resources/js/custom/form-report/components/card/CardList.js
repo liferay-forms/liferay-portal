@@ -14,14 +14,15 @@
 
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import React, {Suspense, lazy, useContext} from 'react';
+import {SidebarContext} from '../sidebar/SidebarContext';
 
-import toDataArray, {sumTotalEntries, toArray} from '../../utils/data';
 import fieldTypes from '../../utils/fieldTypes';
+import toDataArray, {sumTotalEntries, toArray} from '../../utils/data';
+
+import Card from './Card';
 import EmptyState from '../empty-state/EmptyState';
 import List from '../list/List';
-import {SidebarContext} from '../sidebar/SidebarContext';
 import Table from '../table/Table';
-import Card from './Card';
 
 const lazyLoader = ({dataEngineModule, path}) => {
 	return lazy(
