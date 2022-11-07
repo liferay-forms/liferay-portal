@@ -746,7 +746,7 @@ public class ObjectFieldLocalServiceImpl
 		}
 
 		objectFieldBusinessType.predefineObjectFieldSettings(
-			newObjectField, oldObjectField);
+			newObjectField, oldObjectField, objectFieldSettings);
 
 		for (ObjectFieldSetting newObjectFieldSetting : objectFieldSettings) {
 			ObjectFieldSetting oldObjectFieldSetting =
