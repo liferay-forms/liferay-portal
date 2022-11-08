@@ -71,17 +71,13 @@ public class LPKGDeployerRegistrar {
 			return;
 		}
 
-		Map<AppKey, App> apps = new HashMap<>();
+		Map<Long, App> apps = new HashMap<>();
 
 		for (App app :
 				_appLocalService.getApps(
 					QueryUtil.ALL_POS, QueryUtil.ALL_POS)) {
 
-			apps.put(
-				new AppKey(
-					app.getTitle(), app.getDescription(), app.getCategory(),
-					app.getIconURL(), app.isRequired()),
-				app);
+			apps.put(app.getRemoteAppId(), app);
 		}
 
 		Map<Long, List<Module>> modules = new HashMap<>();
@@ -107,7 +103,7 @@ public class LPKGDeployerRegistrar {
 	}
 
 	private void _doRegister(
-			Bundle lpkgBundle, Map<AppKey, App> apps,
+			Bundle lpkgBundle, Map<Long, App> apps,
 			Map<Long, List<Module>> modules)
 		throws Exception {
 
@@ -141,8 +137,7 @@ public class LPKGDeployerRegistrar {
 			app = _appLocalService.fetchRemoteApp(remoteAppId);
 		}
 		else {
-			app = apps.get(
-				new AppKey(title, description, category, iconURL, required));
+			app = apps.get(remoteAppId);
 		}
 
 		if ((app != null) &&
@@ -226,7 +221,7 @@ public class LPKGDeployerRegistrar {
 	}
 
 	private void _register(
-		Bundle lpkgBundle, Map<AppKey, App> apps,
+		Bundle lpkgBundle, Map<Long, App> apps,
 		Map<Long, List<Module>> modules) {
 
 		try {
