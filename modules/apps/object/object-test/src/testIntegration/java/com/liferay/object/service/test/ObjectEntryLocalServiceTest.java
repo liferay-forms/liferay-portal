@@ -175,7 +175,7 @@ public class ObjectEntryLocalServiceTest {
 
 		_listTypeDefinition =
 			_listTypeDefinitionLocalService.addListTypeDefinition(
-				TestPropsValues.getUserId(),
+				RandomTestUtil.randomString(), TestPropsValues.getUserId(),
 				Collections.singletonMap(
 					LocaleUtil.getDefault(), RandomTestUtil.randomString()));
 
