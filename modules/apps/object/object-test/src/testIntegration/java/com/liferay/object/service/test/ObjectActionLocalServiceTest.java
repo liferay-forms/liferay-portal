@@ -378,7 +378,7 @@ public class ObjectActionLocalServiceTest {
 	}
 
 	@Test
-	public void testObjectActionExecutionWhenAddingMoreThanOneEntry()
+	public void testAddObjectActionWithMoreThanOneObjectEntry()
 		throws Exception {
 
 		ObjectAction objectAction = _objectActionLocalService.addObjectAction(
