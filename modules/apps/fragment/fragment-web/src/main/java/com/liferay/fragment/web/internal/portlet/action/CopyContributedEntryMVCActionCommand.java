@@ -221,7 +221,7 @@ public class CopyContributedEntryMVCActionCommand extends BaseMVCActionCommand {
 		}
 		catch (Exception exception) {
 			if (_log.isDebugEnabled()) {
-				_log.debug("Unable to get preview entry image URL", exception);
+				_log.debug(exception);
 			}
 		}
 
