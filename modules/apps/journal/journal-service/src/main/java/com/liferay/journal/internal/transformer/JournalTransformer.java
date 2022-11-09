@@ -563,9 +563,9 @@ public class JournalTransformer {
 				"option");
 
 			while (iterator.hasNext()) {
-				Element option = iterator.next();
+				Element optionElement = iterator.next();
 
-				dataJSONArray.put(option.getData());
+				dataJSONArray.put(optionElement.getData());
 			}
 
 			data = JSONUtil.toString(dataJSONArray);
