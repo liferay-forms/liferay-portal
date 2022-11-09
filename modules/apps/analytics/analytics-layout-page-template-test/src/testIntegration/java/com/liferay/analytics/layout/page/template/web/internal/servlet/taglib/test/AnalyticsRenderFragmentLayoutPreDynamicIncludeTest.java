@@ -97,7 +97,7 @@ public class AnalyticsRenderFragmentLayoutPreDynamicIncludeTest {
 			StringBundler.concat(
 				"<div data-analytics-asset-id=\"", blogsEntry.getEntryId(),
 				"\" data-analytics-asset-title=\"", blogsEntry.getTitle(),
-				"\" data-analytics-asset-type=\"blog\" >"),
+				"\" data-analytics-asset-type=\"blog\">"),
 			mockHttpServletResponse.getContentAsString());
 	}
 
@@ -131,7 +131,7 @@ public class AnalyticsRenderFragmentLayoutPreDynamicIncludeTest {
 				"<div data-analytics-asset-id=\"",
 				journalArticle.getResourcePrimKey(),
 				"\" data-analytics-asset-title=\"", journalArticle.getTitle(),
-				"\" data-analytics-asset-type=\"web-content\" >"),
+				"\" data-analytics-asset-type=\"web-content\">"),
 			mockHttpServletResponse.getContentAsString());
 	}
 
