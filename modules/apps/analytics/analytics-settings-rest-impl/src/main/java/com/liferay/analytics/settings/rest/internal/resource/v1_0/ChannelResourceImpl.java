@@ -65,7 +65,6 @@ public class ChannelResourceImpl extends BaseChannelResourceImpl {
 				_analyticsCloudClient.getAnalyticsChannelsPage(
 					contextCompany.getCompanyId(), keywords,
 					pagination.getPage() - 1, pagination.getPageSize(), sorts);
-
 		AnalyticsConfiguration analyticsConfiguration =
 			_analyticsSettingsManager.getAnalyticsConfiguration(
 				contextCompany.getCompanyId());
