@@ -23,21 +23,33 @@ import {Liferay} from '../../common/services/liferay';
 import usePagination from '../MDFRequestList/hooks/usePagination';
 import Table from './components/Table';
 import useGetDealRegistrationListData from './hooks/useGetDealRegistrationListData';
-import getDealColumns from './utils/getDealColumns';
 
 type DealRegistrationItem = {
 	[key in DealRegistrationColumnKey]?: any;
 };
+
 const DealRegistrationList = () => {
 	const pagination = usePagination();
-	const siteURL = useLiferayNavigate();
-
 	const {data, isValidating} = useGetDealRegistrationListData(
 		pagination.activePage,
 		pagination.activeDelta
 	);
+	const siteURL = useLiferayNavigate();
 
-	const columns = getDealColumns(data.listItems);
+	const columns = [
+		{
+			columnKey: DealRegistrationColumnKey.ACCOUNT_NAME,
+			label: 'Account Name',
+		},
+		{
+			columnKey: DealRegistrationColumnKey.START_DATE,
+			label: 'Start Date',
+		},
+		{
+			columnKey: DealRegistrationColumnKey.END_DATE,
+			label: 'End Date',
+		},
+	];
 
 	const getTable = (
 		totalCount: number,
@@ -61,7 +73,7 @@ const DealRegistrationList = () => {
 
 			return (
 				<div className="mt-3">
-					<Table<DealRegistrationItem>
+					<Table<DealRegistrationListItem>
 						borderless
 						columns={columns}
 						responsive

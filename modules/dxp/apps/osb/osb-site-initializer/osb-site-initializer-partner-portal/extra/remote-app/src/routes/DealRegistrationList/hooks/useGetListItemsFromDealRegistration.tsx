@@ -27,10 +27,6 @@ export default function useGetListItemsFromDealRegistration(
 					item.prospectAccountName
 				),
 				...getDealDates(item.dateCreated, item.dateModified),
-
-				[DealRegistrationColumnKey.DEAL_AMOUNT]:
-					item.r_activityToDealRegistrations_c_activity,
-				[DealRegistrationColumnKey.STAGE]: item.registrationStatus,
 			})),
 		[swrResponse.data?.items]
 	);
