@@ -16,12 +16,6 @@
 
 <%@ include file="/init.jsp" %>
 
-<liferay-util:buffer
-	var="onClickFn"
->
-
-</liferay-util:buffer>
-
 <aui:script>
 	if (!Liferay.__PORTLET_CONFIGURATION_ICON_ACTIONS__) {
 		Liferay.__PORTLET_CONFIGURATION_ICON_ACTIONS__ = {};
