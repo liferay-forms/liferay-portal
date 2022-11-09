@@ -57,7 +57,7 @@ AssetListManagementToolbarDisplayContext assetListManagementToolbarDisplayContex
 							"actions", assetListManagementToolbarDisplayContext.getAvailableActions(assetListEntry)
 						).build());
 
-					Date statusDate = assetListEntry.getCreateDate();
+					Date createDate = assetListEntry.getCreateDate();
 					%>
 
 					<c:choose>
@@ -144,7 +144,7 @@ AssetListManagementToolbarDisplayContext assetListManagementToolbarDisplayContex
 								cssClass="table-cell-expand text-truncate"
 								name="modified"
 							>
-								<liferay-ui:message arguments="<%= LanguageUtil.getTimeDescription(request, System.currentTimeMillis() - statusDate.getTime(), true) %>" key="x-ago" translateArguments="<%= false %>" />
+								<liferay-ui:message arguments="<%= LanguageUtil.getTimeDescription(request, System.currentTimeMillis() - createDate.getTime(), true) %>" key="x-ago" translateArguments="<%= false %>" />
 							</liferay-ui:search-container-column-text>
 
 							<liferay-ui:search-container-column-text>
