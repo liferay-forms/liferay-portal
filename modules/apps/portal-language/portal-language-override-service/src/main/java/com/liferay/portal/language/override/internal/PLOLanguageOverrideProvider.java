@@ -79,8 +79,6 @@ public class PLOLanguageOverrideProvider implements LanguageOverrideProvider {
 
 		_companyLocalService.forEachCompanyId(
 			companyId -> {
-				CompanyThreadLocal.setCompanyId(companyId);
-
 				for (PLOEntry ploEntry :
 						_ploEntryLocalService.getPLOEntries(companyId)) {
 
