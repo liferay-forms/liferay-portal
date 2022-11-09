@@ -45,14 +45,13 @@ public class BackgroundTaskStatusRegistryImpl
 		}
 
 		Map.Entry<BackgroundTaskStatus, BackgroundTaskStatusMessageTranslator>
-			backgroundTaskStatusEntry = _backgroundTaskStatuses.get(
-				backgroundTaskId);
+			entry = _entries.get(backgroundTaskId);
 
-		if (backgroundTaskStatusEntry == null) {
+		if (entry == null) {
 			return null;
 		}
 
-		return backgroundTaskStatusEntry.getKey();
+		return entry.getKey();
 	}
 
 	@Override
@@ -60,14 +59,13 @@ public class BackgroundTaskStatusRegistryImpl
 		getBackgroundTaskStatusMessageTranslator(long backgroundTaskId) {
 
 		Map.Entry<BackgroundTaskStatus, BackgroundTaskStatusMessageTranslator>
-			backgroundTaskStatusEntry = _backgroundTaskStatuses.get(
-				backgroundTaskId);
+			entry = _entries.get(backgroundTaskId);
 
-		if (backgroundTaskStatusEntry == null) {
+		if (entry == null) {
 			return null;
 		}
 
-		return backgroundTaskStatusEntry.getValue();
+		return entry.getValue();
 	}
 
 	@Override
@@ -77,13 +75,13 @@ public class BackgroundTaskStatusRegistryImpl
 			backgroundTaskStatusMessageTranslator) {
 
 		Map.Entry<BackgroundTaskStatus, BackgroundTaskStatusMessageTranslator>
-			backgroundTaskStatusEntry = _backgroundTaskStatuses.computeIfAbsent(
+			entry = _entries.computeIfAbsent(
 				backgroundTaskId,
 				key -> new AbstractMap.SimpleImmutableEntry<>(
 					new BackgroundTaskStatus(),
 					backgroundTaskStatusMessageTranslator));
 
-		return backgroundTaskStatusEntry.getKey();
+		return entry.getKey();
 	}
 
 	@Override
@@ -91,14 +89,13 @@ public class BackgroundTaskStatusRegistryImpl
 		long backgroundTaskId) {
 
 		Map.Entry<BackgroundTaskStatus, BackgroundTaskStatusMessageTranslator>
-			backgroundTaskStatusEntry = _backgroundTaskStatuses.remove(
-				backgroundTaskId);
+			entry = _entries.remove(backgroundTaskId);
 
-		if (backgroundTaskStatusEntry == null) {
+		if (entry == null) {
 			return null;
 		}
 
-		return backgroundTaskStatusEntry.getKey();
+		return entry.getKey();
 	}
 
 	private BackgroundTaskStatus _getMasterBackgroundTaskStatus(
@@ -125,12 +122,12 @@ public class BackgroundTaskStatusRegistryImpl
 	private static final Log _log = LogFactoryUtil.getLog(
 		BackgroundTaskStatusRegistryImpl.class);
 
+	@Reference
+	private ClusterMasterExecutor _clusterMasterExecutor;
+
 	private final Map
 		<Long,
 		 Map.Entry<BackgroundTaskStatus, BackgroundTaskStatusMessageTranslator>>
-			_backgroundTaskStatuses = new ConcurrentHashMap<>();
-
-	@Reference
-	private ClusterMasterExecutor _clusterMasterExecutor;
+			_entries = new ConcurrentHashMap<>();
 
 }
