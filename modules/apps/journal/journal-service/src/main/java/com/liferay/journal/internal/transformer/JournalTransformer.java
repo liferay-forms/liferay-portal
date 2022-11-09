@@ -479,8 +479,7 @@ public class JournalTransformer {
 				}
 			}
 		}
-
-		if (Objects.equals(type, DDMFormFieldTypeConstants.GRID)) {
+		else if (Objects.equals(type, DDMFormFieldTypeConstants.GRID)) {
 			try {
 				JSONObject nextJSONObject = JSONFactoryUtil.createJSONObject();
 
@@ -514,9 +513,8 @@ public class JournalTransformer {
 				}
 			}
 		}
-
-		if (Objects.equals(type, DDMFormFieldTypeConstants.SELECT) ||
-			Objects.equals(type, DDMFormFieldTypeConstants.RADIO)) {
+		else if (Objects.equals(type, DDMFormFieldTypeConstants.RADIO) ||
+				 Objects.equals(type, DDMFormFieldTypeConstants.SELECT)) {
 
 			return optionsReferences.getOrDefault(data, data);
 		}
