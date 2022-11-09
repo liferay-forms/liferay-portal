@@ -74,12 +74,12 @@ public class FieldConstantsTest {
 	@Test
 	public void testGetSerializableReturnNegativeDecimalWithCommaDecimalSeparator() {
 		Serializable serializable = FieldConstants.getSerializable(
-			LocaleUtil.US, LocaleUtil.US, FieldConstants.DOUBLE, "-0,5");
+			LocaleUtil.SPAIN, LocaleUtil.SPAIN, FieldConstants.DOUBLE, "-0,5");
 
 		Assert.assertEquals(Double.valueOf(-0.5), (Double)serializable);
 
 		serializable = FieldConstants.getSerializable(
-			LocaleUtil.SPAIN, LocaleUtil.SPAIN, FieldConstants.DOUBLE, "-0,5");
+			LocaleUtil.US, LocaleUtil.US, FieldConstants.DOUBLE, "-0,5");
 
 		Assert.assertEquals(Double.valueOf(-0.5), (Double)serializable);
 	}
@@ -87,12 +87,12 @@ public class FieldConstantsTest {
 	@Test
 	public void testGetSerializableReturnNegativeDecimalWithPeriodSeparator() {
 		Serializable serializable = FieldConstants.getSerializable(
-			LocaleUtil.US, LocaleUtil.US, FieldConstants.DOUBLE, "-0.5");
+			LocaleUtil.SPAIN, LocaleUtil.SPAIN, FieldConstants.DOUBLE, "-0.5");
 
 		Assert.assertEquals(Double.valueOf(-0.5), (Double)serializable);
 
 		serializable = FieldConstants.getSerializable(
-			LocaleUtil.SPAIN, LocaleUtil.SPAIN, FieldConstants.DOUBLE, "-0.5");
+			LocaleUtil.US, LocaleUtil.US, FieldConstants.DOUBLE, "-0.5");
 
 		Assert.assertEquals(Double.valueOf(-0.5), (Double)serializable);
 	}
