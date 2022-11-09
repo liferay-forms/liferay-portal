@@ -113,7 +113,8 @@ public class BackgroundTaskStatusRegistryImpl
 			return future.get();
 		}
 		catch (Exception exception) {
-			_log.error("Unable to retrieve status from master node", exception);
+			_log.error(
+				"Unable to get master background task status", exception);
 		}
 
 		return null;
