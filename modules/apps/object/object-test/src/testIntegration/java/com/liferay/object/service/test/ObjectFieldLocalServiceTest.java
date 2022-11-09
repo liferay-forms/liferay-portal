@@ -166,6 +166,18 @@ public class ObjectFieldLocalServiceTest {
 
 		ObjectFieldBuilder objectFieldBuilder = new ObjectFieldBuilder();
 
+		_testAddCustomObjectField(
+			"List type definition ID is 0",
+			objectFieldBuilder.businessType(
+				ObjectFieldConstants.BUSINESS_TYPE_MULTISELECT_PICKLIST
+			).labelMap(
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString())
+			).name(
+				"a" + RandomTestUtil.randomString()
+			).build());
+
+		objectFieldBuilder = new ObjectFieldBuilder();
+
 		String defaultValue = RandomTestUtil.randomString();
 
 		_testAddCustomObjectField(
@@ -213,18 +225,6 @@ public class ObjectFieldLocalServiceTest {
 			"Object field must be required when the state is true",
 			objectFieldBuilder.state(
 				true
-			).build());
-
-		objectFieldBuilder = new ObjectFieldBuilder();
-
-		_testAddCustomObjectField(
-			"List type definition ID is 0",
-			objectFieldBuilder.businessType(
-				ObjectFieldConstants.BUSINESS_TYPE_MULTISELECT_PICKLIST
-			).labelMap(
-				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString())
-			).name(
-				"a" + RandomTestUtil.randomString()
 			).build());
 	}
 
