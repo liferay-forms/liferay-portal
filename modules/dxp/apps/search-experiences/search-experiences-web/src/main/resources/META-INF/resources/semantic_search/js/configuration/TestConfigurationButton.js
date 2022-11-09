@@ -225,7 +225,7 @@ function TestConfigurationButton({
 					return setTestResultsMessage({
 						message: sub(
 							Liferay.Language.get(
-								'the-dimensions-from-the-connection-do-not-match-the-configured-embedding-vector-dimensions.expected-x-but-got-x'
+								'the-dimensions-from-the-connection-do-not-match-the-configured-embedding-vector-dimensions'
 							),
 							[
 								embeddingVectorDimensions,
