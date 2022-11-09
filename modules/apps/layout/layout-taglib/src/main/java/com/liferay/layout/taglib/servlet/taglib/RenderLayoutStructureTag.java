@@ -277,7 +277,6 @@ public class RenderLayoutStructureTag extends IncludeTag {
 			InfoItemReference currentInfoItemReference =
 				(InfoItemReference)httpServletRequest.getAttribute(
 					InfoDisplayWebKeys.INFO_ITEM_REFERENCE);
-
 			LayoutDisplayPageProvider<?> currentLayoutDisplayPageProvider =
 				(LayoutDisplayPageProvider<?>)httpServletRequest.getAttribute(
 					LayoutDisplayPageWebKeys.LAYOUT_DISPLAY_PAGE_PROVIDER);
@@ -423,7 +422,6 @@ public class RenderLayoutStructureTag extends IncludeTag {
 				httpServletRequest.setAttribute(
 					InfoDisplayWebKeys.INFO_ITEM_REFERENCE,
 					currentInfoItemReference);
-
 				httpServletRequest.setAttribute(
 					LayoutDisplayPageWebKeys.LAYOUT_DISPLAY_PAGE_PROVIDER,
 					currentLayoutDisplayPageProvider);
