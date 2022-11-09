@@ -71,7 +71,7 @@ BatchPlannerPlanDisplay batchPlannerPlanDisplay = (BatchPlannerPlanDisplay)resul
 		/>
 	</c:if>
 
-	<c:if test="<%= batchPlannerPlanDisplay.isStatusCompleted() && batchPlannerPlanDisplay.isExport() %>">
+	<c:if test="<%= batchPlannerPlanDisplay.isExport() && batchPlannerPlanDisplay.isStatusCompleted() %>">
 		<liferay-ui:icon
 			id='<%= "downloadExportFile" + batchPlannerPlanDisplay.getBatchPlannerPlanId() %>'
 			message="download-file"
