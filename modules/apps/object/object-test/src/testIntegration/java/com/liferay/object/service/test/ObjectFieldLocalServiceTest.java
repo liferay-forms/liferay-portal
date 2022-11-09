@@ -193,6 +193,8 @@ public class ObjectFieldLocalServiceTest {
 				defaultValue
 			).build());
 
+		//objectFieldBuilder = new ObjectFieldBuilder();
+
 		_testAddCustomObjectField(
 			StringBundler.concat(
 				"Object field can only have a default type when the business ",
@@ -212,6 +214,8 @@ public class ObjectFieldLocalServiceTest {
 				_getObjectFieldSettings(ObjectFieldConstants.BUSINESS_TYPE_TEXT)
 			).build());
 
+		//objectFieldBuilder = new ObjectFieldBuilder();
+
 		_testAddCustomObjectField(
 			"Object field default value can only be set when the picklist is " +
 				"a state",
@@ -220,6 +224,8 @@ public class ObjectFieldLocalServiceTest {
 			).defaultValue(
 				_listTypeEntryKey
 			).build());
+
+		//objectFieldBuilder = new ObjectFieldBuilder();
 
 		_testAddCustomObjectField(
 			"Object field must be required when the state is true",
