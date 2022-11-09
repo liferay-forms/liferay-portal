@@ -163,7 +163,7 @@ function TestConfigurationButton({
 						return setTestResultsMessage({
 							message: sub(
 								Liferay.Language.get(
-									'unable-to-connect-to-x.connection-failed-with-x'
+									'unable-to-connect-to-x.-connection-failed-with-x'
 								),
 								[
 									availableSentenceTransformProviders[
@@ -182,7 +182,7 @@ function TestConfigurationButton({
 						return setTestResultsMessage({
 							message: sub(
 								Liferay.Language.get(
-									'unable-to-connect-to-x.connection-failed-with-x'
+									'unable-to-connect-to-x.-connection-failed-with-x'
 								),
 								[
 									availableSentenceTransformProviders[
@@ -209,7 +209,7 @@ function TestConfigurationButton({
 				if (Number(responseData.expectedDimensions === 0)) {
 					return setTestResultsMessage({
 						message: Liferay.Language.get(
-							'the-sentence-transform-provider-returned-no-results-please-check-the-configured-settings'
+							'the-sentence-transform-provider-returned-no-results'
 						),
 						type: 'danger',
 					});
