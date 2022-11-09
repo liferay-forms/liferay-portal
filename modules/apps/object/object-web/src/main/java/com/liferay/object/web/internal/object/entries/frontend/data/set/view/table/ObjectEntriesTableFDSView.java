@@ -224,14 +224,14 @@ public class ObjectEntriesTableFDSView extends BaseTableFDSView {
 		FDSTableSchemaBuilder fdsTableSchemaBuilder, String fieldLabel,
 		String fieldName) {
 
-		if (Objects.equals(fieldName, "creator")) {
-			_addFDSTableSchemaField(
-				null, null, null, fdsTableSchemaBuilder, fieldName + ".name",
-				fieldLabel, true, true);
-		}
-		else if (Objects.equals(fieldName, "createDate")) {
+		if (Objects.equals(fieldName, "createDate")) {
 			_addFDSTableSchemaField(
 				null, null, "Date", fdsTableSchemaBuilder, "dateCreated",
+				fieldLabel, true, true);
+		}
+		else if (Objects.equals(fieldName, "creator")) {
+			_addFDSTableSchemaField(
+				null, null, null, fdsTableSchemaBuilder, fieldName + ".name",
 				fieldLabel, true, true);
 		}
 		else if (Objects.equals(fieldName, "externalReferenceCode")) {
