@@ -106,7 +106,8 @@ public class LayoutUtilityPageEntryLocalServiceImpl
 		layoutUtilityPageEntry.setName(name);
 		layoutUtilityPageEntry.setType(type);
 
-		// Resources
+		layoutUtilityPageEntry = layoutUtilityPageEntryPersistence.update(
+			layoutUtilityPageEntry);
 
 		_resourceLocalService.addResources(
 			layoutUtilityPageEntry.getCompanyId(),
@@ -116,7 +117,7 @@ public class LayoutUtilityPageEntryLocalServiceImpl
 			layoutUtilityPageEntry.getLayoutUtilityPageEntryId(), false, true,
 			true);
 
-		return layoutUtilityPageEntryPersistence.update(layoutUtilityPageEntry);
+		return layoutUtilityPageEntry;
 	}
 
 	@Override
