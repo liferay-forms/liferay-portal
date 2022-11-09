@@ -392,8 +392,8 @@ public class GCSStore implements Store {
 			if (Validator.isBlank(serviceAccountKey)) {
 				if (_log.isInfoEnabled()) {
 					_log.info(
-						"No credentials set for GCS Store. Library will use " +
-							"Application Default Credentials.");
+						"Using application default credentials because " +
+							"service account key was not set");
 				}
 
 				_googleCredentials =

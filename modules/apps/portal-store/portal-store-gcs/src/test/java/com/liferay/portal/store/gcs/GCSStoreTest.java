@@ -82,7 +82,7 @@ public class GCSStoreTest {
 	}
 
 	@Test
-	public void testGoogleCredentials() throws Exception {
+	public void testActivate1() throws Exception {
 		byte[] serviceAccountKeyBytes = FileUtil.getBytes(
 			getClass(), "dependencies/service-account-key.json");
 
@@ -96,7 +96,7 @@ public class GCSStoreTest {
 	}
 
 	@Test
-	public void testGoogleCredentialsNull() throws Exception {
+	public void testActivate2() throws Exception {
 		_mockServiceAccountKey(null);
 
 		_gcsStore.activate(Collections.emptyMap());
