@@ -213,8 +213,7 @@ public class TimelineDisplayContext {
 					HtmlUtil.escape(ctCollection.getUserName())
 				});
 		}
-
-		if (ctCollection.getStatus() == WorkflowConstants.STATUS_DRAFT) {
+		else if (ctCollection.getStatus() == WorkflowConstants.STATUS_DRAFT) {
 			Date modifiedDate = ctCollection.getModifiedDate();
 
 			return LanguageUtil.format(
@@ -227,8 +226,9 @@ public class TimelineDisplayContext {
 					HtmlUtil.escape(ctCollection.getUserName())
 				});
 		}
+		else if (ctCollection.getStatus() ==
+					WorkflowConstants.STATUS_SCHEDULED) {
 
-		if (ctCollection.getStatus() == WorkflowConstants.STATUS_SCHEDULED) {
 			try {
 				SchedulerResponse schedulerResponse =
 					SchedulerEngineHelperUtil.getScheduledJob(
