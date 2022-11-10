@@ -688,8 +688,8 @@ public class ObjectEntryLocalServiceImpl
 			long objectDefinitionId)
 		throws PortalException {
 
-		// TODO Try to understand why this approach avoids two Insert
-		// statements to be executed when an ObjectEntry is added
+		// TODO Temporary workaround to avoid two insert statements when adding
+		// an object entry
 
 		DynamicQuery dynamicQuery = dynamicQuery();
 

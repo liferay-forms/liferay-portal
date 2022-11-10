@@ -136,13 +136,9 @@ public class RelationshipObjectFieldBusinessType
 			return baseModel.getPrimaryKeyObj();
 		}
 
-		// TODO This is a temporary fix
-		// We need to do a deeper investigation to understand what is
-		// causing the "Lock wait timeout exceeded" error in MySQL when
-		// using the _objectEntryPersistence.findByERC_C_ODI directly
-		// We also need to avoid using localServiceUtil. We will
-		// temporarily use ObjectEntryLocalServiceUtil to avoid
-		// circular dependency
+		// TODO Temporary workaround to avoid "Lock wait timeout exceeded" error
+		// in MySQL when using ObjectEntryPersistence#findByERC_C_ODI by using
+		// ObjectEntryLocalServiceUtil
 
 		return ObjectEntryLocalServiceUtil.getObjectEntryId(
 			externalReferenceCode, objectDefinition.getCompanyId(),
