@@ -238,8 +238,8 @@ public class SettingsLocatorHelperImpl implements SettingsLocatorHelper {
 		if (configurationBeanClass.getAnnotation(Meta.OCD.class) == null) {
 			if (_log.isDebugEnabled()) {
 				_log.debug(
-					"Skipping registration for class (no Meta.OCD " +
-						"annotation): " + configurationBeanClass.getName());
+					"Skipping registration for class because Meta.OCD is " +
+						"missing: " + configurationBeanClass.getName());
 			}
 
 			return null;
@@ -255,9 +255,8 @@ public class SettingsLocatorHelperImpl implements SettingsLocatorHelper {
 			if (annotation.required()) {
 				if (_log.isDebugEnabled()) {
 					_log.debug(
-						"Skipping registration for class (Meta.AD has " +
-							"required = true): " +
-								configurationBeanClass.getName());
+						"Skipping registration for class because Meta.AD is " +
+							"required: " + configurationBeanClass.getName());
 				}
 
 				return null;
@@ -270,8 +269,8 @@ public class SettingsLocatorHelperImpl implements SettingsLocatorHelper {
 		if (_configurationBeanClasses.containsKey(configurationPid)) {
 			if (_log.isDebugEnabled()) {
 				_log.debug(
-					"Skipping registration for class (already registered): " +
-						configurationPid);
+					"Skipping registration for class because it is already " +
+						"registered: " + configurationPid);
 			}
 
 			return null;
