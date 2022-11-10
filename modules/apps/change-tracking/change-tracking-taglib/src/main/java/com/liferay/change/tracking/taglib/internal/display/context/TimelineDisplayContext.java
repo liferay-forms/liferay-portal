@@ -201,14 +201,14 @@ public class TimelineDisplayContext {
 			PortalUtil.getHttpServletRequest(_renderRequest);
 
 		if (ctCollection.getStatus() == WorkflowConstants.STATUS_APPROVED) {
-			Date modifiedDate = ctCollection.getStatusDate();
+			Date statusDate = ctCollection.getStatusDate();
 
 			return LanguageUtil.format(
 				httpServletRequest, "published-x-ago-by-x",
 				new String[] {
 					LanguageUtil.getTimeDescription(
 						httpServletRequest,
-						System.currentTimeMillis() - modifiedDate.getTime(),
+						System.currentTimeMillis() - statusDate.getTime(),
 						true),
 					HtmlUtil.escape(ctCollection.getUserName())
 				});
