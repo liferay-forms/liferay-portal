@@ -233,7 +233,7 @@ public class TimelineDisplayContext {
 				SchedulerResponse schedulerResponse =
 					SchedulerEngineHelperUtil.getScheduledJob(
 						String.valueOf(ctCollection.getCtCollectionId()),
-						_CT_COLLECTION_SCHEDULED_PUBLISH,
+						"liferay/ct_collection_scheduled_publish",
 						StorageType.PERSISTED);
 
 				if (schedulerResponse == null) {
@@ -313,9 +313,6 @@ public class TimelineDisplayContext {
 			).buildString(),
 			"');} else {self.focus();}}});");
 	}
-
-	private static final String _CT_COLLECTION_SCHEDULED_PUBLISH =
-		"liferay/ct_collection_scheduled_publish";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		TimelineDisplayContext.class);
