@@ -73,7 +73,6 @@ public class UserGroupResourceTest extends BaseUserGroupResourceTestCase {
 
 		UserGroup userGroup1 = testGetUserUserGroups_addUserGroup(
 			userAccountId, randomUserGroup());
-
 		UserGroup userGroup2 = testGetUserUserGroups_addUserGroup(
 			userAccountId, randomUserGroup());
 
