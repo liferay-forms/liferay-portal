@@ -147,6 +147,10 @@ public class ContentUtil {
 			ThemeDisplay themeDisplay, HttpServletRequest httpServletRequest)
 		throws Exception {
 
+		boolean hasUpdatePermission = ModelResourcePermissionUtil.contains(
+			themeDisplay.getPermissionChecker(), className,
+			layoutClassedModelUsage.getClassPK(), ActionKeys.UPDATE);
+
 		String className = layoutClassedModelUsage.getClassName();
 
 		LayoutDisplayPageProvider<?> layoutDisplayPageProvider =
@@ -158,14 +162,10 @@ public class ContentUtil {
 				new InfoItemReference(
 					className, layoutClassedModelUsage.getClassPK()));
 
-		boolean updatePermission = ModelResourcePermissionUtil.contains(
-			themeDisplay.getPermissionChecker(), className,
-			layoutClassedModelUsage.getClassPK(), ActionKeys.UPDATE);
-
 		return JSONUtil.put(
 			"editImage",
 			() -> {
-				if (!updatePermission ||
+				if (!hasUpdatePermission ||
 					!Objects.equals(className, FileEntry.class.getName())) {
 
 					return null;
@@ -204,7 +204,7 @@ public class ContentUtil {
 		).put(
 			"editURL",
 			() -> {
-				if (!updatePermission) {
+				if (!hasUpdatePermission) {
 					return null;
 				}
 
