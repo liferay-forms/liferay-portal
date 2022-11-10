@@ -388,10 +388,6 @@ public abstract class BaseProfile {
 		HttpServletRequest httpServletRequest,
 		HttpServletResponse httpServletResponse) {
 
-		boolean rememberMe = GetterUtil.getBoolean(
-			CookiesManagerUtil.getCookieValue(
-				CookiesConstants.NAME_REMEMBER_ME, httpServletRequest));
-
 		String domain = CookiesManagerUtil.getDomain(httpServletRequest);
 
 		CookiesManagerUtil.deleteCookies(
@@ -409,6 +405,10 @@ public abstract class BaseProfile {
 		CookiesManagerUtil.deleteCookies(
 			domain, httpServletRequest, httpServletResponse,
 			CookiesConstants.NAME_REMEMBER_ME);
+
+		boolean rememberMe = GetterUtil.getBoolean(
+			CookiesManagerUtil.getCookieValue(
+				CookiesConstants.NAME_REMEMBER_ME, httpServletRequest));
 
 		if (!rememberMe) {
 			CookiesManagerUtil.deleteCookies(
