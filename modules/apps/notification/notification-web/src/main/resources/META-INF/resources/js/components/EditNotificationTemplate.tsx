@@ -869,35 +869,33 @@ export default function EditNotificationTemplate({
 							translations={values.subject}
 						/>
 
-						{Liferay.FeatureFlags['LPS-162133'] &&
-							values.type === 'email' && (
-								<RichTextLocalized
-									editorConfig={editorConfig}
-									label={Liferay.Language.get('body')}
-									name="body"
-									onSelectedLocaleChange={({label}) =>
-										setSelectedLocale(label)
-									}
-									onTranslationsChange={(translation) => {
-										setValues({
-											...values,
-											body: translation,
-										});
-									}}
-									selectedLocale={selectedLocale}
-									translations={values.body}
-								/>
-							)}
+						{values.type === 'email' && (
+							<RichTextLocalized
+								editorConfig={editorConfig}
+								label={Liferay.Language.get('body')}
+								name="body"
+								onSelectedLocaleChange={({label}) =>
+									setSelectedLocale(label)
+								}
+								onTranslationsChange={(translation) => {
+									setValues({
+										...values,
+										body: translation,
+									});
+								}}
+								selectedLocale={selectedLocale}
+								translations={values.body}
+							/>
+						)}
 
 						<DefinitionOfTerms baseResourceURL={baseResourceURL} />
 
-						{Liferay.FeatureFlags['LPS-162133'] &&
-							values.type === 'email' && (
-								<Attachments
-									setValues={setValues}
-									values={values}
-								/>
-							)}
+						{values.type === 'email' && (
+							<Attachments
+								setValues={setValues}
+								values={values}
+							/>
+						)}
 					</Card>
 				</div>
 			</div>
