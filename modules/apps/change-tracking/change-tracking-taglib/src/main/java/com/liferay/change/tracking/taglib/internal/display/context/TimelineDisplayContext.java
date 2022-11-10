@@ -176,14 +176,14 @@ public class TimelineDisplayContext {
 		if (status == WorkflowConstants.STATUS_APPROVED) {
 			return "published";
 		}
-		else if (status == WorkflowConstants.STATUS_EXPIRED) {
-			return "out-of-date";
+		else if (status == WorkflowConstants.STATUS_DENIED) {
+			return "failed";
 		}
 		else if (status == WorkflowConstants.STATUS_DRAFT) {
 			return "in-progress";
 		}
-		else if (status == WorkflowConstants.STATUS_DENIED) {
-			return "failed";
+		else if (status == WorkflowConstants.STATUS_EXPIRED) {
+			return "out-of-date";
 		}
 		else if (status == WorkflowConstants.STATUS_SCHEDULED) {
 			return "scheduled";
