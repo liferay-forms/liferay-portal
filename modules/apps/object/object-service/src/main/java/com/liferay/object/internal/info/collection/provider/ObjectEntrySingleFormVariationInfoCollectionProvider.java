@@ -232,7 +232,7 @@ public class ObjectEntrySingleFormVariationInfoCollectionProvider
 	public String getKey() {
 		return StringBundler.concat(
 			SingleFormVariationInfoCollectionProvider.super.getKey(), "_",
-			_objectDefinition.getName(), "_", _objectDefinition.getCompanyId());
+			_objectDefinition.getCompanyId(), "_", _objectDefinition.getName());
 	}
 
 	@Override
