@@ -93,14 +93,23 @@ public class ObjectStateFlowLocalServiceImpl
 		ObjectStateFlow objectStateFlow = _addObjectStateFlow(
 			userId, objectFieldId);
 
-		for (ObjectState objectState : objectStates) {
-			ObjectState sourceObjectState =
-				_objectStateLocalService.addObjectState(
-					userId, objectState.getListTypeEntryId(),
-					objectStateFlow.getObjectStateFlowId());
+		List<ObjectState> newObjectStates = TransformUtil.transform(
+			objectStates,
+			objectState -> {
+				ObjectState newObjectState =
+					_objectStateLocalService.addObjectState(
+						userId, objectState.getListTypeEntryId(),
+						objectStateFlow.getObjectStateFlowId());
 
+				newObjectState.setObjectStateTransitions(
+					objectState.getObjectStateTransitions());
+
+				return newObjectState;
+			});
+
+		for (ObjectState sourceObjectState : newObjectStates) {
 			for (ObjectStateTransition objectStateTransition :
-					objectState.getObjectStateTransitions()) {
+					sourceObjectState.getObjectStateTransitions()) {
 
 				ObjectState targetObjectState =
 					_objectStateLocalService.getObjectStateFlowObjectState(
