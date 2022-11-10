@@ -147,11 +147,11 @@ public class ContentUtil {
 			ThemeDisplay themeDisplay, HttpServletRequest httpServletRequest)
 		throws Exception {
 
+		String className = layoutClassedModelUsage.getClassName();
+
 		boolean hasUpdatePermission = ModelResourcePermissionUtil.contains(
 			themeDisplay.getPermissionChecker(), className,
 			layoutClassedModelUsage.getClassPK(), ActionKeys.UPDATE);
-
-		String className = layoutClassedModelUsage.getClassName();
 
 		LayoutDisplayPageProvider<?> layoutDisplayPageProvider =
 			LayoutDisplayPageProviderTrackerUtil.getLayoutDisplayPageProvider(
