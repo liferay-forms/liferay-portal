@@ -20,7 +20,7 @@
 JournalArticleDisplay articleDisplay = journalDisplayContext.getArticleDisplay();
 %>
 
-<c:if test='<%= Boolean.parseBoolean(renderRequest.getParameter("showTitle")) %>'>
+<c:if test='<%= GetterUtil.getBoolean(renderRequest.getParameter("showTitle")) %>'>
 	<clay:container-fluid
 		cssClass="mt-3"
 	>
