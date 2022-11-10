@@ -112,7 +112,7 @@ public class ObjectFieldLocalServiceTest {
 
 		_listTypeDefinition =
 			_listTypeDefinitionLocalService.addListTypeDefinition(
-				RandomTestUtil.randomString(), TestPropsValues.getUserId(),
+				null, TestPropsValues.getUserId(),
 				LocalizedMapUtil.getLocalizedMap(
 					RandomTestUtil.randomString()));
 
