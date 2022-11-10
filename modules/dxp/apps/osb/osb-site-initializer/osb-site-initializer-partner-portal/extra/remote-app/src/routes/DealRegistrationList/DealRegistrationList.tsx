@@ -14,28 +14,26 @@ import ClayButton from '@clayui/button';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {ClayPaginationBarWithBasicItems} from '@clayui/pagination-bar';
 
+import Table from '../../common/components/Table';
 import {DealRegistrationColumnKey} from '../../common/enums/dealRegistrationColumnKey';
 import {PRMPageRoute} from '../../common/enums/prmPageRoute';
 import useLiferayNavigate from '../../common/hooks/useLiferayNavigate';
 import {DealRegistrationListItem} from '../../common/interfaces/dealRegistrationListItem';
-import TableColumn from '../../common/interfaces/tableColumn';
 import {Liferay} from '../../common/services/liferay';
 import usePagination from '../MDFRequestList/hooks/usePagination';
-import Table from './components/Table';
-import useGetDealRegistrationListData from './hooks/useGetDealRegistrationListData';
-
+import useGetListItemsFromDealRegistration from './hooks/useGetListItemsFromDealRegistration';
 type DealRegistrationItem = {
 	[key in DealRegistrationColumnKey]?: any;
 };
 
 const DealRegistrationList = () => {
 	const pagination = usePagination();
-	const {data, isValidating} = useGetDealRegistrationListData(
+	const {data, isValidating} = useGetListItemsFromDealRegistration(
 		pagination.activePage,
 		pagination.activeDelta
 	);
-	const siteURL = useLiferayNavigate();
 
+	const siteURL = useLiferayNavigate();
 	const columns = [
 		{
 			columnKey: DealRegistrationColumnKey.ACCOUNT_NAME,
@@ -51,12 +49,8 @@ const DealRegistrationList = () => {
 		},
 	];
 
-	const getTable = (
-		totalCount: number,
-		items?: DealRegistrationItem[],
-		columns?: TableColumn<DealRegistrationListItem>[]
-	) => {
-		if (items && columns) {
+	const getTable = (totalCount: number, items?: DealRegistrationItem[]) => {
+		if (items) {
 			if (!totalCount) {
 				return (
 					<div className="d-flex justify-content-center mt-4">
@@ -107,12 +101,7 @@ const DealRegistrationList = () => {
 
 			{isValidating && <ClayLoadingIndicator />}
 
-			{!isValidating &&
-				getTable(
-					data.listItems.totalCount || 0,
-					data.listItems.items,
-					columns
-				)}
+			{!isValidating && getTable(data?.totalCount || 0, data?.items)}
 		</div>
 	);
 };

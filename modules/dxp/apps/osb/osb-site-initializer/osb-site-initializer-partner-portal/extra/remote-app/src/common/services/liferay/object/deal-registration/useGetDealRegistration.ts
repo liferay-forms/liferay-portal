@@ -20,7 +20,7 @@ import liferayFetcher from '../../common/utils/fetcher';
 export default function useGetDealRegistration(page: number, pageSize: number) {
 	return useSWR(
 		[
-			`/o/${LiferayAPIs.OBJECT}/dealregistrations?nestedFields=accountEntry&page=${page}&pageSize=${pageSize}`,
+			`/o/${LiferayAPIs.OBJECT}/dealregistrations?&page=${page}&pageSize=${pageSize}`,
 			Liferay.authToken,
 		],
 		(url, token) =>

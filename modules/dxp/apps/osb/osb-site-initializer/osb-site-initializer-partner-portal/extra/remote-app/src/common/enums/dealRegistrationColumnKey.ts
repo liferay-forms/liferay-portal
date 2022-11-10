@@ -11,10 +11,6 @@
 
 export enum DealRegistrationColumnKey {
 	ACCOUNT_NAME = 'PRMDRC-001',
-	ACTION = 'FIXED-ACTION',
 	START_DATE = 'PRMDRC-002',
 	END_DATE = 'PRMDRC-003',
-	DEAL_AMOUNT = 'PRMDRC-004',
-	STAGE = 'FIXED-STATUS',
-	ID = 'ID',
 }
