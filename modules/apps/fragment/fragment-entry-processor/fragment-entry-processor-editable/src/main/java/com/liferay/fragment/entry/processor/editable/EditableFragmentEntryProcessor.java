@@ -179,11 +179,11 @@ public class EditableFragmentEntryProcessor implements FragmentEntryProcessor {
 			JSONObject mappedValueConfigJSONObject =
 				_jsonFactory.createJSONObject();
 
-			if (_fragmentEntryProcessorHelper.isMappedDisplayPage(
-					editableValueJSONObject) ||
-				_fragmentEntryProcessorHelper.isMapped(
+			if (_fragmentEntryProcessorHelper.isMapped(
 					editableValueJSONObject) ||
 				_fragmentEntryProcessorHelper.isMappedCollection(
+					editableValueJSONObject) ||
+				_fragmentEntryProcessorHelper.isMappedDisplayPage(
 					editableValueJSONObject)) {
 
 				Object fieldValue = _fragmentEntryProcessorHelper.getFieldValue(
