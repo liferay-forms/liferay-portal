@@ -38,9 +38,25 @@ definition {
 	macro addTestraySite {
 		Site.openSitesAdmin();
 
-		TeamExtranet.addSiteTemplateCP(
-			siteName = "Testray 2",
-			siteTemplateName = "Liferay Site Initializer Testray");
+		LexiconEntry.gotoAdd();
+
+		LexiconCard.clickCard(card = "Liferay Site Initializer Testray");
+
+		SelectFrame(
+			key_title = "Add Site",
+			locator1 = "IFrame#MODAL_ANY");
+
+		PortletEntry.inputName(name = "Testray 2");
+
+		Button.click(button = "Add");
+
+		Site.openSitesAdmin();
+
+		while (IsElementNotPresent(key_siteName = "Testray 2", locator1 = "Sites#SITE_TABLE_NAME")) {
+			Refresh();
+
+			WaitForPageLoad();
+		}
 	}
 
 	macro assertItemName {
