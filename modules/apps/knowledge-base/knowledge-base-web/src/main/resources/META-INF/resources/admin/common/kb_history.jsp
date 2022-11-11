@@ -82,6 +82,7 @@ if (portletTitleBasedNavigation) {
 		>
 			<liferay-portlet:renderURL var="rowURL">
 				<portlet:param name="mvcPath" value="/admin/common/kb_history.jsp" />
+				<portlet:param name="redirect" value="<%= redirect %>" />
 				<portlet:param name="resourcePrimKey" value="<%= String.valueOf(curKBArticle.getResourcePrimKey()) %>" />
 				<portlet:param name="status" value="<%= String.valueOf(status) %>" />
 				<portlet:param name="sourceVersion" value="<%= String.valueOf(curKBArticle.getVersion()) %>" />
