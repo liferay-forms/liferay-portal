@@ -747,13 +747,13 @@ public class ExpandoValueLocalServiceImpl
 			Map<String, Serializable> attributes)
 		throws PortalException {
 
+		Map<String, String> data = new HashMap<>();
+
 		ExpandoTable table = expandoTableLocalService.getTable(
 			companyId, classNameId, tableName);
 
 		List<ExpandoColumn> columns = expandoColumnLocalService.getColumns(
 			table.getTableId(), attributes.keySet());
-
-		Map<String, String> data = new HashMap<>();
 
 		for (ExpandoColumn column : columns) {
 			ExpandoValue value = new ExpandoValueImpl();
