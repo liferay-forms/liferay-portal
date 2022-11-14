@@ -708,7 +708,7 @@ public class HttpImpl implements Http {
 		throws IOException {
 
 		try (InputStream inputStream = URLtoInputStream(
-				location, method, headers, cookies, cookieSpec, auth, body,
+				location, method, headers, cookieSpec, cookies, auth, body,
 				fileParts, inputStreamParts, parts, response, followRedirects,
 				normalizeURI, timeout)) {
 
