@@ -303,18 +303,18 @@ public class ObjectDefinitionResourceImpl
 			_addListTypeDefinition(objectDefinition);
 		}
 
-		long accountERObjectFieldId = 0;
+		long accountEntryRestrictedObjectFieldId = 0;
 
 		com.liferay.object.model.ObjectField
-			accountERServiceBuilderObjectField =
+			accountEntryRestrictedServiceBuilderObjectField =
 				_objectFieldLocalService.fetchObjectField(
 					objectDefinitionId,
 					objectDefinition.
 						getAccountEntryRestrictedObjectFieldName());
 
-		if (accountERServiceBuilderObjectField != null) {
-			accountERObjectFieldId =
-				accountERServiceBuilderObjectField.getObjectFieldId();
+		if (accountEntryRestrictedServiceBuilderObjectField != null) {
+			accountEntryRestrictedObjectFieldId =
+				accountEntryRestrictedServiceBuilderObjectField.getObjectFieldId();
 		}
 
 		long titleObjectFieldId = 0;
@@ -338,7 +338,7 @@ public class ObjectDefinitionResourceImpl
 		serviceBuilderObjectDefinition =
 			_objectDefinitionService.updateCustomObjectDefinition(
 				objectDefinition.getExternalReferenceCode(), objectDefinitionId,
-				GetterUtil.getLong(accountERObjectFieldId), 0,
+				GetterUtil.getLong(accountEntryRestrictedObjectFieldId), 0,
 				titleObjectFieldId,
 				GetterUtil.getBoolean(
 					objectDefinition.getAccountEntryRestricted()),
