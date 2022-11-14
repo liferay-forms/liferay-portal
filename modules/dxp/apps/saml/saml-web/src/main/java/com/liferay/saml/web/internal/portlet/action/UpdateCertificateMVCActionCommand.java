@@ -355,7 +355,6 @@ public class UpdateCertificateMVCActionCommand extends BaseMVCActionCommand {
 
 		actionRequest.setAttribute(
 			SamlWebKeys.SAML_X509_CERTIFICATE, x509Certificate);
-
 		actionResponse.setWindowState(LiferayWindowState.EXCLUSIVE);
 	}
 
