@@ -378,7 +378,7 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 		if (Validator.isNotNull(entityId)) {
 			if (entityId.length() > 1024) {
 				throw new EntityIdException(
-					"EntityID too long (Max 1024 characters)");
+					"Entity ID is longer than 1024 characters");
 			}
 		}
 		else {
@@ -400,13 +400,13 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 					samlProvider.getEnabled(), samlProviderConfiguration)) {
 
 				throw new ConfigurationException(
-					"The Identity Provider role has been disabled. It can be " +
-						"re-enabled in system settings.");
+					"The identity provider role is disabled");
 			}
 
 			if (samlProvider.getSp() != null) {
 				throw new ConfigurationException(
-					"Can only configure one of sp & idp roles");
+					"Identity and service provider roles are mutually " +
+						"exclusive");
 			}
 
 			_setIdpProperties(
@@ -426,7 +426,7 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 					samlProviderConfiguration.role()))) {
 
 			throw new ConfigurationException(
-				"Cannot enable the provider without configuring its role");
+				"Unable to enable a provider without a role");
 		}
 
 		_samlProviderConfigurationHelper.updateProperties(unicodeProperties);
