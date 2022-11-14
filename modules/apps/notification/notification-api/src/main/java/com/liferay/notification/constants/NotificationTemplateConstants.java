@@ -19,7 +19,7 @@ package com.liferay.notification.constants;
  */
 public class NotificationTemplateConstants {
 
-	public static final String EDITOR_TYPE_FREEMARKER = "freemarker";
+	public static final String EDITOR_TYPE_FREEMARKER = "freeMarker";
 
 	public static final String EDITOR_TYPE_RICH_TEXT = "richText";
 

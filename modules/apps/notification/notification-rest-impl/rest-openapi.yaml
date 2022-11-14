@@ -71,7 +71,7 @@ components:
                 description:
                     type: string
                 editorType:
-                    enum: [freemarker, richText]
+                    enum: [freeMarker, richText]
                     type: string
                 id:
                     format: int64
