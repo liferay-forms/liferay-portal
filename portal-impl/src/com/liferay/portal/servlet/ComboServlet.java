@@ -364,7 +364,7 @@ public class ComboServlet extends HttpServlet {
 				cacheControl.contains("no-store")) {
 
 				_log.error(
-					"Refused to serve " + modulePath +
+					"Skip " + modulePath +
 						" because it sent no-cache or no-store headers");
 			}
 			else if (!contentType.startsWith("application/javascript") &&
@@ -372,14 +372,14 @@ public class ComboServlet extends HttpServlet {
 					 !contentType.startsWith("text/javascript")) {
 
 				_log.error(
-					"Refused to serve " + modulePath +
-						" because its content type is not CSS or JavaScript");
+					"Skip " + modulePath +
+					" because its content type is not CSS or JavaScript");
 			}
 			else if (status != HttpServletResponse.SC_OK) {
 				_log.error(
 					StringBundler.concat(
-						"Refused to serve ", modulePath,
-						" because it returns HTTP status ", status));
+						"Skip ", modulePath, " because it returns HTTP status ",
+						status));
 			}
 			else {
 				stringFileContent = bufferCacheServletResponse.getString();
