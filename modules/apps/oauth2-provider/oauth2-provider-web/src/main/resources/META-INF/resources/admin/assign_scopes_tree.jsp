@@ -193,6 +193,7 @@ pageContext.setAttribute("scopeAliasesDescriptionsMap", assignScopesTreeDisplayC
 						function () {
 							if (!this._node.checked) {
 								this._node.checked = true;
+
 								var elementId = this._node.value;
 
 								var container = document.getElementById(
