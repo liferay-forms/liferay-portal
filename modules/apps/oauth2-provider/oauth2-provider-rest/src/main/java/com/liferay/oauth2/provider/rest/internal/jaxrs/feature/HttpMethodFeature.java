@@ -71,23 +71,23 @@ import org.osgi.service.component.annotations.ServiceScope;
 public class HttpMethodFeature implements Feature {
 
 	@Override
-	public boolean configure(FeatureContext context) {
-		Configuration configuration = context.getConfiguration();
+	public boolean configure(FeatureContext featureContext) {
+		featureContext.register((DynamicFeature)this::_collectHttpMethods);
+		featureContext.register(
+			new HttpScopeCheckerContainerRequestFilter(),
+			Collections.singletonMap(
+				ContainerRequestFilter.class, Priorities.AUTHORIZATION - 8));
+
+		Configuration configuration = featureContext.getConfiguration();
 
 		Map<String, Object> applicationProperties =
 			(Map<String, Object>)configuration.getProperty(
 				"osgi.jaxrs.application.serviceProperties");
 
-		context.register((DynamicFeature)this::_collectHttpMethods);
-		context.register(
-			new HttpScopeCheckerContainerRequestFilter(),
-			Collections.singletonMap(
-				ContainerRequestFilter.class, Priorities.AUTHORIZATION - 8));
-
+		_propertyAccessorFunction = applicationProperties::get;
 		_serviceRegistration = _bundleContext.registerService(
 			ScopeFinder.class, new CollectionScopeFinder(_scopes),
 			new Hashtable<>(applicationProperties));
-		_propertyAccessorFunction = applicationProperties::get;
 
 		return true;
 	}

@@ -46,7 +46,6 @@ public class AnnotationScopeLogic implements ScopeLogic {
 		RequiresNoScope requiresNoScope =
 			RequiresScopeAnnotationFinder.getScopeAnnotation(
 				resourceMethod, RequiresNoScope.class);
-
 		RequiresScope requiresScope =
 			RequiresScopeAnnotationFinder.getScopeAnnotation(
 				resourceMethod, RequiresScope.class);
@@ -74,7 +73,6 @@ public class AnnotationScopeLogic implements ScopeLogic {
 
 		requiresNoScope = RequiresScopeAnnotationFinder.getScopeAnnotation(
 			resourceClass, RequiresNoScope.class);
-
 		requiresScope = RequiresScopeAnnotationFinder.getScopeAnnotation(
 			resourceClass, RequiresScope.class);
 

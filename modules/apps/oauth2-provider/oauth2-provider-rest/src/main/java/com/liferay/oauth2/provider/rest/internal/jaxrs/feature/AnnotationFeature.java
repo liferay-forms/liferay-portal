@@ -22,6 +22,7 @@ import com.liferay.oauth2.provider.scope.spi.scope.finder.ScopeFinder;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 import javax.ws.rs.Priorities;
@@ -58,28 +59,30 @@ import org.osgi.service.component.annotations.ServiceScope;
 public class AnnotationFeature implements Feature {
 
 	@Override
-	public boolean configure(FeatureContext context) {
-		Configuration configuration = context.getConfiguration();
+	public boolean configure(FeatureContext featureContext) {
+		Set<String> scopes = new HashSet<>();
 
-		HashSet<String> scopes = new HashSet<>();
+		// TODO What is a?
 
-		context.register(
+		featureContext.register(
 			(DynamicFeature)(resourceInfo, a) -> scopes.addAll(
 				RequiresScopeAnnotationFinder.find(
 					resourceInfo.getResourceClass())));
 
-		context.register(
+		featureContext.register(
 			new AnnotationContainerScopeCheckerContainerRequestFilter(),
 			Priorities.AUTHORIZATION - 8);
+
+		Configuration configuration = featureContext.getConfiguration();
 
 		Map<String, Object> applicationProperties =
 			(Map<String, Object>)configuration.getProperty(
 				"osgi.jaxrs.application.serviceProperties");
 
+		_propertyAccessorFunction = applicationProperties::get;
 		_serviceRegistration = _bundleContext.registerService(
 			ScopeFinder.class, new CollectionScopeFinder(scopes),
 			new Hashtable<>(applicationProperties));
-		_propertyAccessorFunction = applicationProperties::get;
 
 		return true;
 	}

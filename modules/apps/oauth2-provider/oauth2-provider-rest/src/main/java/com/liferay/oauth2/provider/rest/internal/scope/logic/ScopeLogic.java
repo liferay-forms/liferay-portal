@@ -26,6 +26,8 @@ import java.util.function.Function;
  */
 public interface ScopeLogic {
 
+	// TODO Sort parameters
+
 	public boolean check(
 		ScopeChecker scopeChecker,
 		Function<String, Object> propertyAccessorFunction,
