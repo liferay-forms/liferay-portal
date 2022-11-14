@@ -471,8 +471,6 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 	private SamlProviderConfigurationHelper _samlProviderConfigurationHelper;
 
 	private ServiceRegistration<?> _serviceRegistration;
-	private final Dictionary<String, ?> _systemProperties =
-		new HashMapDictionary<>();
 	private SamlProviderConfiguration _defaultCompanySamlProviderConfiguration =
 		ConfigurableUtil.createConfigurable(
 			SamlProviderConfiguration.class, Collections.emptyMap());
@@ -482,15 +480,6 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 
 		@Override
 		public void deleted(String pid) {
-			if ((_systemProperties != null) &&
-				Objects.equals(
-					_systemProperties.get(Constants.SERVICE_PID), pid)) {
-
-				_defaultCompanySamlProviderConfiguration =
-					ConfigurableUtil.createConfigurable(
-						SamlProviderConfiguration.class,
-						Collections.emptyMap());
-			}
 		}
 
 		@Override
