@@ -286,23 +286,19 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 		_setProperty(
 			samlProviderConfiguration::enabled, PortletPropsKeys.SAML_ENABLED,
 			unicodeProperties, _toNullableString(samlProvider.getEnabled()));
-
 		_setProperty(
 			samlProviderConfiguration::entityId,
 			PortletPropsKeys.SAML_ENTITY_ID, unicodeProperties,
 			samlProvider.getEntityId());
-
 		_setProperty(
 			samlProviderConfiguration::keyStoreCredentialPassword,
 			PortletPropsKeys.SAML_KEYSTORE_CREDENTIAL_PASSWORD,
 			unicodeProperties,
 			_toNullableString(samlProvider.getKeyStoreCredentialPassword()));
-
 		_setProperty(
 			samlProviderConfiguration::signMetadata,
 			PortletPropsKeys.SAML_SIGN_METADATA, unicodeProperties,
 			_toNullableString(samlProvider.getSignMetadata()));
-
 		_setProperty(
 			samlProviderConfiguration::sslRequired,
 			PortletPropsKeys.SAML_SSL_REQUIRED, unicodeProperties,
@@ -322,6 +318,11 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 		}
 
 		_setProperty(
+			samlProviderConfiguration::keyStoreCredentialPassword,
+			PortletPropsKeys.SAML_KEYSTORE_ENCRYPTION_CREDENTIAL_PASSWORD,
+			unicodeProperties,
+			_toNullableString(sp.getKeyStoreEncryptionCredentialPassword()));
+		_setProperty(
 			samlProviderConfiguration::allowShowingTheLoginPortlet,
 			PortletPropsKeys.SAML_SP_ALLOW_SHOWING_THE_LOGIN_PORTLET,
 			unicodeProperties,
@@ -339,11 +340,6 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 			samlProviderConfiguration::ldapImportEnabled,
 			PortletPropsKeys.SAML_SP_LDAP_IMPORT_ENABLED, unicodeProperties,
 			_toNullableString(sp.getLdapImportEnabled()));
-		_setProperty(
-			samlProviderConfiguration::keyStoreCredentialPassword,
-			PortletPropsKeys.SAML_KEYSTORE_ENCRYPTION_CREDENTIAL_PASSWORD,
-			unicodeProperties,
-			_toNullableString(sp.getKeyStoreEncryptionCredentialPassword()));
 		_setProperty(
 			samlProviderConfiguration::signAuthnRequest,
 			PortletPropsKeys.SAML_SP_SIGN_AUTHN_REQUEST, unicodeProperties,
@@ -397,7 +393,7 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 		}
 
 		if (samlProvider.getIdp() != null) {
-			if (!_validateIdpRoleSelection(
+			if (_isIdpRoleDisabled(
 					samlProvider.getEnabled(), samlProviderConfiguration)) {
 
 				throw new ConfigurationException(
@@ -435,11 +431,11 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 		return getSamlProvider();
 	}
 
-	private boolean _validateIdpRoleSelection(
+	private boolean _isIdpRoleDisabled(
 		boolean enabled, SamlProviderConfiguration samlProviderConfiguration) {
 
 		if (_samlConfiguration.idpRoleConfigurationEnabled()) {
-			return true;
+			return false;
 		}
 
 		String role = samlProviderConfiguration.role();
@@ -447,14 +443,14 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 		if (Validator.isNull(role) ||
 			!role.equals(SamlProviderConfigurationKeys.SAML_ROLE_IDP)) {
 
-			return false;
+			return true;
 		}
 
 		if (!samlProviderConfiguration.enabled() && enabled) {
-			return false;
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
