@@ -206,14 +206,14 @@ public class AssetListEntryActionDropdownItemsProvider {
 	private UnsafeConsumer<DropdownItem, Exception>
 		_getViewAssetListEntryUsagesActionUnsafeConsumer() {
 
-		long usagesCount =
+		long count =
 			AssetListEntryUsageLocalServiceUtil.getAssetListEntryUsagesCount(
 				_themeDisplay.getScopeGroupId(),
 				PortalUtil.getClassNameId(AssetListEntry.class),
 				String.valueOf(_assetListEntry.getAssetListEntryId()));
 
 		return dropdownItem -> {
-			dropdownItem.setDisabled(usagesCount == 0);
+			dropdownItem.setDisabled(count == 0);
 			dropdownItem.setHref(
 				_liferayPortletResponse.createRenderURL(), "mvcPath",
 				"/view_asset_list_entry_usages.jsp", "redirect",
