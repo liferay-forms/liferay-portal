@@ -242,22 +242,22 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 		UnicodeProperties unicodeProperties) {
 
 		_setProperty(
-			unicodeProperties, PortletPropsKeys.SAML_IDP_ASSERTION_LIFETIME,
-			_toNullableString(idp.getDefaultAssertionLifetime()),
-			samlProviderConfiguration::defaultAssertionLifetime);
+			samlProviderConfiguration::defaultAssertionLifetime,
+			PortletPropsKeys.SAML_IDP_ASSERTION_LIFETIME, unicodeProperties,
+			_toNullableString(idp.getDefaultAssertionLifetime()));
 		_setProperty(
-			unicodeProperties,
+			samlProviderConfiguration::authnRequestSignatureRequired,
 			PortletPropsKeys.SAML_IDP_AUTHN_REQUEST_SIGNATURE_REQUIRED,
-			_toNullableString(idp.getAuthnRequestSignatureRequired()),
-			samlProviderConfiguration::authnRequestSignatureRequired);
+			unicodeProperties,
+			_toNullableString(idp.getAuthnRequestSignatureRequired()));
 		_setProperty(
-			unicodeProperties, PortletPropsKeys.SAML_IDP_SESSION_MAXIMUM_AGE,
-			_toNullableString(idp.getSessionMaximumAge()),
-			samlProviderConfiguration::sessionMaximumAge);
+			samlProviderConfiguration::sessionMaximumAge,
+			PortletPropsKeys.SAML_IDP_SESSION_MAXIMUM_AGE, unicodeProperties,
+			_toNullableString(idp.getSessionMaximumAge()));
 		_setProperty(
-			unicodeProperties, PortletPropsKeys.SAML_IDP_SESSION_TIMEOUT,
-			_toNullableString(idp.getSessionTimeout()),
-			samlProviderConfiguration::sessionTimeout);
+			samlProviderConfiguration::sessionTimeout,
+			PortletPropsKeys.SAML_IDP_SESSION_TIMEOUT, unicodeProperties,
+			_toNullableString(idp.getSessionTimeout()));
 
 		unicodeProperties.put(
 			PortletPropsKeys.SAML_ROLE,
@@ -265,8 +265,8 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 	}
 
 	private void _setProperty(
-		UnicodeProperties unicodeProperties, String key, String value,
-		Supplier<Object> defaultSupplier) {
+		Supplier<Object> defaultSupplier, String key,
+		UnicodeProperties unicodeProperties, String value) {
 
 		if (value == null) {
 			unicodeProperties.put(
@@ -284,29 +284,29 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 		UnicodeProperties unicodeProperties) {
 
 		_setProperty(
-			unicodeProperties, PortletPropsKeys.SAML_ENABLED,
-			_toNullableString(samlProvider.getEnabled()),
-			samlProviderConfiguration::enabled);
+			samlProviderConfiguration::enabled, PortletPropsKeys.SAML_ENABLED,
+			unicodeProperties, _toNullableString(samlProvider.getEnabled()));
 
 		_setProperty(
-			unicodeProperties, PortletPropsKeys.SAML_ENTITY_ID,
-			samlProvider.getEntityId(), samlProviderConfiguration::entityId);
+			samlProviderConfiguration::entityId,
+			PortletPropsKeys.SAML_ENTITY_ID, unicodeProperties,
+			samlProvider.getEntityId());
 
 		_setProperty(
-			unicodeProperties,
+			samlProviderConfiguration::keyStoreCredentialPassword,
 			PortletPropsKeys.SAML_KEYSTORE_CREDENTIAL_PASSWORD,
-			_toNullableString(samlProvider.getKeyStoreCredentialPassword()),
-			samlProviderConfiguration::keyStoreCredentialPassword);
+			unicodeProperties,
+			_toNullableString(samlProvider.getKeyStoreCredentialPassword()));
 
 		_setProperty(
-			unicodeProperties, PortletPropsKeys.SAML_SIGN_METADATA,
-			_toNullableString(samlProvider.getSignMetadata()),
-			samlProviderConfiguration::signMetadata);
+			samlProviderConfiguration::signMetadata,
+			PortletPropsKeys.SAML_SIGN_METADATA, unicodeProperties,
+			_toNullableString(samlProvider.getSignMetadata()));
 
 		_setProperty(
-			unicodeProperties, PortletPropsKeys.SAML_SSL_REQUIRED,
-			_toNullableString(samlProvider.getSslRequired()),
-			samlProviderConfiguration::sslRequired);
+			samlProviderConfiguration::sslRequired,
+			PortletPropsKeys.SAML_SSL_REQUIRED, unicodeProperties,
+			_toNullableString(samlProvider.getSslRequired()));
 	}
 
 	private void _setSpProperties(
@@ -322,32 +322,32 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 		}
 
 		_setProperty(
-			unicodeProperties,
+			samlProviderConfiguration::allowShowingTheLoginPortlet,
 			PortletPropsKeys.SAML_SP_ALLOW_SHOWING_THE_LOGIN_PORTLET,
-			_toNullableString(sp.getAllowShowingTheLoginPortlet()),
-			samlProviderConfiguration::allowShowingTheLoginPortlet);
-		_setProperty(
 			unicodeProperties,
+			_toNullableString(sp.getAllowShowingTheLoginPortlet()));
+		_setProperty(
+			samlProviderConfiguration::assertionSignatureRequired,
 			PortletPropsKeys.SAML_SP_ASSERTION_SIGNATURE_REQUIRED,
-			_toNullableString(sp.getAssertionSignatureRequired()),
-			samlProviderConfiguration::assertionSignatureRequired);
-		_setProperty(
-			unicodeProperties, PortletPropsKeys.SAML_SP_CLOCK_SKEW,
-			_toNullableString(sp.getClockSkew()),
-			samlProviderConfiguration::clockSkew);
-		_setProperty(
-			unicodeProperties, PortletPropsKeys.SAML_SP_LDAP_IMPORT_ENABLED,
-			_toNullableString(sp.getLdapImportEnabled()),
-			samlProviderConfiguration::ldapImportEnabled);
-		_setProperty(
 			unicodeProperties,
-			PortletPropsKeys.SAML_KEYSTORE_ENCRYPTION_CREDENTIAL_PASSWORD,
-			_toNullableString(sp.getKeyStoreEncryptionCredentialPassword()),
-			samlProviderConfiguration::keyStoreCredentialPassword);
+			_toNullableString(sp.getAssertionSignatureRequired()));
 		_setProperty(
-			unicodeProperties, PortletPropsKeys.SAML_SP_SIGN_AUTHN_REQUEST,
-			_toNullableString(sp.getSignAuthnRequest()),
-			samlProviderConfiguration::signAuthnRequest);
+			samlProviderConfiguration::clockSkew,
+			PortletPropsKeys.SAML_SP_CLOCK_SKEW, unicodeProperties,
+			_toNullableString(sp.getClockSkew()));
+		_setProperty(
+			samlProviderConfiguration::ldapImportEnabled,
+			PortletPropsKeys.SAML_SP_LDAP_IMPORT_ENABLED, unicodeProperties,
+			_toNullableString(sp.getLdapImportEnabled()));
+		_setProperty(
+			samlProviderConfiguration::keyStoreCredentialPassword,
+			PortletPropsKeys.SAML_KEYSTORE_ENCRYPTION_CREDENTIAL_PASSWORD,
+			unicodeProperties,
+			_toNullableString(sp.getKeyStoreEncryptionCredentialPassword()));
+		_setProperty(
+			samlProviderConfiguration::signAuthnRequest,
+			PortletPropsKeys.SAML_SP_SIGN_AUTHN_REQUEST, unicodeProperties,
+			_toNullableString(sp.getSignAuthnRequest()));
 
 		unicodeProperties.put(
 			PortletPropsKeys.SAML_ROLE,
