@@ -52,6 +52,9 @@ public class ProductNavigationControlMenuTagDisplayContext {
 			return _productNavigationControlMenuEntriesMap;
 		}
 
+		Map<String, List<ProductNavigationControlMenuEntry>>
+			productNavigationControlMenuEntriesMap = new LinkedHashMap<>();
+
 		ProductNavigationControlMenuCategoryRegistry
 			productNavigationControlMenuCategoryRegistry =
 				ServletContextUtil.
@@ -63,17 +66,14 @@ public class ProductNavigationControlMenuTagDisplayContext {
 					getProductNavigationControlMenuCategories(
 						ProductNavigationControlMenuCategoryKeys.ROOT);
 
-		ProductNavigationControlMenuEntryRegistry
-			productNavigationControlMenuEntryRegistry =
-				ServletContextUtil.
-					getProductNavigationControlMenuEntryRegistry();
-
-		Map<String, List<ProductNavigationControlMenuEntry>>
-			productNavigationControlMenuEntriesMap = new LinkedHashMap<>();
-
 		for (ProductNavigationControlMenuCategory
 				productNavigationControlMenuCategory :
 					productNavigationControlMenuCategories) {
+
+			ProductNavigationControlMenuEntryRegistry
+				productNavigationControlMenuEntryRegistry =
+					ServletContextUtil.
+						getProductNavigationControlMenuEntryRegistry();
 
 			List<ProductNavigationControlMenuEntry>
 				productNavigationControlMenuEntries =
