@@ -108,7 +108,7 @@ public class AnalyticsRenderFragmentLayoutPreDynamicIncludeTest {
 	}
 
 	@Test
-	public void testIncludeWithFile() throws Exception {
+	public void testIncludeWithFileEntry() throws Exception {
 		MockHttpServletRequest mockHttpServletRequest =
 			new MockHttpServletRequest();
 
