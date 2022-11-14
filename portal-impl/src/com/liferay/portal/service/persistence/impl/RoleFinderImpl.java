@@ -969,34 +969,9 @@ public class RoleFinderImpl extends RoleFinderBaseImpl implements RoleFinder {
 	}
 
 	private Predicate _getKeywordsPredicate(
-		Column<?, String> column, String[] keywords) {
+		Expression<String> expression, String[] keywords) {
 
-		Expression<String> expression = DSLFunctionFactoryUtil.lower(column);
-
-		Predicate keywordsPredicate = null;
-
-		for (String keyword : keywords) {
-			if (keyword == null) {
-				continue;
-			}
-
-			Predicate keywordPredicate = expression.like(keyword);
-
-			if (keywordsPredicate == null) {
-				keywordsPredicate = keywordPredicate;
-			}
-			else {
-				keywordsPredicate = keywordsPredicate.or(keywordPredicate);
-			}
-		}
-
-		return keywordsPredicate;
-	}
-
-	private Predicate _getKeywordsPredicate(
-		Expression<String> column, String[] keywords) {
-
-		Expression<String> expression = DSLFunctionFactoryUtil.lower(column);
+		expression = DSLFunctionFactoryUtil.lower(expression);
 
 		Predicate keywordsPredicate = null;
 
