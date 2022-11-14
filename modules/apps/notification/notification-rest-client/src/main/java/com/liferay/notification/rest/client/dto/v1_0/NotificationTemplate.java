@@ -412,7 +412,7 @@ public class NotificationTemplate implements Cloneable, Serializable {
 
 	public static enum EditorType {
 
-		FREEMARKER("freemarker"), RICH_TEXT("richText");
+		FREE_MARKER("freeMarker"), RICH_TEXT("richText");
 
 		public static EditorType create(String value) {
 			for (EditorType editorType : values()) {

@@ -788,7 +788,7 @@ public class NotificationTemplate implements Serializable {
 	@GraphQLName("EditorType")
 	public static enum EditorType {
 
-		FREEMARKER("freemarker"), RICH_TEXT("richText");
+		FREE_MARKER("freeMarker"), RICH_TEXT("richText");
 
 		@JsonCreator
 		public static EditorType create(String value) {
