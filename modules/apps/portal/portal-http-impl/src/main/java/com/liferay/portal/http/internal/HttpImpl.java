@@ -858,17 +858,6 @@ public class HttpImpl implements Http {
 					HttpHeaders.USER_AGENT, _DEFAULT_USER_AGENT);
 			}
 
-			if (ArrayUtil.isNotEmpty(cookies)) {
-				basicCookieStore = new BasicCookieStore();
-
-				org.apache.http.cookie.Cookie[] httpCookies = toHttpCookies(
-					cookies);
-
-				basicCookieStore.addCookies(httpCookies);
-
-				httpClientContext.setCookieStore(basicCookieStore);
-			}
-
 			if (cookieSpec != null) {
 				if (cookieSpec.equals(CookieSpec.DEFAULT)) {
 					requestConfigBuilder.setCookieSpec(CookieSpecs.DEFAULT);
@@ -890,6 +879,17 @@ public class HttpImpl implements Http {
 			}
 			else {
 				requestConfigBuilder.setCookieSpec(CookieSpecs.DEFAULT);
+			}
+
+			if (ArrayUtil.isNotEmpty(cookies)) {
+				basicCookieStore = new BasicCookieStore();
+
+				org.apache.http.cookie.Cookie[] httpCookies = toHttpCookies(
+					cookies);
+
+				basicCookieStore.addCookies(httpCookies);
+
+				httpClientContext.setCookieStore(basicCookieStore);
 			}
 
 			if (auth != null) {
