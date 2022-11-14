@@ -79,10 +79,10 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 	public SamlProvider getSamlProvider() throws Exception {
 		_checkPermission();
 
+		SamlProvider samlProvider = new SamlProvider();
+
 		SamlProviderConfiguration samlProviderConfiguration =
 			_samlProviderConfigurationHelper.getSamlProviderConfiguration();
-
-		SamlProvider samlProvider = new SamlProvider();
 
 		samlProvider.setEnabled(samlProviderConfiguration.enabled());
 		samlProvider.setEntityId(samlProviderConfiguration.entityId());
@@ -141,7 +141,6 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 
 		_samlConfiguration = ConfigurableUtil.createConfigurable(
 			SamlConfiguration.class, properties);
-
 		_serviceRegistration = bundleContext.registerService(
 			ManagedServiceFactory.class,
 			new SystemConfigurationManagedServiceFactory(),
@@ -176,11 +175,11 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 
 			throw new CredentialException(
 				StringBundler.concat(
-					"Error occurred when authenticating the ",
-					certificateUsage.name(), " certificate. Please verify ",
-					"that the SAML KeyStore contains a certificate for the ",
-					"Entity ID and that it is protected by the provided key ",
-					"credential password"));
+					"Unable to authenticate with the ",
+					certificateUsage.name(), " certificate. Verify that the ",
+					"SAML KeyStore contains a certificate for the entity ID ",
+					"and that it is protected by the provided key credential ",
+					"password."));
 		}
 	}
 
@@ -232,8 +231,8 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 			return false;
 		}
 
-		if (role.equals(SamlProviderConfigurationKeys.SAML_ROLE_SP) ||
-			role.equals(SamlProviderConfigurationKeys.SAML_ROLE_IDP)) {
+		if (role.equals(SamlProviderConfigurationKeys.SAML_ROLE_IDP) ||
+			role.equals(SamlProviderConfigurationKeys.SAML_ROLE_SP)) {
 
 			return true;
 		}
