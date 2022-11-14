@@ -238,8 +238,8 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 	}
 
 	private void _setIdpProperties(
-		Idp idp, UnicodeProperties unicodeProperties,
-		SamlProviderConfiguration samlProviderConfiguration) {
+		Idp idp, SamlProviderConfiguration samlProviderConfiguration,
+		UnicodeProperties unicodeProperties) {
 
 		_setProperty(
 			unicodeProperties, PortletPropsKeys.SAML_IDP_ASSERTION_LIFETIME,
@@ -310,8 +310,9 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 	}
 
 	private void _setSpProperties(
-			String entityId, Sp sp, UnicodeProperties unicodeProperties,
-			SamlProviderConfiguration samlProviderConfiguration)
+			String entityId,
+			SamlProviderConfiguration samlProviderConfiguration, Sp sp,
+			UnicodeProperties unicodeProperties)
 		throws Exception {
 
 		if (sp.getKeyStoreEncryptionCredentialPassword() != null) {
@@ -410,13 +411,13 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 			}
 
 			_setIdpProperties(
-				samlProvider.getIdp(), unicodeProperties,
-				samlProviderConfiguration);
+				samlProvider.getIdp(), samlProviderConfiguration,
+				unicodeProperties);
 		}
 		else if (samlProvider.getSp() != null) {
 			_setSpProperties(
-				entityId, samlProvider.getSp(), unicodeProperties,
-				samlProviderConfiguration);
+				entityId, samlProviderConfiguration, samlProvider.getSp(),
+				unicodeProperties);
 		}
 
 		if (GetterUtil.getBoolean(samlProvider.getEnabled()) &&
