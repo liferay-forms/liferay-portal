@@ -104,6 +104,9 @@ public class AnalyticsRenderFragmentLayoutPostDynamicIncludeTest {
 
 	@Test
 	public void testIncludeWithFileEntry() throws Exception {
+		MockHttpServletRequest mockHttpServletRequest =
+			new MockHttpServletRequest();
+
 		FileEntry fileEntry = _dlAppLocalService.addFileEntry(
 			null, TestPropsValues.getUserId(), _group.getGroupId(),
 			DLFolderConstants.DEFAULT_PARENT_FOLDER_ID, "image.jpg",
@@ -112,9 +115,6 @@ public class AnalyticsRenderFragmentLayoutPostDynamicIncludeTest {
 				AnalyticsRenderFragmentLayoutPreDynamicIncludeTest.class,
 				"dependencies/image.jpg"),
 			null, null, new ServiceContext());
-
-		MockHttpServletRequest mockHttpServletRequest =
-			new MockHttpServletRequest();
 
 		mockHttpServletRequest.setAttribute(
 			LayoutDisplayPageWebKeys.LAYOUT_DISPLAY_PAGE_OBJECT_PROVIDER,
