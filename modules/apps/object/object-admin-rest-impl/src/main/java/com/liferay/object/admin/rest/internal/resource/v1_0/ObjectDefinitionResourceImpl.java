@@ -314,7 +314,8 @@ public class ObjectDefinitionResourceImpl
 
 		if (accountEntryRestrictedServiceBuilderObjectField != null) {
 			accountEntryRestrictedObjectFieldId =
-				accountEntryRestrictedServiceBuilderObjectField.getObjectFieldId();
+				accountEntryRestrictedServiceBuilderObjectField.
+					getObjectFieldId();
 		}
 
 		long titleObjectFieldId = 0;
@@ -730,7 +731,6 @@ public class ObjectDefinitionResourceImpl
 
 						return serviceBuilderObjectField.getName();
 					});
-
 				setTitleObjectFieldName(
 					() -> {
 						com.liferay.object.model.ObjectField
