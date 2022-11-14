@@ -104,9 +104,9 @@ public class AnalyticsRenderFragmentLayoutPreDynamicInclude
 			printWriter.print(entry.getKey());
 			printWriter.print("=\"");
 
-			Function<T, String> value = entry.getValue();
+			Function<T, String> function = entry.getValue();
 
-			printWriter.print(value.apply(displayObject));
+			printWriter.print(function.apply(displayObject));
 		}
 
 		printWriter.print("\">");
