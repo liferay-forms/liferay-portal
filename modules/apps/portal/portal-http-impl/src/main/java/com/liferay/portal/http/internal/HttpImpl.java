@@ -936,7 +936,7 @@ public class HttpImpl implements Http {
 
 						return URLtoInputStream(
 							locationHeaderValue, Http.Method.GET, headers,
-							cookies, cookieSpec, auth, body, fileParts,
+							cookieSpec, cookies, auth, body, fileParts,
 							inputStreamParts, parts, response, followRedirects,
 							normalizeURI, timeout);
 					}
