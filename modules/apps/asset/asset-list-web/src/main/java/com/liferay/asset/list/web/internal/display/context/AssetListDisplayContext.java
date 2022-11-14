@@ -261,9 +261,9 @@ public class AssetListDisplayContext {
 	}
 
 	public int getAssetListEntryUsageCount(AssetListEntry assetListEntry) {
-		Group scopeGroup = _themeDisplay.getScopeGroup();
+		Group group = _themeDisplay.getScopeGroup();
 
-		if (scopeGroup.getType() == GroupConstants.TYPE_DEPOT) {
+		if (group.getType() == GroupConstants.TYPE_DEPOT) {
 			return AssetListEntryUsageLocalServiceUtil.
 				getCompanyAssetListEntryUsagesCount(
 					_themeDisplay.getCompanyId(),
