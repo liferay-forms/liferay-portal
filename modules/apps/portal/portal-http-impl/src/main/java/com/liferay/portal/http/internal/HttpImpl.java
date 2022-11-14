@@ -161,7 +161,7 @@ public class HttpImpl implements Http {
 	public byte[] URLtoByteArray(Http.Options options) throws IOException {
 		return URLtoByteArray(
 			options.getLocation(), options.getMethod(), options.getHeaders(),
-			options.getCookies(), options.getCookieSpec(), options.getAuth(),
+			options.getCookieSpec(), options.getCookies(), options.getAuth(),
 			options.getBody(), options.getFileParts(),
 			options.getInputStreamParts(), options.getParts(),
 			options.getResponse(), options.isFollowRedirects(),
@@ -195,7 +195,7 @@ public class HttpImpl implements Http {
 
 		return URLtoInputStream(
 			options.getLocation(), options.getMethod(), options.getHeaders(),
-			options.getCookies(), options.getCookieSpec(), options.getAuth(),
+			options.getCookieSpec(), options.getCookies(), options.getAuth(),
 			options.getBody(), options.getFileParts(),
 			options.getInputStreamParts(), options.getParts(),
 			options.getResponse(), options.isFollowRedirects(),
@@ -700,7 +700,7 @@ public class HttpImpl implements Http {
 
 	protected byte[] URLtoByteArray(
 			String location, Http.Method method, Map<String, String> headers,
-			Cookie[] cookies, Http.CookieSpec cookieSpec, Http.Auth auth,
+			Http.CookieSpec cookieSpec, Cookie[] cookies, Http.Auth auth,
 			Http.Body body, List<Http.FilePart> fileParts,
 			List<Http.InputStreamPart> inputStreamParts,
 			Map<String, String> parts, Http.Response response,
@@ -732,7 +732,7 @@ public class HttpImpl implements Http {
 
 	protected InputStream URLtoInputStream(
 			String location, Http.Method method, Map<String, String> headers,
-			Cookie[] cookies, Http.CookieSpec cookieSpec, Http.Auth auth,
+			Http.CookieSpec cookieSpec, Cookie[] cookies, Http.Auth auth,
 			Http.Body body, List<Http.FilePart> fileParts,
 			List<Http.InputStreamPart> inputStreamParts,
 			Map<String, String> parts, Http.Response response,
