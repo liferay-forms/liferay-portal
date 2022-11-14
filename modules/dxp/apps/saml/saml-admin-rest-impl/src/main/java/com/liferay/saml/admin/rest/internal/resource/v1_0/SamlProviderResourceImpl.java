@@ -27,7 +27,6 @@ import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.HashMapDictionary;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
@@ -52,7 +51,6 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.osgi.framework.BundleContext;
@@ -175,11 +173,10 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 
 			throw new CredentialException(
 				StringBundler.concat(
-					"Unable to authenticate with the ",
-					certificateUsage.name(), " certificate. Verify that the ",
-					"SAML KeyStore contains a certificate for the entity ID ",
-					"and that it is protected by the provided key credential ",
-					"password."));
+					"Unable to authenticate with the ", certificateUsage.name(),
+					" certificate. Verify that the SAML KeyStore contains a ",
+					"certificate for the entity ID and that it is protected ",
+					"by the provided key credential password."));
 		}
 	}
 
@@ -462,6 +459,10 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 	private static final Log _log = LogFactoryUtil.getLog(
 		SamlProviderResourceImpl.class);
 
+	private SamlProviderConfiguration _defaultCompanySamlProviderConfiguration =
+		ConfigurableUtil.createConfigurable(
+			SamlProviderConfiguration.class, Collections.emptyMap());
+
 	@Reference
 	private LocalEntityManager _localEntityManager;
 
@@ -471,9 +472,6 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 	private SamlProviderConfigurationHelper _samlProviderConfigurationHelper;
 
 	private ServiceRegistration<?> _serviceRegistration;
-	private SamlProviderConfiguration _defaultCompanySamlProviderConfiguration =
-		ConfigurableUtil.createConfigurable(
-			SamlProviderConfiguration.class, Collections.emptyMap());
 
 	private class DefaultCompanyManagedServiceFactory
 		implements ManagedServiceFactory {
