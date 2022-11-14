@@ -109,14 +109,10 @@ public class NotificationUtil {
 			LocalizedMapUtil.getLocalizedMap(notificationTemplate.getBody()));
 		serviceBuilderNotificationTemplate.setDescription(
 			notificationTemplate.getDescription());
-
-		String editorType = NotificationTemplateConstants.EDITOR_TYPE_RICH_TEXT;
-
-		if (notificationTemplate.getEditorTypeAsString() != null) {
-			editorType = notificationTemplate.getEditorTypeAsString();
-		}
-
-		serviceBuilderNotificationTemplate.setEditorType(editorType);
+		serviceBuilderNotificationTemplate.setEditorType(
+			GetterUtil.getString(
+				notificationTemplate.getEditorTypeAsString(),
+				NotificationTemplateConstants.EDITOR_TYPE_RICH_TEXT));
 		serviceBuilderNotificationTemplate.setName(
 			notificationTemplate.getName());
 		serviceBuilderNotificationTemplate.setRecipientType(
