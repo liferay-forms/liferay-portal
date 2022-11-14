@@ -223,6 +223,28 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 		return sp;
 	}
 
+	private boolean _isIdpRoleDisabled(
+		boolean enabled, SamlProviderConfiguration samlProviderConfiguration) {
+
+		if (_samlConfiguration.idpRoleConfigurationEnabled()) {
+			return false;
+		}
+
+		String role = samlProviderConfiguration.role();
+
+		if (Validator.isNull(role) ||
+			!role.equals(SamlProviderConfigurationKeys.SAML_ROLE_IDP)) {
+
+			return true;
+		}
+
+		if (!samlProviderConfiguration.enabled() && enabled) {
+			return true;
+		}
+
+		return false;
+	}
+
 	private boolean _isValidRole(String role) {
 		if (Validator.isBlank(role)) {
 			return false;
@@ -429,28 +451,6 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 		_samlProviderConfigurationHelper.updateProperties(unicodeProperties);
 
 		return getSamlProvider();
-	}
-
-	private boolean _isIdpRoleDisabled(
-		boolean enabled, SamlProviderConfiguration samlProviderConfiguration) {
-
-		if (_samlConfiguration.idpRoleConfigurationEnabled()) {
-			return false;
-		}
-
-		String role = samlProviderConfiguration.role();
-
-		if (Validator.isNull(role) ||
-			!role.equals(SamlProviderConfigurationKeys.SAML_ROLE_IDP)) {
-
-			return true;
-		}
-
-		if (!samlProviderConfiguration.enabled() && enabled) {
-			return true;
-		}
-
-		return false;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
