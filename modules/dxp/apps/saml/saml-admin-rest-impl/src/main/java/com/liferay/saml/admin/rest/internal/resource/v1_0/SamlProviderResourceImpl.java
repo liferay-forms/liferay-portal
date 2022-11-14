@@ -121,7 +121,7 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 		_checkPermission();
 
 		return _updateSamlProvider(
-			samlProvider, _systemSamlProviderConfiguration);
+			samlProvider, _defaultCompanySamlProviderConfiguration);
 	}
 
 	@Override
@@ -143,7 +143,7 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 			SamlConfiguration.class, properties);
 		_serviceRegistration = bundleContext.registerService(
 			ManagedServiceFactory.class,
-			new SystemConfigurationManagedServiceFactory(),
+			new DefaultCompanyManagedServiceFactory(),
 			HashMapDictionaryBuilder.put(
 				Constants.SERVICE_PID,
 				"com.liferay.saml.runtime.configuration." +
@@ -473,11 +473,11 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 	private ServiceRegistration<?> _serviceRegistration;
 	private final Dictionary<String, ?> _systemProperties =
 		new HashMapDictionary<>();
-	private SamlProviderConfiguration _systemSamlProviderConfiguration =
+	private SamlProviderConfiguration _defaultCompanySamlProviderConfiguration =
 		ConfigurableUtil.createConfigurable(
 			SamlProviderConfiguration.class, Collections.emptyMap());
 
-	private class SystemConfigurationManagedServiceFactory
+	private class DefaultCompanyManagedServiceFactory
 		implements ManagedServiceFactory {
 
 		@Override
@@ -486,7 +486,7 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 				Objects.equals(
 					_systemProperties.get(Constants.SERVICE_PID), pid)) {
 
-				_systemSamlProviderConfiguration =
+				_defaultCompanySamlProviderConfiguration =
 					ConfigurableUtil.createConfigurable(
 						SamlProviderConfiguration.class,
 						Collections.emptyMap());
@@ -495,7 +495,7 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 
 		@Override
 		public String getName() {
-			return SystemConfigurationManagedServiceFactory.class.getName();
+			return DefaultCompanyManagedServiceFactory.class.getName();
 		}
 
 		@Override
@@ -503,7 +503,7 @@ public class SamlProviderResourceImpl extends BaseSamlProviderResourceImpl {
 			if (GetterUtil.getLong(properties.get("companyId")) ==
 					CompanyConstants.SYSTEM) {
 
-				_systemSamlProviderConfiguration =
+				_defaultCompanySamlProviderConfiguration =
 					ConfigurableUtil.createConfigurable(
 						SamlProviderConfiguration.class, properties);
 			}
