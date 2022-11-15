@@ -55,7 +55,7 @@ export default function NavigationPanel({
 		) {
 			openToast({
 				message: Liferay.Language.get(
-					'folders-can-not-be-moved-into-articles'
+					'folders-cannot-be-moved-into-articles'
 				),
 				type: 'danger',
 			});

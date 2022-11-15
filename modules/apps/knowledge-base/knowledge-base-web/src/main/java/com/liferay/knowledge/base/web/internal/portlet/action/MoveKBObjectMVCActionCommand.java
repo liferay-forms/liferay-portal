@@ -115,7 +115,7 @@ public class MoveKBObjectMVCActionCommand extends BaseMVCActionCommand {
 							actionRequest, actionResponse,
 							_language.get(
 								_portal.getHttpServletRequest(actionRequest),
-								"folders-can-not-be-moved-into-articles"));
+								"folders-cannot-be-moved-into-articles"));
 
 						return;
 					}
