@@ -21,8 +21,8 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.servlet.taglib.BaseDynamicInclude;
 import com.liferay.portal.kernel.servlet.taglib.DynamicInclude;
 import com.liferay.portal.kernel.util.HtmlUtil;
-import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.TreeMapBuilder;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -86,7 +86,7 @@ public class AnalyticsRenderFragmentLayoutPreDynamicInclude
 			return;
 		}
 
-		Map<String, String> attributes = LinkedHashMapBuilder.put(
+		Map<String, String> attributes = TreeMapBuilder.put(
 			"data-analytics-asset-id", String.valueOf(classPK)
 		).put(
 			"data-analytics-asset-title", HtmlUtil.escapeAttribute(title)
