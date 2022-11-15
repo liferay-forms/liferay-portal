@@ -80,16 +80,16 @@ public class AssetListEntryItemSelectorDisplayContext {
 	public int getAssetListEntrySegmentsEntryRelsCount(
 		AssetListEntry assetListEntry) {
 
-		int assetListEntryVariationCount =
+		int assetListEntrySegmentsEntryRelsCount =
 			AssetListEntrySegmentsEntryRelLocalServiceUtil.
 				getAssetListEntrySegmentsEntryRelsCount(
 					assetListEntry.getAssetListEntryId());
 
-		if (assetListEntryVariationCount < 2) {
+		if (assetListEntrySegmentsEntryRelsCount < 2) {
 			return 0;
 		}
 
-		return assetListEntryVariationCount;
+		return assetListEntrySegmentsEntryRelsCount;
 	}
 
 	public List<BreadcrumbEntry> getBreadcrumbEntries(PortletURL currentURL)

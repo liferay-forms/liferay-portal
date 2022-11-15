@@ -88,7 +88,7 @@ SearchContainer<AssetListEntry> searchContainer = assetListEntryItemSelectorDisp
 
 						String modifiedDateDescription = LanguageUtil.getTimeDescription(request, System.currentTimeMillis() - modifiedDate.getTime(), true);
 
-						int assetListEntryVariationCount = assetListEntryItemSelectorDisplayContext.getAssetListEntrySegmentsEntryRelsCount(assetListEntry);
+						int assetListEntrySegmentsEntryRelsCount = assetListEntryItemSelectorDisplayContext.getAssetListEntrySegmentsEntryRelsCount(assetListEntry);
 						%>
 
 						<span class="text-default">
@@ -116,11 +116,11 @@ SearchContainer<AssetListEntry> searchContainer = assetListEntryItemSelectorDisp
 						</p>
 
 						<c:choose>
-							<c:when test="<%= assetListEntryVariationCount > 0 %>">
+							<c:when test="<%= assetListEntrySegmentsEntryRelsCount > 0 %>">
 								<clay:label
 									cssClass="mr-auto"
 									displayType="info"
-									label='<%= LanguageUtil.format(locale, "x-variations", new String[] {String.valueOf(assetListEntryVariationCount)}) %>'
+									label='<%= LanguageUtil.format(locale, "x-variations", new String[] {String.valueOf(assetListEntrySegmentsEntryRelsCount)}) %>'
 								/>
 							</c:when>
 							<c:otherwise>

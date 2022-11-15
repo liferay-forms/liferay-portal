@@ -62,11 +62,11 @@ public class AssetListEntryVerticalCard extends BaseVerticalCard {
 
 	@Override
 	public List<LabelItem> getLabels() {
-		int assetListEntryVariationCount =
+		int assetListEntrySegmentsEntryRelsCount =
 			_assetListEntryItemSelectorDisplayContext.
 				getAssetListEntrySegmentsEntryRelsCount(_assetListEntry);
 
-		if (assetListEntryVariationCount > 0) {
+		if (assetListEntrySegmentsEntryRelsCount > 0) {
 			return LabelItemListBuilder.add(
 				labelItem -> {
 					labelItem.setDisplayType("info");
@@ -74,7 +74,7 @@ public class AssetListEntryVerticalCard extends BaseVerticalCard {
 						LanguageUtil.format(
 							themeDisplay.getLocale(), "x-variations",
 							new String[] {
-								String.valueOf(assetListEntryVariationCount)
+								String.valueOf(assetListEntrySegmentsEntryRelsCount)
 							}));
 				}
 			).build();
