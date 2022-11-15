@@ -20,16 +20,13 @@ import com.liferay.layout.display.page.constants.LayoutDisplayPageWebKeys;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.servlet.taglib.BaseDynamicInclude;
 import com.liferay.portal.kernel.servlet.taglib.DynamicInclude;
-import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HtmlUtil;
+import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.Portal;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -91,7 +88,7 @@ public class AnalyticsRenderFragmentLayoutPreDynamicInclude
 		}
 
 		Map<String, Function<T, String>> attributes =
-			HashMapBuilder.<String, Function<T, String>>put(
+			LinkedHashMapBuilder.<String, Function<T, String>>put(
 				"data-analytics-asset-id", object -> String.valueOf(classPK)
 			).put(
 				"data-analytics-asset-title",
@@ -103,19 +100,17 @@ public class AnalyticsRenderFragmentLayoutPreDynamicInclude
 				analyticsAssetType.getAttributes()
 			).build();
 
-		List<String> keys = new ArrayList<>(attributes.keySet());
-
-		Collections.sort(keys);
-
-		StringBundler sb = new StringBundler((keys.size() * 3) + 2);
+		StringBundler sb = new StringBundler((attributes.size() * 3) + 2);
 
 		sb.append("<div ");
 
-		for (String key : keys) {
-			sb.append(key);
+		for (Map.Entry<String, Function<T, String>> entry :
+				attributes.entrySet()) {
+
+			sb.append(entry.getKey());
 			sb.append("=\"");
 
-			Function<T, String> function = attributes.get(key);
+			Function<T, String> function = entry.getValue();
 
 			sb.append(function.apply(displayObject));
 
