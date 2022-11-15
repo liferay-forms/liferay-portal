@@ -25,7 +25,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * @author Hugo Huijser
+ * @author Brian Wing Shun Chan
  */
 public class TreeMapBuilderTest {
 
