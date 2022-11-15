@@ -346,14 +346,14 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 			"pathToAssets", _portal.getPathContext(resourceRequest)
 		).put(
 			"publishDate",
-			_toIsoDateFormat(
+			_toISODateFormat(
 				_toLocaleDate(analyticsReportsInfoItem.getPublishDate(object)))
 		).put(
 			"timeRange",
 			JSONUtil.put(
-				"endDate", _toIsoDateFormat(timeRange.getEndLocalDate())
+				"endDate", _toISODateFormat(timeRange.getEndLocalDate())
 			).put(
-				"startDate", _toIsoDateFormat(timeRange.getStartLocalDate())
+				"startDate", _toISODateFormat(timeRange.getStartLocalDate())
 			)
 		).put(
 			"timeSpanKey", _getTimeSpanKey(timeRange)
@@ -561,7 +561,7 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 			).toArray());
 	}
 
-	private String _toIsoDateFormat(LocalDate localDate) {
+	private String _toISODateFormat(LocalDate localDate) {
 		if (localDate == null) {
 			return null;
 		}
