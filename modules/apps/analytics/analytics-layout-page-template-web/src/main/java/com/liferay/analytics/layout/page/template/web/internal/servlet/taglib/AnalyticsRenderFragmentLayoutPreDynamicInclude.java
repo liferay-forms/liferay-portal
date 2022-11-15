@@ -100,7 +100,7 @@ public class AnalyticsRenderFragmentLayoutPreDynamicInclude
 				analyticsAssetType.getAttributes()
 			).build();
 
-		StringBundler sb = new StringBundler((attributes.size() * 3) + 2);
+		StringBundler sb = new StringBundler((attributes.size() * 5) + 2);
 
 		sb.append("<div ");
 
