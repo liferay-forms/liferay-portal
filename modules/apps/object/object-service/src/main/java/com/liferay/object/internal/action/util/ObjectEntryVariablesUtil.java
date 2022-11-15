@@ -48,6 +48,8 @@ public class ObjectEntryVariablesUtil {
 		SystemObjectDefinitionMetadataRegistry
 			systemObjectDefinitionMetadataRegistry) {
 
+		// TODO Remove all references to version 1 after March 2023
+
 		if (PropsValues.OBJECT_ENTRY_SCRIPT_VARIABLES_VERSION == 2) {
 			return _getVariables(
 				dtoConverterRegistry, objectDefinition, payloadJSONObject,
