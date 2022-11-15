@@ -474,10 +474,10 @@ public class FragmentsImporterImpl implements FragmentsImporter {
 	}
 
 	private String _getFileName(String path) {
-		int indexOf = path.lastIndexOf(CharPool.SLASH);
+		int index = path.lastIndexOf(CharPool.SLASH);
 
-		if (indexOf > 0) {
-			return path.substring(indexOf + 1);
+		if (index > 0) {
+			return path.substring(index + 1);
 		}
 
 		return path;
