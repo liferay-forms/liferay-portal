@@ -18,14 +18,17 @@ import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemListBuilder;
 import com.liferay.journal.model.JournalFeed;
 import com.liferay.journal.web.internal.security.permission.resource.JournalFeedPermission;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.taglib.security.PermissionsURLTag;
 
 import java.util.List;
 
@@ -89,7 +92,13 @@ public class JournalFeedActionDropdownItemsProvider {
 								"action", "permissionsJournalFeed");
 							dropdownItem.putData(
 								"permissionsJournalFeedURL",
-								_getPermissionsJournalFeedURL());
+								PermissionsURLTag.doTag(
+									StringPool.BLANK,
+									JournalFeed.class.getName(),
+									_feed.getName(), null,
+									String.valueOf(_feed.getId()),
+									LiferayWindowState.POP_UP.toString(), null,
+									_httpServletRequest));
 							dropdownItem.setIcon("password-policies");
 							dropdownItem.setLabel(
 								LanguageUtil.get(
