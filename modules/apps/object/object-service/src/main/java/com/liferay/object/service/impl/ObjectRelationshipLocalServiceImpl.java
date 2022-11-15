@@ -202,6 +202,19 @@ public class ObjectRelationshipLocalServiceImpl
 				"_", objectDefinition2.getShortName(), "_",
 				objectRelationship.getName()));
 
+		objectRelationship =
+			objectRelationshipLocalService.updateObjectRelationship(
+				objectRelationship);
+
+		ObjectRelationship reverseObjectRelationship =
+			fetchReverseObjectRelationship(objectRelationship, true);
+
+		reverseObjectRelationship.setDBTableName(
+			objectRelationship.getDBTableName());
+
+		objectRelationshipLocalService.updateObjectRelationship(
+			reverseObjectRelationship);
+
 		Map<String, String> pkObjectFieldDBColumnNames =
 			ObjectRelationshipUtil.getPKObjectFieldDBColumnNames(
 				objectDefinition1, objectDefinition2, false);
@@ -219,17 +232,7 @@ public class ObjectRelationshipLocalServiceImpl
 				pkObjectFieldDBColumnName1, ", ", pkObjectFieldDBColumnName2,
 				"))"));
 
-		ObjectRelationship reverseObjectRelationship =
-			fetchReverseObjectRelationship(objectRelationship, true);
-
-		reverseObjectRelationship.setDBTableName(
-			objectRelationship.getDBTableName());
-
-		objectRelationshipLocalService.updateObjectRelationship(
-			reverseObjectRelationship);
-
-		return objectRelationshipLocalService.updateObjectRelationship(
-			objectRelationship);
+		return objectRelationship;
 	}
 
 	@Override
