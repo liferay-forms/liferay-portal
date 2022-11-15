@@ -130,11 +130,12 @@ public class BufferedIndexerInvocationHandler implements InvocationHandler {
 				Indexer.class, method.getName(), String.class, Long.TYPE);
 
 			String className = (String)args[0];
-			Long classPK = (Long)args[1];
 
 			PersistedModelLocalService persistedModelLocalService =
 				_persistedModelLocalServiceRegistry.
 					getPersistedModelLocalService(className);
+
+			Long classPK = (Long)args[1];
 
 			try {
 				Object object = persistedModelLocalService.getPersistedModel(
