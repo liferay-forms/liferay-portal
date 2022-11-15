@@ -434,7 +434,7 @@ public class FragmentsImporterImpl implements FragmentsImporter {
 				groupId, FragmentPortletKeys.FRAGMENT, serviceContext);
 		}
 
-		Map<String, Long> folderIdMap = HashMapBuilder.put(
+		Map<String, Long> folderIdsMap = HashMapBuilder.put(
 			StringPool.BLANK, fragmentCollection.getResourcesFolderId()
 		).build();
 
@@ -454,7 +454,7 @@ public class FragmentsImporterImpl implements FragmentsImporter {
 				fragmentCollection.getFragmentCollectionId(),
 				FragmentPortletKeys.FRAGMENT,
 				_getOrCreateFolderId(
-					folderIdMap, folderPath, repository.getRepositoryId(),
+					folderIdsMap, folderPath, repository.getRepositoryId(),
 					userId),
 				_getInputStream(zipFile, entry.getValue()), fileName,
 				MimeTypesUtil.getContentType(fileName), false);
@@ -706,12 +706,12 @@ public class FragmentsImporterImpl implements FragmentsImporter {
 	}
 
 	private long _getOrCreateFolderId(
-			Map<String, Long> folderIdMap, String folderPath, long repositoryId,
+			Map<String, Long> folderIdsMap, String folderPath, long repositoryId,
 			long userId)
 		throws Exception {
 
-		if (folderIdMap.containsKey(folderPath)) {
-			return folderIdMap.get(folderPath);
+		if (folderIdsMap.containsKey(folderPath)) {
+			return folderIdsMap.get(folderPath);
 		}
 
 		String folderName = folderPath;
@@ -729,10 +729,10 @@ public class FragmentsImporterImpl implements FragmentsImporter {
 		Folder folder = PortletFileRepositoryUtil.addPortletFolder(
 			userId, repositoryId,
 			_getOrCreateFolderId(
-				folderIdMap, parentFolderPath, repositoryId, userId),
+				folderIdsMap, parentFolderPath, repositoryId, userId),
 			folderName, ServiceContextThreadLocal.getServiceContext());
 
-		folderIdMap.put(folderPath, folder.getFolderId());
+		folderIdsMap.put(folderPath, folder.getFolderId());
 
 		return folder.getFolderId();
 	}
