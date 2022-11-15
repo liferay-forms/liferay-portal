@@ -27,7 +27,9 @@ import com.liferay.portal.kernel.util.Portal;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -98,15 +100,23 @@ public class AnalyticsRenderFragmentLayoutPreDynamicInclude
 
 		sb.append("<div ");
 
-		for (Map.Entry<String, String> entry : attributes.entrySet()) {
+		Set<Map.Entry<String, String>> set = attributes.entrySet();
+
+		Iterator<Map.Entry<String, String>> iterator = set.iterator();
+
+		while (iterator.hasNext()) {
+			Map.Entry<String, String> entry = iterator.next();
+
 			sb.append(entry.getKey());
+
 			sb.append("=\"");
 			sb.append(entry.getValue());
 			sb.append("\"");
-			sb.append(" ");
-		}
 
-		sb.setIndex(sb.index() - 1);
+			if (iterator.hasNext()) {
+				sb.append(" ");
+			}
+		}
 
 		sb.append(">");
 
