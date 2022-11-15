@@ -87,8 +87,6 @@ SearchContainer<AssetListEntry> searchContainer = assetListEntryItemSelectorDisp
 						Date modifiedDate = assetListEntry.getModifiedDate();
 
 						String modifiedDateDescription = LanguageUtil.getTimeDescription(request, System.currentTimeMillis() - modifiedDate.getTime(), true);
-
-						int assetListEntrySegmentsEntryRelsCount = assetListEntryItemSelectorDisplayContext.getAssetListEntrySegmentsEntryRelsCount(assetListEntry);
 						%>
 
 						<span class="text-default">
@@ -114,6 +112,10 @@ SearchContainer<AssetListEntry> searchContainer = assetListEntryItemSelectorDisp
 						<p class="h6 text-default">
 							<liferay-ui:message key="supports-filters" />
 						</p>
+
+						<%
+						int assetListEntrySegmentsEntryRelsCount = assetListEntryItemSelectorDisplayContext.getAssetListEntrySegmentsEntryRelsCount(assetListEntry);
+						%>
 
 						<c:choose>
 							<c:when test="<%= assetListEntrySegmentsEntryRelsCount > 0 %>">
