@@ -238,7 +238,25 @@ public class KBDropdownItemsProvider {
 			dropdownGroupItem -> dropdownGroupItem.setDropdownItems(
 				DropdownItemListBuilder.add(
 					() -> _hasViewPermission(kbTemplate),
-					_getViewActionUnsafeConsumer(kbTemplate)
+					dropdownItem -> {
+						dropdownItem.setHref(
+							PortletURLBuilder.createRenderURL(
+								_liferayPortletResponse
+							).setMVCPath(
+								"/admin/view_kb_template.jsp"
+							).setRedirect(
+								_currentURL
+							).setParameter(
+								"kbTemplateId", kbTemplate.getKbTemplateId()
+							).setParameter(
+								"selectedItemId", kbTemplate.getPrimaryKey()
+							).buildRenderURL());
+						dropdownItem.setIcon("view");
+						dropdownItem.setLabel(
+							LanguageUtil.get(
+								_liferayPortletRequest.getHttpServletRequest(),
+								"view"));
+					}
 				).add(
 					() -> _hasUpdatePermission(kbTemplate),
 					_getEditActionUnsafeConsumer(kbTemplate)
@@ -889,29 +907,6 @@ public class KBDropdownItemsProvider {
 				LanguageUtil.get(
 					_liferayPortletRequest.getHttpServletRequest(),
 					KBUtil.getStatusTransitionLabel(previousStatus)));
-		};
-	}
-
-	private UnsafeConsumer<DropdownItem, Exception>
-		_getViewActionUnsafeConsumer(KBTemplate kbTemplate) {
-
-		return dropdownItem -> {
-			dropdownItem.setHref(
-				PortletURLBuilder.createRenderURL(
-					_liferayPortletResponse
-				).setMVCPath(
-					"/admin/view_kb_template.jsp"
-				).setRedirect(
-					_currentURL
-				).setParameter(
-					"kbTemplateId", kbTemplate.getKbTemplateId()
-				).setParameter(
-					"selectedItemId", kbTemplate.getPrimaryKey()
-				).buildRenderURL());
-			dropdownItem.setIcon("view");
-			dropdownItem.setLabel(
-				LanguageUtil.get(
-					_liferayPortletRequest.getHttpServletRequest(), "view"));
 		};
 	}
 
