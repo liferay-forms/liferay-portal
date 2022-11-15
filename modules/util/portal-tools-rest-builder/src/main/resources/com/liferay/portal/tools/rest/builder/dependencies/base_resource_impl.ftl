@@ -945,7 +945,7 @@ public abstract class Base${schemaName}ResourceImpl
 		protected VulcanBatchEngineImportTaskResource vulcanBatchEngineImportTaskResource;
 	</#if>
 
-	private void _checkResources(
+	private static void _checkResources(
 			long companyId, long resourceId, String resourceName,
 			ResourcePermissionLocalService resourcePermissionLocalService)
 		throws PortalException {
