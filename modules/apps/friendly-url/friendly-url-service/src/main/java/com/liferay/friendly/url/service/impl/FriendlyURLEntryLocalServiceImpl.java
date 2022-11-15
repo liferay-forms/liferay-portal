@@ -446,7 +446,7 @@ public class FriendlyURLEntryLocalServiceImpl
 		}
 
 		for (int i = 1;
-			 _existsFriendlyURLEntryWithUrlTitle(
+			 _hasFriendlyURLEntryWithUrlTitle(
 				 groupId, classNameId, classPK, curUrlTitle, languageId);
 			 i++) {
 
@@ -615,7 +615,7 @@ public class FriendlyURLEntryLocalServiceImpl
 		return true;
 	}
 
-	private boolean _existsFriendlyURLEntryWithUrlTitle(
+	private boolean _hasFriendlyURLEntryWithUrlTitle(
 		long groupId, long classNameId, long notClassPK, String urlTitle,
 		String languageId) {
 
