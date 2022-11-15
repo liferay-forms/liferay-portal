@@ -118,7 +118,7 @@ public class DocumentLibraryDDMFormFieldValueAccessor
 		}
 		catch (PortalException portalException) {
 			if (_log.isDebugEnabled()) {
-				_log.debug("Unable to retrieve file entry ", portalException);
+				_log.debug("Unable to get file entry", portalException);
 			}
 
 			return null;
