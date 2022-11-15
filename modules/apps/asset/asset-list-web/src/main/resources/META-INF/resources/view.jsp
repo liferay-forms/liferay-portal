@@ -57,9 +57,8 @@ AssetListManagementToolbarDisplayContext assetListManagementToolbarDisplayContex
 							"actions", assetListManagementToolbarDisplayContext.getAvailableActions(assetListEntry)
 						).build());
 
-					Date createDate = assetListEntry.getCreateDate();
-
 					int assetListEntrySegmentsEntryRelsCount = assetListDisplayContext.getAssetListEntrySegmentsEntryRelsCount(assetListEntry);
+					Date createDate = assetListEntry.getCreateDate();
 					%>
 
 					<c:choose>
