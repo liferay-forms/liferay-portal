@@ -72,11 +72,11 @@ public class FragmentCollectionImpl extends FragmentCollectionBaseImpl {
 
 	@Override
 	public List<FileEntry> getResources() throws PortalException {
-		Map<String, FileEntry> resources = _getResourcesMap(
+		Map<String, FileEntry> resourcesMap = _getResourcesMap(
 			PortletFileRepositoryUtil.getPortletFolder(getResourcesFolderId()),
 			null);
 
-		return new ArrayList<>(resources.values());
+		return new ArrayList<>(resourcesMap.values());
 	}
 
 	@Override
@@ -296,7 +296,7 @@ public class FragmentCollectionImpl extends FragmentCollectionBaseImpl {
 			Folder folder, String parentPath)
 		throws PortalException {
 
-		Map<String, FileEntry> resources = new HashMap<>();
+		Map<String, FileEntry> resourcesMap = new HashMap<>();
 
 		Repository repository = _getRepository();
 
@@ -317,7 +317,7 @@ public class FragmentCollectionImpl extends FragmentCollectionBaseImpl {
 						parentPath + StringPool.SLASH + childFolderPath;
 				}
 
-				resources.putAll(
+				resourcesMap.putAll(
 					_getResourcesMap(childFolder, childFolderPath));
 			}
 			else if (object instanceof FileEntry) {
@@ -330,11 +330,11 @@ public class FragmentCollectionImpl extends FragmentCollectionBaseImpl {
 						parentPath + StringPool.SLASH + fileEntryPath;
 				}
 
-				resources.put(fileEntryPath, fileEntry);
+				resourcesMap.put(fileEntryPath, fileEntry);
 			}
 		}
 
-		return resources;
+		return resourcesMap;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
