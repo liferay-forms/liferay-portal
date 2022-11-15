@@ -57,10 +57,10 @@ import com.liferay.portal.vulcan.util.TransformUtil;
 
 import java.io.Serializable;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -745,10 +745,10 @@ public abstract class Base${schemaName}ResourceImpl
 			List<ResourceAction> resourceActions = resourceActionLocalService.getResourceActions(resourceName);
 
 			if (Validator.isNotNull(roleNames)) {
-				return Page.of(actions, _getPermissions(contextCompany.getCompanyId(), resourceActions, id, resourceName, StringUtil.split(roleNames)));
+				return Page.of(actions, _getResourcePermissionsByResourceName(contextCompany.getCompanyId(), resourceActions, id, resourceName, StringUtil.split(roleNames)));
 			}
 
-			return Page.of(actions, _getPermissions(contextCompany.getCompanyId(), resourceActions, id, resourceName, null));
+			return Page.of(actions, _getResourcePermissionsByResourceName(contextCompany.getCompanyId(), resourceActions, id, resourceName, null));
 		}
 	</#if>
 
@@ -945,49 +945,72 @@ public abstract class Base${schemaName}ResourceImpl
 		protected VulcanBatchEngineImportTaskResource vulcanBatchEngineImportTaskResource;
 	</#if>
 
-	private void _checkResources(long companyId, long resourceId, String resourceName) throws PortalException {
-		int count = resourcePermissionLocalService.getResourcePermissionsCount(companyId, resourceName, ResourceConstants.SCOPE_INDIVIDUAL, String.valueOf(resourceId));
+	private void _checkResources(
+			long companyId, long resourceId, String resourceName)
+		throws PortalException {
+
+		int count = resourcePermissionLocalService.getResourcePermissionsCount(
+			companyId, resourceName, ResourceConstants.SCOPE_INDIVIDUAL,
+			String.valueOf(resourceId));
 
 		if (count == 0) {
-			ResourceLocalServiceUtil.addResources(companyId, resourceId, 0, resourceName, String.valueOf(resourceId), false, true, true);
+			ResourceLocalServiceUtil.addResources(
+				companyId, resourceId, 0, resourceName,
+				String.valueOf(resourceId), false, true, true);
 		}
 	}
 
-	private Collection<Permission> _getPermissions(long companyId, List<ResourceAction> resourceActions, long resourceId, String resourceName, String[] roleNames) throws PortalException {
-		_checkResources(companyId, resourceId, resourceName);
+	private List<Permission> _getResourcePermissionsByResourceName(
+		long companyId, List<ResourceAction> resourceActions,
+		long resourceId, String resourceName, String[] roleNames)
+		throws PortalException {
 
-		Map<String, Permission> permissions = new LinkedHashMap<>();
+		_checkResources(
+			companyId, resourceId, resourceName);
 
-		for (ResourcePermission resourcePermission : resourcePermissionLocalService.getResourcePermissions(resourceName)) {
-			if ((resourcePermission.getPrimKeyId() == 0) || (resourcePermission.getPrimKeyId() == resourceId)) {
-				com.liferay.portal.kernel.model.Role role = roleLocalService.getRole(resourcePermission.getRoleId());
+		List<ResourcePermission> resourcePermissions =
+			resourcePermissionLocalService.getResourcePermissions(resourceName);
+
+		List<Permission> permissions = new ArrayList<>();
+
+		Map<String, Permission> permissionMap = new HashMap<>();
+
+		for (ResourcePermission resourcePermission : resourcePermissions) {
+			if ((resourcePermission.getPrimKeyId() == 0L) ||
+				(resourcePermission.getPrimKeyId() == resourceId)) {
+
+				com.liferay.portal.kernel.model.Role role = roleLocalService.getRole(
+					resourcePermission.getRoleId());
 
 				if ((roleNames == null) ||
-					((roleNames != null) && ArrayUtil.contains(roleNames, role.getName()))) {
+					((roleNames != null) &&
+					ArrayUtil.contains(roleNames, role.getName()))) {
 
-					Permission permission = permissions.get(role.getName());
+					Permission existingPermission = permissionMap.get(
+						role.getName());
+					Permission newPermission = _toPermission(
+						resourceActions, resourcePermission, role);
 
-					if (permission == null) {
-						permission = _toPermission(resourceActions, resourcePermission, role);
-
-						permissions.put(role.getName(), permission);
+					if (existingPermission == null) {
+						permissionMap.put(role.getName(), newPermission);
+						permissions.add(newPermission);
 					}
 					else {
-						Set<String> actionsIdsSet = new HashSet<>();
+						Set<String> actions = new HashSet<>();
 
-						Collections.addAll(actionsIdsSet, permission.getActionIds());
+						Collections.addAll(
+							actions, existingPermission.getActionIds());
+						Collections.addAll(
+							actions, newPermission.getActionIds());
 
-						Permission newPermission = _toPermission(resourceActions, resourcePermission, role);
-
-						Collections.addAll(actionsIdsSet, newPermission.getActionIds());
-
-						permission.setActionIds(actionsIdsSet.toArray(new String[0]));
+						existingPermission.setActionIds(
+							actions.toArray(new String[0]));
 					}
 				}
 			}
 		}
 
-		return permissions.values();
+		return permissions;
 	}
 
 	private Permission _toPermission(List<ResourceAction> resourceActions, ResourcePermission resourcePermission, com.liferay.portal.kernel.model.Role role) {
