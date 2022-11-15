@@ -342,7 +342,7 @@ public class ObjectEntryInfoItemFormProvider
 	private InfoForm _getInfoForm(long objectDefinitionId)
 		throws NoSuchFormVariationException {
 
-		String objectDefinitionClassName =
+		String modelClassName =
 			ObjectDefinition.class.getName() + "#" + objectDefinitionId;
 
 		return InfoForm.builder(
@@ -356,20 +356,18 @@ public class ObjectEntryInfoItemFormProvider
 				}
 			}
 		).infoFieldSetEntry(
-			_templateInfoItemFieldSetProvider.getInfoFieldSet(
-				objectDefinitionClassName)
+			_templateInfoItemFieldSetProvider.getInfoFieldSet(modelClassName)
 		).infoFieldSetEntry(
 			_getDisplayPageInfoFieldSet()
 		).infoFieldSetEntry(
-			_infoItemFieldReaderFieldSetProvider.getInfoFieldSet(
-				objectDefinitionClassName)
+			_infoItemFieldReaderFieldSetProvider.getInfoFieldSet(modelClassName)
 		).labelInfoLocalizedValue(
 			InfoLocalizedValue.<String>builder(
 			).values(
 				_objectDefinition.getLabelMap()
 			).build()
 		).name(
-			objectDefinitionClassName
+			modelClassName
 		).build();
 	}
 
