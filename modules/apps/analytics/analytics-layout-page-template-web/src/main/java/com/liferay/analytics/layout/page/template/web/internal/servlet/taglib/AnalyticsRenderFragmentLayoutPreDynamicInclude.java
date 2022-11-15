@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import java.util.Map;
-import java.util.function.Function;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,7 +61,6 @@ public class AnalyticsRenderFragmentLayoutPreDynamicInclude
 		_printAnalyticsCloudAssetTracker(
 			layoutDisplayPageObjectProvider.getClassName(),
 			layoutDisplayPageObjectProvider.getClassPK(),
-			layoutDisplayPageObjectProvider.getDisplayObject(),
 			httpServletResponse.getWriter(),
 			layoutDisplayPageObjectProvider.getTitle(
 				_portal.getLocale(httpServletRequest)));
@@ -75,8 +73,7 @@ public class AnalyticsRenderFragmentLayoutPreDynamicInclude
 	}
 
 	private <T> void _printAnalyticsCloudAssetTracker(
-		String className, long classPK, T displayObject,
-		PrintWriter printWriter, String title) {
+		String className, long classPK, PrintWriter printWriter, String title) {
 
 		AnalyticsRenderFragmentLayoutUtil.AnalyticsAssetType
 			analyticsAssetType =
@@ -87,33 +84,24 @@ public class AnalyticsRenderFragmentLayoutPreDynamicInclude
 			return;
 		}
 
-		Map<String, Function<T, String>> attributes =
-			LinkedHashMapBuilder.<String, Function<T, String>>put(
-				"data-analytics-asset-id", object -> String.valueOf(classPK)
-			).put(
-				"data-analytics-asset-title",
-				object -> HtmlUtil.escapeAttribute(title)
-			).put(
-				"data-analytics-asset-type",
-				object -> analyticsAssetType.getType()
-			).putAll(
-				analyticsAssetType.getAttributes()
-			).build();
+		Map<String, String> attributes = LinkedHashMapBuilder.put(
+			"data-analytics-asset-id", String.valueOf(classPK)
+		).put(
+			"data-analytics-asset-title", HtmlUtil.escapeAttribute(title)
+		).put(
+			"data-analytics-asset-type", analyticsAssetType.getType()
+		).putAll(
+			analyticsAssetType.getAttributes()
+		).build();
 
 		StringBundler sb = new StringBundler((attributes.size() * 5) + 2);
 
 		sb.append("<div ");
 
-		for (Map.Entry<String, Function<T, String>> entry :
-				attributes.entrySet()) {
-
+		for (Map.Entry<String, String> entry : attributes.entrySet()) {
 			sb.append(entry.getKey());
 			sb.append("=\"");
-
-			Function<T, String> function = entry.getValue();
-
-			sb.append(function.apply(displayObject));
-
+			sb.append(entry.getValue());
 			sb.append("\"");
 			sb.append(" ");
 		}
