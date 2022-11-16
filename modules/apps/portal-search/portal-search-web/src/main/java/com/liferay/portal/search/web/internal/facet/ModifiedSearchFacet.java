@@ -56,7 +56,7 @@ public class ModifiedSearchFacet extends BaseJSPSearchFacet {
 
 		facetConfiguration.setClassName(getFacetClassName());
 
-		JSONArray jsonArray = _jsonFactory.createJSONArray();
+		JSONArray jsonArray = jsonFactory.createJSONArray();
 
 		for (int i = 0; i < _LABELS.length; i++) {
 			jsonArray.put(
@@ -165,6 +165,7 @@ public class ModifiedSearchFacet extends BaseJSPSearchFacet {
 
 	protected CalendarFactory calendarFactory;
 	protected DateFormatFactory dateFormatFactory;
+	protected JSONFactory jsonFactory;
 
 	@Reference
 	protected ModifiedFacetFactory modifiedFacetFactory;
