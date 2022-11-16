@@ -288,6 +288,8 @@ const Main = ({
 		return null;
 	};
 
+	const fieldDetailsId = `${id ?? name}_fieldDetails`;
+
 	return (
 		<FieldBase
 			{...otherProps}
@@ -300,7 +302,7 @@ const Main = ({
 		>
 			<ImagePicker
 				editingLanguageId={editingLanguageId}
-				id={id ?? name}
+				id={fieldDetailsId}
 				inputValue={
 					transformValue(inputValue) ??
 					transformValue(value) ??

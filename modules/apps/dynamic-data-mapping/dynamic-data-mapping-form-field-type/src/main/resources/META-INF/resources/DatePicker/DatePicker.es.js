@@ -250,6 +250,8 @@ export default function DatePicker({
 		}
 	};
 
+	const fieldDetailsId = `${name}_fieldDetails`;
+
 	return (
 		<FieldBase
 			localizedValue={localizedValue}
@@ -263,6 +265,7 @@ export default function DatePicker({
 				disabled={readOnly}
 				expanded={expanded}
 				firstDayOfWeek={firstDayOfWeek}
+				id={fieldDetailsId}
 				months={months}
 				onBlur={onBlur}
 				onExpandedChange={handleExpandedChange}

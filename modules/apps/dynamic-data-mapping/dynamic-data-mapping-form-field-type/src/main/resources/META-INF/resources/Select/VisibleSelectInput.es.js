@@ -14,7 +14,6 @@
 
 import './VisibleSelectInput.scss';
 
-import ClayIcon from '@clayui/icon';
 import ClayLabel from '@clayui/label';
 import classNames from 'classnames';
 import React, {forwardRef} from 'react';
@@ -41,20 +40,20 @@ const LabelOptionListItem = ({onCloseButtonClicked, option, readOnly}) => (
 );
 
 const OptionSelected = ({isPlaceholder, label}) => (
-	<div
+	<span
 		className={classNames('option-selected', {
 			'option-selected-placeholder': isPlaceholder,
 		})}
 	>
 		{label}
-	</div>
+	</span>
 );
 
 const VisibleSelectInput = forwardRef(
 	(
 		{
 			className,
-			id,
+			fieldDetailsId,
 			multiple,
 			onClick,
 			onCloseButtonClicked,
@@ -94,17 +93,18 @@ const VisibleSelectInput = forwardRef(
 				onKeyDown={onKeyDown}
 				ref={ref}
 			>
-				<div
+				<button
+					aria-haspopup="listbox"
 					className={classNames(
-						'form-control results-chosen select-field-trigger',
+						'form-control form-control-select results-chosen select-field-trigger',
 						{
 							'disabled': readOnly,
 							'multiple-label-list': multiple,
 						}
 					)}
 					disabled={readOnly}
-					id={id}
-					tabIndex="0"
+					id={fieldDetailsId}
+					type="button"
 				>
 					{isValueEmpty || (value.length === 1 && !multiple) ? (
 						<OptionSelected
@@ -135,13 +135,7 @@ const VisibleSelectInput = forwardRef(
 							})}
 						</>
 					)}
-
-					<div className="lfr__ddm-form-field-type-select-arrow-down">
-						<a className="select-arrow-down-container">
-							<ClayIcon symbol="caret-double" />
-						</a>
-					</div>
-				</div>
+				</button>
 			</div>
 		);
 	}

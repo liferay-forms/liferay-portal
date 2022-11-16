@@ -33,6 +33,7 @@ const DEFAULT_COLORS = [
 ];
 
 const ClayColorPickerWithState = ({
+	id,
 	inputValue,
 	name,
 	onBlur,
@@ -59,6 +60,7 @@ const ClayColorPickerWithState = ({
 			<ClayColorPicker
 				colors={customColors}
 				disabled={readOnly}
+				id={id}
 				label={Liferay.Language.get('color-field-type-label')}
 				onBlur={onBlur}
 				onColorsChange={setCustoms}
@@ -136,6 +138,8 @@ const ColorPicker = ({
 		observer.observe(colorDropdownNode, {attributes: true});
 	};
 
+	const fieldDetailsId = `${name}_fieldDetails`;
+
 	return (
 		<FieldBase
 			name={name}
@@ -145,6 +149,7 @@ const ColorPicker = ({
 			{...otherProps}
 		>
 			<ClayColorPickerWithState
+				id={fieldDetailsId}
 				inputValue={value ? value : predefinedValue}
 				name={name}
 				onBlur={onBlur}
