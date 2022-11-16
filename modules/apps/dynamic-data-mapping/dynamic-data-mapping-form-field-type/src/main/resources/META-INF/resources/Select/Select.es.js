@@ -250,6 +250,7 @@ const DropdownListWithSearch = ({
 const Trigger = forwardRef(
 	(
 		{
+			fieldDetailsId,
 			onCloseButtonClicked,
 			onTriggerClicked,
 			onTriggerKeyDown,
@@ -265,6 +266,7 @@ const Trigger = forwardRef(
 					<HiddenSelectInput value={value} {...otherProps} />
 				)}
 				<VisibleSelectInput
+					fieldDetailsId={fieldDetailsId}
 					onClick={onTriggerClicked}
 					onCloseButtonClicked={onCloseButtonClicked}
 					onKeyDown={onTriggerKeyDown}
@@ -280,6 +282,7 @@ const Trigger = forwardRef(
 
 const Select = ({
 	defaultSearch,
+	fieldDetailsId,
 	multiple,
 	onCloseButtonClicked,
 	onDropdownItemClicked,
@@ -365,6 +368,7 @@ const Select = ({
 	return (
 		<>
 			<Trigger
+				fieldDetailsId={fieldDetailsId}
 				multiple={multiple}
 				onCloseButtonClicked={({event, value}) => {
 					const newValue = removeValue({
@@ -501,6 +505,8 @@ const Main = ({
 	const predefinedValueArray = toArray(predefinedValue);
 	const valueArray = toArray(value);
 
+	const fieldDetailsId = `${name}_fieldDetails`;
+
 	const normalizedOptions = useMemo(
 		() =>
 			normalizeOptions({
@@ -543,6 +549,7 @@ const Main = ({
 		>
 			<Select
 				defaultSearch={defaultSearch}
+				fieldDetailsId={fieldDetailsId}
 				multiple={multiple}
 				name={`${name}_field`}
 				onCloseButtonClicked={({event, value}) =>

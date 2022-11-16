@@ -211,7 +211,9 @@ export function FieldBase({
 		warningMessage,
 	});
 
-	const fieldDetailsId = `${id ?? name}_fieldDetails`;
+	const fieldDetailsId = `${id ?? name}${
+		type === 'document_library' ? 'inputFile' : '_fieldDetails'
+	}`;
 
 	const hiddenTranslations = useMemo(() => {
 		if (!localizedValue) {
@@ -244,15 +246,13 @@ export function FieldBase({
 		type === 'radio';
 	const showPopover = fieldName === 'inputMaskFormat';
 	const showFor =
-		type === 'text' ||
-		type === 'numeric' ||
-		type === 'image' ||
-		type === 'search_location' ||
-		type === 'select';
+		type === 'text' || type === 'numeric' || type === 'search_location';
 
 	const accessibleProps = {
-		...(accessible && fieldDetails && {'aria-labelledby': fieldDetailsId}),
-		...(showFor ? {htmlFor: id ?? name} : {tabIndex: 0}),
+		...(!showFor &&
+			accessible &&
+			fieldDetails && {htmlFor: fieldDetailsId}),
+		...(showFor ? {htmlFor: id ?? name} : ''),
 	};
 
 	const defaultRows = nestedFields?.map((field) => ({
@@ -406,16 +406,6 @@ export function FieldBase({
 				helpMessage={typeof tip === 'string' ? tip : undefined}
 				warningMessage={warningMessage}
 			/>
-
-			{accessible && fieldDetails && (
-				<span
-					className="sr-only"
-					dangerouslySetInnerHTML={{
-						__html: fieldDetails,
-					}}
-					id={fieldDetailsId}
-				/>
-			)}
 
 			{defaultRows && <Layout itemPath={itemPath} rows={defaultRows} />}
 		</ClayForm.Group>
