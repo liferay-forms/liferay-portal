@@ -59,6 +59,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -274,6 +275,12 @@ public class DDMFormEvaluatorHelper {
 		if (ddmFormRuleConditionEvaluationResult) {
 			List<String> actions = ddmFormRule.getActions();
 
+			_removeInvalidCallFunctionsFromActions(ddmFormRule, actions);
+
+			if (actions.isEmpty()) {
+				return;
+			}
+
 			Stream<String> stream = actions.stream();
 
 			_evaluateDDMFormRuleAction(
@@ -482,6 +489,16 @@ public class DDMFormEvaluatorHelper {
 		return getFieldPropertyResponse.getValue();
 	}
 
+	private String _getFocusedFieldName() {
+		for (DDMFormField ddmFormField : _ddmFormFieldsMap.values()) {
+			if (_isFieldFocused(ddmFormField)) {
+				return ddmFormField.getName();
+			}
+		}
+
+		return null;
+	}
+
 	private boolean _isBooleanPropertyValue(
 		DDMFormEvaluatorFieldContextKey ddmFormFieldContextKey,
 		String booleanPropertyName, boolean defaultValue) {
@@ -567,6 +584,20 @@ public class DDMFormEvaluatorHelper {
 		}
 
 		return false;
+	}
+
+	private boolean _isFieldFocused(DDMFormField ddmFormField) {
+		if (ddmFormField == null) {
+			return false;
+		}
+
+		Object fieldFocusedProperty = ddmFormField.getProperty("focused");
+
+		if (fieldFocusedProperty == null) {
+			return false;
+		}
+
+		return (Boolean)fieldFocusedProperty;
 	}
 
 	private boolean _isFieldNative(
@@ -751,6 +782,28 @@ public class DDMFormEvaluatorHelper {
 		).forEach(
 			this::_localizeDDMFormFieldValue
 		);
+	}
+
+	private void _removeInvalidCallFunctionsFromActions(
+		DDMFormRule ddmFormRule, List<String> actions) {
+
+		String changedFieldName = _getFocusedFieldName();
+
+		String ruleCondition = ddmFormRule.getCondition();
+
+		if ((changedFieldName == null) ||
+			!ruleCondition.contains(changedFieldName)) {
+
+			Iterator<String> actionsIterator = actions.iterator();
+
+			while (actionsIterator.hasNext()) {
+				String currentAction = actionsIterator.next();
+
+				if (currentAction.startsWith("call(")) {
+					actionsIterator.remove();
+				}
+			}
+		}
 	}
 
 	private void _resetInvisibleFieldValue() {
