@@ -32,10 +32,7 @@ export function useSyncValue(newValue, isDelay = true, forceValue) {
 	useEffect(() => {
 		const handler = setTimeout(
 			() => {
-				if (
-					value !== newValue &&
-					previousValueRef.current !== newValue
-				) {
+				if (previousValueRef.current !== newValue) {
 					previousValueRef.current = newValue;
 					setValue(newValue);
 				}
