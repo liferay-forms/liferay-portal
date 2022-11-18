@@ -147,7 +147,7 @@ export default withRouter(
 								emptyState={
 									<ClayEmptyState
 										description={Liferay.Language.get(
-											'there-is-no-new-activity'
+											'there-is-are-no-new-activities'
 										)}
 										imgSrc={
 											context.includeContextPath +
