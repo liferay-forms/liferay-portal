@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.util.ArrayList;
@@ -124,9 +125,22 @@ public class UpdateRecordMVCResourceCommand extends BaseMVCResourceCommand {
 				while (iterator.hasNext()) {
 					String languageId = iterator.next();
 
+					String valueJSONObjectString = valueJSONObject.getString(
+						languageId);
+
+					if (jsonObject.getString(
+							"name"
+						).equals(
+							"eventDate"
+						)) {
+
+						valueJSONObjectString = StringUtil.removeChars(
+							valueJSONObjectString, '[', ']', '"');
+					}
+
 					localizedValue.addString(
 						LocaleUtil.fromLanguageId(languageId),
-						valueJSONObject.getString(languageId));
+						valueJSONObjectString);
 				}
 
 				ddmFormFieldValue.setValue(localizedValue);
