@@ -3807,7 +3807,6 @@ AUI.add(
 
 				setValue(value) {
 					const instance = this;
-
 					if (Lang.isString(value)) {
 						if (value !== '') {
 							value = JSON.parse(value);
@@ -3816,7 +3815,23 @@ AUI.add(
 							value = [''];
 						}
 					}
-
+					const values = instance.getInputNode().all('option').val();
+					let count = 0;
+					for (let i = 0; i < value.length; i++) {
+						if (!values.includes(value[i])) {
+							count++;
+						}
+					}
+					if (count === value.length) {
+						const name = instance.get('name');
+						const field = instance.getFieldByNameInFieldDefinition(
+							name
+						);
+						value =
+							field.predefinedValue[
+								instance.get('displayLocale')
+							];
+					}
 					instance
 						.getInputNode()
 						.all('option')
