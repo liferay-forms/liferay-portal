@@ -128,7 +128,11 @@ export function getDDMFormFieldSettingsContext({
 				value,
 			};
 
-			if (type === 'select' && fieldName === 'predefinedValue') {
+			if (
+				type === 'select' &&
+				fieldName === 'predefinedValue' &&
+				dataDefinitionField.customProperties.options !== undefined
+			) {
 				newField.multiple =
 					dataDefinitionField.customProperties.multiple;
 				newField.options = (dataDefinitionField.customProperties
