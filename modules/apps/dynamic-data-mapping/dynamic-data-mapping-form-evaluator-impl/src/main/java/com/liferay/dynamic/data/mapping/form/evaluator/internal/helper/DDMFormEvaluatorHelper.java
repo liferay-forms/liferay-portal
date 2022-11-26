@@ -28,6 +28,7 @@ import com.liferay.dynamic.data.mapping.form.evaluator.internal.expression.DDMFo
 import com.liferay.dynamic.data.mapping.form.evaluator.internal.expression.DDMFormEvaluatorExpressionFieldAccessor;
 import com.liferay.dynamic.data.mapping.form.evaluator.internal.expression.DDMFormEvaluatorExpressionObserver;
 import com.liferay.dynamic.data.mapping.form.evaluator.internal.expression.DDMFormEvaluatorExpressionParameterAccessor;
+import com.liferay.dynamic.data.mapping.form.evaluator.internal.function.CallFunction;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesRegistry;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueAccessor;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueEditingAware;
@@ -275,7 +276,8 @@ public class DDMFormEvaluatorHelper {
 		if (ddmFormRuleConditionEvaluationResult) {
 			List<String> actions = ddmFormRule.getActions();
 
-			_removeInvalidCallFunctionsFromActions(ddmFormRule, actions);
+			_removeInvalidCallFunctionsFromActions(
+				actions, ddmFormRule.getCondition());
 
 			if (actions.isEmpty()) {
 				return;
@@ -489,16 +491,6 @@ public class DDMFormEvaluatorHelper {
 		return getFieldPropertyResponse.getValue();
 	}
 
-	private String _getFocusedFieldName() {
-		for (DDMFormField ddmFormField : _ddmFormFieldsMap.values()) {
-			if (_isFieldFocused(ddmFormField)) {
-				return ddmFormField.getName();
-			}
-		}
-
-		return null;
-	}
-
 	private boolean _isBooleanPropertyValue(
 		DDMFormEvaluatorFieldContextKey ddmFormFieldContextKey,
 		String booleanPropertyName, boolean defaultValue) {
@@ -584,20 +576,6 @@ public class DDMFormEvaluatorHelper {
 		}
 
 		return false;
-	}
-
-	private boolean _isFieldFocused(DDMFormField ddmFormField) {
-		if (ddmFormField == null) {
-			return false;
-		}
-
-		Object fieldFocusedProperty = ddmFormField.getProperty("focused");
-
-		if (fieldFocusedProperty == null) {
-			return false;
-		}
-
-		return (Boolean)fieldFocusedProperty;
 	}
 
 	private boolean _isFieldNative(
@@ -785,23 +763,32 @@ public class DDMFormEvaluatorHelper {
 	}
 
 	private void _removeInvalidCallFunctionsFromActions(
-		DDMFormRule ddmFormRule, List<String> actions) {
+		List<String> actions, String condition) {
 
-		String changedFieldName = _getFocusedFieldName();
+		String focusedFieldName = null;
 
-		String ruleCondition = ddmFormRule.getCondition();
+		for (DDMFormField ddmFormField : _ddmFormFieldsMap.values()) {
+			if (GetterUtil.getBoolean(ddmFormField.getProperty("focused"))) {
+				focusedFieldName = ddmFormField.getName();
 
-		if ((changedFieldName == null) ||
-			!ruleCondition.contains(changedFieldName)) {
+				break;
+			}
+		}
 
-			Iterator<String> actionsIterator = actions.iterator();
+		if ((focusedFieldName != null) &&
+			condition.contains(focusedFieldName)) {
 
-			while (actionsIterator.hasNext()) {
-				String currentAction = actionsIterator.next();
+			return;
+		}
 
-				if (currentAction.startsWith("call(")) {
-					actionsIterator.remove();
-				}
+		Iterator<String> iterator = actions.iterator();
+
+		while (iterator.hasNext()) {
+			if (StringUtil.startsWith(
+					iterator.next(),
+					CallFunction.NAME + StringPool.OPEN_PARENTHESIS)) {
+
+				iterator.remove();
 			}
 		}
 	}
