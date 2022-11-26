@@ -776,7 +776,7 @@ public class DDMFormEvaluatorHelper {
 		}
 
 		if ((focusedFieldName != null) &&
-			condition.contains(focusedFieldName)) {
+			condition.contains(StringUtil.quote(focusedFieldName))) {
 
 			return;
 		}
