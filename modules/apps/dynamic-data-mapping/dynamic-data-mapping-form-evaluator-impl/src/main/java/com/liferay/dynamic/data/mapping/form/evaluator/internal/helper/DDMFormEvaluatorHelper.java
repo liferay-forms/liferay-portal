@@ -765,6 +765,10 @@ public class DDMFormEvaluatorHelper {
 	private void _removeInvalidCallFunctionsFromActions(
 		List<String> actions, String condition) {
 
+		if (StringUtil.equals(condition, "TRUE")) {
+			return;
+		}
+
 		String focusedFieldName = null;
 
 		for (DDMFormField ddmFormField : _ddmFormFieldsMap.values()) {
