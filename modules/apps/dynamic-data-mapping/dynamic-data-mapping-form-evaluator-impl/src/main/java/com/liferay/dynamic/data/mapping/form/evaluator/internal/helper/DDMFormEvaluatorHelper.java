@@ -784,9 +784,13 @@ public class DDMFormEvaluatorHelper {
 		Iterator<String> iterator = actions.iterator();
 
 		while (iterator.hasNext()) {
+			String action = iterator.next();
+
 			if (StringUtil.startsWith(
-					iterator.next(),
-					CallFunction.NAME + StringPool.OPEN_PARENTHESIS)) {
+					action, CallFunction.NAME + StringPool.OPEN_PARENTHESIS) &&
+				!action.contains(
+					StringUtil.quote(
+						"getDataProviderInstanceOutputParameters"))) {
 
 				iterator.remove();
 			}
