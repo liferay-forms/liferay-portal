@@ -15,6 +15,7 @@
 import ClayAutocomplete from '@clayui/autocomplete';
 import ClayDropDown from '@clayui/drop-down';
 import {ClayInput} from '@clayui/form';
+import {ClayTooltipProvider} from '@clayui/tooltip';
 import {usePrevious} from '@liferay/frontend-js-react-web';
 import {normalizeFieldName} from 'data-engine-js-components-web';
 import {sub} from 'frontend-js-web';
@@ -159,6 +160,8 @@ const Text = ({
 
 	return (
 		<>
+		 <ClayTooltipProvider autoAlign>
+		 <div data-tooltip-align="top" title={value}>
 			<ClayInput
 				className="ddm-field-text"
 				dir={Liferay.Language.direction[editingLanguageId]}
@@ -178,6 +181,8 @@ const Text = ({
 				type="text"
 				value={value}
 			/>
+		</div>
+		 </ClayTooltipProvider>
 
 			<CounterContainer
 				counter={value?.length}
@@ -214,6 +219,8 @@ const Textarea = ({
 
 	return (
 		<>
+		<ClayTooltipProvider autoAlign>
+		<div data-tooltip-align="top" title={value}>
 			<textarea
 				className="ddm-field-text form-control"
 				dir={Liferay.Language.direction[editingLanguageId]}
@@ -232,6 +239,8 @@ const Textarea = ({
 				type="text"
 				value={value}
 			/>
+			</div>
+		 </ClayTooltipProvider>
 
 			<CounterContainer
 				counter={value?.length}

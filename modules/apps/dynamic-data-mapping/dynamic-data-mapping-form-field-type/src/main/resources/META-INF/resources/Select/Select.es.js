@@ -14,6 +14,7 @@
 
 import ClayDropDown from '@clayui/drop-down';
 import {ClayCheckbox} from '@clayui/form';
+import {ClayTooltipProvider} from '@clayui/tooltip';
 import React, {forwardRef, useEffect, useMemo, useRef, useState} from 'react';
 
 import {FieldBase} from '../FieldBase/ReactFieldBase.es';
@@ -296,6 +297,7 @@ const Select = ({
 
 	const [currentValue, setCurrentValue] = useSyncValue(value, false);
 	const [expand, setExpand] = useState(false);
+	const [selectedLabel, setSelectedLabel] = useState('');
 
 	const handleFocus = (event, direction) => {
 		const target = event.target;
@@ -357,8 +359,24 @@ const Select = ({
 		leftRect = rect.left;
 	}
 
+	useEffect(() => {
+		const [selectedValue] = currentValue;
+		const selectedOption = options.find(
+			(option) => option.value === selectedValue
+		);
+
+		if (selectedOption) {
+			return setSelectedLabel(selectedOption.label);
+		}
+
+			setSelectedLabel("")
+
+	}, [currentValue, options, value]);
+
 	return (
-		<>
+		<ClayTooltipProvider>
+		<div data-tooltip-align="top" title={selectedLabel}>
+
 			<Trigger
 				multiple={multiple}
 				onCloseButtonClicked={({event, value}) => {
@@ -470,7 +488,8 @@ const Select = ({
 					/>
 				)}
 			</ClayDropDown.Menu>
-		</>
+		</div>
+		</ClayTooltipProvider>
 	);
 };
 
