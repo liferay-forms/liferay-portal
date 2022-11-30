@@ -160,29 +160,29 @@ const Text = ({
 
 	return (
 		<>
-		 <ClayTooltipProvider autoAlign>
-		 <div data-tooltip-align="top" title={value}>
-			<ClayInput
-				className="ddm-field-text"
-				dir={Liferay.Language.direction[editingLanguageId]}
-				disabled={disabled}
-				id={id}
-				lang={editingLanguageId}
-				maxLength={showCounter ? '' : maxLength}
-				name={name}
-				onBlur={(event) => {
-					onBlur(event);
-					handleChangeInput(event);
-				}}
-				onChange={handleChangeInput}
-				onFocus={onFocus}
-				placeholder={placeholder}
-				ref={inputRef}
-				type="text"
-				value={value}
-			/>
-		</div>
-		 </ClayTooltipProvider>
+			<ClayTooltipProvider autoAlign>
+				<div data-tooltip-align="top" title={value}>
+					<ClayInput
+						className="ddm-field-text"
+						dir={Liferay.Language.direction[editingLanguageId]}
+						disabled={disabled}
+						id={id}
+						lang={editingLanguageId}
+						maxLength={showCounter ? '' : maxLength}
+						name={name}
+						onBlur={(event) => {
+							onBlur(event);
+							handleChangeInput(event);
+						}}
+						onChange={handleChangeInput}
+						onFocus={onFocus}
+						placeholder={placeholder}
+						ref={inputRef}
+						type="text"
+						value={value}
+					/>
+				</div>
+			</ClayTooltipProvider>
 
 			<CounterContainer
 				counter={value?.length}
@@ -219,28 +219,28 @@ const Textarea = ({
 
 	return (
 		<>
-		<ClayTooltipProvider autoAlign>
-		<div data-tooltip-align="top" title={value}>
-			<textarea
-				className="ddm-field-text form-control"
-				dir={Liferay.Language.direction[editingLanguageId]}
-				disabled={disabled}
-				id={id}
-				lang={editingLanguageId}
-				name={name}
-				onBlur={onBlur}
-				onChange={(event) => {
-					setValue(event.target.value);
-					onChange(event);
-				}}
-				onFocus={onFocus}
-				placeholder={placeholder}
-				style={disabled ? {resize: 'none'} : null}
-				type="text"
-				value={value}
-			/>
-			</div>
-		 </ClayTooltipProvider>
+			<ClayTooltipProvider autoAlign>
+				<div data-tooltip-align="top" title={value}>
+					<textarea
+						className="ddm-field-text form-control"
+						dir={Liferay.Language.direction[editingLanguageId]}
+						disabled={disabled}
+						id={id}
+						lang={editingLanguageId}
+						name={name}
+						onBlur={onBlur}
+						onChange={(event) => {
+							setValue(event.target.value);
+							onChange(event);
+						}}
+						onFocus={onFocus}
+						placeholder={placeholder}
+						style={disabled ? {resize: 'none'} : null}
+						type="text"
+						value={value}
+					/>
+				</div>
+			</ClayTooltipProvider>
 
 			<CounterContainer
 				counter={value?.length}
