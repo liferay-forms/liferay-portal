@@ -12,6 +12,7 @@
  * details.
  */
 
+import {useState} from 'react';
 import {useDrop as useDndDrop} from 'react-dnd';
 
 import {getDDMFormFieldSettingsContext} from '../../utils/dataConverter';
@@ -153,6 +154,7 @@ export function useDrop({
 	parentField,
 	rowIndex,
 }) {
+	const [draggingElementSet, setDraggingElementSet] = useState();
 	const {editingLanguageId} = useFormState();
 	const {fieldTypes} = useConfig();
 
@@ -168,23 +170,28 @@ export function useDrop({
 
 	const [{canDrop, overTarget}, drop] = useDndDrop({
 		accept: [...Object.values(DRAG_TYPES), DRAG_ELEMENT_SET_ADD],
-		canDrop: (item) =>
-			!isElementsSetOverField(field, item.data) &&
-			!isElementsSetOverFieldsGroups(parentField, item.data) &&
-			!isSameField(field, item.data) &&
-			!isDroppingFieldGroupIntoField(field, item.data) &&
-			!isDroppingFieldIntoFieldset(item.data, field) &&
-			!isFieldGroupMovingIntoItself({
-				sourceIndexes: item.sourceIndexes,
-				sourceParentField: item.sourceParentField,
-				targetIndexes: {
-					columnIndex,
-					pageIndex,
-					rowIndex,
-				},
-				targetParentField: parentField,
-				type: item.data.type,
-			}),
+		canDrop: (item) => {
+			setDraggingElementSet(item.data.dragType === 'elementSet:add');
+
+			return (
+				!isElementsSetOverField(field, item.data) &&
+				!isElementsSetOverFieldsGroups(parentField, item.data) &&
+				!isSameField(field, item.data) &&
+				!isDroppingFieldGroupIntoField(field, item.data) &&
+				!isDroppingFieldIntoFieldset(item.data, field) &&
+				!isFieldGroupMovingIntoItself({
+					sourceIndexes: item.sourceIndexes,
+					sourceParentField: item.sourceParentField,
+					targetIndexes: {
+						columnIndex,
+						pageIndex,
+						rowIndex,
+					},
+					targetParentField: parentField,
+					type: item.data.type,
+				})
+			);
+		},
 		collect: (monitor) => ({
 			canDrop: monitor.canDrop(),
 			overTarget: monitor.isOver({shallow: true}),
@@ -312,6 +319,7 @@ export function useDrop({
 
 	return {
 		canDrop,
+		draggingElementSet,
 		drop,
 		overTarget,
 	};

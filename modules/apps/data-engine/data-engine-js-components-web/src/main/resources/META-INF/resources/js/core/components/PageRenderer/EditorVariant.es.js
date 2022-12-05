@@ -63,7 +63,7 @@ export function Column({
 		state: {activeId, hoveredId},
 	} = useActions();
 
-	const {canDrop, drop, overTarget} = useDrop({
+	const {canDrop, draggingElementSet, drop, overTarget} = useDrop({
 		columnIndex,
 		field: firstField,
 		fieldName: firstField?.fieldName,
@@ -132,6 +132,7 @@ export function Column({
 			<DefaultVariant.Column
 				className={classNames({
 					'active-drop-child':
+						!draggingElementSet &&
 						isFieldSetOrGroup &&
 						overTarget &&
 						!rootParentField.ddmStructureId,
