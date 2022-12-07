@@ -67,10 +67,11 @@ const Radio = ({
 					<ClayRadio
 						checked={currentValue === option.value}
 						disabled={disabled}
+						id={`${name}_${index}`}
 						inline={inline}
 						key={option.value}
 						label={option.label}
-						name={`${name}_${index}`}
+						name={name}
 						onChange={(event) => {
 							setCurrentValue(option.value);
 
