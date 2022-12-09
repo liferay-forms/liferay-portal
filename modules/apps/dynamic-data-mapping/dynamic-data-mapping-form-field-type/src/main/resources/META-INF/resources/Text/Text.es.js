@@ -25,6 +25,19 @@ import {FieldBase} from '../FieldBase/ReactFieldBase.es';
 import {useSyncValue} from '../hooks/useSyncValue.es';
 import withConfirmationField from '../util/withConfirmationField.es';
 
+const getTooltipTitle = (placeholder, value) => {
+	let tooltipText = '';
+
+	if (value !== '') {
+		tooltipText = value;
+	}
+	else if (placeholder !== '') {
+		tooltipText = placeholder;
+	}
+
+	return tooltipText !== '' ? {title: tooltipText} : '';
+};
+
 const CounterContainer = ({
 	counter,
 	displayErrors,
@@ -161,7 +174,10 @@ const Text = ({
 	return (
 		<>
 			<ClayTooltipProvider autoAlign>
-				<div data-tooltip-align="top" title={value}>
+				<div
+					data-tooltip-align="top"
+					{...getTooltipTitle(placeholder, value)}
+				>
 					<ClayInput
 						className="ddm-field-text"
 						dir={Liferay.Language.direction[editingLanguageId]}
@@ -220,7 +236,10 @@ const Textarea = ({
 	return (
 		<>
 			<ClayTooltipProvider autoAlign>
-				<div data-tooltip-align="top" title={value}>
+				<div
+					data-tooltip-align="top"
+					{...getTooltipTitle(placeholder, value)}
+				>
 					<textarea
 						className="ddm-field-text form-control"
 						dir={Liferay.Language.direction[editingLanguageId]}

@@ -59,6 +59,12 @@ function appendValue({value, valueToBeAppended}) {
 	return newValue;
 }
 
+function getTooltipTitle({value}) {
+	return value !== ''
+		? {title: value}
+		: {title: Liferay.Language.get('choose-an-option')};
+}
+
 /**
  * Removes a value from the value array.
  * @param options {Object}
@@ -372,7 +378,10 @@ const Select = ({
 
 	return (
 		<ClayTooltipProvider>
-			<div data-tooltip-align="top" title={selectedLabel}>
+			<div
+				data-tooltip-align="top"
+				{...getTooltipTitle({value: selectedLabel})}
+			>
 				<Trigger
 					multiple={multiple}
 					onCloseButtonClicked={({event, value}) => {
