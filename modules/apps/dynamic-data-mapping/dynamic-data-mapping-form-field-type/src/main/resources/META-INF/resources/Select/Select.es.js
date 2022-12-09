@@ -370,9 +370,11 @@ const Select = ({
 		setSelectedLabel('');
 	}, [currentValue, options, value]);
 
+	const title = selectedLabel !== "" ? {title: selectedLabel} : ""; 
+
 	return (
 		<ClayTooltipProvider>
-			<div data-tooltip-align="top" title={selectedLabel}>
+			<div data-tooltip-align="top" {...title}>
 				<Trigger
 					multiple={multiple}
 					onCloseButtonClicked={({event, value}) => {

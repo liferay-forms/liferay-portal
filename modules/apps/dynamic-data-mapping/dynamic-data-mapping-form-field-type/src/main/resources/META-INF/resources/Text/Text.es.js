@@ -158,10 +158,12 @@ const Text = ({
 		setValue(event.target.value);
 	};
 
+	const title = value !== "" ? {title: value} : ""; 
+
 	return (
 		<>
 			<ClayTooltipProvider autoAlign>
-				<div data-tooltip-align="top" title={value}>
+				<div data-tooltip-align="top" {...title}>
 					<ClayInput
 						className="ddm-field-text"
 						dir={Liferay.Language.direction[editingLanguageId]}
@@ -217,10 +219,12 @@ const Textarea = ({
 }) => {
 	const [value, setValue] = useSyncValue(initialValue, syncDelay);
 
+	const title = value !== "" ? {title: value} : ""; 
+
 	return (
 		<>
 			<ClayTooltipProvider autoAlign>
-				<div data-tooltip-align="top" title={value}>
+				<div data-tooltip-align="top" {...title}>
 					<textarea
 						className="ddm-field-text form-control"
 						dir={Liferay.Language.direction[editingLanguageId]}
