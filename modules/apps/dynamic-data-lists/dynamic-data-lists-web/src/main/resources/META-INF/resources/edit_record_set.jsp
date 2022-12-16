@@ -103,7 +103,7 @@ if (ddlDisplayContext.isAdminPortlet()) {
 					<aui:input name="description" />
 
 					<div class="form-group">
-						<aui:input label="data-definition" name="ddmStructureNameDisplay" required="<%= true %>" type="resource" value="<%= ddmStructureName %>" />
+						<aui:input label="data-definition" name="ddmStructureNameDisplay" required="<%= true %>" type="text" value="<%= ddmStructureName %>" readonly="<%=true%>" />
 
 						<liferay-ui:icon
 							cssClass="open-record-set-modal"
