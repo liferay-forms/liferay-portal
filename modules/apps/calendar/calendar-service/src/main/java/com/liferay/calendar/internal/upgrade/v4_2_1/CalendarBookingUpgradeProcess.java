@@ -44,14 +44,14 @@ public class CalendarBookingUpgradeProcess extends UpgradeProcess {
 				connection.prepareStatement(
 					SQLTransformer.transform(
 						StringBundler.concat(
-							"select calendarBookingId, startTime, endTime, ",
-							"userId from CalendarBooking where allDay = ",
-							"[$TRUE$]")));
+							"select companyId,calendarBookingId, startTime, ",
+							"endTime, userId from CalendarBooking where ",
+							"allDay = [$TRUE$]")));
 			PreparedStatement updatePreparedStatement =
 				AutoBatchPreparedStatementUtil.autoBatch(
 					connection,
 					"update CalendarBooking set startTime = ?, endTime = ? " +
-						"where calendarBookingId = ?");
+						"userId = ? userName = ? where calendarBookingId = ?");
 			ResultSet resultSet = selectPreparedStatement.executeQuery()) {
 
 			while (resultSet.next()) {
@@ -62,8 +62,14 @@ public class CalendarBookingUpgradeProcess extends UpgradeProcess {
 					continue;
 				}
 
-				User user = _userLocalService.getUser(
+				User user = _userLocalService.fetchUser(
 					resultSet.getLong("userId"));
+
+				if (user == null) {
+					long companyId = resultSet.getLong("companyId");
+
+					user = _userLocalService.getDefaultUser(companyId);
+				}
 
 				Calendar startTimeJCalendar = JCalendarUtil.getJCalendar(
 					startTime, user.getTimeZone());
@@ -95,8 +101,11 @@ public class CalendarBookingUpgradeProcess extends UpgradeProcess {
 				updatePreparedStatement.setLong(
 					2, endTimeUTCJCalendar.getTimeInMillis());
 
+				updatePreparedStatement.setLong(3, user.getUserId());
+				updatePreparedStatement.setString(4, user.getFullName());
+
 				updatePreparedStatement.setLong(
-					3, resultSet.getLong("calendarBookingId"));
+					5, resultSet.getLong("calendarBookingId"));
 
 				updatePreparedStatement.addBatch();
 			}
