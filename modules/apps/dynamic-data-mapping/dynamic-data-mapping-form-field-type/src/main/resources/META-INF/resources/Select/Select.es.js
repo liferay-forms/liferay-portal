@@ -347,9 +347,10 @@ const Select = ({
 		}
 	};
 
-	const inputTrigger = document.querySelector(
+	const inputTrigger = document.querySelectorAll(
 		'.lfr__ddm-select-input-trigger'
-	);
+	)[document.querySelectorAll('.lfr__ddm-select-input-trigger').length - 1];
+
 	let leftRect;
 
 	if (inputTrigger) {
