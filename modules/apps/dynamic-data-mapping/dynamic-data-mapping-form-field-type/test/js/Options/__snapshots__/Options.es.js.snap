@@ -58,7 +58,6 @@ exports[`Options shows the options 1`] = `
                 type="hidden"
                 value="false"
               />
-              
             </div>
             <button
               class="close close-modal"
@@ -110,7 +109,6 @@ exports[`Options shows the options 1`] = `
               type="hidden"
               value="false"
             />
-            
           </div>
         </div>
       </div>
@@ -161,7 +159,6 @@ exports[`Options shows the options 1`] = `
                 type="hidden"
                 value="false"
               />
-              
             </div>
             <button
               class="close close-modal"
@@ -213,7 +210,6 @@ exports[`Options shows the options 1`] = `
               type="hidden"
               value="false"
             />
-            
           </div>
         </div>
       </div>
@@ -264,7 +260,6 @@ exports[`Options shows the options 1`] = `
                 type="hidden"
                 value="false"
               />
-              
             </div>
             <div
               class="active form-text key-value-editor"
@@ -303,7 +298,6 @@ exports[`Options shows the options 1`] = `
               type="hidden"
               value="false"
             />
-            
           </div>
         </div>
       </div>
@@ -313,7 +307,6 @@ exports[`Options shows the options 1`] = `
       type="hidden"
       value="false"
     />
-    
   </div>
 </div>
 `;

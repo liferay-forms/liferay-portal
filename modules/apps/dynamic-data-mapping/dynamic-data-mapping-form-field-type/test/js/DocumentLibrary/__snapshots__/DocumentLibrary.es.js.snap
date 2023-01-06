@@ -78,14 +78,6 @@ exports[`Field DocumentLibrary has a helptext 1`] = `
         Type something
       </div>
     </div>
-    <span
-      class="sr-only"
-      id="uploadField_fieldDetails"
-    >
-      Type something
-      <br />
-       you-need-to-be-signed-in-to-edit-this-field
-    </span>
   </div>
 </div>
 `;
@@ -97,9 +89,8 @@ exports[`Field DocumentLibrary has a label 1`] = `
     data-field-name="uploadField"
   >
     <label
-      aria-labelledby="uploadField_fieldDetails"
       class="ddm-label"
-      tabindex="0"
+      for="uploadField_fieldDetails"
     >
       label
     </label>
@@ -170,14 +161,6 @@ exports[`Field DocumentLibrary has a label 1`] = `
          you-need-to-be-signed-in-to-edit-this-field
       </div>
     </div>
-    <span
-      class="sr-only"
-      id="uploadField_fieldDetails"
-    >
-      label
-      <br />
-       you-need-to-be-signed-in-to-edit-this-field
-    </span>
   </div>
 </div>
 `;
@@ -258,12 +241,6 @@ exports[`Field DocumentLibrary has a placeholder 1`] = `
          you-need-to-be-signed-in-to-edit-this-field
       </div>
     </div>
-    <span
-      class="sr-only"
-      id="uploadField_fieldDetails"
-    >
-       you-need-to-be-signed-in-to-edit-this-field
-    </span>
   </div>
 </div>
 `;
@@ -343,12 +320,6 @@ exports[`Field DocumentLibrary has a spritemap 1`] = `
          you-need-to-be-signed-in-to-edit-this-field
       </div>
     </div>
-    <span
-      class="sr-only"
-      id="uploadField_fieldDetails"
-    >
-       you-need-to-be-signed-in-to-edit-this-field
-    </span>
   </div>
 </div>
 `;
@@ -428,12 +399,6 @@ exports[`Field DocumentLibrary has a value 1`] = `
          you-need-to-be-signed-in-to-edit-this-field
       </div>
     </div>
-    <span
-      class="sr-only"
-      id="uploadField_fieldDetails"
-    >
-       you-need-to-be-signed-in-to-edit-this-field
-    </span>
   </div>
 </div>
 `;
@@ -514,12 +479,6 @@ exports[`Field DocumentLibrary has an id 1`] = `
          you-need-to-be-signed-in-to-edit-this-field
       </div>
     </div>
-    <span
-      class="sr-only"
-      id="ID_fieldDetails"
-    >
-       you-need-to-be-signed-in-to-edit-this-field
-    </span>
   </div>
 </div>
 `;
@@ -575,7 +534,6 @@ exports[`Field DocumentLibrary is not readOnly 1`] = `
       type="hidden"
       value="false"
     />
-    
   </div>
 </div>
 `;
@@ -655,12 +613,6 @@ exports[`Field DocumentLibrary is not required 1`] = `
          you-need-to-be-signed-in-to-edit-this-field
       </div>
     </div>
-    <span
-      class="sr-only"
-      id="uploadField_fieldDetails"
-    >
-       you-need-to-be-signed-in-to-edit-this-field
-    </span>
   </div>
 </div>
 `;
@@ -672,9 +624,8 @@ exports[`Field DocumentLibrary renders Label if showLabel is true 1`] = `
     data-field-name="uploadField"
   >
     <label
-      aria-labelledby="uploadField_fieldDetails"
       class="ddm-label"
-      tabindex="0"
+      for="uploadField_fieldDetails"
     >
       text
     </label>
@@ -745,14 +696,6 @@ exports[`Field DocumentLibrary renders Label if showLabel is true 1`] = `
          you-need-to-be-signed-in-to-edit-this-field
       </div>
     </div>
-    <span
-      class="sr-only"
-      id="uploadField_fieldDetails"
-    >
-      text
-      <br />
-       you-need-to-be-signed-in-to-edit-this-field
-    </span>
   </div>
 </div>
 `;
