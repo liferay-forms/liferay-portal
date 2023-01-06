@@ -238,16 +238,14 @@ describe('ReactFieldBase', () => {
 			expect(getByText('hidden')).toBeInTheDocument();
 
 			const allByText = getAllByText('Text');
-			expect(allByText).toHaveLength(2);
+			expect(allByText).toHaveLength(1);
 			expect(allByText[0]).toBeInTheDocument();
-			expect(allByText[1]).toBeInTheDocument();
 
 			expect(getByText('hidden').parentNode).toHaveAttribute(
 				'class',
 				'label ml-1 label-secondary'
 			);
 			expect(allByText[0]).toHaveAttribute('class', 'text-secondary');
-			expect(allByText[1]).toHaveAttribute('class', 'sr-only');
 		});
 
 		it('renders the FieldBase with hideField markup when the label is empty', () => {
