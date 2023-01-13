@@ -24,7 +24,6 @@ import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceLocalService;
-import com.liferay.dynamic.data.mapping.util.DDMFormFieldUtil;
 import com.liferay.list.type.model.ListTypeEntry;
 import com.liferay.list.type.service.ListTypeEntryLocalService;
 import com.liferay.object.model.ObjectDefinition;
@@ -176,7 +175,8 @@ public class SelectDDMFormFieldTemplateContextContributor
 			Validator.isNotNull(objectFieldName)) {
 
 			List<Map<String, String>> options = _getOptionsFromObjectField(
-				objectDefinition.getObjectDefinitionId(), objectFieldName);
+				ddmFormFieldOptions, objectDefinition.getObjectDefinitionId(),
+				objectFieldName);
 
 			if (ListUtil.isNotEmpty(options)) {
 				return options;
@@ -270,7 +270,8 @@ public class SelectDDMFormFieldTemplateContextContributor
 	protected Portal portal;
 
 	private List<Map<String, String>> _getOptionsFromObjectField(
-		long objectDefinitionId, String objectFieldName) {
+		DDMFormFieldOptions ddmFormFieldOptions, long objectDefinitionId,
+		String objectFieldName) {
 
 		ObjectField objectField = _objectFieldLocalService.fetchObjectField(
 			objectDefinitionId,
@@ -303,7 +304,9 @@ public class SelectDDMFormFieldTemplateContextContributor
 					).put(
 						"reference", listTypeEntry.getKey()
 					).put(
-						"value", DDMFormFieldUtil.getDDMFormFieldName("Option")
+						"value",
+						ddmFormFieldOptions.getOptionValue(
+							listTypeEntry.getKey())
 					).build());
 			}
 		}
