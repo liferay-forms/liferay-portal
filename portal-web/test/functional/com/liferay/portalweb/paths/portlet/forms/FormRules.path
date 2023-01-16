@@ -65,7 +65,7 @@
 </tr>
 <tr>
 	<td>RULE_BUILDER_CONDITION_FIELD</td>
-	<td>//ul[contains(@class, 'timeline')][1]//li[contains(@class,'timeline-item')]/following-sibling::li[contains(@class, 'timeline-item')][${key_conditionRowNumber}]//div[contains(@class,'form-group-item') and not(contains(@class, 'form-group-item-label'))][${key_fieldColumnNumber}]//div[contains(@class,'select-field-trigger')]</td>
+	<td>xpath=(//ul[contains(@class, 'timeline')][1]//li[contains(@class,'timeline-item')]/following-sibling::li[contains(@class, 'timeline-item')][${key_conditionRowNumber}]//div[contains(@class,'form-group-item')]//button[contains(@class,'select-field-trigger')])[${key_fieldColumnNumber}]</td>
 	<td></td>
 </tr>
 <tr>
@@ -75,7 +75,7 @@
 </tr>
 <tr>
 	<td>RULE_BUILDER_ACTION_FIELD</td>
-	<td>//ul[contains(@class, 'timeline')][2]//li[contains(@class,'timeline-item')]/following-sibling::li[contains(@class, 'timeline-item')][${key_actionRowNumber}]//div[contains(@class,'form-group-item') and not(contains(@class, 'form-group-item-label'))][${key_fieldColumnNumber}]//div[contains(@class,'select-field-trigger')]</td>
+	<td>xpath=(//ul[contains(@class, 'timeline')][2]//li[contains(@class,'timeline-item')]/following-sibling::li[contains(@class, 'timeline-item')][${key_actionRowNumber}]//div[contains(@class,'form-group-item')]//button[contains(@class,'select-field-trigger')])[${key_fieldColumnNumber}]</td>
 	<td></td>
 </tr>
 <tr>

@@ -233,7 +233,7 @@
 </tr>
 <tr>
 	<td>PREDEFINED_VALUE_AT_FORM_SELECTLIST</td>
-	<td>//label[contains(text(),'${key_fieldName}')]/..//div[contains(@class,'option-selected') and contains(text(),'${key_fieldValue}')]</td>
+	<td>//label[contains(text(),'Select from List')]/..//span[contains(@class,'option-selected') and contains(text(),'Choose an Option')]</td>
 	<td></td>
 </tr>
 <tr>

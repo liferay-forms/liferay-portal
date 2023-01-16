@@ -172,7 +172,7 @@
 </tr>
 <tr>
 	<td>PREDEFINED_VALUE_AT_FORM_SELECT</td>
-	<td>//label[contains(text(),'${key_fieldName}')]/..//div[contains(@class,'option-selected') and contains(text(),'${key_fieldValue}')]</td>
+	<td>//div[@class='form-group']//label[contains(.,'${key_fieldName}')]/..//button[@type='button' and contains(.,'${key_fieldValue}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -240,7 +240,7 @@
 </tr>
 <tr>
 	<td>BOOLEAN_PREDEFINED_VALUE</td>
-	<td>//div[contains(@class,'form-builder-select-field input-group-container')]//div[contains(@class,'form-control results-chosen select-field-trigger')]//div[contains(@class,'option-selected')]</td>
+	<td>//button[@class='form-control form-control-select results-chosen select-field-trigger']</td>
 	<td></td>
 </tr>
 <tr>
@@ -408,7 +408,7 @@
 </tr>
 <tr>
 	<td>OPTIONS_PREDEFINED_SELECTOR</td>
-	<td>//label[contains(text(),'Predefined')]/..//div[contains(@class,'input-group-container') and //div[contains(text(),'${key_definedEntry}')]]</td>
+	<td>//button[@class='form-control form-control-select results-chosen select-field-trigger']//span[contains(.,'${key_definedEntry}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -866,7 +866,7 @@
 </tr>
 <tr>
 	<td>SELECT_SELECT_LIST_INDEX</td>
-	<td>xpath=//label[contains(text(),'${key_fieldLabel}')]/../../..//div[contains(@class,'ddm-field') and contains(@data-field-name,'SelectFromList')][${key_index}] | //div[@class="ddm-field"][${key_index}]//label[contains(text(),'${key_fieldLabel}')]/..//div[contains(@class,'option-selected')]</td>
+	<td>(//label[contains(@class,'ddm-label ddm-repeatable')and contains(.,'${key_fieldLabel}')]/..//button[@class='form-control form-control-select results-chosen select-field-trigger'])[${key_index}]</td>
 	<td></td>
 </tr>
 <tr>
@@ -953,12 +953,7 @@
 </tr>
 <tr>
 	<td>VALIDATION_ARGUMENT</td>
-	<td>//div[contains(@data-field-name,'selectedValidation')]//div[contains(@class,'select-field-trigger')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>VALIDATION_ARGUMENT_2</td>
-	<td>//div[contains(@class,'form-control')]//div[contains(@class,'option-selected') and text()='Contains']</td>
+	<td>//button[@id='selectedValidation_fieldDetails']</td>
 	<td></td>
 </tr>
 <tr>
@@ -1142,7 +1137,7 @@
 </tr>
 <tr>
 	<td>UPLOAD_ON_WIDGET_ON_ANY_FIELD</td>
-	<td>//div[contains(@data-field-name,'${key_fieldName}')][${key_rowNumber}]//button[contains(.,'Select')] | //div[@class="ddm-field"][${key_rowNumber}]//span[text()='${key_fieldName}']/..//button[contains(.,'Select')]</td>
+	<td>(//button[@class='select-button btn btn-secondary'])[${key_rowNumber}]</td>
 	<td></td>
 </tr>
 <tr>

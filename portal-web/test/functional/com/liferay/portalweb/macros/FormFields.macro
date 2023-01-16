@@ -575,9 +575,9 @@ definition {
 	}
 
 	macro editValidation {
-		ScrollWebElementIntoView(locator1 = "FormFields#VALIDATION_ARGUMENT_2");
+		ScrollWebElementIntoView(locator1 = "FormFields#VALIDATION_ARGUMENT");
 
-		Click(locator1 = "FormFields#VALIDATION_ARGUMENT_2");
+		Click(locator1 = "FormFields#VALIDATION_ARGUMENT");
 
 		MenuItem.click(menuItem = "${validationArgument}");
 
@@ -829,7 +829,6 @@ definition {
 
 		if (isSet(rowNumber)) {
 			Click(
-				key_fieldName = "${fieldName}",
 				key_rowNumber = "${rowNumber}",
 				locator1 = "FormFields#UPLOAD_ON_WIDGET_ON_ANY_FIELD");
 		}
@@ -1823,7 +1822,6 @@ definition {
 	macro viewRepeatableFields {
 		for (var row : list "${rows}") {
 			AssertElementPresent(
-				key_fieldName = "${fieldName}",
 				key_rowNumber = "${row}",
 				locator1 = "FormFields#UPLOAD_ON_WIDGET_ON_ANY_FIELD");
 		}
