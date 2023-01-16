@@ -1227,7 +1227,7 @@
 
 <tr>
 	<td>SIDEBAR_ADVANCED_PREDEFINED_SELECT_FROM_LIST_DROPDOWN_CONTENT</td>
-	<td>//div[contains(@data-field-name,'predefinedValue')]//div[contains(@class,'form-builder-select-field')]//div[contains(text(),'${key_textContent}')]</td>
+	<td>//button[@class='form-control form-control-select results-chosen select-field-trigger multiple-label-list']//span[contains(.,'${key_textContent}')]</td>
 	<td></td>
 </tr>
 <tr>
