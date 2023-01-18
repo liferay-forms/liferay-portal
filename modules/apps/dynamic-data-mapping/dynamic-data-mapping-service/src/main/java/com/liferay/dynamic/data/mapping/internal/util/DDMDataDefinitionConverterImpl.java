@@ -589,9 +589,11 @@ public class DDMDataDefinitionConverterImpl
 		List<DDMFormField> ddmFormFields, Locale defaultLocale,
 		DDMFormField parentFieldSetDDMFormField) {
 
+		List<DDMFormField> newDDMFormFields = new ArrayList<>();
+
 		for (DDMFormField ddmFormField : ddmFormFields) {
 			if (ListUtil.isEmpty(ddmFormField.getNestedDDMFormFields())) {
-				parentFieldSetDDMFormField.addNestedDDMFormField(ddmFormField);
+				newDDMFormFields.add(ddmFormField);
 
 				continue;
 			}
@@ -610,9 +612,17 @@ public class DDMDataDefinitionConverterImpl
 			ddmFormField.setNestedDDMFormFields(Collections.emptyList());
 			ddmFormField.setRepeatable(false);
 
-			parentFieldSetDDMFormField.addNestedDDMFormField(
-				fieldSetDDMFormField);
+			newDDMFormFields.add(fieldSetDDMFormField);
 		}
+
+		DDMFormField fieldSetDDMFormField = _createFieldSetDDMFormField(
+			defaultLocale, parentFieldSetDDMFormField.getName() + "FieldSet",
+			newDDMFormFields, false);
+
+		fieldSetDDMFormField.setProperty(
+			"rows", _getDDMFormFieldsRows(fieldSetDDMFormField));
+
+		parentFieldSetDDMFormField.addNestedDDMFormField(fieldSetDDMFormField);
 	}
 
 	private void _upgradeNumberField(DDMFormField ddmFormField) {
