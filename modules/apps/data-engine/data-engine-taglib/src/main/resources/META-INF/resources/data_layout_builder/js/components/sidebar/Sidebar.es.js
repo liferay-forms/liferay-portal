@@ -49,13 +49,19 @@ const SidebarHeader = ({children, className}) => {
 	);
 };
 
-const SidebarSearchInput = ({children, onSearch, searchText}) => (
+const SidebarSearchInput = ({
+	children,
+	onSearch,
+	searchText,
+	setSearchClicked,
+}) => (
 	<ClayLayout.ContentRow className="sidebar-section">
 		<ClayLayout.ContentCol expand>
 			{onSearch && (
 				<SearchInput
 					onChange={(searchText) => onSearch(searchText)}
 					searchText={searchText}
+					setSearchClicked={setSearchClicked}
 				/>
 			)}
 		</ClayLayout.ContentCol>
