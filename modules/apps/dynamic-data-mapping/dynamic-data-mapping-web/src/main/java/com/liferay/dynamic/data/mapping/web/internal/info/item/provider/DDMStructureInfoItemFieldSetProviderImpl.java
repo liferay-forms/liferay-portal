@@ -99,7 +99,10 @@ public class DDMStructureInfoItemFieldSetProviderImpl
 		DDMFormFieldTypeConstants.DATE, DDMFormFieldTypeConstants.NUMERIC,
 		DDMFormFieldTypeConstants.IMAGE, DDMFormFieldTypeConstants.TEXT,
 		DDMFormFieldTypeConstants.RADIO, DDMFormFieldTypeConstants.RICH_TEXT,
-		DDMFormFieldTypeConstants.SELECT
+		DDMFormFieldTypeConstants.SELECT, DDMFormFieldTypeConstants.GRID,
+		DDMFormFieldTypeConstants.DOCUMENT_LIBRARY,
+		DDMFormFieldTypeConstants.COLOR, DDMFormFieldTypeConstants.GEOLOCATION,
+		DDMFormFieldTypeConstants.JOURNAL_ARTICLE
 	};
 
 	@Reference
