@@ -11,13 +11,61 @@
 
 import ClayForm, {ClayCheckbox} from '@clayui/form';
 import {useFormik} from 'formik';
-import React from 'react';
+import React, {useRef} from 'react';
 
 import {LearnMessageWithoutContext} from '../../../sxp_blueprint_admin/js/shared/LearnMessage';
-import {sub} from '../../../sxp_blueprint_admin/js/utils/language';
+import sub from '../../../sxp_blueprint_admin/js/utils/language/sub';
 import Input from './Input';
 import TestConfigurationButton from './TestConfigurationButton';
 import {TEXT_EMBEDDING_PROVIDER_TYPES} from './constants';
+
+const DEFAULT_TEXT_EMBEDDING_PROVIDER_CONFIGURATIONS = [
+	{
+		attributes: {
+			maxCharacterCount: 500,
+			modelTimeout: 25,
+		},
+		embeddingVectorDimensions: 768,
+		languageIds: ['en_US'],
+		modelClassNames: [
+			'com.liferay.blogs.model.BlogsEntry',
+			'com.liferay.journal.model.JournalArticle',
+			'com.liferay.knowledge.base.model.KBArticle',
+			'com.liferay.wiki.model.WikiPage',
+		],
+		providerName: TEXT_EMBEDDING_PROVIDER_TYPES.HUGGING_FACE_INFERENCE_API,
+	},
+];
+
+function parseJSONString(jsonString) {
+	if (typeof jsonString === 'undefined' || jsonString === '') {
+		return '';
+	}
+
+	try {
+		return JSON.parse(jsonString);
+	}
+	catch (error) {
+		if (process.env.NODE_ENV === 'development') {
+			console.error(error);
+		}
+
+		return jsonString;
+	}
+}
+
+/**
+ * Converts an array of JSON strings into an array of JSON objects.
+ *
+ * Example:
+ * parseArrayOfJSONStrings(["{}"]);
+ * => [{}]
+ * @param {Array} array
+ * @returns {Array}
+ */
+function parseArrayOfJSONStrings(array) {
+	return array.map((string) => parseJSONString(string));
+}
 
 /**
  * Formats the object into an array of label and value, important for inputs
@@ -57,144 +105,207 @@ const transformToLabelValueArray = (items = {}) => {
  * This can be found on: System Settings > Search Experiences > Semantic Search
  */
 export default function ({
-	assetEntryClassNames,
-	availableAssetEntryClassNames,
 	availableEmbeddingVectorDimensions,
 	availableLanguageDisplayNames,
+	availableModelClassNames,
 	availableTextEmbeddingProviders,
 	availableTextTruncationStrategies,
-	cacheTimeout = '',
-	embeddingVectorDimensions,
-	huggingFaceAccessToken,
+	initialTextEmbeddingCacheTimeout,
+	initialTextEmbeddingProviderConfigurationJSONs,
+	initialTextEmbeddingsEnabled,
 	learnMessages,
-	languageIds,
-	maxCharacterCount = '',
-	model,
-	modelTimeout = '',
 	namespace = '',
-	textEmbeddingProvider = TEXT_EMBEDDING_PROVIDER_TYPES.HUGGING_FACE_INFERENCE_API,
-	textEmbeddingsEnabled,
-	textTruncationStrategy,
-	txtaiHostAddress,
-	txtaiPassword,
-	txtaiUsername,
 }) {
+	const initialTextEmbeddingProviderConfigurationJSONsRef = useRef(
+		Array.isArray(initialTextEmbeddingProviderConfigurationJSONs)
+			? parseArrayOfJSONStrings(
+					initialTextEmbeddingProviderConfigurationJSONs
+			  )
+			: parseJSONString(initialTextEmbeddingProviderConfigurationJSONs)
+	);
+
 	const _handleFormikValidate = (values) => {
-		const errors = {};
+		const errors = {
+			textEmbeddingProviderConfigurationJSONs: [{attributes: {}}],
+		}; // Sets empty values to avoid undefined errors when setting values.
 
-		// Validate "Asset Entry Class Names" field.
+		values.textEmbeddingProviderConfigurationJSONs?.map(
+			(textEmbeddingProviderConfigurationJSON, index) => {
 
-		if (!values.assetEntryClassNames?.length) {
-			errors.assetEntryClassNames = sub(
-				Liferay.Language.get('the-x-field-is-required'),
-				[Liferay.Language.get('asset-entry-class-names')]
-			);
-		}
+				// Validate "Types" field.
 
-		// Validate "Cache Timeout" field.
+				if (
+					!textEmbeddingProviderConfigurationJSON.modelClassNames
+						?.length
+				) {
+					errors.textEmbeddingProviderConfigurationJSONs[
+						index
+					].modelClassNames = sub(
+						Liferay.Language.get('the-x-field-is-required'),
+						[Liferay.Language.get('types')]
+					);
+				}
 
-		if (values.cacheTimeout === '') {
-			errors.cacheTimeout = Liferay.Language.get(
+				// Validate "Hugging Face Access Token" field.
+
+				if (
+					!textEmbeddingProviderConfigurationJSON.attributes
+						?.accessToken ||
+					textEmbeddingProviderConfigurationJSON.attributes
+						?.accessToken === ''
+				) {
+					errors.textEmbeddingProviderConfigurationJSONs[
+						index
+					].attributes.accessToken = Liferay.Language.get(
+						'this-field-is-required'
+					);
+				}
+
+				// Validate "Languages" field.
+
+				if (
+					!textEmbeddingProviderConfigurationJSON.languageIds?.length
+				) {
+					errors.textEmbeddingProviderConfigurationJSONs[
+						index
+					].languageIds = sub(
+						Liferay.Language.get('the-x-field-is-required'),
+						[Liferay.Language.get('languages')]
+					);
+				}
+
+				// Validate "Max Character Count" field.
+
+				if (
+					!textEmbeddingProviderConfigurationJSON.attributes
+						?.maxCharacterCount === ''
+				) {
+					errors.textEmbeddingProviderConfigurationJSONs[
+						index
+					].attributes.maxCharacterCount = Liferay.Language.get(
+						'this-field-is-required'
+					);
+				}
+				else {
+					if (
+						textEmbeddingProviderConfigurationJSON.attributes
+							?.maxCharacterCount < 50
+					) {
+						errors.textEmbeddingProviderConfigurationJSONs[
+							index
+						].attributes.maxCharacterCount = sub(
+							Liferay.Language.get(
+								'please-enter-a-value-greater-than-or-equal-to-x'
+							),
+							['50']
+						);
+					}
+
+					if (
+						textEmbeddingProviderConfigurationJSON.attributes
+							?.maxCharacterCount > 10000
+					) {
+						errors.textEmbeddingProviderConfigurationJSONs[
+							index
+						].attributes.maxCharacterCount = sub(
+							Liferay.Language.get(
+								'please-enter-a-value-less-than-or-equal-to-x'
+							),
+							['10000']
+						);
+					}
+				}
+
+				// Validate "Model" field.
+
+				if (
+					!textEmbeddingProviderConfigurationJSON.attributes?.model ||
+					textEmbeddingProviderConfigurationJSON.attributes?.model ===
+						''
+				) {
+					errors.textEmbeddingProviderConfigurationJSONs[
+						index
+					].attributes.model = Liferay.Language.get(
+						'this-field-is-required'
+					);
+				}
+
+				// Validate "Model Timeout" field.
+
+				if (
+					!textEmbeddingProviderConfigurationJSON.attributes
+						?.modelTimeout ||
+					(textEmbeddingProviderConfigurationJSON.attributes
+						?.modelTimeout === '' &&
+						textEmbeddingProviderConfigurationJSON?.providerName ===
+							TEXT_EMBEDDING_PROVIDER_TYPES.HUGGING_FACE_INFERENCE_API)
+				) {
+					errors.textEmbeddingProviderConfigurationJSONs[
+						index
+					].attributes.modelTimeout = Liferay.Language.get(
+						'this-field-is-required'
+					);
+				}
+				else {
+					if (
+						textEmbeddingProviderConfigurationJSON.attributes
+							?.modelTimeout < 0
+					) {
+						errors.textEmbeddingProviderConfigurationJSONs[
+							index
+						].attributes.modelTimeout = sub(
+							Liferay.Language.get(
+								'please-enter-a-value-greater-than-or-equal-to-x'
+							),
+							['0']
+						);
+					}
+
+					if (
+						textEmbeddingProviderConfigurationJSON.attributes
+							?.modelTimeout > 60
+					) {
+						errors.textEmbeddingProviderConfigurationJSONs[
+							index
+						].attributes.modelTimeout = sub(
+							Liferay.Language.get(
+								'please-enter-a-value-less-than-or-equal-to-x'
+							),
+							['60']
+						);
+					}
+				}
+
+				// Validate "Host Address" field.
+
+				if (
+					!textEmbeddingProviderConfigurationJSON.attributes
+						?.hostAddress ||
+					textEmbeddingProviderConfigurationJSON.attributes
+						?.hostAddress === ''
+				) {
+					errors.textEmbeddingProviderConfigurationJSONs[
+						index
+					].attributes.hostAddress = Liferay.Language.get(
+						'this-field-is-required'
+					);
+				}
+			}
+		);
+
+		// Validate "Text Embedding Cache Timeout" field.
+
+		if (values.textEmbeddingCacheTimeout === '') {
+			errors.textEmbeddingCacheTimeout = Liferay.Language.get(
 				'this-field-is-required'
 			);
 		}
-		else {
-			if (values.cacheTimeout < 0) {
-				errors.cacheTimeout = sub(
-					Liferay.Language.get(
-						'please-enter-a-value-greater-than-or-equal-to-x'
-					),
-					['0']
-				);
-			}
-		}
-
-		// Validate "Hugging Face Access Token" field.
-
-		if (values.huggingFaceAccessToken === '') {
-			errors.huggingFaceAccessToken = Liferay.Language.get(
-				'this-field-is-required'
-			);
-		}
-
-		// Validate "Language IDs" field.
-
-		if (!values.languageIds?.length) {
-			errors.languageIds = sub(
-				Liferay.Language.get('the-x-field-is-required'),
-				[Liferay.Language.get('language-ids')]
-			);
-		}
-
-		// Validate "Max Character Count" field.
-
-		if (!values.maxCharacterCount === '') {
-			errors.maxCharacterCount = Liferay.Language.get(
-				'this-field-is-required'
-			);
-		}
-		else {
-			if (values.maxCharacterCount < 50) {
-				errors.maxCharacterCount = sub(
-					Liferay.Language.get(
-						'please-enter-a-value-greater-than-or-equal-to-x'
-					),
-					['50']
-				);
-			}
-
-			if (values.maxCharacterCount > 10000) {
-				errors.maxCharacterCount = sub(
-					Liferay.Language.get(
-						'please-enter-a-value-less-than-or-equal-to-x'
-					),
-					['10000']
-				);
-			}
-		}
-
-		// Validate "Model" field.
-
-		if (values.model === '') {
-			errors.model = Liferay.Language.get('this-field-is-required');
-		}
-
-		// Validate "Model Timeout" field.
-
-		if (
-			values.modelTimeout === '' &&
-			values.textEmbeddingProvider ===
-				TEXT_EMBEDDING_PROVIDER_TYPES.HUGGING_FACE_INFERENCE_API
-		) {
-			errors.modelTimeout = Liferay.Language.get(
-				'this-field-is-required'
-			);
-		}
-		else {
-			if (values.modelTimeout < 0) {
-				errors.modelTimeout = sub(
-					Liferay.Language.get(
-						'please-enter-a-value-greater-than-or-equal-to-x'
-					),
-					['0']
-				);
-			}
-
-			if (values.modelTimeout > 60) {
-				errors.modelTimeout = sub(
-					Liferay.Language.get(
-						'please-enter-a-value-less-than-or-equal-to-x'
-					),
-					['60']
-				);
-			}
-		}
-
-		// Validate "txtai Host Address" field.
-
-		if (values.txtaiHostAddress === '') {
-			errors.txtaiHostAddress = Liferay.Language.get(
-				'this-field-is-required'
+		else if (values.textEmbeddingCacheTimeout < 0) {
+			errors.textEmbeddingCacheTimeout = sub(
+				Liferay.Language.get(
+					'please-enter-a-value-greater-than-or-equal-to-x'
+				),
+				['0']
 			);
 		}
 
@@ -203,20 +314,12 @@ export default function ({
 
 	const formik = useFormik({
 		initialValues: {
-			assetEntryClassNames,
-			cacheTimeout,
-			embeddingVectorDimensions,
-			huggingFaceAccessToken,
-			languageIds,
-			maxCharacterCount,
-			model,
-			modelTimeout,
-			textEmbeddingProvider,
-			textEmbeddingsEnabled,
-			textTruncationStrategy,
-			txtaiHostAddress,
-			txtaiPassword,
-			txtaiUsername,
+			textEmbeddingCacheTimeout: initialTextEmbeddingCacheTimeout,
+			textEmbeddingProviderConfigurationJSONs: !initialTextEmbeddingProviderConfigurationJSONsRef
+				.current?.length
+				? DEFAULT_TEXT_EMBEDDING_PROVIDER_CONFIGURATIONS
+				: initialTextEmbeddingProviderConfigurationJSONsRef.current,
+			textEmbeddingsEnabled: initialTextEmbeddingsEnabled,
 		},
 		validate: _handleFormikValidate,
 		validateOnMount: true,
@@ -234,300 +337,587 @@ export default function ({
 		formik.setFieldValue(name, val);
 	};
 
-	return (
-		<div className="semantic-search-settings-root">
-			<div className="sheet-section">
-				<h3 className="sheet-subtitle">
-					{Liferay.Language.get('text-embedding-provider-settings')}
-				</h3>
-
-				<ClayForm.Group>
-					<ClayCheckbox
-						aria-label={Liferay.Language.get(
-							'text-embeddings-enabled'
+	const _renderEmbeddingProviderConfigurationInputs = (index) => {
+		return (
+			<>
+				<div className="sheet-section">
+					<h3 className="sheet-subtitle">
+						{Liferay.Language.get(
+							'text-embedding-provider-settings'
 						)}
-						checked={!!formik.values.textEmbeddingsEnabled}
-						label={Liferay.Language.get('text-embeddings-enabled')}
-						name={`${namespace}textEmbeddingsEnabled`}
-						onChange={_handleCheckboxChange(
-							'textEmbeddingsEnabled'
-						)}
-						value={!!formik.values.textEmbeddingsEnabled}
-					/>
-				</ClayForm.Group>
+					</h3>
 
-				<Input
-					error={formik.errors.textEmbeddingProvider}
-					items={transformToLabelValueArray(
-						availableTextEmbeddingProviders
-					)}
-					label={Liferay.Language.get('text-embedding-provider')}
-					name={`${namespace}textEmbeddingProvider`}
-					onBlur={_handleInputBlur('textEmbeddingProvider')}
-					onChange={_handleInputChange('textEmbeddingProvider')}
-					type="select"
-					value={formik.values.textEmbeddingProvider}
-				>
-					{formik.values.textEmbeddingProvider ===
-						TEXT_EMBEDDING_PROVIDER_TYPES.HUGGING_FACE_INFERENCE_API && (
-						<ClayForm.FeedbackGroup>
-							<ClayForm.Text>
-								{Liferay.Language.get(
-									'text-embedding-provider-hugging-face-help'
-								)}
-
-								<LearnMessageWithoutContext
-									className="ml-1"
-									learnMessages={learnMessages}
-									resourceKey="semantic-search"
-								/>
-							</ClayForm.Text>
-						</ClayForm.FeedbackGroup>
-					)}
-				</Input>
-
-				{formik.values.textEmbeddingProvider ===
-					TEXT_EMBEDDING_PROVIDER_TYPES.TXTAI && (
-					<>
-						<Input
-							error={formik.errors.txtaiHostAddress}
-							helpText={Liferay.Language.get(
-								'text-embedding-provider-txtai-host-address-help'
+					<ClayForm.Group>
+						<ClayCheckbox
+							aria-label={Liferay.Language.get(
+								'text-embeddings-enabled'
 							)}
-							label={Liferay.Language.get('txtai-host-address')}
-							name={`${namespace}txtaiHostAddress`}
-							onBlur={_handleInputBlur('txtaiHostAddress')}
-							onChange={_handleInputChange('txtaiHostAddress')}
-							required
-							touched={formik.touched.txtaiHostAddress}
-							value={formik.values.txtaiHostAddress}
-						/>
-
-						<Input
-							error={formik.errors.txtaiUsername}
-							helpText={Liferay.Language.get(
-								'text-embedding-provider-txtai-username-help'
-							)}
-							label={Liferay.Language.get('username')}
-							name={`${namespace}txtaiUsername`}
-							onBlur={_handleInputBlur('txtaiUsername')}
-							onChange={_handleInputChange('txtaiUsername')}
-							value={formik.values.txtaiUsername}
-						/>
-
-						<Input
-							error={formik.errors.txtaiPassword}
-							helpText={Liferay.Language.get(
-								'text-embedding-provider-txtai-password-help'
-							)}
-							label={Liferay.Language.get('password')}
-							name={`${namespace}txtaiPassword`}
-							onBlur={_handleInputBlur('txtaiPassword')}
-							onChange={_handleInputChange('txtaiPassword')}
-							type="password"
-							value={formik.values.txtaiPassword}
-						/>
-					</>
-				)}
-
-				{formik.values.textEmbeddingProvider ===
-					TEXT_EMBEDDING_PROVIDER_TYPES.HUGGING_FACE_INFERENCE_API && (
-					<>
-						<Input
-							error={formik.errors.huggingFaceAccessToken}
+							checked={!!formik.values.textEmbeddingsEnabled}
 							label={Liferay.Language.get(
-								'hugging-face-access-token'
+								'text-embeddings-enabled'
 							)}
-							name={`${namespace}huggingFaceAccessToken`}
-							onBlur={_handleInputBlur('huggingFaceAccessToken')}
-							onChange={_handleInputChange(
-								'huggingFaceAccessToken'
+							name={`${namespace}textEmbeddingsEnabled`}
+							onChange={_handleCheckboxChange(
+								'textEmbeddingsEnabled'
 							)}
-							required
-							touched={formik.touched.huggingFaceAccessToken}
-							value={formik.values.huggingFaceAccessToken}
+							value={!!formik.values.textEmbeddingsEnabled}
 						/>
+					</ClayForm.Group>
 
-						<Input
-							error={formik.errors.model}
-							helpText={Liferay.Language.get(
-								'text-embedding-provider-model-help'
-							)}
-							label={Liferay.Language.get('model')}
-							name={`${namespace}model`}
-							onBlur={_handleInputBlur('model')}
-							onChange={_handleInputChange('model')}
-							required
-							touched={formik.touched.model}
-							type="model"
-							value={formik.values.model}
-						>
+					<Input
+						error={
+							formik.errors
+								?.textEmbeddingProviderConfigurationJSONs?.[
+								index
+							]?.providerName
+						}
+						items={transformToLabelValueArray(
+							availableTextEmbeddingProviders
+						)}
+						label={Liferay.Language.get('text-embedding-provider')}
+						name={`textEmbeddingProviderConfigurationJSONs[${index}].providerName`}
+						onBlur={_handleInputBlur(
+							`textEmbeddingProviderConfigurationJSONs[${index}].providerName`
+						)}
+						onChange={_handleInputChange(
+							`textEmbeddingProviderConfigurationJSONs[${index}].providerName`
+						)}
+						type="select"
+						value={
+							formik.values
+								?.textEmbeddingProviderConfigurationJSONs?.[
+								index
+							]?.providerName
+						}
+					>
+						{formik.values
+							.textEmbeddingProviderConfigurationJSONs?.[index]
+							?.providerName ===
+							TEXT_EMBEDDING_PROVIDER_TYPES.HUGGING_FACE_INFERENCE_API && (
 							<ClayForm.FeedbackGroup>
 								<ClayForm.Text>
 									{Liferay.Language.get(
-										'begin-typing-and-select-a-model'
+										'text-embedding-provider-hugging-face-help'
 									)}
+
+									<LearnMessageWithoutContext
+										className="ml-1"
+										learnMessages={learnMessages}
+										resourceKey="semantic-search"
+									/>
 								</ClayForm.Text>
 							</ClayForm.FeedbackGroup>
-						</Input>
+						)}
+					</Input>
 
-						<Input
-							error={formik.errors.modelTimeout}
-							helpText={Liferay.Language.get(
-								'text-embedding-provider-model-timeout-help'
-							)}
-							label={Liferay.Language.get('model-timeout')}
-							name={`${namespace}modelTimeout`}
-							onBlur={_handleInputBlur('modelTimeout')}
-							onChange={_handleInputChange('modelTimeout')}
-							options={{max: 60, min: 0}}
-							required
-							touched={formik.touched.modelTimeout}
-							type="number"
-							value={formik.values.modelTimeout}
-						/>
-					</>
-				)}
+					{formik.values.textEmbeddingProviderConfigurationJSONs?.[
+						index
+					]?.providerName === TEXT_EMBEDDING_PROVIDER_TYPES.TXTAI && (
+						<>
+							<Input
+								error={
+									formik.errors
+										.textEmbeddingProviderConfigurationJSONs?.[
+										index
+									]?.attributes?.hostAddress
+								}
+								helpText={Liferay.Language.get(
+									'text-embedding-provider-txtai-host-address-help'
+								)}
+								label={Liferay.Language.get('host-address')}
+								name={`textEmbeddingProviderConfigurationJSONs[${index}].attributes.hostAddress`}
+								onBlur={_handleInputBlur(
+									`textEmbeddingProviderConfigurationJSONs[${index}].attributes.hostAddress`
+								)}
+								onChange={_handleInputChange(
+									`textEmbeddingProviderConfigurationJSONs[${index}].attributes.hostAddress`
+								)}
+								required
+								touched={
+									formik.touched
+										.textEmbeddingProviderConfigurationJSONs?.[
+										index
+									]?.attributes?.hostAddress
+								}
+								value={
+									formik.values
+										.textEmbeddingProviderConfigurationJSONs?.[
+										index
+									]?.attributes?.hostAddress
+								}
+							/>
 
-				<Input
-					error={formik.errors.embeddingVectorDimensions}
-					helpText={Liferay.Language.get(
-						'text-embedding-provider-embedding-vector-dimensions-help'
-					)}
-					items={transformToLabelValueArray(
-						availableEmbeddingVectorDimensions
-					)}
-					label={Liferay.Language.get('embedding-vector-dimensions')}
-					name={`${namespace}embeddingVectorDimensions`}
-					onBlur={_handleInputBlur('embeddingVectorDimensions')}
-					onChange={_handleInputChange('embeddingVectorDimensions')}
-					type="select"
-					value={formik.values.embeddingVectorDimensions}
-				/>
+							<Input
+								error={
+									formik.errors
+										.textEmbeddingProviderConfigurationJSONs?.[
+										index
+									]?.attributes?.basicAuthUsername
+								}
+								helpText={Liferay.Language.get(
+									'text-embedding-provider-basic-auth-username-help'
+								)}
+								label={Liferay.Language.get(
+									'basic-auth-username'
+								)}
+								name={`textEmbeddingProviderConfigurationJSONs[${index}].attributes.basicAuthUsername`}
+								onBlur={_handleInputBlur(
+									`textEmbeddingProviderConfigurationJSONs[${index}].attributes.basicAuthUsername`
+								)}
+								onChange={_handleInputChange(
+									`textEmbeddingProviderConfigurationJSONs[${index}].attributes.basicAuthUsername`
+								)}
+								value={
+									formik.values
+										.textEmbeddingProviderConfigurationJSONs?.[
+										index
+									]?.attributes?.basicAuthUsername
+								}
+							/>
 
-				<TestConfigurationButton
-					assetEntryClassNames={formik.values.assetEntryClassNames}
-					availableTextEmbeddingProviders={
-						availableTextEmbeddingProviders
-					}
-					cacheTimeout={formik.values.cacheTimeout}
-					embeddingVectorDimensions={
-						formik.values.embeddingVectorDimensions
-					}
-					errors={formik.errors}
-					huggingFaceAccessToken={
-						formik.values.huggingFaceAccessToken
-					}
-					languageIds={formik.values.languageIds}
-					maxCharacterCount={formik.values.maxCharacterCount}
-					model={formik.values.model}
-					modelTimeout={formik.values.modelTimeout}
-					textEmbeddingProvider={formik.values.textEmbeddingProvider}
-					textEmbeddingsEnabled={formik.values.textEmbeddingsEnabled}
-					textTruncationStrategy={
-						formik.values.textTruncationStrategy
-					}
-					txtaiHostAddress={formik.values.txtaiHostAddress}
-					txtaiPassword={formik.values.txtaiPassword}
-					txtaiUsername={formik.values.txtaiUsername}
-				/>
-			</div>
+							<Input
+								error={
+									formik.errors
+										.textEmbeddingProviderConfigurationJSONs?.[
+										index
+									]?.attributes?.basicAuthPassword
+								}
+								helpText={Liferay.Language.get(
+									'text-embedding-provider-basic-auth-password-help'
+								)}
+								label={Liferay.Language.get(
+									'basic-auth-password'
+								)}
+								name={`textEmbeddingProviderConfigurationJSONs[${index}].attributes.basicAuthPassword`}
+								onBlur={_handleInputBlur(
+									`textEmbeddingProviderConfigurationJSONs[${index}].attributes.basicAuthPassword`
+								)}
+								onChange={_handleInputChange(
+									`textEmbeddingProviderConfigurationJSONs[${index}].attributes.basicAuthPassword`
+								)}
+								type="basicAuthPassword"
+								value={
+									formik.values
+										.textEmbeddingProviderConfigurationJSONs?.[
+										index
+									]?.attributes?.basicAuthPassword
+								}
+							/>
+						</>
+					)}
 
-			<div className="sheet-section">
-				<h3 className="sheet-subtitle">
-					{Liferay.Language.get('index-settings')}
-				</h3>
+					{formik.values.textEmbeddingProviderConfigurationJSONs?.[
+						index
+					]?.providerName ===
+						TEXT_EMBEDDING_PROVIDER_TYPES.HUGGING_FACE_INFERENCE_API && (
+						<>
+							<Input
+								error={
+									formik.errors
+										.textEmbeddingProviderConfigurationJSONs?.[
+										index
+									]?.attributes?.accessToken
+								}
+								label={Liferay.Language.get('access-token')}
+								name={`textEmbeddingProviderConfigurationJSONs[${index}].attributes.accessToken`}
+								onBlur={_handleInputBlur(
+									`textEmbeddingProviderConfigurationJSONs[${index}].attributes.accessToken`
+								)}
+								onChange={_handleInputChange(
+									`textEmbeddingProviderConfigurationJSONs[${index}].attributes.accessToken`
+								)}
+								required
+								touched={
+									formik.touched
+										.textEmbeddingProviderConfigurationJSONs?.[
+										index
+									]?.attributes?.accessToken
+								}
+								value={
+									formik.values
+										.textEmbeddingProviderConfigurationJSONs?.[
+										index
+									]?.attributes?.accessToken
+								}
+							/>
 
-				<Input
-					error={formik.errors.maxCharacterCount}
-					helpText={Liferay.Language.get(
-						'text-embedding-provider-max-character-count-help'
-					)}
-					label={Liferay.Language.get('max-character-count')}
-					name={`${namespace}maxCharacterCount`}
-					onBlur={_handleInputBlur('maxCharacterCount')}
-					onChange={_handleInputChange('maxCharacterCount')}
-					options={{max: 10000, min: 50}}
-					required
-					touched={formik.touched.maxCharacterCount}
-					type="number"
-					value={formik.values.maxCharacterCount}
-				/>
+							<Input
+								error={
+									formik.errors
+										.textEmbeddingProviderConfigurationJSONs?.[
+										index
+									]?.attributes?.model
+								}
+								helpText={Liferay.Language.get(
+									'text-embedding-provider-model-help'
+								)}
+								label={Liferay.Language.get('model')}
+								name={`textEmbeddingProviderConfigurationJSONs[${index}].attributes.model`}
+								onBlur={_handleInputBlur(
+									`textEmbeddingProviderConfigurationJSONs[${index}].attributes.model`
+								)}
+								onChange={_handleInputChange(
+									`textEmbeddingProviderConfigurationJSONs[${index}].attributes.model`
+								)}
+								required
+								touched={
+									formik.touched
+										.textEmbeddingProviderConfigurationJSONs?.[
+										index
+									]?.attributes?.model
+								}
+								type="model"
+								value={
+									formik.values
+										.textEmbeddingProviderConfigurationJSONs?.[
+										index
+									]?.attributes?.model
+								}
+							>
+								<ClayForm.FeedbackGroup>
+									<ClayForm.Text>
+										{Liferay.Language.get(
+											'begin-typing-and-select-a-model'
+										)}
+									</ClayForm.Text>
+								</ClayForm.FeedbackGroup>
+							</Input>
 
-				<Input
-					error={formik.errors.textTruncationStrategy}
-					helpText={Liferay.Language.get(
-						'text-embedding-provider-text-truncation-strategy-help'
+							<Input
+								error={
+									formik.errors
+										.textEmbeddingProviderConfigurationJSONs?.[
+										index
+									]?.attributes?.modelTimeout
+								}
+								helpText={Liferay.Language.get(
+									'text-embedding-provider-model-timeout-help'
+								)}
+								label={Liferay.Language.get('model-timeout')}
+								name={`textEmbeddingProviderConfigurationJSONs[${index}].attributes.modelTimeout`}
+								onBlur={_handleInputBlur(
+									`textEmbeddingProviderConfigurationJSONs[${index}].attributes.modelTimeout`
+								)}
+								onChange={_handleInputChange(
+									`textEmbeddingProviderConfigurationJSONs[${index}].attributes.modelTimeout`
+								)}
+								options={{max: 60, min: 0}}
+								required
+								touched={
+									formik.touched
+										.textEmbeddingProviderConfigurationJSONs?.[
+										index
+									]?.attributes?.modelTimeout
+								}
+								type="number"
+								value={
+									formik.values
+										.textEmbeddingProviderConfigurationJSONs?.[
+										index
+									]?.attributes?.modelTimeout
+								}
+							/>
+						</>
 					)}
-					items={transformToLabelValueArray(
-						availableTextTruncationStrategies
-					)}
-					label={Liferay.Language.get('text-truncation-strategy')}
-					name={`${namespace}textTruncationStrategy`}
-					onBlur={_handleInputBlur('textTruncationStrategy')}
-					onChange={_handleInputChange('textTruncationStrategy')}
-					type="select"
-					value={formik.values.textTruncationStrategy}
-				/>
 
-				<Input
-					error={formik.errors.assetEntryClassNames}
-					helpText={Liferay.Language.get(
-						'text-embedding-provider-asset-entry-class-names-help'
-					)}
-					items={transformToLabelValueArray(
-						availableAssetEntryClassNames
-					)}
-					label={Liferay.Language.get('asset-entry-class-names')}
-					name={`${namespace}assetEntryClassNames`}
-					onBlur={_handleInputBlur('assetEntryClassNames')}
-					onChange={_handleInputChange('assetEntryClassNames')}
-					required
-					touched={formik.touched.assetEntryClassNames}
-					type="multiple"
-					value={formik.values.assetEntryClassNames}
-				/>
+					<Input
+						error={
+							formik.errors
+								.textEmbeddingProviderConfigurationJSONs?.[
+								index
+							]?.embeddingVectorDimensions
+						}
+						helpText={Liferay.Language.get(
+							'text-embedding-provider-embedding-vector-dimensions-help'
+						)}
+						items={transformToLabelValueArray(
+							availableEmbeddingVectorDimensions
+						)}
+						label={Liferay.Language.get(
+							'embedding-vector-dimensions'
+						)}
+						name={`textEmbeddingProviderConfigurationJSONs[${index}].embeddingVectorDimensions`}
+						onBlur={_handleInputBlur(
+							`textEmbeddingProviderConfigurationJSONs[${index}].embeddingVectorDimensions`
+						)}
+						onChange={_handleInputChange(
+							`textEmbeddingProviderConfigurationJSONs[${index}].embeddingVectorDimensions`
+						)}
+						type="select"
+						value={
+							formik.values
+								.textEmbeddingProviderConfigurationJSONs?.[
+								index
+							]?.embeddingVectorDimensions
+						}
+					/>
 
-				<Input
-					error={formik.errors.languageIds}
-					helpText={Liferay.Language.get(
-						'text-embedding-provider-language-ids-help'
-					)}
-					items={transformToLabelValueArray(
-						availableLanguageDisplayNames
-					)}
-					label={Liferay.Language.get('language-ids')}
-					name={`${namespace}languageIds`}
-					onBlur={_handleInputBlur('languageIds')}
-					onChange={_handleInputChange('languageIds')}
-					required
-					touched={formik.touched.languageIds}
-					type="multiple"
-					value={formik.values.languageIds}
-				/>
-			</div>
+					<TestConfigurationButton
+						accessToken={
+							formik.values
+								.textEmbeddingProviderConfigurationJSONs[index]
+								?.attributes?.accessToken
+						}
+						availableTextEmbeddingProviders={
+							availableTextEmbeddingProviders
+						}
+						basicAuthPassword={
+							formik.values
+								.textEmbeddingProviderConfigurationJSONs[index]
+								?.attributes.basicAuthPassword
+						}
+						basicAuthUsername={
+							formik.values
+								.textEmbeddingProviderConfigurationJSONs[index]
+								?.attributes.basicAuthUsername
+						}
+						embeddingVectorDimensions={
+							formik.values
+								.textEmbeddingProviderConfigurationJSONs[index]
+								?.embeddingVectorDimensions
+						}
+						errors={
+							formik.errors
+								.textEmbeddingProviderConfigurationJSONs?.[
+								index
+							]
+						}
+						hostAddress={
+							formik.values
+								.textEmbeddingProviderConfigurationJSONs[index]
+								?.attributes.hostAddress
+						}
+						languageIds={
+							formik.values
+								.textEmbeddingProviderConfigurationJSONs[index]
+								?.languageIds
+						}
+						maxCharacterCount={
+							formik.values
+								.textEmbeddingProviderConfigurationJSONs[index]
+								?.attributes?.maxCharacterCount
+						}
+						model={
+							formik.values
+								.textEmbeddingProviderConfigurationJSONs[index]
+								?.attributes?.model
+						}
+						modelClassNames={
+							formik.values
+								.textEmbeddingProviderConfigurationJSONs[index]
+								?.modelClassNames
+						}
+						modelTimeout={
+							formik.values
+								.textEmbeddingProviderConfigurationJSONs[index]
+								?.attributes?.modelTimeout
+						}
+						textEmbeddingCacheTimeout={
+							formik.values.textEmbeddingCacheTimeout
+						}
+						textEmbeddingProvider={
+							formik.values
+								.textEmbeddingProviderConfigurationJSONs[index]
+								?.providerName
+						}
+						textEmbeddingsEnabled={
+							formik.values.textEmbeddingsEnabled
+						}
+						textTruncationStrategy={
+							formik.values
+								.textEmbeddingProviderConfigurationJSONs[index]
+								?.attributes.textTruncationStrategy
+						}
+					/>
+				</div>
 
-			<div className="sheet-section">
-				<h3 className="sheet-subtitle">
-					{Liferay.Language.get('search-settings')}
-				</h3>
+				<div className="sheet-section">
+					<h3 className="sheet-subtitle">
+						{Liferay.Language.get('index-settings')}
+					</h3>
 
-				<Input
-					error={formik.errors.cacheTimeout}
-					helpText={Liferay.Language.get(
-						'text-embedding-provider-cache-timeout-help'
-					)}
-					label={Liferay.Language.get('cache-timeout')}
-					name={`${namespace}cacheTimeout`}
-					onBlur={_handleInputBlur('cacheTimeout')}
-					onChange={_handleInputChange('cacheTimeout')}
-					options={{min: 0}}
-					required
-					touched={formik.touched.cacheTimeout}
-					type="number"
-					value={formik.values.cacheTimeout}
-				/>
-			</div>
+					<Input
+						error={
+							formik.errors
+								.textEmbeddingProviderConfigurationJSONs?.[
+								index
+							]?.attributes?.maxCharacterCount
+						}
+						helpText={Liferay.Language.get(
+							'text-embedding-provider-max-character-count-help'
+						)}
+						label={Liferay.Language.get('max-character-count')}
+						name={`textEmbeddingProviderConfigurationJSONs[${index}].attributes.maxCharacterCount`}
+						onBlur={_handleInputBlur(
+							`textEmbeddingProviderConfigurationJSONs[${index}].attributes.maxCharacterCount`
+						)}
+						onChange={_handleInputChange(
+							`textEmbeddingProviderConfigurationJSONs[${index}].attributes.maxCharacterCount`
+						)}
+						options={{max: 10000, min: 50}}
+						required
+						touched={
+							formik.touched
+								.textEmbeddingProviderConfigurationJSONs?.[
+								index
+							]?.attributes?.maxCharacterCount
+						}
+						type="number"
+						value={
+							formik.values
+								.textEmbeddingProviderConfigurationJSONs?.[
+								index
+							]?.attributes?.maxCharacterCount
+						}
+					/>
+
+					<Input
+						error={
+							formik.errors
+								.textEmbeddingProviderConfigurationJSONs?.[
+								index
+							]?.attributes?.textTruncationStrategy
+						}
+						helpText={Liferay.Language.get(
+							'text-embedding-provider-text-truncation-strategy-help'
+						)}
+						items={transformToLabelValueArray(
+							availableTextTruncationStrategies
+						)}
+						label={Liferay.Language.get('text-truncation-strategy')}
+						name={`textEmbeddingProviderConfigurationJSONs[${index}].attributes.textTruncationStrategy`}
+						onBlur={_handleInputBlur(
+							`textEmbeddingProviderConfigurationJSONs[${index}].attributes.textTruncationStrategy`
+						)}
+						onChange={_handleInputChange(
+							`textEmbeddingProviderConfigurationJSONs[${index}].attributes.textTruncationStrategy`
+						)}
+						type="select"
+						value={
+							formik.values
+								.textEmbeddingProviderConfigurationJSONs?.[
+								index
+							]?.attributes?.textTruncationStrategy
+						}
+					/>
+
+					<Input
+						error={
+							formik.errors
+								.textEmbeddingProviderConfigurationJSONs?.[
+								index
+							]?.modelClassNames
+						}
+						helpText={Liferay.Language.get(
+							'text-embedding-provider-types-help'
+						)}
+						items={transformToLabelValueArray(
+							availableModelClassNames
+						)}
+						label={Liferay.Language.get('types')}
+						name={`textEmbeddingProviderConfigurationJSONs[${index}].modelClassNames`}
+						onBlur={_handleInputBlur(
+							`textEmbeddingProviderConfigurationJSONs[${index}].modelClassNames`
+						)}
+						onChange={_handleInputChange(
+							`textEmbeddingProviderConfigurationJSONs[${index}].modelClassNames`
+						)}
+						required
+						touched={
+							formik.touched
+								.textEmbeddingProviderConfigurationJSONs?.[
+								index
+							]?.modelClassNames
+						}
+						type="multiple"
+						value={
+							formik.values
+								.textEmbeddingProviderConfigurationJSONs?.[
+								index
+							]?.modelClassNames
+						}
+					/>
+
+					<Input
+						error={
+							formik.errors
+								.textEmbeddingProviderConfigurationJSONs?.[
+								index
+							]?.languageIds
+						}
+						helpText={Liferay.Language.get(
+							'text-embedding-provider-languages-help'
+						)}
+						items={transformToLabelValueArray(
+							availableLanguageDisplayNames
+						)}
+						label={Liferay.Language.get('languages')}
+						name={`textEmbeddingProviderConfigurationJSONs[${index}].languageIds`}
+						onBlur={_handleInputBlur(
+							`textEmbeddingProviderConfigurationJSONs[${index}].languageIds`
+						)}
+						onChange={_handleInputChange(
+							`textEmbeddingProviderConfigurationJSONs[${index}].languageIds`
+						)}
+						required
+						touched={
+							formik.touched
+								.textEmbeddingProviderConfigurationJSONs?.[
+								index
+							]?.languageIds
+						}
+						type="multiple"
+						value={
+							formik.values
+								.textEmbeddingProviderConfigurationJSONs?.[
+								index
+							]?.languageIds
+						}
+					/>
+				</div>
+
+				<div className="sheet-section">
+					<h3 className="sheet-subtitle">
+						{Liferay.Language.get('search-settings')}
+					</h3>
+
+					<Input
+						error={formik.errors.textEmbeddingCacheTimeout}
+						helpText={Liferay.Language.get(
+							'text-embedding-cache-timeout-help'
+						)}
+						label={Liferay.Language.get(
+							'text-embedding-cache-timeout'
+						)}
+						name={`${namespace}textEmbeddingCacheTimeout`}
+						onBlur={_handleInputBlur('textEmbeddingCacheTimeout')}
+						onChange={_handleInputChange(
+							'textEmbeddingCacheTimeout'
+						)}
+						options={{min: 0}}
+						required
+						touched={formik.touched.textEmbeddingCacheTimeout}
+						type="number"
+						value={formik.values.textEmbeddingCacheTimeout}
+					/>
+				</div>
+			</>
+		);
+	};
+
+	return (
+		<div className="semantic-search-settings-root">
+			{_renderEmbeddingProviderConfigurationInputs(0)}
+
+			<input
+				name={`${namespace}textEmbeddingProviderConfigurationJSONs`}
+				type="hidden"
+				value={formik.values.textEmbeddingProviderConfigurationJSONs
+					.map((configurationObject) =>
+						JSON.stringify(configurationObject)
+					)
+					.join('|')}
+			/>
 		</div>
 	);
 }

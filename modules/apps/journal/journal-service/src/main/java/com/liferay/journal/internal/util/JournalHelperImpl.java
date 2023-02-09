@@ -16,12 +16,8 @@ package com.liferay.journal.internal.util;
 
 import com.liferay.diff.DiffHtml;
 import com.liferay.diff.exception.CompareVersionsException;
-import com.liferay.dynamic.data.mapping.model.DDMStructure;
-import com.liferay.dynamic.data.mapping.model.DDMTemplate;
-import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.journal.constants.JournalFolderConstants;
 import com.liferay.journal.constants.JournalPortletKeys;
-import com.liferay.journal.internal.transformer.JournalTransformerListenerRegistryUtil;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalArticleDisplay;
 import com.liferay.journal.model.JournalFolder;
@@ -45,7 +41,6 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.LayoutSetLocalService;
-import com.liferay.portal.kernel.templateparser.TransformerListener;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -64,7 +59,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -76,7 +70,7 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Tom Wang
  */
-@Component(immediate = true, service = JournalHelper.class)
+@Component(service = JournalHelper.class)
 public class JournalHelperImpl implements JournalHelper {
 
 	@Override
@@ -287,29 +281,6 @@ public class JournalHelperImpl implements JournalHelper {
 		return restrictionType;
 	}
 
-	@Override
-	public String getTemplateScript(
-			long groupId, String ddmTemplateKey, Map<String, String> tokens,
-			String languageId)
-		throws PortalException {
-
-		DDMTemplate ddmTemplate = _ddmTemplateLocalService.getTemplate(
-			groupId, _portal.getClassNameId(DDMStructure.class), ddmTemplateKey,
-			true);
-
-		String script = ddmTemplate.getScript();
-
-		for (TransformerListener transformerListener :
-				JournalTransformerListenerRegistryUtil.
-					getTransformerListeners()) {
-
-			script = transformerListener.onScript(
-				script, null, languageId, tokens);
-		}
-
-		return script;
-	}
-
 	private List<String> _getAttributeValues(String content, Pattern pattern) {
 		Matcher matcher = pattern.matcher(content);
 
@@ -399,9 +370,6 @@ public class JournalHelperImpl implements JournalHelper {
 		"data-latitude (-?\\d+(?:\\.\\d+)?)");
 	private static final Pattern _longitudePattern = Pattern.compile(
 		"data-longitude (-?\\d+(?:\\.\\d+)?)");
-
-	@Reference
-	private DDMTemplateLocalService _ddmTemplateLocalService;
 
 	@Reference
 	private DiffHtml _diffHtml;

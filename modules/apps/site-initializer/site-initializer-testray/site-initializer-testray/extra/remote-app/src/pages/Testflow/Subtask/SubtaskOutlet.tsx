@@ -26,7 +26,7 @@ import {
 	testraySubTaskImpl,
 } from '../../../services/rest';
 import {testraySubtaskIssuesImpl} from '../../../services/rest/TestraySubtaskIssues';
-import {searchUtil} from '../../../util/search';
+import {SearchBuilder} from '../../../util/search';
 
 type OutletContext = {
 	data: {
@@ -50,25 +50,36 @@ const SubtaskOutlet = () => {
 		revalidate: revalidateSubtask,
 	} = useFetch<TestraySubTask>(
 		testraySubTaskImpl.getResource(subtaskId as string),
-		(response) => testraySubTaskImpl.transformData(response)
+		{
+			transformData: (response) =>
+				testraySubTaskImpl.transformData(response),
+		}
 	);
 
 	const {data: testraySubtaskToMerged} = useFetch<
 		APIResponse<TestraySubTask>
-	>(
-		`${testraySubTaskImpl.resource}&filter=${searchUtil.eq(
-			'r_mergedToTestraySubtask_c_subtaskId',
-			subtaskId as string
-		)}&pageSize=100&fields=name`,
-		(response) => testraySubTaskImpl.transformDataFromList(response)
-	);
+	>(testraySubTaskImpl.resource, {
+		params: {
+			fields: 'name',
+			filter: SearchBuilder.eq(
+				'r_mergedToTestraySubtask_c_subtaskId',
+				subtaskId as string
+			),
+			pageSize: 100,
+		},
+		transformData: (response) =>
+			testraySubTaskImpl.transformDataFromList(response),
+	});
 
 	const {data, mutate: mutateSubtaskIssues} = useFetch(
-		`${testraySubtaskIssuesImpl.resource}&filter=${searchUtil.eq(
-			'subtaskId',
-			subtaskId as string
-		)}`,
-		(response) => testraySubtaskIssuesImpl.transformDataFromList(response)
+		testraySubtaskIssuesImpl.resource,
+		{
+			params: {
+				filter: SearchBuilder.eq('subtaskId', subtaskId as string),
+			},
+			transformData: (response) =>
+				testraySubtaskIssuesImpl.transformDataFromList(response),
+		}
 	);
 
 	const {data: mbMessage} = useFetch(
@@ -80,11 +91,19 @@ const SubtaskOutlet = () => {
 	);
 
 	const {data: testraySubtaskToSplit} = useFetch<APIResponse<TestraySubTask>>(
-		`${testraySubTaskImpl.resource}&filter=${searchUtil.eq(
-			'r_splitFromTestraySubtask_c_subtaskId',
-			subtaskId as string
-		)}&pageSize=100&fields=name`,
-		(response) => testraySubTaskImpl.transformDataFromList(response)
+		testraySubTaskImpl.resource,
+		{
+			params: {
+				fields: 'name',
+				filter: SearchBuilder.eq(
+					'r_splitFromTestraySubtask_c_subtaskId',
+					subtaskId as string
+				),
+				pageSize: 100,
+			},
+			transformData: (response) =>
+				testraySubTaskImpl.transformDataFromList(response),
+		}
 	);
 
 	const subtaskIssues = data?.items || [];

@@ -41,7 +41,6 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
 import java.util.Locale;
-import java.util.Optional;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
@@ -109,15 +108,17 @@ public class TranslationEntryAssetRenderer
 		InfoItemHelper infoItemHelper = new InfoItemHelper(
 			_translationEntry.getClassName(), _infoItemServiceRegistry);
 
-		Optional<String> infoItemTitleOptional =
-			infoItemHelper.getInfoItemTitleOptional(
-				_translationEntry.getClassPK(), locale);
+		String infoItemTitle = infoItemHelper.getInfoItemTitle(
+			_translationEntry.getClassPK(), locale);
+
+		if (infoItemTitle == null) {
+			infoItemTitle = _getAssetRendererTitle(locale);
+		}
 
 		return LanguageUtil.format(
 			locale, "translation-of-x-to-x",
 			new Object[] {
-				infoItemTitleOptional.orElseGet(
-					() -> _getAssetRendererTitle(locale)),
+				infoItemTitle,
 				StringUtil.replace(
 					_translationEntry.getLanguageId(), CharPool.UNDERLINE,
 					CharPool.DASH)
@@ -196,8 +197,8 @@ public class TranslationEntryAssetRenderer
 		try {
 			AssetRendererFactory<?> assetRendererFactory =
 				AssetRendererFactoryRegistryUtil.
-					getAssetRendererFactoryByClassNameId(
-						_translationEntry.getClassNameId());
+					getAssetRendererFactoryByClassName(
+						_translationEntry.getClassName());
 
 			if (assetRendererFactory == null) {
 				return LanguageUtil.get(locale, "translation");

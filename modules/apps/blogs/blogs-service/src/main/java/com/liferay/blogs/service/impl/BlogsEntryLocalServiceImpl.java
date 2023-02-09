@@ -130,7 +130,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import javax.portlet.PortletRequest;
 
@@ -1453,7 +1452,10 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 
 			// Resources
 
-			if (oldStatus == WorkflowConstants.STATUS_DRAFT) {
+			if ((oldStatus == WorkflowConstants.STATUS_DRAFT) ||
+				GetterUtil.getBoolean(
+					serviceContext.getAttribute("addEntryResources"))) {
+
 				if (serviceContext.isAddGroupPermissions() ||
 					serviceContext.isAddGuestPermissions()) {
 
@@ -1873,15 +1875,14 @@ public class BlogsEntryLocalServiceImpl extends BlogsEntryLocalServiceBaseImpl {
 		Set<String> extensions = MimeTypesUtil.getExtensions(
 			fileEntry.getMimeType());
 
-		if (Stream.of(
-				_blogsFileUploadsConfiguration.imageExtensions()
-			).anyMatch(
-				extension ->
-					extension.equals(StringPool.STAR) ||
-					extensions.contains(extension)
-			)) {
+		for (String extension :
+				_blogsFileUploadsConfiguration.imageExtensions()) {
 
-			return true;
+			if (extension.equals(StringPool.STAR) ||
+				extensions.contains(extension)) {
+
+				return true;
+			}
 		}
 
 		return false;

@@ -37,6 +37,7 @@ import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.journal.service.JournalArticleServiceUtil;
 import com.liferay.journal.service.JournalFolderLocalServiceUtil;
 import com.liferay.journal.service.JournalFolderServiceUtil;
+import com.liferay.journal.util.JournalHelper;
 import com.liferay.journal.util.comparator.FolderArticleArticleIdComparator;
 import com.liferay.journal.util.comparator.FolderArticleDisplayDateComparator;
 import com.liferay.journal.util.comparator.FolderArticleModifiedDateComparator;
@@ -148,6 +149,10 @@ public class JournalDisplayContext {
 		return journalDisplayContext;
 	}
 
+	public String getAbsolutePath(long folderId) throws PortalException {
+		return _journalHelper.getAbsolutePath(_liferayPortletRequest, folderId);
+	}
+
 	public String[] getAddMenuFavItems() throws PortalException {
 		if (_addMenuFavItems != null) {
 			return _addMenuFavItems;
@@ -162,7 +167,7 @@ public class JournalDisplayContext {
 		String[] addMenuFavItems = portalPreferences.getValues(
 			JournalPortletKeys.JOURNAL,
 			JournalPortletUtil.getAddMenuFavItemKey(
-				_liferayPortletRequest, _liferayPortletResponse),
+				_journalHelper, _liferayPortletRequest),
 			new String[0]);
 
 		for (DDMStructure ddmStructure : getDDMStructures()) {
@@ -1089,6 +1094,8 @@ public class JournalDisplayContext {
 
 		_itemSelector = (ItemSelector)httpServletRequest.getAttribute(
 			ItemSelector.class.getName());
+		_journalHelper = (JournalHelper)httpServletRequest.getAttribute(
+			JournalHelper.class.getName());
 		_journalWebConfiguration =
 			(JournalWebConfiguration)_httpServletRequest.getAttribute(
 				JournalWebConfiguration.class.getName());
@@ -1503,6 +1510,7 @@ public class JournalDisplayContext {
 	private Long _folderId;
 	private final HttpServletRequest _httpServletRequest;
 	private final ItemSelector _itemSelector;
+	private final JournalHelper _journalHelper;
 	private final JournalWebConfiguration _journalWebConfiguration;
 	private String _keywords;
 	private final LiferayPortletRequest _liferayPortletRequest;

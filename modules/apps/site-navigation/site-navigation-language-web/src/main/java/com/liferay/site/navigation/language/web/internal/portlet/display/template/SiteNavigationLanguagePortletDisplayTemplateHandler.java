@@ -21,7 +21,6 @@ import com.liferay.portal.kernel.servlet.taglib.ui.LanguageEntry;
 import com.liferay.portal.kernel.template.TemplateHandler;
 import com.liferay.portal.kernel.template.TemplateVariableGroup;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portlet.display.template.constants.PortletDisplayTemplateConstants;
 import com.liferay.site.navigation.language.constants.SiteNavigationLanguagePortletKeys;
 import com.liferay.site.navigation.language.web.internal.configuration.SiteNavigationLanguageWebTemplateConfiguration;
@@ -32,7 +31,6 @@ import java.util.Map;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
@@ -41,7 +39,6 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	configurationPid = "com.liferay.site.navigation.language.web.internal.configuration.SiteNavigationLanguageWebTemplateConfiguration",
-	configurationPolicy = ConfigurationPolicy.OPTIONAL,
 	property = "javax.portlet.name=" + SiteNavigationLanguagePortletKeys.SITE_NAVIGATION_LANGUAGE,
 	service = TemplateHandler.class
 )
@@ -61,8 +58,7 @@ public class SiteNavigationLanguagePortletDisplayTemplateHandler
 	@Override
 	public String getName(Locale locale) {
 		String portletTitle = _portal.getPortletTitle(
-			SiteNavigationLanguagePortletKeys.SITE_NAVIGATION_LANGUAGE,
-			ResourceBundleUtil.getBundle(locale, getClass()));
+			SiteNavigationLanguagePortletKeys.SITE_NAVIGATION_LANGUAGE, locale);
 
 		return _language.format(locale, "x-template", portletTitle, false);
 	}

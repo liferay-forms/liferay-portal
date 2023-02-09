@@ -24,11 +24,11 @@ import classNames from 'classnames';
 import {sub} from 'frontend-js-web';
 import React, {useRef} from 'react';
 
-import {useId} from '../../core/hooks/useId';
-import useLazy from '../../core/hooks/useLazy';
-import useLoad from '../../core/hooks/useLoad';
-import usePlugins from '../../core/hooks/usePlugins';
-import {useSessionState} from '../../core/hooks/useSessionState';
+import {useId} from '../../common/hooks/useId';
+import useLazy from '../../common/hooks/useLazy';
+import useLoad from '../../common/hooks/useLoad';
+import usePlugins from '../../common/hooks/usePlugins';
+import {useSessionState} from '../../common/hooks/useSessionState';
 import * as Actions from '../actions/index';
 import {config} from '../config/index';
 import {useSelectItem} from '../contexts/ControlsContext';
@@ -37,7 +37,7 @@ import selectAvailablePanels from '../selectors/selectAvailablePanels';
 import selectItemConfigurationOpen from '../selectors/selectItemConfigurationOpen';
 import selectSidebarIsOpened from '../selectors/selectSidebarIsOpened';
 import switchSidebarPanel from '../thunks/switchSidebarPanel';
-import {useDropClear} from '../utils/drag-and-drop/useDragAndDrop';
+import {useDropClear} from '../utils/drag_and_drop/useDragAndDrop';
 
 const {Suspense, useCallback, useEffect} = React;
 

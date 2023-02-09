@@ -805,11 +805,11 @@ public class ResourcePermissionLocalServiceImpl
 			ResourcePermissionTable.INSTANCE.companyId.eq(
 				companyId
 			).and(
-				ResourcePermissionTable.INSTANCE.scope.eq(
-					ResourceConstants.SCOPE_INDIVIDUAL)
-			).and(
 				ResourcePermissionTable.INSTANCE.name.eq(
 					ResourcePermissionTable.INSTANCE.primKey)
+			).and(
+				ResourcePermissionTable.INSTANCE.scope.eq(
+					ResourceConstants.SCOPE_INDIVIDUAL)
 			)
 		);
 

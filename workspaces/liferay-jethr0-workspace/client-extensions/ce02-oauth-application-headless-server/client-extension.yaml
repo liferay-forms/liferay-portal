@@ -1,0 +1,3 @@
+ce02-oauth-application-headless-server:
+    name: CE02 OAuth Application Headless Server
+    type: oAuthApplicationHeadlessServer

@@ -26,6 +26,7 @@ import com.liferay.portal.vulcan.fields.NestedFieldSupport;
 import com.liferay.portal.vulcan.fields.NestedFieldsContext;
 import com.liferay.portal.vulcan.fields.NestedFieldsContextThreadLocal;
 import com.liferay.portal.vulcan.internal.fields.servlet.NestedFieldsHttpServletRequestWrapper;
+import com.liferay.portal.vulcan.internal.jaxrs.message.exchange.ExchangeWrapper;
 import com.liferay.portal.vulcan.pagination.Page;
 
 import java.io.IOException;
@@ -62,6 +63,7 @@ import javax.ws.rs.ext.WriterInterceptorContext;
 import org.apache.cxf.jaxrs.ext.ContextProvider;
 import org.apache.cxf.jaxrs.impl.UriInfoImpl;
 import org.apache.cxf.jaxrs.provider.ProviderFactory;
+import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 
 import org.osgi.framework.BundleContext;
@@ -261,15 +263,17 @@ public class NestedFieldsWriterInterceptor implements WriterInterceptor {
 
 		private Object[] _getMethodArgs(
 				String fieldName, Object item,
-				NestedFieldsContext nestedFieldsContext, Method resourceMethod,
+				NestedFieldsContext nestedFieldsContext, Object resource,
+				Method resourceMethod,
 				Map.Entry<String, Class<?>>[] resourceMethodArgNameTypeEntries)
 			throws Exception {
 
 			Object[] args = new Object[resourceMethod.getParameterCount()];
 
+			Message message = _handleNestedFieldMessage(
+				fieldName, nestedFieldsContext.getMessage(), resource);
 			MultivaluedMap<String, String> pathParameters =
 				nestedFieldsContext.getPathParameters();
-
 			MultivaluedMap<String, String> queryParameters =
 				nestedFieldsContext.getQueryParameters();
 
@@ -283,10 +287,12 @@ public class NestedFieldsWriterInterceptor implements WriterInterceptor {
 
 				if (args[i] == null) {
 					args[i] = _getMethodArgValueFromRequest(
-						fieldName, nestedFieldsContext, pathParameters,
-						queryParameters, resourceMethodArgNameTypeEntries[i]);
+						fieldName, message, pathParameters, queryParameters,
+						resourceMethodArgNameTypeEntries[i]);
 				}
 			}
+
+			_resetNestedFieldMessage(message);
 
 			return args;
 		}
@@ -326,7 +332,7 @@ public class NestedFieldsWriterInterceptor implements WriterInterceptor {
 		}
 
 		private Object _getMethodArgValueFromRequest(
-			String fieldName, NestedFieldsContext nestedFieldsContext,
+			String fieldName, Message message,
 			MultivaluedMap<String, String> pathParameters,
 			MultivaluedMap<String, String> queryParameters,
 			Map.Entry<String, Class<?>> resourceMethodArgNameTypeEntry) {
@@ -336,15 +342,10 @@ public class NestedFieldsWriterInterceptor implements WriterInterceptor {
 			Class<?> resourceMethodArgType =
 				resourceMethodArgNameTypeEntry.getValue();
 
-			Message message = _getNestedFieldsAwareMessage(
-				fieldName, nestedFieldsContext.getMessage());
-
 			Object context = _getContext(resourceMethodArgType, message);
 
 			if (context != null) {
 				argValue = context;
-
-				_resetNestedAwareMessage(message);
 			}
 			else {
 				argValue = _convert(
@@ -364,17 +365,6 @@ public class NestedFieldsWriterInterceptor implements WriterInterceptor {
 			return argValue;
 		}
 
-		private Message _getNestedFieldsAwareMessage(
-			String fieldName, Message message) {
-
-			message.put(
-				"HTTP.REQUEST",
-				new NestedFieldsHttpServletRequestWrapper(
-					fieldName, getHttpServletRequest(message)));
-
-			return message;
-		}
-
 		private Object _getNestedFieldValue(
 				String fieldName, Object item,
 				NestedFieldsContext nestedFieldsContext, Method resourceMethod,
@@ -389,8 +379,8 @@ public class NestedFieldsWriterInterceptor implements WriterInterceptor {
 					nestedFieldsContext.getMessage(), resource);
 
 				Object[] args = _getMethodArgs(
-					fieldName, item, nestedFieldsContext, resourceMethod,
-					resourceMethodArgNameTypeEntries);
+					fieldName, item, nestedFieldsContext, resource,
+					resourceMethod, resourceMethodArgNameTypeEntries);
 
 				return resourceMethod.invoke(resource, args);
 			}
@@ -472,7 +462,20 @@ public class NestedFieldsWriterInterceptor implements WriterInterceptor {
 			return resourceMethodArgNameTypeEntries;
 		}
 
-		private void _resetNestedAwareMessage(Message message) {
+		private Message _handleNestedFieldMessage(
+			String fieldName, Message message, Object resource) {
+
+			message.put(
+				"HTTP.REQUEST",
+				new NestedFieldsHttpServletRequestWrapper(
+					fieldName, getHttpServletRequest(message)));
+			message.setExchange(
+				new ExchangeWrapper(message.getExchange(), resource));
+
+			return message;
+		}
+
+		private void _resetNestedFieldMessage(Message message) {
 			NestedFieldsHttpServletRequestWrapper
 				nestedFieldsHttpServletRequestWrapper =
 					(NestedFieldsHttpServletRequestWrapper)
@@ -481,6 +484,14 @@ public class NestedFieldsWriterInterceptor implements WriterInterceptor {
 			message.put(
 				"HTTP.REQUEST",
 				nestedFieldsHttpServletRequestWrapper.getRequest());
+
+			Exchange exchange = message.getExchange();
+
+			if (exchange instanceof ExchangeWrapper) {
+				ExchangeWrapper exchangeWrapper = (ExchangeWrapper)exchange;
+
+				message.setExchange(exchangeWrapper.getExchange());
+			}
 		}
 
 		private void _setContextFields(

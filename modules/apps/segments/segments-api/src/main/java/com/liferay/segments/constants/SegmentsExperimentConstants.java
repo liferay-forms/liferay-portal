@@ -14,6 +14,8 @@
 
 package com.liferay.segments.constants;
 
+import com.liferay.petra.function.transform.TransformUtil;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.segments.exception.SegmentsExperimentStatusException;
@@ -21,9 +23,7 @@ import com.liferay.segments.exception.SegmentsExperimentStatusException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Stream;
 
 /**
  * @author Eduardo García
@@ -148,84 +148,98 @@ public class SegmentsExperimentConstants {
 			false);
 
 		public static int[] getExclusiveStatusValues() {
-			Stream<Status> stream = Arrays.stream(Status.values());
+			return ArrayUtil.toIntArray(
+				TransformUtil.transformToList(
+					Status.values(),
+					status -> {
+						if (status.isExclusive()) {
+							return status.getValue();
+						}
 
-			return stream.filter(
-				Status::isExclusive
-			).mapToInt(
-				Status::getValue
-			).toArray();
+						return null;
+					}));
 		}
 
 		public static int[] getLockedStatusValues() {
-			Stream<Status> stream = Arrays.stream(Status.values());
+			return ArrayUtil.toIntArray(
+				TransformUtil.transformToList(
+					Status.values(),
+					status -> {
+						if (!status.isEditable()) {
+							return status.getValue();
+						}
 
-			return stream.filter(
-				status -> !status.isEditable()
-			).mapToInt(
-				Status::getValue
-			).toArray();
+						return null;
+					}));
 		}
 
 		public static int[] getNonexclusiveStatusValues() {
-			Stream<Status> stream = Arrays.stream(Status.values());
+			return ArrayUtil.toIntArray(
+				TransformUtil.transformToList(
+					Status.values(),
+					status -> {
+						if (!status.isExclusive()) {
+							return status.getValue();
+						}
 
-			return stream.filter(
-				status -> !status.isExclusive()
-			).mapToInt(
-				Status::getValue
-			).toArray();
+						return null;
+					}));
 		}
 
 		public static int[] getSplitStatusValues() {
-			Stream<Status> stream = Arrays.stream(Status.values());
+			return ArrayUtil.toIntArray(
+				TransformUtil.transformToList(
+					Status.values(),
+					status -> {
+						if (status.isSplit()) {
+							return status.getValue();
+						}
 
-			return stream.filter(
-				Status::isSplit
-			).mapToInt(
-				Status::getValue
-			).toArray();
+						return null;
+					}));
 		}
 
-		public static Optional<Status> parse(int value) {
+		public static Status parse(int value) {
 			for (Status status : values()) {
 				if (status.getValue() == value) {
-					return Optional.of(status);
+					return status;
 				}
 			}
 
-			return Optional.empty();
+			return null;
 		}
 
-		public static Optional<Status> parse(String stringValue) {
+		public static Status parse(String stringValue) {
 			if (Validator.isNull(stringValue)) {
-				return Optional.empty();
+				return null;
 			}
 
 			for (Status status : values()) {
 				if (stringValue.equals(status.toString())) {
-					return Optional.of(status);
+					return status;
 				}
 			}
 
-			return Optional.empty();
+			return null;
 		}
 
 		public static void validateTransition(
 				int fromStatusValue, int toStatusValue)
 			throws SegmentsExperimentStatusException {
 
-			Optional<Status> fromStatusOptional = Status.parse(fromStatusValue);
+			Status fromStatus = Status.parse(fromStatusValue);
 
-			Status fromStatus = fromStatusOptional.orElseThrow(
-				() -> new SegmentsExperimentStatusException(
-					"Invalid initial status value " + fromStatusValue));
+			if (fromStatus == null) {
+				throw new SegmentsExperimentStatusException(
+					"Invalid initial status value " + fromStatusValue);
+			}
 
-			Optional<Status> toStatusOptional = Status.parse(toStatusValue);
+			Status toStatus = Status.parse(toStatusValue);
 
-			Status toStatus = toStatusOptional.orElseThrow(
-				() -> new SegmentsExperimentStatusException(
-					"Invalid final status value " + toStatusValue));
+			if (toStatus == null) {
+				throw new SegmentsExperimentStatusException(
+					"Invalid final status value " + toStatusValue);
+			}
 
 			if (Objects.equals(fromStatus, toStatus)) {
 				return;

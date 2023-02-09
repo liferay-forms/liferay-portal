@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.search.SearchEngineHelper;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.document.Document;
 import com.liferay.portal.search.document.DocumentBuilder;
@@ -206,6 +207,13 @@ public class IndexedFieldsFixture {
 		com.liferay.portal.kernel.search.Document document) {
 
 		if (_isSearchEngineSolr()) {
+			if (Validator.isNotNull(document.get("roleNames"))) {
+				document.add(
+					new Field(
+						"roleNames",
+						StringUtil.toLowerCase(document.get("roleNames"))));
+			}
+
 			document.remove("score");
 		}
 	}
@@ -215,6 +223,10 @@ public class IndexedFieldsFixture {
 			DocumentBuilder documentBuilder = _documentBuilderFactory.builder(
 				document);
 
+			documentBuilder.setString(
+				"userGroupRoleNames",
+				StringUtil.toLowerCase(
+					document.getString("userGroupRoleNames")));
 			documentBuilder.unsetValue("score");
 
 			return documentBuilder.build();

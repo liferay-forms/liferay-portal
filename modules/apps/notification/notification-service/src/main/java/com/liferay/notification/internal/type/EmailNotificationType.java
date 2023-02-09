@@ -138,9 +138,18 @@ public class EmailNotificationType extends BaseNotificationType {
 	public void sendNotification(NotificationContext notificationContext)
 		throws PortalException {
 
+		long groupId = 0;
+
 		User user = userLocalService.getUser(notificationContext.getUserId());
 
-		siteDefaultLocale = portal.getSiteDefaultLocale(user.getGroupId());
+		Group userGroup = user.getGroup();
+
+		if (userGroup != null) {
+			groupId = userGroup.getGroupId();
+		}
+
+		siteDefaultLocale = portal.getSiteDefaultLocale(groupId);
+
 		userLocale = user.getLocale();
 
 		notificationContext.setFileEntryIds(
@@ -258,10 +267,10 @@ public class EmailNotificationType extends BaseNotificationType {
 	}
 
 	@Override
-	public void sendUnsentNotifications() {
+	public void sendUnsentNotifications(long companyId) {
 		for (NotificationQueueEntry notificationQueueEntry :
 				notificationQueueEntryLocalService.getUnsentNotificationEntries(
-					NotificationConstants.TYPE_EMAIL)) {
+					companyId, NotificationConstants.TYPE_EMAIL)) {
 
 			NotificationRecipient notificationRecipient =
 				notificationQueueEntry.getNotificationRecipient();

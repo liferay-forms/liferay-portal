@@ -31,6 +31,7 @@ import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
 import com.liferay.info.type.WebImage;
 import com.liferay.layout.display.page.LayoutDisplayPageObjectProvider;
 import com.liferay.layout.display.page.constants.LayoutDisplayPageWebKeys;
+import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.seo.kernel.LayoutSEOLink;
 import com.liferay.layout.seo.kernel.LayoutSEOLinkManager;
 import com.liferay.petra.string.StringPool;
@@ -58,7 +59,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Optional;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -104,18 +105,21 @@ public class LayoutDisplayPageObjectProviderAnalyticsReportsInfoItemImpl
 	public List<Locale> getAvailableLocales(
 		LayoutDisplayPageObjectProvider layoutDisplayPageObjectProvider) {
 
-		return Optional.ofNullable(
-			_groupLocalService.fetchGroup(
-				layoutDisplayPageObjectProvider.getGroupId())
-		).map(
-			Group::getGroupId
-		).map(
-			_language::getAvailableLocales
-		).map(
-			ListUtil::fromCollection
-		).orElseGet(
-			() -> Collections.singletonList(LocaleUtil.getDefault())
-		);
+		Group group = _groupLocalService.fetchGroup(
+			layoutDisplayPageObjectProvider.getGroupId());
+
+		if (group == null) {
+			return Collections.singletonList(LocaleUtil.getDefault());
+		}
+
+		Set<Locale> availableLocales = _language.getAvailableLocales(
+			group.getGroupId());
+
+		if (availableLocales == null) {
+			return Collections.singletonList(LocaleUtil.getDefault());
+		}
+
+		return ListUtil.fromCollection(availableLocales);
 	}
 
 	@Override
@@ -123,64 +127,59 @@ public class LayoutDisplayPageObjectProviderAnalyticsReportsInfoItemImpl
 		LayoutDisplayPageObjectProvider layoutDisplayPageObjectProvider,
 		Locale locale) {
 
-		Optional<ThemeDisplay> themeDisplayOptional =
-			_getThemeDisplayOptional();
+		ThemeDisplay themeDisplay = _getThemeDisplay();
 
-		return themeDisplayOptional.map(
-			themeDisplay -> {
-				Optional<Layout> layoutOptional = _getLayoutOptional(
-					layoutDisplayPageObjectProvider);
+		if (themeDisplay == null) {
+			return StringPool.BLANK;
+		}
 
-				return layoutOptional.map(
-					layout -> {
-						HttpServletRequest httpServletRequest =
-							themeDisplay.getRequest();
+		Layout layout = _getLayout(layoutDisplayPageObjectProvider);
 
-						LayoutDisplayPageObjectProvider<?>
-							initialLayoutDisplayPageObjectProvider =
-								(LayoutDisplayPageObjectProvider<?>)
-									httpServletRequest.getAttribute(
-										LayoutDisplayPageWebKeys.
-											LAYOUT_DISPLAY_PAGE_OBJECT_PROVIDER);
+		if (layout == null) {
+			return StringPool.BLANK;
+		}
 
-						httpServletRequest.setAttribute(
-							LayoutDisplayPageWebKeys.
-								LAYOUT_DISPLAY_PAGE_OBJECT_PROVIDER,
-							layoutDisplayPageObjectProvider);
+		HttpServletRequest httpServletRequest = themeDisplay.getRequest();
 
-						String completeURL = _portal.getCurrentCompleteURL(
-							httpServletRequest);
+		LayoutDisplayPageObjectProvider<?>
+			initialLayoutDisplayPageObjectProvider =
+				(LayoutDisplayPageObjectProvider<?>)
+					httpServletRequest.getAttribute(
+						LayoutDisplayPageWebKeys.
+							LAYOUT_DISPLAY_PAGE_OBJECT_PROVIDER);
 
-						try {
-							String canonicalURL = _portal.getCanonicalURL(
-								completeURL, themeDisplay, layout, false,
-								false);
+		httpServletRequest.setAttribute(
+			LayoutDisplayPageWebKeys.LAYOUT_DISPLAY_PAGE_OBJECT_PROVIDER,
+			layoutDisplayPageObjectProvider);
 
-							LayoutSEOLink layoutSEOLink =
-								_layoutSEOLinkManager.getCanonicalLayoutSEOLink(
-									layout, locale, canonicalURL, themeDisplay);
+		String completeURL = _portal.getCurrentCompleteURL(httpServletRequest);
 
-							return layoutSEOLink.getHref();
-						}
-						catch (PortalException portalException) {
-							_log.error(portalException);
+		try {
+			String canonicalURL = _portal.getCanonicalURL(
+				completeURL, themeDisplay, layout, false, false);
 
-							return StringPool.BLANK;
-						}
-						finally {
-							httpServletRequest.setAttribute(
-								LayoutDisplayPageWebKeys.
-									LAYOUT_DISPLAY_PAGE_OBJECT_PROVIDER,
-								initialLayoutDisplayPageObjectProvider);
-						}
-					}
-				).orElse(
-					StringPool.BLANK
-				);
+			LayoutSEOLink layoutSEOLink =
+				_layoutSEOLinkManager.getCanonicalLayoutSEOLink(
+					layout, locale, canonicalURL, themeDisplay);
+
+			String href = layoutSEOLink.getHref();
+
+			if (href == null) {
+				return StringPool.BLANK;
 			}
-		).orElse(
-			StringPool.BLANK
-		);
+
+			return href;
+		}
+		catch (PortalException portalException) {
+			_log.error(portalException);
+
+			return StringPool.BLANK;
+		}
+		finally {
+			httpServletRequest.setAttribute(
+				LayoutDisplayPageWebKeys.LAYOUT_DISPLAY_PAGE_OBJECT_PROVIDER,
+				initialLayoutDisplayPageObjectProvider);
+		}
 	}
 
 	@Override
@@ -202,41 +201,47 @@ public class LayoutDisplayPageObjectProviderAnalyticsReportsInfoItemImpl
 	public Date getPublishDate(
 		LayoutDisplayPageObjectProvider layoutDisplayPageObjectProvider) {
 
-		Date date = (Date)Optional.ofNullable(
+		Object firstInfoItemService =
 			_infoItemServiceRegistry.getFirstInfoItemService(
 				InfoItemFieldValuesProvider.class,
-				layoutDisplayPageObjectProvider.getClassName())
-		).map(
-			infoItemFieldValuesProvider ->
+				layoutDisplayPageObjectProvider.getClassName());
+
+		Date date = new Date();
+
+		if (firstInfoItemService != null) {
+			InfoItemFieldValuesProvider<Object> infoItemFieldValuesProvider =
+				(InfoItemFieldValuesProvider<Object>)firstInfoItemService;
+
+			InfoFieldValue<Object> infoFieldValue =
 				infoItemFieldValuesProvider.getInfoFieldValue(
 					layoutDisplayPageObjectProvider.getDisplayObject(),
-					"createDate")
-		).filter(
-			infoFieldValue -> {
+					"createDate");
+
+			if (infoFieldValue != null) {
 				InfoField infoField = infoFieldValue.getInfoField();
 
-				return Objects.equals(
-					infoField.getInfoFieldType(), DateInfoFieldType.INSTANCE);
-			}
-		).map(
-			InfoFieldValue::getValue
-		).orElseGet(
-			Date::new
-		);
+				if (Objects.equals(
+						infoField.getInfoFieldType(),
+						DateInfoFieldType.INSTANCE)) {
 
-		return Optional.ofNullable(
+					date = (Date)infoFieldValue.getValue();
+				}
+			}
+		}
+
+		AssetDisplayPageEntry assetDisplayPageEntry =
 			_assetDisplayPageEntryLocalService.fetchAssetDisplayPageEntry(
 				layoutDisplayPageObjectProvider.getGroupId(),
 				layoutDisplayPageObjectProvider.getClassNameId(),
-				layoutDisplayPageObjectProvider.getClassPK())
-		).filter(
-			assetDisplayPageEntry -> date.before(
-				assetDisplayPageEntry.getCreateDate())
-		).map(
-			AssetDisplayPageEntry::getCreateDate
-		).orElse(
-			date
-		);
+				layoutDisplayPageObjectProvider.getClassPK());
+
+		if ((assetDisplayPageEntry == null) ||
+			!date.before(assetDisplayPageEntry.getCreateDate())) {
+
+			return date;
+		}
+
+		return assetDisplayPageEntry.getCreateDate();
 	}
 
 	@Override
@@ -249,78 +254,86 @@ public class LayoutDisplayPageObjectProviderAnalyticsReportsInfoItemImpl
 				InfoItemFieldValuesProvider.class,
 				layoutDisplayPageObjectProvider.getClassName());
 
-		return (String)Optional.ofNullable(
+		InfoFieldValue<Object> infoFieldValue =
 			infoItemFieldValuesProvider.getInfoFieldValue(
-				layoutDisplayPageObjectProvider.getDisplayObject(), "title")
-		).filter(
-			infoFieldValue -> {
-				InfoField infoField = infoFieldValue.getInfoField();
+				layoutDisplayPageObjectProvider.getDisplayObject(), "title");
 
-				return Objects.equals(
-					infoField.getInfoFieldType(), TextInfoFieldType.INSTANCE);
-			}
-		).map(
-			infoItemFieldValue -> infoItemFieldValue.getValue(locale)
-		).orElse(
-			StringPool.BLANK
-		);
+		if (infoFieldValue == null) {
+			return StringPool.BLANK;
+		}
+
+		InfoField infoField = infoFieldValue.getInfoField();
+
+		if (!Objects.equals(
+				infoField.getInfoFieldType(), TextInfoFieldType.INSTANCE)) {
+
+			return StringPool.BLANK;
+		}
+
+		return (String)infoFieldValue.getValue(locale);
 	}
 
 	@Override
 	public boolean isShow(
 		LayoutDisplayPageObjectProvider layoutDisplayPageObjectProvider) {
 
-		Optional<Layout> layoutOptional = _getLayoutOptional(
-			layoutDisplayPageObjectProvider);
+		Layout layout = _getLayout(layoutDisplayPageObjectProvider);
 
-		return layoutOptional.filter(
-			Layout::isTypeAssetDisplay
-		).filter(
-			layout -> !layout.isEmbeddedPersonalApplication()
-		).filter(
-			layout -> {
-				try {
-					return _hasEditPermission(
-						layoutDisplayPageObjectProvider, layout,
-						PermissionThreadLocal.getPermissionChecker());
-				}
-				catch (PortalException portalException) {
-					_log.error(portalException);
+		if (layout == null) {
+			return false;
+		}
 
-					return false;
-				}
+		if (layout.isTypeAssetDisplay() &&
+			!layout.isEmbeddedPersonalApplication()) {
+
+			try {
+				return _hasEditPermission(
+					layoutDisplayPageObjectProvider, layout,
+					PermissionThreadLocal.getPermissionChecker());
 			}
-		).isPresent();
+			catch (PortalException portalException) {
+				_log.error(portalException);
+
+				return false;
+			}
+		}
+
+		return false;
 	}
 
-	private Optional<Layout> _getLayoutOptional(
+	private Layout _getLayout(
 		LayoutDisplayPageObjectProvider<?> layoutDisplayPageObjectProvider) {
 
-		return Optional.ofNullable(
-			layoutDisplayPageObjectProvider
-		).filter(
-			currentLayoutDisplayPageObjectProvider ->
-				currentLayoutDisplayPageObjectProvider.getDisplayObject() !=
-					null
-		).map(
-			currentLayoutDisplayPageObjectProvider ->
-				AssetDisplayPageUtil.getAssetDisplayPageLayoutPageTemplateEntry(
-					layoutDisplayPageObjectProvider.getGroupId(),
-					layoutDisplayPageObjectProvider.getClassNameId(),
-					layoutDisplayPageObjectProvider.getClassPK(),
-					layoutDisplayPageObjectProvider.getClassTypeId())
-		).map(
-			layoutPageTemplateEntry -> _layoutLocalService.fetchLayout(
-				layoutPageTemplateEntry.getPlid())
-		);
+		if ((layoutDisplayPageObjectProvider == null) ||
+			(layoutDisplayPageObjectProvider.getDisplayObject() == null)) {
+
+			return null;
+		}
+
+		LayoutPageTemplateEntry layoutPageTemplateEntry =
+			AssetDisplayPageUtil.getAssetDisplayPageLayoutPageTemplateEntry(
+				layoutDisplayPageObjectProvider.getGroupId(),
+				layoutDisplayPageObjectProvider.getClassNameId(),
+				layoutDisplayPageObjectProvider.getClassPK(),
+				layoutDisplayPageObjectProvider.getClassTypeId());
+
+		if (layoutPageTemplateEntry == null) {
+			return null;
+		}
+
+		return _layoutLocalService.fetchLayout(
+			layoutPageTemplateEntry.getPlid());
 	}
 
-	private Optional<ThemeDisplay> _getThemeDisplayOptional() {
-		return Optional.ofNullable(
-			ServiceContextThreadLocal.getServiceContext()
-		).map(
-			ServiceContext::getThemeDisplay
-		);
+	private ThemeDisplay _getThemeDisplay() {
+		ServiceContext serviceContext =
+			ServiceContextThreadLocal.getServiceContext();
+
+		if (serviceContext == null) {
+			return null;
+		}
+
+		return serviceContext.getThemeDisplay();
 	}
 
 	private boolean _hasEditPermission(

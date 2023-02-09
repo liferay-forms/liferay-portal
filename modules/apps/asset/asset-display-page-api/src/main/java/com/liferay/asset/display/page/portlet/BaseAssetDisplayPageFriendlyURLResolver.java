@@ -64,7 +64,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -144,30 +143,32 @@ public abstract class BaseAssetDisplayPageFriendlyURLResolver
 			infoItemFieldValuesProvider.getInfoItemFieldValues(
 				layoutDisplayPageObjectProvider.getDisplayObject());
 
-		Optional<String> descriptionOptional = _getMappedValueOptional(
+		String description = _getMappedValue(
 			layout.getTypeSettingsProperty("mapped-description"),
 			infoItemFieldValues, locale);
 
+		if (description == null) {
+			description = layoutDisplayPageObjectProvider.getDescription(
+				locale);
+		}
+
 		portal.setPageDescription(
-			HtmlUtil.unescape(
-				HtmlUtil.stripHtml(
-					descriptionOptional.orElseGet(
-						() -> layoutDisplayPageObjectProvider.getDescription(
-							locale)))),
+			HtmlUtil.unescape(HtmlUtil.stripHtml(description)),
 			httpServletRequest);
 
 		portal.setPageKeywords(
 			layoutDisplayPageObjectProvider.getKeywords(locale),
 			httpServletRequest);
 
-		Optional<String> titleOptional = _getMappedValueOptional(
+		String title = _getMappedValue(
 			layout.getTypeSettingsProperty("mapped-title"), infoItemFieldValues,
 			locale);
 
-		portal.setPageTitle(
-			titleOptional.orElseGet(
-				() -> layoutDisplayPageObjectProvider.getTitle(locale)),
-			httpServletRequest);
+		if (title == null) {
+			title = layoutDisplayPageObjectProvider.getTitle(locale);
+		}
+
+		portal.setPageTitle(title, httpServletRequest);
 
 		return portal.getLayoutActualURL(layout, mainPath) +
 			layoutQueryStringComposite.getQueryString();
@@ -213,6 +214,15 @@ public abstract class BaseAssetDisplayPageFriendlyURLResolver
 		}
 
 		return new LayoutFriendlyURLComposite(layout, friendlyURL, false);
+	}
+
+	protected AssetDisplayPageEntry getAssetDisplayPageEntry(
+		long groupId,
+		LayoutDisplayPageObjectProvider<?> layoutDisplayPageObjectProvider) {
+
+		return assetDisplayPageEntryLocalService.fetchAssetDisplayPageEntry(
+			groupId, layoutDisplayPageObjectProvider.getClassNameId(),
+			layoutDisplayPageObjectProvider.getClassPK());
 	}
 
 	protected Locale getLocale(Map<String, Object> requestContext) {
@@ -344,10 +354,8 @@ public abstract class BaseAssetDisplayPageFriendlyURLResolver
 		LayoutDisplayPageObjectProvider<?> layoutDisplayPageObjectProvider,
 		LayoutDisplayPageProvider<?> layoutDisplayPageProvider) {
 
-		AssetDisplayPageEntry assetDisplayPageEntry =
-			assetDisplayPageEntryLocalService.fetchAssetDisplayPageEntry(
-				groupId, layoutDisplayPageObjectProvider.getClassNameId(),
-				layoutDisplayPageObjectProvider.getClassPK());
+		AssetDisplayPageEntry assetDisplayPageEntry = getAssetDisplayPageEntry(
+			groupId, layoutDisplayPageObjectProvider);
 
 		if (assetDisplayPageEntry != null) {
 			if (assetDisplayPageEntry.getType() ==
@@ -417,17 +425,16 @@ public abstract class BaseAssetDisplayPageFriendlyURLResolver
 		return layoutDisplayPageProvider;
 	}
 
-	private Optional<String> _getMappedValueOptional(
+	private String _getMappedValue(
 		String template, InfoItemFieldValues infoItemFieldValues,
 		Locale locale) {
 
 		if ((infoItemFieldValues == null) || Validator.isNull(template)) {
-			return Optional.empty();
+			return null;
 		}
 
-		return Optional.ofNullable(
-			layoutSEOTemplateProcessor.processTemplate(
-				template, infoItemFieldValues, locale));
+		return layoutSEOTemplateProcessor.processTemplate(
+			template, infoItemFieldValues, locale);
 	}
 
 	private String _getOriginalFriendlyURL(String friendlyURL) {

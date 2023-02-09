@@ -14,22 +14,22 @@
 
 package com.liferay.segments.asah.connector.internal.messaging;
 
+import com.liferay.analytics.settings.rest.manager.AnalyticsSettingsManager;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
+import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.segments.asah.connector.internal.cache.AsahInterestTermCache;
 import com.liferay.segments.asah.connector.internal.client.AsahFaroBackendClient;
 import com.liferay.segments.asah.connector.internal.client.AsahFaroBackendClientImpl;
-import com.liferay.segments.asah.connector.internal.client.JSONWebServiceClient;
 import com.liferay.segments.asah.connector.internal.client.model.Results;
 import com.liferay.segments.asah.connector.internal.client.model.Topic;
-import com.liferay.segments.asah.connector.internal.util.AsahUtil;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -42,9 +42,11 @@ import org.osgi.service.component.annotations.Reference;
 @Component(service = InterestTermsChecker.class)
 public class InterestTermsChecker {
 
-	public void checkInterestTerms(long companyId, String userId) {
+	public void checkInterestTerms(long companyId, String userId)
+		throws Exception {
+
 		if ((_asahInterestTermCache.getInterestTerms(userId) != null) ||
-			!AsahUtil.isAnalyticsEnabled(companyId)) {
+			!_analyticsSettingsManager.isAnalyticsEnabled(companyId)) {
 
 			return;
 		}
@@ -75,19 +77,15 @@ public class InterestTermsChecker {
 			return;
 		}
 
-		Stream<Topic> stream = topics.stream();
+		List<String> termsList = new ArrayList<>();
 
-		String[] terms = stream.flatMap(
-			topic -> {
-				List<Topic.TopicTerm> topicTerms = topic.getTerms();
-
-				return topicTerms.stream();
+		for (Topic topic : topics) {
+			for (Topic.TopicTerm topicTerm : topic.getTerms()) {
+				termsList.add(topicTerm.getKeyword());
 			}
-		).map(
-			Topic.TopicTerm::getKeyword
-		).toArray(
-			String[]::new
-		);
+		}
+
+		String[] terms = termsList.toArray(new String[0]);
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(
@@ -102,7 +100,7 @@ public class InterestTermsChecker {
 	@Activate
 	protected void activate() {
 		_asahFaroBackendClient = new AsahFaroBackendClientImpl(
-			_jsonWebServiceClient);
+			_analyticsSettingsManager, _http);
 	}
 
 	@Deactivate
@@ -113,13 +111,16 @@ public class InterestTermsChecker {
 	private static final Log _log = LogFactoryUtil.getLog(
 		InterestTermsChecker.class);
 
+	@Reference
+	private AnalyticsSettingsManager _analyticsSettingsManager;
+
 	private AsahFaroBackendClient _asahFaroBackendClient;
 
 	@Reference
 	private AsahInterestTermCache _asahInterestTermCache;
 
 	@Reference
-	private JSONWebServiceClient _jsonWebServiceClient;
+	private Http _http;
 
 	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED)
 	private ModuleServiceLifecycle _moduleServiceLifecycle;

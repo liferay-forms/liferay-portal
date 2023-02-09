@@ -39,6 +39,8 @@ if (enableKBArticleRatings && kbArticle.isDraft()) {
 	}
 }
 
+ViewKBArticleDisplayContext viewKBArticleDisplayContext = new ViewKBArticleDisplayContext(liferayPortletRequest, liferayPortletResponse);
+
 if (Validator.isNotNull(backURL)) {
 	portletDisplay.setURLBack(backURL);
 }
@@ -48,6 +50,7 @@ boolean portletTitleBasedNavigation = GetterUtil.getBoolean(portletConfig.getIni
 if (portletTitleBasedNavigation) {
 	portletDisplay.setShowBackIcon(true);
 	portletDisplay.setURLBack(redirect);
+
 	renderResponse.setTitle(kbArticle.getTitle());
 }
 %>
@@ -56,8 +59,6 @@ if (portletTitleBasedNavigation) {
 
 	<%
 	KBDropdownItemsProvider kbDropdownItemsProvider = new KBDropdownItemsProvider(liferayPortletRequest, liferayPortletResponse);
-
-	ViewKBArticleDisplayContext viewKbArticleDisplayContext = new ViewKBArticleDisplayContext(liferayPortletRequest, liferayPortletResponse);
 	%>
 
 	<div class="management-bar management-bar-light navbar navbar-expand-md">
@@ -69,7 +70,7 @@ if (portletTitleBasedNavigation) {
 							<clay:link
 								aria-label='<%= LanguageUtil.get(request, "edit") %>'
 								cssClass="btn-monospaced btn-secondary btn-sm"
-								href="<%= viewKbArticleDisplayContext.getEditArticleURL(kbArticle) %>"
+								href="<%= viewKBArticleDisplayContext.getEditArticleURL(kbArticle) %>"
 								icon="pencil"
 								title='<%= LanguageUtil.get(request, "edit") %>'
 							/>
@@ -89,13 +90,13 @@ if (portletTitleBasedNavigation) {
 					/>
 				</li>
 
-				<c:if test='<%= viewKbArticleDisplayContext.isSubscriptionEnabled(kbArticle) && GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-166643")) %>'>
+				<c:if test='<%= viewKBArticleDisplayContext.isSubscriptionEnabled(kbArticle) && GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-166643")) %>'>
 					<li class="nav-item">
 						<clay:link
-							aria-label="<%= viewKbArticleDisplayContext.getSubscriptionLabel(kbArticle) %>"
+							aria-label="<%= viewKBArticleDisplayContext.getSubscriptionLabel(kbArticle) %>"
 							cssClass="btn-primary btn-sm"
-							href="<%= viewKbArticleDisplayContext.getSubscriptionURL(kbArticle).toString() %>"
-							label="<%= viewKbArticleDisplayContext.getSubscriptionLabel(kbArticle) %>"
+							href="<%= viewKBArticleDisplayContext.getSubscriptionURL(kbArticle).toString() %>"
+							label="<%= viewKBArticleDisplayContext.getSubscriptionLabel(kbArticle) %>"
 						/>
 					</li>
 				</c:if>
@@ -153,16 +154,35 @@ if (portletTitleBasedNavigation) {
 		</div>
 
 		<div <%= portletTitleBasedNavigation ? "class=\"sheet\"" : StringPool.BLANK %>>
-			<div class="kb-entity-body">
+			<div class="kb-entity-body mb-5">
 				<c:if test="<%= portletTitleBasedNavigation %>">
 					<div class="kb-article-title">
 						<%= HtmlUtil.escape(kbArticle.getTitle()) %>
 					</div>
 				</c:if>
 
-				<div id="<portlet:namespace /><%= kbArticle.getResourcePrimKey() %>">
+				<div class="mb-4" id="<portlet:namespace /><%= kbArticle.getResourcePrimKey() %>">
 					<%= kbArticle.getContent() %>
 				</div>
+
+				<c:if test="<%= viewKBArticleDisplayContext.isKBArticleDescriptionEnabled() && Validator.isNotNull(kbArticle.getDescription()) %>">
+					<liferay-ui:panel-container
+						cssClass="mt-5 panel-group-flush panel-group-sm"
+						extended="<%= true %>"
+						markupView="lexicon"
+						persistState="<%= true %>"
+					>
+						<liferay-frontend:fieldset
+							collapsible="<%= false %>"
+							cssClass="panel-unstyled"
+							label="description"
+						>
+							<div class="lfr-asset-description">
+								<%= HtmlUtil.escape(kbArticle.getDescription()) %>
+							</div>
+						</liferay-frontend:fieldset>
+					</liferay-ui:panel-container>
+				</c:if>
 
 				<clay:content-row>
 					<clay:content-col>
@@ -237,7 +257,7 @@ if (portletTitleBasedNavigation) {
 				<c:choose>
 					<c:when test="<%= portletTitleBasedNavigation %>">
 						<liferay-ui:panel-container
-							cssClass="mt-5 panel-group-flush panel-group-sm"
+							cssClass="panel-group-flush panel-group-sm"
 							extended="<%= true %>"
 							markupView="lexicon"
 							persistState="<%= true %>"
@@ -258,7 +278,7 @@ if (portletTitleBasedNavigation) {
 							<c:if test="<%= !childKBArticles.isEmpty() %>">
 								<liferay-ui:panel
 									collapsible="<%= true %>"
-									cssClass="panel-unstyled"
+									cssClass="knowledge-base-child-article-title panel-unstyled"
 									extended="<%= true %>"
 									markupView="lexicon"
 									persistState="<%= true %>"

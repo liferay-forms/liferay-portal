@@ -46,15 +46,15 @@ definition {
 	macro tearDownConfig {
 		Variables.assertDefined(parameterList = "${staticExtensionType}");
 
-		RemoteApps.goToRemoteAppsPortlet();
+		ClientExtensionGeneral.goToRemoteAppsPortlet();
 
-		while (IsElementNotPresent(locator1 = "RemoteApps#EMPTY_REMOTE_TABLE_MESSAGE")) {
+		while (IsElementNotPresent(locator1 = "ClientExtension#EMPTY_REMOTE_TABLE_MESSAGE")) {
 			FileInstall.deleteConfigFile(configFile = "com.liferay.client.extension.type.configuration.CETConfiguration~${staticExtensionType}.config");
 
 			Refresh();
 		}
 
-		RemoteApps.viewEmptyRemoteTable();
+		ClientExtensionGeneral.viewEmptyRemoteTable();
 	}
 
 }

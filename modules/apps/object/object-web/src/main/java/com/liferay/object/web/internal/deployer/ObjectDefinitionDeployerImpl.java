@@ -137,9 +137,14 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 				_objectRelationshipLocalService, _objectScopeProviderRegistry,
 				_restContextPathResolverRegistry,
 				_templateInfoItemFieldSetProvider, _userLocalService);
+
+		PortletResourcePermission portletResourcePermission =
+			_getPortletResourcePermission(objectDefinition.getResourceName());
+
 		InfoPermissionProvider infoPermissionProvider =
 			new ObjectEntryInfoPermissionProvider(
-				objectDefinition, _portletLocalService, _portletPermission);
+				objectDefinition, _portletLocalService, _portletPermission,
+				portletResourcePermission);
 
 		List<ServiceRegistration<?>> serviceRegistrations = ListUtil.fromArray(
 			_bundleContext.registerService(
@@ -148,6 +153,8 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 					objectDefinition, _objectEntryDisplayContextFactory,
 					_objectEntryService, _servletContext),
 				HashMapDictionaryBuilder.<String, Object>put(
+					"company.id", objectDefinition.getCompanyId()
+				).put(
 					"javax.portlet.name", objectDefinition.getPortletId()
 				).build()),
 			_bundleContext.registerService(
@@ -197,8 +204,8 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 					_infoItemFieldReaderFieldSetProvider, _jsonFactory,
 					_listTypeEntryLocalService, objectDefinition,
 					_objectEntryLocalService, _objectEntryManagerRegistry,
-					_objectFieldLocalService, _templateInfoItemFieldSetProvider,
-					_userLocalService),
+					_objectFieldLocalService, _objectRelationshipLocalService,
+					_templateInfoItemFieldSetProvider, _userLocalService),
 				HashMapDictionaryBuilder.<String, Object>put(
 					"company.id", objectDefinition.getCompanyId()
 				).put(
@@ -239,8 +246,9 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 				InfoItemRenderer.class,
 				new ObjectEntryRowInfoItemRenderer(
 					_assetDisplayPageFriendlyURLProvider,
-					_listTypeEntryLocalService, _objectDefinitionLocalService,
-					_objectEntryLocalService, _objectFieldLocalService,
+					_dlFileEntryLocalService, _listTypeEntryLocalService,
+					_objectDefinitionLocalService, _objectEntryLocalService,
+					_objectFieldLocalService, _objectRelationshipLocalService,
 					_servletContext),
 				HashMapDictionaryBuilder.<String, Object>put(
 					Constants.SERVICE_RANKING, 100
@@ -297,8 +305,7 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 					_objectFieldFDSFilterFactoryRegistry,
 					_objectFieldLocalService, _objectScopeProviderRegistry,
 					_objectViewLocalService, _portal,
-					_getPortletResourcePermission(
-						objectDefinition.getResourceName())),
+					portletResourcePermission),
 				HashMapDictionaryBuilder.<String, Object>put(
 					"com.liferay.portlet.company",
 					objectDefinition.getCompanyId()

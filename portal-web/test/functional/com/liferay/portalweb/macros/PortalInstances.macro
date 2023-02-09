@@ -53,9 +53,9 @@ definition {
 				value1 = "${instanceAdminLastName}");
 		}
 
-		Button.clickAdd();
-
 		SelectFrameTop();
+
+		Button.clickAdd();
 
 		Alert.viewSuccessMessage();
 	}
@@ -72,7 +72,9 @@ definition {
 		Button.clickSave();
 
 		AssertTextEquals(
-			locator1 = "PortalInstances#INSTANCE_TABLE_ACTIVE",
+			key_columnName = "active",
+			key_tableEntry = "${virtualHost}",
+			locator1 = "LexiconTable#TABLE_ENTRY_COLUMN_LINK",
 			value1 = "No");
 	}
 
@@ -173,18 +175,25 @@ definition {
 		HeadlessPortalInstanceAPI.cleanAllPortalInstances(authenticationMethod = "${authenticationMethod}");
 	}
 
+	@summary = "Clean up Portal Instances as part of standard teardown but without Selenium usage"
+	macro tearDownCPNoSelenium {
+		JSONUser.tearDownNonAdminUsersNoSelenium(authenticationMethod = "${authenticationMethod}");
+
+		HeadlessPortalInstanceAPI.cleanAllPortalInstances(authenticationMethod = "${authenticationMethod}");
+	}
+
 	macro viewCP {
 		var key_virtualHost = "${virtualHost}";
 
-		AssertTextEquals(
+		AssertTextEquals.assertText(
 			locator1 = "PortalInstances#INSTANCE_TABLE_WEB_ID",
 			value1 = "${virtualHost}");
 
-		AssertTextEquals(
+		AssertTextEquals.assertText(
 			locator1 = "PortalInstances#INSTANCE_TABLE_VIRTUAL_HOST",
 			value1 = "${virtualHost}");
 
-		AssertTextEquals(
+		AssertTextEquals.assertText(
 			locator1 = "PortalInstances#INSTANCE_TABLE_MAIL_DOMAIN",
 			value1 = "${virtualHost}");
 	}

@@ -13,7 +13,7 @@
  */
 
 import ClayIcon from '@clayui/icon';
-import {Dispatch} from 'react';
+import {Dispatch, useContext} from 'react';
 import {Link, useOutletContext, useParams} from 'react-router-dom';
 import {KeyedMutator} from 'swr';
 
@@ -29,11 +29,12 @@ import StatusBadge from '../../components/StatusBadge';
 import {StatusBadgeType} from '../../components/StatusBadge/StatusBadge';
 import QATable from '../../components/Table/QATable';
 import {ListViewTypes} from '../../context/ListViewContext';
+import {TestrayContext} from '../../context/TestrayContext';
 import useCaseResultGroupBy from '../../data/useCaseResultGroupBy';
+import useSubtaskScore from '../../data/useSubtaskScore';
 import useHeader from '../../hooks/useHeader';
 import useMutate from '../../hooks/useMutate';
 import i18n from '../../i18n';
-import {filters} from '../../schema/filter';
 import {Liferay} from '../../services/liferay';
 import {
 	PickList,
@@ -72,19 +73,26 @@ const TestFlowTasks = () => {
 	const {taskId} = useParams();
 	const {updateItemFromList} = useMutate();
 
+	const [{myUserAccount}] = useContext(TestrayContext);
+
 	useHeader({
-		useHeading: [
+		heading: [
 			{
 				category: i18n.translate('task'),
 				title: testrayTask?.name,
 			},
 		],
-		useTabs: [],
+		tabs: [],
 	});
 
 	const {
 		donut: {columns},
 	} = useCaseResultGroupBy(testrayTask?.build?.id);
+
+	const subtaskScore = useSubtaskScore({
+		testrayTask,
+		userId: myUserAccount?.id as number,
+	});
 
 	if (!testrayTask) {
 		return <Loading />;
@@ -108,7 +116,6 @@ const TestFlowTasks = () => {
 					user.id.toString() !== Liferay.ThemeDisplay.getUserId()
 			)
 			.map(({name}) => ({
-				header: name,
 				text: i18n.sub(
 					'subtask-x-must-be-assigned-to-you-to-be-user-in-a-merge',
 					name
@@ -263,21 +270,22 @@ const TestFlowTasks = () => {
 					<TaskbarProgress
 						displayTotalCompleted
 						items={[
-							[StatusesProgressScore.SELF, 0],
+							[
+								StatusesProgressScore.SELF,
+								Number(subtaskScore.selfCompleted ?? 0),
+							],
 							[
 								StatusesProgressScore.OTHER,
-								Number(testrayTask.subtaskScoreCompleted ?? 0),
+								Number(subtaskScore.othersCompleted ?? 0),
 							],
 							[
 								StatusesProgressScore.INCOMPLETE,
-								Number(testrayTask.subtaskScoreIncomplete ?? 0),
+								Number(subtaskScore.incomplete ?? 0),
 							],
 						]}
 						legend
 						taskbarClassNames={chartClassNames}
-						totalCompleted={Number(
-							testrayTask.subtaskScoreCompleted ?? 0
-						)}
+						totalCompleted={Number(subtaskScore.completed ?? 0)}
 					/>
 				</div>
 			</Container>
@@ -286,12 +294,13 @@ const TestFlowTasks = () => {
 				<ListView
 					forceRefetch={forceRefetch}
 					managementToolbarProps={{
-						filterFields: filters.subtasks as any,
+						filterSchema: 'subtasks',
 						title: i18n.translate('subtasks'),
 					}}
 					resource={testraySubTaskImpl.resource}
 					tableProps={{
 						actions,
+						bodyVerticalAlignment: 'top',
 						columns: [
 							{
 								clickable: true,

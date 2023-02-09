@@ -14,15 +14,16 @@
 
 package com.liferay.portal.vulcan.openapi.contributor;
 
-import io.swagger.v3.oas.models.OpenAPI;
+import com.liferay.portal.vulcan.openapi.OpenAPIContext;
 
-import javax.ws.rs.core.UriInfo;
+import io.swagger.v3.oas.models.OpenAPI;
 
 /**
  * @author Luis Miguel Barcos
  */
 public interface OpenAPIContributor {
 
-	public void contribute(OpenAPI openAPI, UriInfo uriInfo) throws Exception;
+	public void contribute(OpenAPI openAPI, OpenAPIContext openAPIContext)
+		throws Exception;
 
 }

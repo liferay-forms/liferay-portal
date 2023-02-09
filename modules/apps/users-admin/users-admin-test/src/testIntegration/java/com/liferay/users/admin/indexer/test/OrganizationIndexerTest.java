@@ -15,6 +15,7 @@
 package com.liferay.users.admin.indexer.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Organization;
@@ -25,7 +26,6 @@ import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
-import com.liferay.portal.search.document.Document;
 import com.liferay.portal.search.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.searcher.SearchResponse;
 import com.liferay.portal.search.searcher.Searcher;
@@ -37,8 +37,6 @@ import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
@@ -143,11 +141,9 @@ public class OrganizationIndexerTest {
 	protected void assertHits(String keywords, int length) throws Exception {
 		SearchResponse searchResponse = search(keywords);
 
-		Stream<Document> stream = searchResponse.getDocumentsStream();
-
 		AssertUtils.assertEquals(
 			() -> StringBundler.concat(
-				keywords, "->", stream.collect(Collectors.toList())),
+				keywords, "->", searchResponse.getDocuments()),
 			length, searchResponse.getTotalHits());
 	}
 
@@ -160,13 +156,9 @@ public class OrganizationIndexerTest {
 	protected List<String> getNames(String keywords) throws Exception {
 		SearchResponse searchResponse = search(keywords);
 
-		Stream<Document> stream = searchResponse.getDocumentsStream();
-
-		return stream.map(
-			document -> document.getString(Field.NAME)
-		).collect(
-			Collectors.toList()
-		);
+		return TransformUtil.transform(
+			searchResponse.getDocuments(),
+			document -> document.getString(Field.NAME));
 	}
 
 	protected SearchResponse search(String keywords) throws Exception {

@@ -14,9 +14,6 @@
 
 package com.liferay.object.service.test;
 
-import com.liferay.account.constants.AccountConstants;
-import com.liferay.account.model.AccountEntry;
-import com.liferay.account.model.AccountEntryUserRel;
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.account.service.AccountEntryOrganizationRelLocalService;
 import com.liferay.account.service.AccountEntryUserRelLocalService;
@@ -33,10 +30,8 @@ import com.liferay.list.type.service.ListTypeDefinitionLocalService;
 import com.liferay.list.type.service.ListTypeEntryLocalService;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.constants.ObjectFieldConstants;
-import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.constants.ObjectValidationRuleConstants;
 import com.liferay.object.exception.NoSuchObjectEntryException;
-import com.liferay.object.exception.ObjectDefinitionAccountEntryRestrictedException;
 import com.liferay.object.exception.ObjectDefinitionScopeException;
 import com.liferay.object.exception.ObjectEntryValuesException;
 import com.liferay.object.field.util.ObjectFieldFormulaEvaluatorUtil;
@@ -45,15 +40,20 @@ import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectFieldSetting;
+import com.liferay.object.model.ObjectState;
+import com.liferay.object.model.ObjectStateFlow;
+import com.liferay.object.model.ObjectStateTransition;
 import com.liferay.object.model.ObjectValidationRule;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectFieldSettingLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
+import com.liferay.object.service.ObjectStateFlowLocalService;
+import com.liferay.object.service.ObjectStateLocalService;
+import com.liferay.object.service.ObjectStateTransitionLocalService;
 import com.liferay.object.service.ObjectValidationRuleLocalService;
 import com.liferay.object.service.test.util.ObjectDefinitionTestUtil;
-import com.liferay.object.util.LocalizedMapUtil;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -69,9 +69,6 @@ import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.model.ModelListener;
-import com.liferay.portal.kernel.model.Organization;
-import com.liferay.portal.kernel.model.OrganizationConstants;
-import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.search.BaseModelSearchResult;
@@ -108,6 +105,7 @@ import com.liferay.portal.test.log.LogEntry;
 import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
 import java.io.Serializable;
 
@@ -178,52 +176,53 @@ public class ObjectEntryLocalServiceTest {
 			_listTypeDefinitionLocalService.addListTypeDefinition(
 				null, TestPropsValues.getUserId(),
 				Collections.singletonMap(
-					LocaleUtil.getDefault(), RandomTestUtil.randomString()));
+					LocaleUtil.getDefault(), RandomTestUtil.randomString()),
+				Collections.emptyList());
 
 		_listTypeEntryLocalService.addListTypeEntry(
-			TestPropsValues.getUserId(),
+			null, TestPropsValues.getUserId(),
 			_listTypeDefinition.getListTypeDefinitionId(), "listTypeEntryKey1",
 			Collections.singletonMap(LocaleUtil.US, "List Type Entry Key 1"));
 		_listTypeEntryLocalService.addListTypeEntry(
-			TestPropsValues.getUserId(),
+			null, TestPropsValues.getUserId(),
 			_listTypeDefinition.getListTypeDefinitionId(), "listTypeEntryKey2",
 			Collections.singletonMap(LocaleUtil.US, "List Type Entry Key 2"));
 		_listTypeEntryLocalService.addListTypeEntry(
-			TestPropsValues.getUserId(),
+			null, TestPropsValues.getUserId(),
 			_listTypeDefinition.getListTypeDefinitionId(), "listTypeEntryKey3",
 			Collections.singletonMap(LocaleUtil.US, "List Type Entry Key 3"));
 		_listTypeEntryLocalService.addListTypeEntry(
-			TestPropsValues.getUserId(),
+			null, TestPropsValues.getUserId(),
 			_listTypeDefinition.getListTypeDefinitionId(),
 			"multipleListTypeEntryKey1",
 			Collections.singletonMap(
 				LocaleUtil.US, "Multiple List Type Entry Key 1"));
 		_listTypeEntryLocalService.addListTypeEntry(
-			TestPropsValues.getUserId(),
+			null, TestPropsValues.getUserId(),
 			_listTypeDefinition.getListTypeDefinitionId(),
 			"multipleListTypeEntryKey2",
 			Collections.singletonMap(
 				LocaleUtil.US, "Multiple List Type Entry Key 2"));
 		_listTypeEntryLocalService.addListTypeEntry(
-			TestPropsValues.getUserId(),
+			null, TestPropsValues.getUserId(),
 			_listTypeDefinition.getListTypeDefinitionId(),
 			"multipleListTypeEntryKey3",
 			Collections.singletonMap(
 				LocaleUtil.US, "Multiple List Type Entry Key 3"));
 		_listTypeEntryLocalService.addListTypeEntry(
-			TestPropsValues.getUserId(),
+			null, TestPropsValues.getUserId(),
 			_listTypeDefinition.getListTypeDefinitionId(),
 			"multipleListTypeEntryKey4",
 			Collections.singletonMap(
 				LocaleUtil.US, "Multiple List Type Entry Key 4"));
 		_listTypeEntryLocalService.addListTypeEntry(
-			TestPropsValues.getUserId(),
+			null, TestPropsValues.getUserId(),
 			_listTypeDefinition.getListTypeDefinitionId(),
 			"multipleListTypeEntryKey5",
 			Collections.singletonMap(
 				LocaleUtil.US, "Multiple List Type Entry Key 5"));
 		_listTypeEntryLocalService.addListTypeEntry(
-			TestPropsValues.getUserId(),
+			null, TestPropsValues.getUserId(),
 			_listTypeDefinition.getListTypeDefinitionId(),
 			"multipleListTypeEntryKey6",
 			Collections.singletonMap(
@@ -310,6 +309,14 @@ public class ObjectEntryLocalServiceTest {
 			ObjectFieldConstants.DB_TYPE_BIG_DECIMAL, null, true, false, null,
 			LocalizedMapUtil.getLocalizedMap("Speed"), "speed", false, false,
 			Collections.emptyList());
+		_objectFieldLocalService.addCustomObjectField(
+			null, TestPropsValues.getUserId(),
+			_listTypeDefinition.getListTypeDefinitionId(),
+			_objectDefinition.getObjectDefinitionId(),
+			ObjectFieldConstants.BUSINESS_TYPE_PICKLIST,
+			ObjectFieldConstants.DB_TYPE_STRING, "listTypeEntryKey1", false,
+			true, "", LocalizedMapUtil.getLocalizedMap("State"), "state", true,
+			true, Collections.emptyList());
 		_objectFieldLocalService.addCustomObjectField(
 			null, TestPropsValues.getUserId(), 0,
 			_objectDefinition.getObjectDefinitionId(),
@@ -942,141 +949,6 @@ public class ObjectEntryLocalServiceTest {
 	}
 
 	@Test
-	public void testAddOrUpdateObjectEntryWithAccountEntryRestrictedObjectFieldId()
-		throws Exception {
-
-		ObjectDefinition objectDefinition =
-			_addObjectDefinitionWithAccountEntryRestricted();
-
-		long invalidAccountEntryId = -1;
-
-		try {
-			_objectEntryLocalService.addObjectEntry(
-				_user.getUserId(), 0, objectDefinition.getObjectDefinitionId(),
-				HashMapBuilder.<String, Serializable>put(
-					"r_relationship_accountEntryId", invalidAccountEntryId
-				).build(),
-				ServiceContextTestUtil.getServiceContext());
-
-			Assert.fail();
-		}
-		catch (Exception exception) {
-			Assert.assertTrue(
-				exception.getCause() instanceof
-					ObjectDefinitionAccountEntryRestrictedException);
-
-			ObjectDefinitionAccountEntryRestrictedException
-				objectDefinitionAccountEntryRestrictedException =
-					(ObjectDefinitionAccountEntryRestrictedException)
-						exception.getCause();
-
-			Assert.assertEquals(
-				StringBundler.concat(
-					"The account entry ", invalidAccountEntryId,
-					" does not exist or the user ", _user.getUserId(),
-					" does not belong to it"),
-				objectDefinitionAccountEntryRestrictedException.getMessage());
-		}
-
-		AccountEntry accountEntry1 = _accountEntryLocalService.addAccountEntry(
-			_user.getUserId(), AccountConstants.PARENT_ACCOUNT_ENTRY_ID_DEFAULT,
-			"account", null, null, null, null, null,
-			AccountConstants.ACCOUNT_ENTRY_TYPE_BUSINESS,
-			WorkflowConstants.STATUS_APPROVED,
-			ServiceContextTestUtil.getServiceContext());
-
-		AccountEntryUserRel accountEntryUserRel1 =
-			_accountEntryUserRelLocalService.addAccountEntryUserRel(
-				accountEntry1.getAccountEntryId(), _user.getUserId());
-
-		Role role = _roleLocalService.getRole(
-			TestPropsValues.getCompanyId(), "Administrator");
-
-		_userLocalService.addRoleUser(role.getRoleId(), _user);
-
-		ObjectEntry objectEntry = _objectEntryLocalService.addObjectEntry(
-			_user.getUserId(), 0, objectDefinition.getObjectDefinitionId(),
-			HashMapBuilder.<String, Serializable>put(
-				"r_relationship_accountEntryId",
-				accountEntry1.getAccountEntryId()
-			).build(),
-			ServiceContextTestUtil.getServiceContext());
-
-		_userLocalService.deleteRoleUser(role.getRoleId(), _user);
-
-		Map<String, Serializable> values = objectEntry.getValues();
-
-		Assert.assertEquals(
-			accountEntry1.getAccountEntryId(),
-			values.get("r_relationship_accountEntryId"));
-
-		try {
-			objectEntry = _objectEntryLocalService.updateObjectEntry(
-				_user.getUserId(), objectEntry.getObjectEntryId(),
-				HashMapBuilder.<String, Serializable>put(
-					"r_relationship_accountEntryId", invalidAccountEntryId
-				).build(),
-				ServiceContextTestUtil.getServiceContext());
-
-			Assert.fail();
-		}
-		catch (Exception exception) {
-			Assert.assertTrue(
-				exception.getCause() instanceof
-					ObjectDefinitionAccountEntryRestrictedException);
-
-			ObjectDefinitionAccountEntryRestrictedException
-				objectDefinitionAccountEntryRestrictedException =
-					(ObjectDefinitionAccountEntryRestrictedException)
-						exception.getCause();
-
-			Assert.assertEquals(
-				StringBundler.concat(
-					"The account entry ", invalidAccountEntryId,
-					" does not exist or the user ", _user.getUserId(),
-					" does not belong to it"),
-				objectDefinitionAccountEntryRestrictedException.getMessage());
-		}
-
-		AccountEntry accountEntry2 = _accountEntryLocalService.addAccountEntry(
-			_user.getUserId(), AccountConstants.PARENT_ACCOUNT_ENTRY_ID_DEFAULT,
-			"account", null, null, null, null, null,
-			AccountConstants.ACCOUNT_ENTRY_TYPE_BUSINESS,
-			WorkflowConstants.STATUS_APPROVED,
-			ServiceContextTestUtil.getServiceContext());
-
-		AccountEntryUserRel accountEntryUserRel2 =
-			_accountEntryUserRelLocalService.addAccountEntryUserRel(
-				accountEntry2.getAccountEntryId(), _user.getUserId());
-
-		_userLocalService.addRoleUser(role.getRoleId(), _user);
-
-		objectEntry = _objectEntryLocalService.updateObjectEntry(
-			TestPropsValues.getUserId(), objectEntry.getObjectEntryId(),
-			HashMapBuilder.<String, Serializable>put(
-				"r_relationship_accountEntryId",
-				accountEntry2.getAccountEntryId()
-			).build(),
-			ServiceContextTestUtil.getServiceContext());
-
-		values = objectEntry.getValues();
-
-		Assert.assertEquals(
-			accountEntry2.getAccountEntryId(),
-			values.get("r_relationship_accountEntryId"));
-
-		_objectDefinitionLocalService.deleteObjectDefinition(objectDefinition);
-
-		_accountEntryUserRelLocalService.deleteAccountEntryUserRel(
-			accountEntryUserRel1);
-		_accountEntryUserRelLocalService.deleteAccountEntryUserRel(
-			accountEntryUserRel2);
-
-		_accountEntryLocalService.deleteAccountEntry(accountEntry1);
-		_accountEntryLocalService.deleteAccountEntry(accountEntry2);
-	}
-
-	@Test
 	public void testAuditRouter() throws Exception {
 		Queue<AuditMessage> auditMessages = new LinkedList<>();
 
@@ -1534,7 +1406,7 @@ public class ObjectEntryLocalServiceTest {
 
 		_assertCount(1);
 
-		int expectedValuesSize = 19;
+		int expectedValuesSize = 20;
 
 		Map<String, Serializable> values = _getValuesFromDatabase(
 			objectEntries.get(0));
@@ -1688,11 +1560,12 @@ public class ObjectEntryLocalServiceTest {
 			"listTypeEntryKey1", values.get("listTypeEntryKeyRequired"));
 		Assert.assertEquals(StringPool.BLANK, values.get("script"));
 		Assert.assertEquals(_getBigDecimal(0L), values.get("speed"));
+		Assert.assertEquals("listTypeEntryKey1", values.get("state"));
 		Assert.assertEquals(0D, values.get("weight"));
 		Assert.assertEquals(
 			objectEntry.getObjectEntryId(),
 			values.get(_objectDefinition.getPKObjectFieldName()));
-		Assert.assertEquals(values.toString(), 19, values.size());
+		Assert.assertEquals(values.toString(), 20, values.size());
 
 		try {
 			_objectEntryLocalService.getValues(0);
@@ -1744,7 +1617,7 @@ public class ObjectEntryLocalServiceTest {
 		Assert.assertEquals(
 			"listTypeEntryKey1", values.get("listTypeEntryKeyRequired"));
 
-		int expectedValuesSize = 25;
+		int expectedValuesSize = 26;
 
 		Assert.assertEquals(
 			values.toString(), expectedValuesSize, values.size());
@@ -1844,83 +1717,6 @@ public class ObjectEntryLocalServiceTest {
 	}
 
 	@Test
-	public void testGetValuesListWithAccountEntryRestricted() throws Exception {
-		ObjectDefinition objectDefinition =
-			_addObjectDefinitionWithAccountEntryRestricted();
-
-		// Get list of values with owner of the account entry
-
-		User user = UserTestUtil.addUser();
-
-		AccountEntry accountEntry = _accountEntryLocalService.addAccountEntry(
-			user.getUserId(), AccountConstants.PARENT_ACCOUNT_ENTRY_ID_DEFAULT,
-			"account", null, null, null, null, null,
-			AccountConstants.ACCOUNT_ENTRY_TYPE_BUSINESS,
-			WorkflowConstants.STATUS_APPROVED,
-			ServiceContextTestUtil.getServiceContext());
-
-		_objectEntryLocalService.addObjectEntry(
-			TestPropsValues.getUserId(), 0,
-			objectDefinition.getObjectDefinitionId(),
-			HashMapBuilder.<String, Serializable>put(
-				"r_relationship_accountEntryId",
-				accountEntry.getAccountEntryId()
-			).build(),
-			ServiceContextTestUtil.getServiceContext());
-
-		_assertValuesListWithAccountEntryRestricted(
-			accountEntry.getAccountEntryId(),
-			objectDefinition.getObjectDefinitionId(), user.getUserId(), 1);
-
-		// Get list of values with member of the account entry
-
-		user = UserTestUtil.addUser();
-
-		_accountEntryUserRelLocalService.addAccountEntryUserRel(
-			accountEntry.getAccountEntryId(), user.getUserId());
-
-		_assertValuesListWithAccountEntryRestricted(
-			accountEntry.getAccountEntryId(),
-			objectDefinition.getObjectDefinitionId(), user.getUserId(), 1);
-
-		// Get list of values with member of the account entry organization
-
-		user = UserTestUtil.addUser();
-
-		Organization parentOrganization =
-			_organizationLocalService.addOrganization(
-				TestPropsValues.getUserId(),
-				OrganizationConstants.DEFAULT_PARENT_ORGANIZATION_ID,
-				RandomTestUtil.randomString(), false);
-
-		_organizationLocalService.addUserOrganization(
-			user.getUserId(), parentOrganization.getOrganizationId());
-
-		Organization organization = _organizationLocalService.addOrganization(
-			TestPropsValues.getUserId(), parentOrganization.getOrganizationId(),
-			RandomTestUtil.randomString(), false);
-
-		_accountEntryOrganizationRelLocalService.
-			addAccountEntryOrganizationRels(
-				accountEntry.getAccountEntryId(),
-				new long[] {organization.getOrganizationId()});
-
-		_assertValuesListWithAccountEntryRestricted(
-			accountEntry.getAccountEntryId(),
-			objectDefinition.getObjectDefinitionId(), user.getUserId(), 1);
-
-		// Get list of values with user without permission
-
-		user = UserTestUtil.addUser();
-
-		_assertValuesListWithAccountEntryRestricted(
-			accountEntry.getAccountEntryId(),
-			objectDefinition.getObjectDefinitionId(), user.getUserId(), 0);
-
-		_objectDefinitionLocalService.deleteObjectDefinition(objectDefinition);
-	}
-
-	@Test
 	public void testScope() throws Exception {
 
 		// Scope by company
@@ -1989,7 +1785,7 @@ public class ObjectEntryLocalServiceTest {
 
 		List<ObjectEntry> objectEntries = baseModelSearchResult.getBaseModels();
 
-		int expectedValuesSize = 19;
+		int expectedValuesSize = 20;
 
 		Map<String, Serializable> values = _getValuesFromDatabase(
 			objectEntries.get(0));
@@ -2184,6 +1980,8 @@ public class ObjectEntryLocalServiceTest {
 				"multipleListTypeEntriesKey",
 				(Serializable)Arrays.asList(
 					"multipleListTypeEntryKey3", "multipleListTypeEntryKey4")
+			).put(
+				"state", "listTypeEntryKey1"
 			).build(),
 			ServiceContextTestUtil.getServiceContext());
 
@@ -2216,12 +2014,13 @@ public class ObjectEntryLocalServiceTest {
 		Assert.assertEquals(0, values.get("numberOfBooksWritten"));
 		Assert.assertEquals(StringPool.BLANK, values.get("script"));
 		Assert.assertEquals(_getBigDecimal(0L), values.get("speed"));
+		Assert.assertEquals("listTypeEntryKey1", values.get("state"));
 		Assert.assertEquals(0L, values.get("upload"));
 		Assert.assertEquals(0D, values.get("weight"));
 		Assert.assertEquals(
 			objectEntry.getObjectEntryId(),
 			values.get(_objectDefinition.getPKObjectFieldName()));
-		Assert.assertEquals(values.toString(), 19, values.size());
+		Assert.assertEquals(values.toString(), 20, values.size());
 
 		Calendar calendar = new GregorianCalendar();
 
@@ -2258,6 +2057,8 @@ public class ObjectEntryLocalServiceTest {
 			).put(
 				"speed", BigDecimal.valueOf(45L)
 			).put(
+				"state", "listTypeEntryKey2"
+			).put(
 				"upload", fileEntry.getFileEntryId()
 			).put(
 				"weight", 60
@@ -2288,13 +2089,14 @@ public class ObjectEntryLocalServiceTest {
 		Assert.assertEquals(5, values.get("numberOfBooksWritten"));
 		Assert.assertEquals(script, values.get("script"));
 		Assert.assertEquals(_getBigDecimal(45L), values.get("speed"));
+		Assert.assertEquals("listTypeEntryKey2", values.get("state"));
 		Assert.assertNotEquals(
 			fileEntry.getFileEntryId(), values.get("upload"));
 		Assert.assertEquals(60D, values.get("weight"));
 		Assert.assertEquals(
 			objectEntry.getObjectEntryId(),
 			values.get(_objectDefinition.getPKObjectFieldName()));
-		Assert.assertEquals(values.toString(), 19, values.size());
+		Assert.assertEquals(values.toString(), 20, values.size());
 
 		long persistedFileEntryId = GetterUtil.getLong(values.get("upload"));
 
@@ -2317,6 +2119,8 @@ public class ObjectEntryLocalServiceTest {
 		_objectEntryLocalService.updateObjectEntry(
 			TestPropsValues.getUserId(), objectEntry.getObjectEntryId(),
 			HashMapBuilder.<String, Serializable>put(
+				"state", "listTypeEntryKey3"
+			).put(
 				"upload", 0L
 			).put(
 				"weight", 65D
@@ -2347,12 +2151,13 @@ public class ObjectEntryLocalServiceTest {
 		Assert.assertEquals(5, values.get("numberOfBooksWritten"));
 		Assert.assertEquals(script, values.get("script"));
 		Assert.assertEquals(_getBigDecimal(45L), values.get("speed"));
+		Assert.assertEquals("listTypeEntryKey3", values.get("state"));
 		Assert.assertEquals(0L, values.get("upload"));
 		Assert.assertEquals(65D, values.get("weight"));
 		Assert.assertEquals(
 			objectEntry.getObjectEntryId(),
 			values.get(_objectDefinition.getPKObjectFieldName()));
-		Assert.assertEquals(values.toString(), 19, values.size());
+		Assert.assertEquals(values.toString(), 20, values.size());
 
 		try {
 			_dlAppLocalService.getFileEntry(fileEntry.getFileEntryId());
@@ -2509,7 +2314,8 @@ public class ObjectEntryLocalServiceTest {
 				objectEntryValuesException.getMessage());
 		}
 
-		_testUpdateExternalReferenceCode();
+		_testUpdateObjectEntryExternalReferenceCode();
+		_testUpdateObjectEntryObjectStateTransitions();
 	}
 
 	@Test
@@ -2530,47 +2336,6 @@ public class ObjectEntryLocalServiceTest {
 
 	@Rule
 	public TestName testName = new TestName();
-
-	private ObjectDefinition _addObjectDefinitionWithAccountEntryRestricted()
-		throws Exception {
-
-		_user = UserTestUtil.addUser();
-
-		ObjectDefinition accountObjectDefinition =
-			_objectDefinitionLocalService.fetchObjectDefinition(
-				_user.getCompanyId(), "accountEntry");
-
-		ObjectDefinition objectDefinition =
-			ObjectDefinitionTestUtil.addObjectDefinition(
-				_objectDefinitionLocalService,
-				Arrays.asList(
-					ObjectFieldUtil.createObjectField(
-						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
-						ObjectFieldConstants.DB_TYPE_STRING, "text")));
-
-		_objectRelationshipLocalService.addObjectRelationship(
-			_user.getUserId(), accountObjectDefinition.getObjectDefinitionId(),
-			objectDefinition.getObjectDefinitionId(), 0,
-			ObjectRelationshipConstants.DELETION_TYPE_PREVENT,
-			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
-			"relationship", ObjectRelationshipConstants.TYPE_ONE_TO_MANY);
-
-		objectDefinition.setAccountEntryRestricted(true);
-
-		ObjectField objectField = _objectFieldLocalService.getObjectField(
-			objectDefinition.getObjectDefinitionId(),
-			"r_relationship_accountEntryId");
-
-		objectDefinition.setAccountEntryRestrictedObjectFieldId(
-			objectField.getObjectFieldId());
-
-		_objectDefinitionLocalService.updateObjectDefinition(objectDefinition);
-
-		_objectDefinitionLocalService.publishCustomObjectDefinition(
-			_user.getUserId(), objectDefinition.getObjectDefinitionId());
-
-		return objectDefinition;
-	}
 
 	private ObjectEntry _addObjectEntry(Map<String, Serializable> values)
 		throws Exception {
@@ -2654,35 +2419,6 @@ public class ObjectEntryLocalServiceTest {
 
 		Assert.assertEquals(
 			new Timestamp(calendar.getTimeInMillis()), timestamp);
-	}
-
-	private void _assertValuesListWithAccountEntryRestricted(
-			long accountEntryId, long objectDefinitionId, long userId,
-			int valuesListCount)
-		throws Exception {
-
-		Assert.assertEquals(
-			valuesListCount,
-			_objectEntryLocalService.getValuesListCount(
-				0, TestPropsValues.getCompanyId(), userId, objectDefinitionId,
-				null, null));
-
-		List<Map<String, Serializable>> valuesList =
-			_objectEntryLocalService.getValuesList(
-				0, TestPropsValues.getCompanyId(), userId, objectDefinitionId,
-				null, null, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-
-		Assert.assertEquals(
-			valuesList.toString(), valuesListCount, valuesList.size());
-
-		if (valuesListCount == 0) {
-			return;
-		}
-
-		Map<String, Serializable> values = valuesList.get(0);
-
-		Assert.assertEquals(
-			accountEntryId, values.get("r_relationship_accountEntryId"));
 	}
 
 	private boolean _containsObjectEntryValuesSQLQuery(LogCapture logCapture) {
@@ -2854,7 +2590,9 @@ public class ObjectEntryLocalServiceTest {
 		_objectDefinitionLocalService.deleteObjectDefinition(objectDefinition);
 	}
 
-	private void _testUpdateExternalReferenceCode() throws Exception {
+	private void _testUpdateObjectEntryExternalReferenceCode()
+		throws Exception {
+
 		ObjectEntry objectEntry1 = _addObjectEntry(
 			HashMapBuilder.<String, Serializable>put(
 				"emailAddressRequired", "john@liferay.com"
@@ -2961,6 +2699,101 @@ public class ObjectEntryLocalServiceTest {
 			objectEntry2.getObjectEntryId());
 	}
 
+	private void _testUpdateObjectEntryObjectStateTransitions()
+		throws Exception {
+
+		ObjectField objectField = _objectFieldLocalService.fetchObjectField(
+			_objectDefinition.getObjectDefinitionId(), "state");
+
+		ObjectStateFlow objectStateFlow =
+			_objectStateFlowLocalService.fetchObjectFieldObjectStateFlow(
+				objectField.getObjectFieldId());
+
+		List<ObjectState> objectStates =
+			_objectStateLocalService.getObjectStateFlowObjectStates(
+				objectStateFlow.getObjectStateFlowId());
+
+		for (ObjectState objectState : objectStates) {
+			List<ObjectStateTransition> objectStateTransitions =
+				_objectStateTransitionLocalService.
+					getObjectStateObjectStateTransitions(
+						objectState.getObjectStateId());
+
+			objectState.setObjectStateTransitions(
+				Collections.singletonList(objectStateTransitions.get(0)));
+		}
+
+		objectStateFlow.setObjectStates(objectStates);
+
+		_objectStateTransitionLocalService.updateObjectStateTransitions(
+			objectStateFlow);
+
+		ObjectEntry objectEntry = _addObjectEntry(
+			HashMapBuilder.<String, Serializable>put(
+				"emailAddressRequired", "john@liferay.com"
+			).put(
+				"firstName", "John"
+			).put(
+				"listTypeEntryKeyRequired", "listTypeEntryKey1"
+			).build());
+
+		ObjectState objectStateListTypeEntryKey1 = objectStates.get(0);
+		ObjectState objectStateListTypeEntryKey2 = objectStates.get(1);
+		ObjectState objectStateListTypeEntryKey3 = objectStates.get(2);
+
+		try {
+			_objectEntryLocalService.updateObjectEntry(
+				TestPropsValues.getUserId(), objectEntry.getObjectEntryId(),
+				HashMapBuilder.<String, Serializable>put(
+					"state", "listTypeEntryKey3"
+				).build(),
+				ServiceContextTestUtil.getServiceContext());
+
+			Assert.fail();
+		}
+		catch (ObjectEntryValuesException.InvalidObjectStateTransition
+					objectEntryValuesException) {
+
+			Assert.assertEquals(
+				objectStateListTypeEntryKey1,
+				objectEntryValuesException.getSourceObjectState());
+			Assert.assertEquals(
+				objectStateListTypeEntryKey3,
+				objectEntryValuesException.getTargetObjectState());
+		}
+
+		objectEntry = _objectEntryLocalService.updateObjectEntry(
+			TestPropsValues.getUserId(), objectEntry.getObjectEntryId(),
+			HashMapBuilder.<String, Serializable>put(
+				"state", "listTypeEntryKey2"
+			).build(),
+			ServiceContextTestUtil.getServiceContext());
+
+		try {
+			_objectEntryLocalService.updateObjectEntry(
+				TestPropsValues.getUserId(), objectEntry.getObjectEntryId(),
+				HashMapBuilder.<String, Serializable>put(
+					"state", "listTypeEntryKey3"
+				).build(),
+				ServiceContextTestUtil.getServiceContext());
+
+			Assert.fail();
+		}
+		catch (ObjectEntryValuesException.InvalidObjectStateTransition
+					objectEntryValuesException) {
+
+			Assert.assertEquals(
+				objectStateListTypeEntryKey2,
+				objectEntryValuesException.getSourceObjectState());
+			Assert.assertEquals(
+				objectStateListTypeEntryKey3,
+				objectEntryValuesException.getTargetObjectState());
+		}
+
+		_objectEntryLocalService.deleteObjectEntry(
+			objectEntry.getObjectEntryId());
+	}
+
 	private void _testUpdateStatus() throws Exception {
 		_workflowDefinitionLinkLocalService.updateWorkflowDefinitionLink(
 			TestPropsValues.getUserId(), TestPropsValues.getCompanyId(), 0,
@@ -3058,6 +2891,16 @@ public class ObjectEntryLocalServiceTest {
 
 	@Inject
 	private ObjectRelationshipLocalService _objectRelationshipLocalService;
+
+	@Inject
+	private ObjectStateFlowLocalService _objectStateFlowLocalService;
+
+	@Inject
+	private ObjectStateLocalService _objectStateLocalService;
+
+	@Inject
+	private ObjectStateTransitionLocalService
+		_objectStateTransitionLocalService;
 
 	@Inject
 	private ObjectValidationRuleLocalService _objectValidationRuleLocalService;

@@ -556,6 +556,7 @@
 		<field indexed="true" name="rightOrganizationId" stored="true" type="tlong" />
 		<field docValues="true" indexed="true" multiValued="true" name="roleId" stored="true" type="string" />
 		<field indexed="true" multiValued="true" name="roleIds" stored="true" type="string" />
+		<field indexed="true" multiValued="true" name="roleNames" stored="true" type="string_keyword_lowercase" />
 		<field docValues="true" indexed="true" name="rootEntryClassName" stored="true" type="string" />
 		<field docValues="true" indexed="true" name="rootEntryClassPK" stored="true" type="string" />
 		<field docValues="true" indexed="true" multiValued="true" name="scopeGroupId" stored="true" type="string" />
@@ -577,10 +578,12 @@
 		<field indexed="true" name="urlParts" stored="true" type="text" />
 		<field docValues="true" indexed="true" name="userGroupId" stored="true" type="string" />
 		<field indexed="true" multiValued="true" name="userGroupIds" stored="true" type="string" />
+		<field indexed="true" multiValued="true" name="userGroupRoleNames" stored="true" type="string_keyword_lowercase" />
 		<field docValues="true" indexed="true" name="userId" stored="true" type="string" />
 		<field docValues="true" indexed="true" name="userName" stored="true" type="string" />
 		<field indexed="true" name="userName.text" stored="false" type="text_lowercase" />
 		<field indexed="true" name="version" stored="true" type="string" />
+		<field indexed="true" name="viewCount" stored="true" type="long" />
 		<field indexed="true" name="visible" stored="true" type="string" />
 		<dynamicField docValues="true" indexed="true" name="*_coordinate" stored="false" type="double" />
 		<dynamicField docValues="true" indexed="true" multiValued="false" name="*Date_sortable" stored="true" type="long" />

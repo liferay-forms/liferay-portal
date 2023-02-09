@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Shared Dependencies Apache Commons
 Bundle-SymbolicName: com.liferay.shared.dependencies.apache.commons
-Bundle-Version: 1.0.8
+Bundle-Version: 1.0.10
 Import-Package:\
 	!com.github.luben.zstd,\
 	\
@@ -13,5 +13,6 @@ Import-Package:\
 	org.apache.commons.collections4.*,\
 	org.apache.commons.compress.*,\
 	org.apache.commons.csv,\
+	org.apache.commons.digester.*,\
 	org.apache.commons.math3.*,\
 	org.apache.commons.validator.routines

@@ -15,12 +15,11 @@
 import {useParams} from 'react-router-dom';
 
 import Container from '../../../../../../components/Layout/Container';
-import ListViewRest from '../../../../../../components/ListView';
+import ListView from '../../../../../../components/ListView';
 import useRuns from '../../../../../../hooks/useRuns';
 import i18n from '../../../../../../i18n';
-import {filters} from '../../../../../../schema/filter';
 import {testrayRunImpl} from '../../../../../../services/rest';
-import {searchUtil} from '../../../../../../util/search';
+import {SearchBuilder} from '../../../../../../util/search';
 import RunFormModal from './RunFormModal';
 import useRunActions from './useRunActions';
 
@@ -31,11 +30,11 @@ const Runs = () => {
 
 	return (
 		<Container className="mt-4">
-			<ListViewRest
+			<ListView
 				forceRefetch={formModal.forceRefetch}
 				managementToolbarProps={{
 					addButton: () => formModal.modal.open(),
-					filterFields: filters.build.runs,
+					filterSchema: 'buildRuns',
 					title: i18n.translate('runs'),
 				}}
 				resource="/runs"
@@ -85,7 +84,7 @@ const Runs = () => {
 					testrayRunImpl.transformDataFromList(response)
 				}
 				variables={{
-					filter: searchUtil.eq('buildId', buildId as string),
+					filter: SearchBuilder.eq('buildId', buildId as string),
 				}}
 			/>
 

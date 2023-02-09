@@ -91,7 +91,7 @@ public class TestrayRoutine {
 			_jsonObject = jsonObject.getJSONObject("data");
 
 			_testrayProject = _testrayServer.getTestrayProjectByID(
-				Integer.parseInt(_jsonObject.getString("testrayProjectId")));
+				Long.parseLong(_jsonObject.getString("testrayProjectId")));
 		}
 		catch (IOException ioException) {
 			throw new RuntimeException(ioException);
@@ -176,15 +176,15 @@ public class TestrayRoutine {
 		return getTestrayBuildByName(buildName);
 	}
 
-	public int getID() {
-		return _jsonObject.getInt("testrayRoutineId");
+	public long getID() {
+		return _jsonObject.getLong("testrayRoutineId");
 	}
 
 	public String getName() {
 		return _jsonObject.getString("name");
 	}
 
-	public TestrayBuild getTestrayBuildByID(int buildID) {
+	public TestrayBuild getTestrayBuildByID(long buildID) {
 		if (_testrayBuildsByID.containsKey(buildID)) {
 			return _testrayBuildsByID.get(buildID);
 		}
@@ -399,7 +399,7 @@ public class TestrayRoutine {
 			"testrayRoutineId=(?<routineID>\\d+)"));
 
 	private final JSONObject _jsonObject;
-	private final Map<Integer, TestrayBuild> _testrayBuildsByID = new TreeMap<>(
+	private final Map<Long, TestrayBuild> _testrayBuildsByID = new TreeMap<>(
 		Collections.reverseOrder());
 	private final Map<String, TestrayBuild> _testrayBuildsByName =
 		new HashMap<>();

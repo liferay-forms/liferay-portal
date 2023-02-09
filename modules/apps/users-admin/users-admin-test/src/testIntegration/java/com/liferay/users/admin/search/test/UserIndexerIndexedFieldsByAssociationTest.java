@@ -15,7 +15,6 @@
 package com.liferay.users.admin.search.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Address;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Organization;
@@ -33,6 +32,7 @@ import com.liferay.portal.kernel.service.UserGroupRoleLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.RoleTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -60,11 +60,10 @@ import com.liferay.users.admin.test.util.search.UserSearchFixture;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -257,20 +256,23 @@ public class UserIndexerIndexedFieldsByAssociationTest {
 				_queries.term(Field.USER_ID, TestPropsValues.getUserId())
 			).build());
 
-		Stream<Document> stream = searchResponse1.getDocumentsStream();
+		List<Document> documents = searchResponse1.getDocuments();
 
-		Document document = stream.findAny(
-		).get();
+		Document document = documents.get(
+			RandomTestUtil.randomInt(0, documents.size() - 1));
 
 		List<Long> groupIds = document.getLongs(Field.GROUP_ID);
 
 		long groupId = group.getGroupId();
 
+		List<Long> sortedGroupIds = new ArrayList<>(groupIds);
+
+		sortedGroupIds.sort(Comparator.comparing(String::valueOf));
+
 		if (!groupIds.contains(groupId)) {
 			DocumentsAssert.assertValuesIgnoreRelevance(
-				searchResponse1.getRequestString(),
-				searchResponse1.getDocumentsStream(), Field.GROUP_ID,
-				_toSingletonListString(_toSortedListString(groupIds.stream())));
+				searchResponse1.getRequestString(), documents, Field.GROUP_ID,
+				_toSingletonListString(sortedGroupIds.toString()));
 		}
 
 		SearchResponse searchResponse2 = _searcher.search(
@@ -279,9 +281,8 @@ public class UserIndexerIndexedFieldsByAssociationTest {
 			).build());
 
 		DocumentsAssert.assertValuesIgnoreRelevance(
-			searchResponse2.getRequestString(),
-			searchResponse2.getDocumentsStream(), Field.GROUP_ID,
-			_toSingletonListString(_toSortedListString(groupIds.stream())));
+			searchResponse2.getRequestString(), searchResponse2.getDocuments(),
+			Field.GROUP_ID, _toSingletonListString(sortedGroupIds.toString()));
 	}
 
 	protected Group addGroup() {
@@ -324,10 +325,9 @@ public class UserIndexerIndexedFieldsByAssociationTest {
 				_queries.term(Field.ENTRY_CLASS_PK, user.getPrimaryKeyObj())
 			).build());
 
-		Stream<Document> stream = searchResponse.getDocumentsStream();
+		List<Document> documents = searchResponse.getDocuments();
 
-		Document document = stream.findFirst(
-		).get();
+		Document document = documents.get(0);
 
 		return indexedFieldsFixture.postProcessDocument(document);
 	}
@@ -338,25 +338,8 @@ public class UserIndexerIndexedFieldsByAssociationTest {
 	protected UserGroupSearchFixture userGroupSearchFixture;
 	protected UserSearchFixture userSearchFixture;
 
-	private String _toListString(Stream<?> stream) {
-		return stream.map(
-			String::valueOf
-		).collect(
-			Collectors.joining(
-				StringPool.COMMA_AND_SPACE, StringPool.OPEN_BRACKET,
-				StringPool.CLOSE_BRACKET)
-		);
-	}
-
 	private String _toSingletonListString(String string) {
 		return String.valueOf(Collections.singletonList(string));
-	}
-
-	private String _toSortedListString(Stream<?> stream) {
-		return _toListString(
-			stream.map(
-				String::valueOf
-			).sorted());
 	}
 
 	private static final String _CT_COLLECTION_ID = "ctCollectionId";

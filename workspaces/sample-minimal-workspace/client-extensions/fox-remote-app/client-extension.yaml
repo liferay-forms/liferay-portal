@@ -8,8 +8,8 @@ fox-remote-app:
     friendlyURLMapping: fox-remote-app
     htmlElementName: fox-remote-app
     instanceable: false
-    name: fox-remote-app
-    portletCategoryName: category.remote-apps
+    name: Fox Remote App
+    portletCategoryName: category.client-extensions
     type: customElement
     urls:
         - static/js/main.*.js

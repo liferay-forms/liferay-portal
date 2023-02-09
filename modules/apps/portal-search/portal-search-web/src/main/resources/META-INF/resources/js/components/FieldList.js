@@ -84,6 +84,7 @@ function Field({children, index, onDelete, showDeleteButton, showDragButton}) {
 				>
 					{showDragButton && (
 						<ClayButton
+							aria-label={Liferay.Language.get('move')}
 							borderless
 							className="drag-handle"
 							displayType="secondary"
@@ -100,6 +101,7 @@ function Field({children, index, onDelete, showDeleteButton, showDragButton}) {
 				{showDeleteButton && (
 					<ClayInput.GroupItem shrink>
 						<ClayButton
+							aria-label={Liferay.Language.get('delete')}
 							borderless
 							displayType="secondary"
 							monospaced
@@ -154,7 +156,11 @@ function FieldList({
 	};
 
 	const _handleReplaceField = (index) => (newValue) => {
-		onChange(value.map((item, i) => (i === index ? newValue : item)));
+		onChange(
+			value.map((item, i) =>
+				i === index ? {id: item.id, ...newValue} : item
+			)
+		);
 	};
 
 	return (
@@ -184,6 +190,7 @@ function FieldList({
 
 				{showAddButton && (
 					<ClayButton
+						aria-label={addButtonLabel}
 						displayType="secondary"
 						onClick={_handleAddField}
 					>

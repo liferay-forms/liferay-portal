@@ -32,6 +32,7 @@ import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.system.SystemObjectDefinitionMetadataRegistry;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.TreeMapBuilder;
 import com.liferay.portal.vulcan.batch.engine.Field;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
@@ -51,29 +52,46 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Luis Miguel Barcos
  */
-@Component(service = ObjectEntryOpenAPIResource.class)
 public class ObjectEntryOpenAPIResourceImpl
 	implements ObjectEntryOpenAPIResource {
 
-	@Override
-	public Map<String, Field> getFields(
-			ObjectDefinition objectDefinition, UriInfo uriInfo)
-		throws Exception {
+	public ObjectEntryOpenAPIResourceImpl(
+		BundleContext bundleContext, DTOConverterRegistry dtoConverterRegistry,
+		ObjectActionLocalService objectActionLocalService,
+		ObjectDefinition objectDefinition,
+		ObjectDefinitionLocalService objectDefinitionLocalService,
+		ObjectFieldLocalService objectFieldLocalService,
+		ObjectRelationshipLocalService objectRelationshipLocalService,
+		OpenAPIResource openAPIResource,
+		SystemObjectDefinitionMetadataRegistry
+			systemObjectDefinitionMetadataRegistry) {
 
-		Response response = getOpenAPI(objectDefinition, "json", uriInfo);
+		_bundleContext = bundleContext;
+		_dtoConverterRegistry = dtoConverterRegistry;
+		_objectActionLocalService = objectActionLocalService;
+		_objectDefinition = objectDefinition;
+		_objectDefinitionLocalService = objectDefinitionLocalService;
+		_objectFieldLocalService = objectFieldLocalService;
+		_objectRelationshipLocalService = objectRelationshipLocalService;
+		_openAPIResource = openAPIResource;
+		_systemObjectDefinitionMetadataRegistry =
+			systemObjectDefinitionMetadataRegistry;
+	}
+
+	@Override
+	public Map<String, Field> getFields(UriInfo uriInfo) throws Exception {
+		Response response = getOpenAPI(null, "json", uriInfo);
 
 		OpenAPI openAPI = (OpenAPI)response.getEntity();
 
@@ -98,16 +116,10 @@ public class ObjectEntryOpenAPIResourceImpl
 			String propertyName = schemaEntry.getKey();
 			Schema propertySchema = schemaEntry.getValue();
 
-			if (Optional.ofNullable(
-					propertySchema.getReadOnly()
-				).orElse(
-					false
-				) ||
-				Optional.ofNullable(
-					propertySchema.getWriteOnly()
-				).orElse(
-					false
-				) || propertyName.startsWith("x-")) {
+			if ((propertySchema == null) ||
+				GetterUtil.getBoolean(propertySchema.getReadOnly()) ||
+				GetterUtil.getBoolean(propertySchema.getWriteOnly()) ||
+				propertyName.startsWith("x-")) {
 
 				continue;
 			}
@@ -116,18 +128,10 @@ public class ObjectEntryOpenAPIResourceImpl
 				propertyName,
 				Field.of(
 					propertySchema.getDescription(), propertyName,
-					Optional.ofNullable(
-						propertySchema.getReadOnly()
-					).orElse(
-						false
-					),
+					GetterUtil.getBoolean(propertySchema.getReadOnly()),
 					requiredPropertySchemaNames.contains(propertyName),
 					propertySchema.getType(),
-					Optional.ofNullable(
-						propertySchema.getWriteOnly()
-					).orElse(
-						false
-					)));
+					GetterUtil.getBoolean(propertySchema.getWriteOnly())));
 		}
 
 		return fields;
@@ -135,32 +139,21 @@ public class ObjectEntryOpenAPIResourceImpl
 
 	@Override
 	public Response getOpenAPI(
-			ObjectDefinition objectDefinition, String type, UriInfo uriInfo)
+			HttpServletRequest httpServletRequest, String type, UriInfo uriInfo)
 		throws Exception {
 
-		_objectDefinition = objectDefinition;
-
-		return _openAPIResource.getOpenAPI(
-			new ObjectEntryOpenAPIContributor(
-				_bundleContext, _dtoConverterRegistry,
-				_objectActionLocalService, _objectDefinition,
-				_objectDefinitionLocalService, this,
-				_objectRelationshipLocalService, _openAPIResource,
-				_systemObjectDefinitionMetadataRegistry),
-			_getOpenAPISchemaFilter(_objectDefinition.getRESTContextPath()),
-			new HashSet<Class<?>>() {
-				{
-					add(ObjectEntryRelatedObjectsResourceImpl.class);
-					add(ObjectEntryResourceImpl.class);
-					add(OpenAPIResourceImpl.class);
-				}
-			},
-			type, uriInfo);
+		return _getOpenAPI(true, type, uriInfo);
 	}
 
-	@Activate
-	protected void activate(BundleContext bundleContext) {
-		_bundleContext = bundleContext;
+	@Override
+	public Map<String, Schema> getSchemas() throws Exception {
+		Response response = _getOpenAPI(false, "json", null);
+
+		OpenAPI openAPI = (OpenAPI)response.getEntity();
+
+		Components components = openAPI.getComponents();
+
+		return components.getSchemas();
 	}
 
 	private DTOProperty _getDTOProperty(ObjectField objectField) {
@@ -213,12 +206,35 @@ public class ObjectEntryOpenAPIResourceImpl
 		};
 	}
 
+	private Response _getOpenAPI(
+			boolean addRelatedSchemas, String type, UriInfo uriInfo)
+		throws Exception {
+
+		return _openAPIResource.getOpenAPI(
+			new ObjectEntryOpenAPIContributor(
+				addRelatedSchemas, _bundleContext, _dtoConverterRegistry,
+				_objectActionLocalService, _objectDefinition,
+				_objectDefinitionLocalService, this,
+				_objectRelationshipLocalService, _openAPIResource,
+				_systemObjectDefinitionMetadataRegistry),
+			_getOpenAPISchemaFilter(_objectDefinition),
+			new HashSet<Class<?>>() {
+				{
+					add(ObjectEntryRelatedObjectsResourceImpl.class);
+					add(ObjectEntryResourceImpl.class);
+					add(OpenAPIResourceImpl.class);
+				}
+			},
+			type, uriInfo);
+	}
+
 	private OpenAPISchemaFilter _getOpenAPISchemaFilter(
-		String applicationPath) {
+		ObjectDefinition objectDefinition) {
 
 		OpenAPISchemaFilter openAPISchemaFilter = new OpenAPISchemaFilter();
 
-		openAPISchemaFilter.setApplicationPath(applicationPath);
+		openAPISchemaFilter.setApplicationPath(
+			objectDefinition.getRESTContextPath());
 
 		DTOProperty dtoProperty = new DTOProperty(
 			new HashMap<>(), "ObjectEntry", "Object");
@@ -227,7 +243,7 @@ public class ObjectEntryOpenAPIResourceImpl
 
 		for (ObjectField objectField :
 				_objectFieldLocalService.getObjectFields(
-					_objectDefinition.getObjectDefinitionId())) {
+					objectDefinition.getObjectDefinitionId())) {
 
 			dtoProperties.add(_getDTOProperty(objectField));
 
@@ -274,11 +290,11 @@ public class ObjectEntryOpenAPIResourceImpl
 			TreeMapBuilder.<String, String>create(
 				Collections.reverseOrder()
 			).put(
-				"ObjectEntry", _objectDefinition.getShortName()
+				"ObjectEntry", objectDefinition.getShortName()
 			).put(
-				"PageObject", "Page" + _objectDefinition.getShortName()
+				"PageObject", "Page" + objectDefinition.getShortName()
 			).put(
-				"PageObjectEntry", "Page" + _objectDefinition.getShortName()
+				"PageObjectEntry", "Page" + objectDefinition.getShortName()
 			).build());
 
 		return openAPISchemaFilter;
@@ -294,30 +310,16 @@ public class ObjectEntryOpenAPIResourceImpl
 		return requiredPropertySchemaNames;
 	}
 
-	private BundleContext _bundleContext;
-
-	@Reference
-	private DTOConverterRegistry _dtoConverterRegistry;
-
-	@Reference
-	private ObjectActionLocalService _objectActionLocalService;
-
-	private ObjectDefinition _objectDefinition;
-
-	@Reference
-	private ObjectDefinitionLocalService _objectDefinitionLocalService;
-
-	@Reference
-	private ObjectFieldLocalService _objectFieldLocalService;
-
-	@Reference
-	private ObjectRelationshipLocalService _objectRelationshipLocalService;
-
-	@Reference
-	private OpenAPIResource _openAPIResource;
-
-	@Reference
-	private SystemObjectDefinitionMetadataRegistry
+	private final BundleContext _bundleContext;
+	private final DTOConverterRegistry _dtoConverterRegistry;
+	private final ObjectActionLocalService _objectActionLocalService;
+	private final ObjectDefinition _objectDefinition;
+	private final ObjectDefinitionLocalService _objectDefinitionLocalService;
+	private final ObjectFieldLocalService _objectFieldLocalService;
+	private final ObjectRelationshipLocalService
+		_objectRelationshipLocalService;
+	private final OpenAPIResource _openAPIResource;
+	private final SystemObjectDefinitionMetadataRegistry
 		_systemObjectDefinitionMetadataRegistry;
 
 }

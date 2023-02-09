@@ -23,6 +23,7 @@ import {
 	MultipleSelect,
 	SingleSelect,
 	filterArrayByQuery,
+	getLocalizableLabel,
 } from '@liferay/object-js-components-web';
 import React, {
 	FormEvent,
@@ -42,7 +43,9 @@ import {
 import './ModalAddFilter.scss';
 interface IProps {
 	aggregationFilter?: boolean;
+	creationLanguageId?: Locale;
 	currentFilters: CurrentFilter[];
+	disableAutoClose?: boolean;
 	disableDateValues?: boolean;
 	editingFilter: boolean;
 	editingObjectFieldName: string;
@@ -119,11 +122,11 @@ type AttachmentEntry = {
 	name: string;
 };
 
-const defaultLanguageId = Liferay.ThemeDisplay.getDefaultLanguageId();
-
 export function ModalAddFilter({
 	aggregationFilter,
+	creationLanguageId,
 	currentFilters,
+	disableAutoClose = false,
 	disableDateValues,
 	editingFilter,
 	editingObjectFieldName,
@@ -155,8 +158,13 @@ export function ModalAddFilter({
 	const [filterEndDate, setFilterEndDate] = useState('');
 
 	const filteredAvailableFields = useMemo(() => {
-		return filterArrayByQuery(objectFields, 'label', query);
-	}, [objectFields, query]);
+		return filterArrayByQuery({
+			array: objectFields,
+			creationLanguageId: creationLanguageId as Locale,
+			query,
+			str: 'label',
+		});
+	}, [creationLanguageId, objectFields, query]);
 
 	const setEditingFilterType = () => {
 		const currentFilterColumn = currentFilters.find((filterColumn) => {
@@ -265,6 +273,12 @@ export function ModalAddFilter({
 					const relatedEntries = await API.getList<ObjectEntry>(
 						`${restContextPath}`
 					);
+
+					if (!relatedEntries) {
+						setItems([]);
+
+						return;
+					}
 
 					if (editingFilter) {
 						setItems(
@@ -437,7 +451,7 @@ export function ModalAddFilter({
 			selectedFilterBy?.businessType === 'Relationship');
 
 	return (
-		<ClayModal observer={observer}>
+		<ClayModal disableAutoClose={disableAutoClose} observer={observer}>
 			<ClayModal.Header>{header}</ClayModal.Header>
 
 			<ClayModal.Body>
@@ -475,11 +489,20 @@ export function ModalAddFilter({
 						}}
 						query={query}
 						required
-						value={selectedFilterBy?.label[defaultLanguageId]}
+						value={getLocalizableLabel(
+							creationLanguageId as Locale,
+							selectedFilterBy?.label
+						)}
 					>
-						{({label}) => (
+						{({label, name}) => (
 							<div className="d-flex justify-content-between">
-								<div>{label[defaultLanguageId]}</div>
+								<div>
+									{getLocalizableLabel(
+										creationLanguageId as Locale,
+										label,
+										name
+									)}
+								</div>
 							</div>
 						)}
 					</AutoComplete>

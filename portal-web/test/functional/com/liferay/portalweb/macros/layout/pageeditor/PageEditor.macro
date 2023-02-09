@@ -1712,21 +1712,12 @@ definition {
 				value1 = "The page template is based on the current experience.");
 		}
 
-		if (IsElementNotPresent(locator1 = "Modal#SAVE_BUTTON")) {
-			PortletEntry.inputName(name = "${pageTemplateName}");
-		}
-
 		Select(
 			key_fieldLabel = "Page Template Set",
 			locator1 = "Select#GENERIC_SELECT_FIELD",
 			value1 = "${collectionName}");
 
-		if (IsElementPresent(locator1 = "Modal#SAVE_BUTTON")) {
-			Click(locator1 = "Modal#SAVE_BUTTON");
-		}
-		else {
-			Button.click(button = "Create");
-		}
+		Click(locator1 = "Modal#SAVE_BUTTON");
 
 		if (IsElementPresent(locator1 = "Message#ERROR_DISMISSIBLE")) {
 			AssertTextEquals.assertPartialText(
@@ -2285,7 +2276,9 @@ definition {
 				locator1 = "PageEditor#GRID_COLUMN_NESTED_ELEMENT");
 		}
 		else {
-			PageEditor.clickConfigurableField(fragmentName = "${fragmentName}");
+			PageEditor.clickConfigurableField(
+				fragmentName = "${fragmentName}",
+				index = "${index}");
 		}
 
 		AssertVisible(
@@ -2395,6 +2388,14 @@ definition {
 		if (isSet(singleSelection)) {
 			Check.checkNotVisible(
 				checkboxName = "Single Selection",
+				locator1 = "Checkbox#ANY_CHECKBOX");
+
+			PageEditor.waitForAutoSave();
+		}
+
+		if (isSet(showHelpText)) {
+			Check.checkNotVisible(
+				checkboxName = "Show Help Text",
 				locator1 = "Checkbox#ANY_CHECKBOX");
 
 			PageEditor.waitForAutoSave();
@@ -3132,7 +3133,7 @@ definition {
 		Type(
 			key_fieldLabel = "Maximum Nesting Level",
 			locator1 = "TextInput#GENERIC_NUMBER_INPUT",
-			value1 = "2");
+			value1 = "${maxNestingLevel}");
 
 		PageEditor.waitForAutoSave();
 	}
@@ -5676,8 +5677,6 @@ return	Array.from(getWebElement("(//div[@aria-label='${fragmentName}'])[${index}
 
 	macro waitForAutoSave {
 		SelectFrameTop();
-
-		WaitForElementNotPresent(locator1 = "PageEditor#DRAFT_SAVING_MESSAGE");
 
 		WaitForVisible(locator1 = "PageEditor#AUTOSAVE_MESSAGE");
 	}

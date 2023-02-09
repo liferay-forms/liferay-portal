@@ -1763,7 +1763,9 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 				GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK)));
 
 			if (layout == null) {
-				indexer.delete(layout);
+				indexer.delete(
+					GetterUtil.getLong(document.get(Field.COMPANY_ID)),
+					document.getUID());
 
 				continue;
 			}
@@ -1857,7 +1859,9 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 				GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK)));
 
 			if (layout == null) {
-				indexer.delete(layout);
+				indexer.delete(
+					GetterUtil.getLong(document.get(Field.COMPANY_ID)),
+					document.getUID());
 
 				continue;
 			}
@@ -2691,6 +2695,12 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 			groupId, privateLayout, layoutId);
 
 		String name = nameMap.get(LocaleUtil.getSiteDefault());
+
+		if (Validator.isNull(name)) {
+			List<String> values = new ArrayList<>(nameMap.values());
+
+			name = values.get(0);
+		}
 
 		friendlyURLMap = layoutLocalServiceHelper.getFriendlyURLMap(
 			groupId, privateLayout, layoutId, name, friendlyURLMap);

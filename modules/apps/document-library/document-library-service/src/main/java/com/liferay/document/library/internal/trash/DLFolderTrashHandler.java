@@ -159,7 +159,8 @@ public class DLFolderTrashHandler extends BaseDLTrashHandler {
 		DLFolder dlFolder = getDLFolder(classPK);
 
 		return DLUtil.getAbsolutePath(
-			portletRequest, dlFolder.getParentFolderId());
+			portletRequest, DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
+			dlFolder.getParentFolderId());
 	}
 
 	@Override

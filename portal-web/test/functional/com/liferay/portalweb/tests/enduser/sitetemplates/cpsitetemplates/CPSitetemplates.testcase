@@ -1,6 +1,7 @@
 @component-name = "portal-staging"
 definition {
 
+	property ci.retries.disabled = "true";
 	property portal.release = "true";
 	property portal.upstream = "true";
 	property testray.component.names = "Site Templates";
@@ -546,6 +547,75 @@ definition {
 			AssertElementNotPresent(locator1 = "Portlet#OPTIONS_ICON");
 
 			MenuItem.viewNotPresent(menuItem = "Permissions");
+		}
+	}
+
+	@description = "This is a use case for LPS-161817. Child content page of a Site created from a Site Template cannot be viewed or edited."
+	@priority = "4"
+	test CanViewAndEditChildContentPageInSiteCreatedBySiteTemplate {
+		task ("disable "exportDraftLayout"") {
+			OSGiConfig.deployOSGiConfigFile(
+				osgiConfigFileName = "com.liferay.layout.configuration.LayoutExportImportConfiguration.config",
+				osgiConfigs = "exportDraftLayout=\"false\"");
+		}
+
+		task ("Given: User adds a new site template and a site based on this site template") {
+			SiteTemplates.addCP(siteTemplateName = "Site Template Name");
+
+			ApplicationsMenu.gotoPortlet(
+				category = "Sites",
+				panel = "Control Panel",
+				portlet = "Sites");
+
+			Site.addCP(
+				siteName = "Site Template Site Name",
+				siteTemplateName = "Site Template Name",
+				siteType = "Site Template");
+		}
+
+		task ("When: Adds a parent content page and a child content page to the created site template") {
+			SiteTemplates.addSitePageViaSiteTemplateCP(
+				masterLayoutName = "Blank",
+				pageName = "Parent Content Page",
+				sitePageType = "Content Page",
+				siteTemplateName = "Site Template Name");
+
+			PageEditor.publish();
+
+			ContentPages.addChildPage(
+				childPageName = "Child Content Page",
+				parentPageName = "Parent Content Page",
+				sitePageType = "Blank");
+
+			PageEditor.publish();
+		}
+
+		task ("Then: User can view and edit child content page in the site") {
+			PagesAdmin.openPagesAdmin(siteURLKey = "site-template-site-name");
+
+			Refresh();
+
+			// Remove Refresh(); after LPS-172741
+
+			Click(
+				key_pageName = "Parent Content Page",
+				locator1 = "PagesAdmin#LIST_GROUP_ITEM_CHILD_INDICATOR");
+
+			PagesAdmin.gotoPageEllipsisMenuItem(
+				menuItem = "Edit",
+				pageName = "Child Content Page",
+				parentPagesHierarchy = "Parent Content Page");
+
+			PageEditor.assertFragmentSidebarLoaded();
+
+			PagesAdmin.openPagesAdmin(siteURLKey = "site-template-site-name");
+
+			PagesAdmin.gotoPageEllipsisMenuItem(
+				menuItem = "View",
+				pageName = "Child Content Page",
+				parentPagesHierarchy = "Parent Content Page");
+
+			AssertVisible(locator1 = "Icon#EDIT_PENCIL");
 		}
 	}
 

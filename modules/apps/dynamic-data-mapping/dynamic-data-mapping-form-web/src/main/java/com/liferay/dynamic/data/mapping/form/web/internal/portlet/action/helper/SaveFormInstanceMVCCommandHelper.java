@@ -42,7 +42,6 @@ import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.redirect.RedirectURLSettings;
-import com.liferay.portal.kernel.security.auth.AuthTokenUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -113,10 +112,6 @@ public class SaveFormInstanceMVCCommandHelper {
 			PortletRequest portletRequest, PortletResponse portletResponse,
 			boolean validateDDMFormFieldSettings)
 		throws Exception {
-
-		AuthTokenUtil.checkCSRFToken(
-			_portal.getHttpServletRequest(portletRequest),
-			SaveFormInstanceMVCCommandHelper.class.getName());
 
 		long formInstanceId = ParamUtil.getLong(
 			portletRequest, "formInstanceId");

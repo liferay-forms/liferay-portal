@@ -382,6 +382,16 @@ export default function () {
 		type: 'line',
 	};
 
+	const sumDataColumnsArray = () => {
+		const newArray = chartData?.columns?.map((item) => {
+			return item.slice(1);
+		});
+
+		return newArray[0].reduce((acc, item) => Number(acc) + Number(item), 0);
+	};
+
+	const hasDataOnChart = sumDataColumnsArray();
+
 	const newSubmissionsPercentual = getData()[0]?.percentNewApplication;
 	const newSubmissionsValue = getData()[0]?.newSubmissionsValue;
 	const getPeriod = getData()[0]?.period;
@@ -449,7 +459,7 @@ export default function () {
 				</ClaySelect>
 			</div>
 
-			{!!chartData.columns.length && (
+			{hasDataOnChart > 0 ? (
 				<LineChart
 					LegendElement={submissionsLegend}
 					chartData={chartData}
@@ -458,9 +468,7 @@ export default function () {
 					percentual={newSubmissionsPercentual}
 					value={newSubmissionsValue}
 				/>
-			)}
-
-			{!chartData.columns.length && loadData && (
+			) : (
 				<div className="align-items-center d-flex flex-grow-1 justify-content-center">
 					<span>No Data Applications</span>
 				</div>

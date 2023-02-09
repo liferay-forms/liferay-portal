@@ -14,6 +14,7 @@
 
 package com.liferay.portal.odata.internal.sort;
 
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.petra.string.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -28,9 +29,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Parses {@code Sort} strings. This class uses a model to create a {@code
@@ -76,24 +74,11 @@ public class SortParserImpl implements SortParser {
 			return Collections.emptyList();
 		}
 
-		List<String> list = StringUtil.split(sortString);
-
-		Stream<String> stream = list.stream();
-
-		return stream.map(
-			this::getSortFieldOptional
-		).flatMap(
-			sortFieldOptional -> sortFieldOptional.map(
-				Stream::of
-			).orElseGet(
-				Stream::empty
-			)
-		).collect(
-			Collectors.toList()
-		);
+		return TransformUtil.transform(
+			StringUtil.split(sortString), string -> getSortField(string));
 	}
 
-	protected Optional<EntityField> getEntityFieldOptional(
+	protected EntityField getEntityField(
 		Map<String, EntityField> entityFieldsMap, String fieldName) {
 
 		if (fieldName.contains(StringPool.FORWARD_SLASH)) {
@@ -115,19 +100,19 @@ public class SortParserImpl implements SortParser {
 			ComplexEntityField complexEntityField =
 				(ComplexEntityField)entityField;
 
-			return getEntityFieldOptional(
+			return getEntityField(
 				complexEntityField.getEntityFieldsMap(),
 				fieldName.substring(complexTypeName.length() + 1));
 		}
 
-		return Optional.ofNullable(entityFieldsMap.get(fieldName));
+		return entityFieldsMap.get(fieldName);
 	}
 
-	protected Optional<SortField> getSortFieldOptional(String sortString) {
+	protected SortField getSortField(String sortString) {
 		List<String> list = StringUtil.split(sortString, ':');
 
 		if (list.isEmpty()) {
-			return Optional.empty();
+			return null;
 		}
 
 		if (list.size() > 2) {
@@ -147,18 +132,18 @@ public class SortParserImpl implements SortParser {
 		}
 
 		if (_entityModel == null) {
-			return Optional.of(new SortField(fieldName, ascending));
+			return new SortField(fieldName, ascending);
 		}
 
-		Optional<EntityField> entityFieldOptional = getEntityFieldOptional(
+		EntityField entityField = getEntityField(
 			_entityModel.getEntityFieldsMap(), fieldName);
 
-		return entityFieldOptional.map(
-			entityField -> Optional.of(new SortField(entityField, ascending))
-		).orElseThrow(
-			() -> new InvalidSortException(
-				"Unable to sort by property: " + fieldName)
-		);
+		if (entityField == null) {
+			throw new InvalidSortException(
+				"Unable to sort by property: " + fieldName);
+		}
+
+		return new SortField(entityField, ascending);
 	}
 
 	protected boolean isAscending(String orderBy) {

@@ -24,6 +24,7 @@ const statusBarClassNames = {
 	inprogress: 'in-progress',
 	other: 'primary',
 	passed: 'passed',
+	scheduled: 'untested',
 	self: 'info',
 	testfix: 'test-fix',
 	untested: 'untested',
@@ -40,7 +41,8 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({children, type}) => (
 	<span
 		className={classNames(
 			'label label-chart text-uppercase text-nowrap',
-			statusBarClassNames[type] || type?.toLowerCase().replace(' ', '-')
+			(statusBarClassNames as any)[type?.toLowerCase()] ||
+				type?.toLowerCase().replace(' ', '-')
 		)}
 	>
 		{children}

@@ -36,6 +36,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PropertiesParamUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.HashMap;
@@ -71,6 +72,8 @@ public class CopyLayoutMVCActionCommand extends BaseMVCActionCommand {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
+
+		String redirect = ParamUtil.getString(actionRequest, "redirect");
 
 		long sourcePlid = ParamUtil.getLong(uploadPortletRequest, "sourcePlid");
 		long groupId = ParamUtil.getLong(actionRequest, "groupId");
@@ -139,19 +142,21 @@ public class CopyLayoutMVCActionCommand extends BaseMVCActionCommand {
 
 			_layoutLocalService.updateLayout(targetLayout);
 
+			if (Validator.isNull(redirect)) {
+				redirect = PortletURLBuilder.createRenderURL(
+					_portal.getLiferayPortletResponse(actionResponse)
+				).setNavigation(
+					privateLayout ? "private-pages" : "public-pages"
+				).setParameter(
+					"privateLayout", privateLayout
+				).setParameter(
+					"selPlid", sourceLayout.getParentPlid()
+				).buildString();
+			}
+
 			JSONPortletResponseUtil.writeJSON(
 				actionRequest, actionResponse,
-				JSONUtil.put(
-					"redirectURL",
-					PortletURLBuilder.createRenderURL(
-						_portal.getLiferayPortletResponse(actionResponse)
-					).setNavigation(
-						privateLayout ? "private-pages" : "public-pages"
-					).setParameter(
-						"privateLayout", privateLayout
-					).setParameter(
-						"selPlid", sourceLayout.getParentPlid()
-					).buildString()));
+				JSONUtil.put("redirectURL", redirect));
 		}
 		catch (Exception exception) {
 			SessionErrors.add(actionRequest, "layoutNameInvalid");

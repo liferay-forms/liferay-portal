@@ -4,6 +4,18 @@ definition {
 		Click(locator1 = "CustomerPortalSite#ACCOUNTS_PROJECTS");
 	}
 
+	macro activeAccountRestriction {
+		ObjectAdmin.openObjectAdmin();
+
+		ObjectPortlet.selectObject(label = "Koroneiki Account");
+
+		CreateObject.activeToogleAccountRestriction();
+
+		CreateObject.selectAccountRestrictedField(accountRestrictedField = "Koroneiki Account");
+
+		CreateObject.saveObject();
+	}
+
 	macro activeContactRole {
 		ApplicationsMenu.gotoPortlet(
 			category = "Object",
@@ -209,6 +221,15 @@ definition {
 		AssertVisible(locator1 = "CustomerPortalSite#ANY_LINK");
 	}
 
+	macro assertThatTheProjectListIsNotPresent {
+		for (var project : list "${projectList}") {
+			AssertElementNotPresent(
+				key_project = "${project}",
+				locator1 = "CP2LiferayContact#PROJECT_TABLE",
+				title = "${project}");
+		}
+	}
+
 	macro assignUserToOrganization {
 		if (!(isSet(organizationName))) {
 			var organizationName = "Liferay Staff";
@@ -365,7 +386,7 @@ definition {
 
 		Navigator.openWithAppendToBaseURL(urlAppend = "group/control_panel/manage?p_p_id=com_liferay_client_extension_web_internal_portlet_ClientExtensionAdminPortlet");
 
-		RemoteApps.deleteRemoteApp();
+		ClientExtensionGeneral.deleteRemoteApp();
 	}
 
 	macro customerPortalTearDown {
@@ -378,7 +399,7 @@ definition {
 		ApplicationsMenu.gotoPortlet(
 			category = "Object",
 			panel = "Control Panel",
-			portlet = "Koroneiki Accounts");
+			portlet = "Koroneiki Account");
 
 		CustomerPortal.viewCPObjectInfo();
 

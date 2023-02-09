@@ -43,10 +43,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.solr.client.solrj.SolrQuery;
 
@@ -98,10 +95,13 @@ public class BaseSolrQueryAssemblerImpl implements BaseSolrQueryAssembler {
 	protected String getExcludeTagsString(
 		String tag, FacetProcessorContext facetProcessorContext) {
 
-		Optional<String> optional =
-			facetProcessorContext.getExcludeTagsStringOptional();
+		String excludeTagsString = facetProcessorContext.getExcludeTagsString();
 
-		return optional.orElse(tag);
+		if (excludeTagsString == null) {
+			return tag;
+		}
+
+		return excludeTagsString;
 	}
 
 	protected Map<String, JSONObject> getFacetParameters(Facet facet) {
@@ -111,17 +111,23 @@ public class BaseSolrQueryAssemblerImpl implements BaseSolrQueryAssembler {
 	protected String getFacetString(Map<String, JSONObject> jsonObjects) {
 		Set<Map.Entry<String, JSONObject>> entrySet = jsonObjects.entrySet();
 
-		Stream<Map.Entry<String, JSONObject>> stream = entrySet.stream();
+		StringBundler sb = new StringBundler((2 * entrySet.size()) + 1);
 
-		return stream.map(
-			entry -> StringBundler.concat(
-				StringPool.QUOTE, entry.getKey(), StringPool.QUOTE,
-				StringPool.COLON, entry.getValue())
-		).collect(
-			Collectors.joining(
-				StringPool.COMMA, StringPool.OPEN_CURLY_BRACE,
-				StringPool.CLOSE_CURLY_BRACE)
-		);
+		sb.append(StringPool.OPEN_CURLY_BRACE);
+
+		for (Map.Entry<String, JSONObject> entry : entrySet) {
+			sb.append(
+				StringBundler.concat(
+					StringPool.QUOTE, entry.getKey(), StringPool.QUOTE,
+					StringPool.COLON, entry.getValue()));
+			sb.append(StringPool.COMMA);
+		}
+
+		sb.setIndex(sb.index() - 1);
+
+		sb.append(StringPool.CLOSE_CURLY_BRACE);
+
+		return sb.toString();
 	}
 
 	protected String getQueryString(BaseSearchRequest baseSearchRequest) {

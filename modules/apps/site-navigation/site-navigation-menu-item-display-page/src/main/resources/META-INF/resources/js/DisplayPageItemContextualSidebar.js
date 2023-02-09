@@ -178,10 +178,7 @@ function DisplayPageItemContextualSidebar({
 						/>
 					</ClayInput.GroupItem>
 
-					<ClayInput.GroupItem
-						className="site-navigation-language-selector"
-						shrink
-					>
+					<ClayInput.GroupItem shrink>
 						<TranslationAdminSelector
 							activeLanguageIds={locales.map(
 								(locale) => locale.id
@@ -209,7 +206,7 @@ function DisplayPageItemContextualSidebar({
 					{Liferay.Language.get('item')}
 				</label>
 
-				<ClayInput.Group className="site-navigation-item-selector">
+				<ClayInput.Group>
 					<ClayInput.GroupItem>
 						<ClayInput
 							className="text-secondary"

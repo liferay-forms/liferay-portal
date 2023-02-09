@@ -20,7 +20,7 @@ import {
 	TestrayCaseResult,
 	testrayCaseResultImpl,
 } from '../services/rest';
-import {searchUtil} from '../util/search';
+import {SearchBuilder} from '../util/search';
 import useDebounce from './useDebounce';
 import {useFetch} from './useFetch';
 
@@ -60,18 +60,21 @@ const useBreadcrumb = (entities: Entity[]) => {
 
 	const [breadCrumb, setBreadCrumb] = useState<BreadCrumb[]>([]);
 	const [search, setSearch] = useState('');
-
 	const debouncedSearch = useDebounce(search, 500);
 
 	const currentEntity = entities[breadCrumb.length];
+
 	const ids = breadCrumb.map(({value}) => value);
+
 	const {transformer, url} = getEntityUrlAndNormalizer(
 		currentEntity,
 		ids,
 		debouncedSearch
 	);
 
-	const {data} = useFetch<APIResponse<any>>(url, transformer);
+	const {data} = useFetch<APIResponse<any>>(url, {
+		transformData: transformer,
+	});
 
 	const items = useMemo(() => data?.items || [], [data?.items]);
 
@@ -119,7 +122,7 @@ const defaultEntities: Entity[] = [
 		entity: 'projects',
 		getPage: ([projectId]) => `/project/${projectId}/routines`,
 		getResource: (_, search) =>
-			`/projects?filter=${searchUtil.contains(
+			`/projects?filter=${SearchBuilder.contains(
 				'name',
 				search
 			)}&pageSize=1000`,
@@ -130,10 +133,10 @@ const defaultEntities: Entity[] = [
 		getPage: ([projectId, routineId]) =>
 			`/project/${projectId}/routines/${routineId}`,
 		getResource: ([projectId], search) =>
-			`/routines?filter=${searchUtil.eq(
+			`/routines?filter=${SearchBuilder.eq(
 				'projectId',
 				projectId
-			)} and ${searchUtil.contains('name', search)}&pageSize=1000`,
+			)} and ${SearchBuilder.contains('name', search)}&pageSize=1000`,
 		name: i18n.translate('routine'),
 	},
 	{
@@ -141,10 +144,10 @@ const defaultEntities: Entity[] = [
 		getPage: ([projectId, routineId, buildId]) =>
 			`/project/${projectId}/routines/${routineId}/build/${buildId}`,
 		getResource: ([, routineId], search) =>
-			`/builds?filter=${searchUtil.eq(
+			`/builds?filter=${SearchBuilder.eq(
 				'routineId',
 				routineId
-			)} and ${searchUtil.contains('name', search)}&pageSize=1000`,
+			)} and ${SearchBuilder.contains('name', search)}&pageSize=1000`,
 		name: i18n.translate('build'),
 	},
 	{
@@ -152,7 +155,7 @@ const defaultEntities: Entity[] = [
 		getPage: ([projectId, routineId, buildId, caseResultsId]) =>
 			`/project/${projectId}/routines/${routineId}/build/${buildId}/case-result/${caseResultsId}`,
 		getResource: ([, , buildId]) =>
-			`/caseresults?filter=${searchUtil.eq(
+			`/caseresults?filter=${SearchBuilder.eq(
 				'buildId',
 				buildId
 			)}&nestedFields=case,r_runToCaseResult_c_runId&pageSize=1000`,

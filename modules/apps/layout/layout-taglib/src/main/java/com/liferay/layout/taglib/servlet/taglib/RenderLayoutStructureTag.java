@@ -34,6 +34,7 @@ import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.info.item.provider.InfoItemDetailsProvider;
 import com.liferay.info.list.renderer.DefaultInfoListRendererContext;
 import com.liferay.info.list.renderer.InfoListRenderer;
+import com.liferay.info.permission.provider.InfoPermissionProvider;
 import com.liferay.layout.constants.LayoutWebKeys;
 import com.liferay.layout.display.page.LayoutDisplayPageProvider;
 import com.liferay.layout.display.page.constants.LayoutDisplayPageWebKeys;
@@ -76,6 +77,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.util.PropsValues;
@@ -218,6 +220,35 @@ public class RenderLayoutStructureTag extends IncludeTag {
 		return layoutTypePortlet;
 	}
 
+	private boolean _hasAddPermission(String className) {
+		InfoItemServiceRegistry infoItemServiceRegistry =
+			ServletContextUtil.getInfoItemServiceRegistry();
+
+		InfoPermissionProvider infoPermissionProvider =
+			infoItemServiceRegistry.getFirstInfoItemService(
+				InfoPermissionProvider.class, className);
+
+		if (infoPermissionProvider == null) {
+			return true;
+		}
+
+		HttpServletRequest httpServletRequest = getRequest();
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		if ((themeDisplay != null) &&
+			infoPermissionProvider.hasAddPermission(
+				themeDisplay.getScopeGroupId(),
+				themeDisplay.getPermissionChecker())) {
+
+			return true;
+		}
+
+		return false;
+	}
+
 	private void _renderCollectionStyledLayoutStructureItem(
 			InfoForm infoForm,
 			CollectionStyledLayoutStructureItem
@@ -225,6 +256,19 @@ public class RenderLayoutStructureTag extends IncludeTag {
 			RenderLayoutStructureDisplayContext
 				renderLayoutStructureDisplayContext)
 		throws Exception {
+
+		HttpServletRequest httpServletRequest = getRequest();
+
+		RenderCollectionLayoutStructureItemDisplayContext
+			renderCollectionLayoutStructureItemDisplayContext =
+				new RenderCollectionLayoutStructureItemDisplayContext(
+					collectionStyledLayoutStructureItem, httpServletRequest);
+
+		if (!renderCollectionLayoutStructureItemDisplayContext.
+				hasViewPermission()) {
+
+			return;
+		}
 
 		JspWriter jspWriter = pageContext.getOut();
 
@@ -234,18 +278,9 @@ public class RenderLayoutStructureTag extends IncludeTag {
 		jspWriter.write(StringPool.SPACE);
 		jspWriter.write(collectionStyledLayoutStructureItem.getCssClass());
 		jspWriter.write("\" style=\"");
-
-		HttpServletRequest httpServletRequest = getRequest();
-
-		RenderCollectionLayoutStructureItemDisplayContext
-			renderCollectionLayoutStructureItemDisplayContext =
-				new RenderCollectionLayoutStructureItemDisplayContext(
-					collectionStyledLayoutStructureItem, httpServletRequest);
-
 		jspWriter.write(
 			renderLayoutStructureDisplayContext.getStyle(
 				collectionStyledLayoutStructureItem));
-
 		jspWriter.write("\">");
 
 		List<String> collectionStyledLayoutStructureItemIds =
@@ -812,7 +847,12 @@ public class RenderLayoutStructureTag extends IncludeTag {
 				renderLayoutStructureDisplayContext)
 		throws Exception {
 
-		if (infoForm == null) {
+		if ((infoForm == null) ||
+			(GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-169923")) &&
+			 !_hasAddPermission(
+				 PortalUtil.getClassName(
+					 formStyledLayoutStructureItem.getClassNameId())))) {
+
 			return;
 		}
 

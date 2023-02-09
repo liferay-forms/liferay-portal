@@ -12,13 +12,15 @@ definition {
 				locator1 = "ObjectPortlet#ADD_OBJECT_ENTRY",
 				value1 = "${newEntry}");
 
-			Button.clickSave();
+			PortletEntry.save();
 		}
 
 		if (isSet(selectEntry)) {
-			Click(
-				key_kebabOption = "Select Existing One",
-				locator1 = "ObjectAdmin#KEBAB_MENU_OPTION");
+			if (IsElementPresent(key_kebabOption = "Select Existing One", locator1 = "ObjectAdmin#KEBAB_MENU_OPTION")) {
+				Click(
+					key_kebabOption = "Select Existing One",
+					locator1 = "ObjectAdmin#KEBAB_MENU_OPTION");
+			}
 
 			SelectFrame(locator1 = "IFrame#MODAL_BODY");
 

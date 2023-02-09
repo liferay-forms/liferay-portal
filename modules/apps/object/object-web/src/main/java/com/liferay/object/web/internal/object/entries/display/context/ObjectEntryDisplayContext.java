@@ -27,6 +27,7 @@ import com.liferay.dynamic.data.mapping.model.DDMFormLayoutPage;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutRow;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.model.UnlocalizedValue;
+import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.util.NumericDDMFormFieldUtil;
@@ -71,7 +72,7 @@ import com.liferay.object.service.ObjectLayoutLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.web.internal.constants.ObjectWebKeys;
 import com.liferay.object.web.internal.display.context.helper.ObjectRequestHelper;
-import com.liferay.object.web.internal.util.ObjectDefinitionPermissionUtil;
+import com.liferay.object.web.internal.security.permission.resource.util.ObjectDefinitionResourcePermissionUtil;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -97,6 +98,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -561,9 +563,10 @@ public class ObjectEntryDisplayContext {
 				return false;
 			}
 
-			return !ObjectDefinitionPermissionUtil.hasModelResourcePermission(
-				getObjectDefinition(), objectEntry, _objectEntryService,
-				ActionKeys.UPDATE);
+			return !ObjectDefinitionResourcePermissionUtil.
+				hasModelResourcePermission(
+					getObjectDefinition(), objectEntry, _objectEntryService,
+					ActionKeys.UPDATE);
 		}
 		catch (PortalException portalException) {
 			if (_log.isDebugEnabled()) {
@@ -713,9 +716,10 @@ public class ObjectEntryDisplayContext {
 
 			if (objectEntry != null) {
 				readOnly =
-					!ObjectDefinitionPermissionUtil.hasModelResourcePermission(
-						objectDefinition, objectEntry, _objectEntryService,
-						ActionKeys.UPDATE);
+					!ObjectDefinitionResourcePermissionUtil.
+						hasModelResourcePermission(
+							objectDefinition, objectEntry, _objectEntryService,
+							ActionKeys.UPDATE);
 			}
 		}
 
@@ -955,6 +959,19 @@ public class ObjectEntryDisplayContext {
 							ddmFormField, ddmFormFieldValue, values);
 					}
 
+					// TODO Temporary workaround for LPS-171782
+
+					if (GetterUtil.getBoolean(
+							ddmFormField.getProperty(
+								"accountEntryRestrictedObjectField"))) {
+
+						Value value = ddmFormFieldValue.getValue();
+
+						ddmFormField.setReadOnly(
+							Validator.isNotNull(
+								value.getString(LocaleUtil.ROOT)));
+					}
+
 					return ddmFormFieldValue;
 				}));
 
@@ -993,6 +1010,9 @@ public class ObjectEntryDisplayContext {
 		LiferayPortletResponse liferayPortletResponse, ObjectEntry objectEntry,
 		ObjectLayoutTab objectLayoutTab) {
 
+		HttpServletRequest httpServletRequest =
+			_objectRequestHelper.getRequest();
+
 		if (_readOnly) {
 			LiferayPortletURL liferayPortletURL =
 				(LiferayPortletURL)liferayPortletResponse.createResourceURL();
@@ -1001,6 +1021,8 @@ public class ObjectEntryDisplayContext {
 
 			return PortletURLBuilder.create(
 				liferayPortletURL
+			).setBackURL(
+				httpServletRequest.getParameter("backURL")
 			).setParameter(
 				"externalReferenceCode", objectEntry.getExternalReferenceCode()
 			).setParameter(
@@ -1012,6 +1034,8 @@ public class ObjectEntryDisplayContext {
 			liferayPortletResponse.createRenderURL()
 		).setMVCRenderCommandName(
 			"/object_entries/edit_object_entry"
+		).setBackURL(
+			httpServletRequest.getParameter("backURL")
 		).setParameter(
 			"externalReferenceCode", objectEntry.getExternalReferenceCode()
 		).setParameter(

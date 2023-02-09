@@ -12,11 +12,39 @@
  * details.
  */
 
+const defaultLanguageId = Liferay.ThemeDisplay.getDefaultLanguageId();
+const userLanguageId = Liferay.ThemeDisplay.getLanguageId();
+
+/**
+ * Get the label according to the locale
+ */
+
+export function getLocalizableLabel(
+	creationLanguageId: Locale,
+	labels: LocalizedValue<string> | undefined,
+	fallback?: string
+) {
+	if (!labels) {
+		return fallback ?? '';
+	}
+
+	return (
+		labels[userLanguageId] ??
+		labels[defaultLanguageId] ??
+		labels[creationLanguageId] ??
+		fallback ??
+		labels['en_US'] ??
+		''
+	);
+}
+
 /**
  * Checks if the string includes the query
  */
 export function stringIncludesQuery(str: string, query: string) {
-	return str.toLowerCase().includes(query.toLowerCase());
+	return str !== undefined && query !== undefined
+		? str.toLowerCase().includes(query.toLowerCase())
+		: false;
 }
 
 /**

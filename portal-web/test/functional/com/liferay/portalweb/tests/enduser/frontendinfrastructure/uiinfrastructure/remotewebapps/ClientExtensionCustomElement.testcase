@@ -2,8 +2,8 @@ definition {
 
 	property portal.release = "true";
 	property portal.upstream = "true";
-	property testray.component.names = "Remote Apps";
-	property testray.main.component.name = "Remote Apps";
+	property testray.component.names = "Client Extensions";
+	property testray.main.component.name = "Client Extensions";
 
 	setUp {
 		TestCase.setUpPortalInstance();
@@ -20,7 +20,7 @@ definition {
 		else {
 			Navigator.gotoPage(pageName = "Home");
 
-			RemoteApps.tearDown();
+			ClientExtensionGeneral.tearDown();
 		}
 	}
 
@@ -30,12 +30,13 @@ definition {
 		property app.server.types = "tomcat";
 		property database.types = "mysql";
 		property environment.acceptance = "true";
+		property operating.system.types = "alpine,amazonlinux,centos,debian,fedora,orcllinux,osx,redhat,solaris,suse,ubuntu,windows";
 		property portal.acceptance = "true";
 
 		task ("When client extension has portal category 'Client Extensions'") {
-			RemoteApps.goToRemoteAppsPortlet();
+			ClientExtensionGeneral.goToRemoteAppsPortlet();
 
-			RemoteApps.addCustomElementAllFields(
+			ClientExtensionGeneral.addCustomElementAllFields(
 				entryCssurl = "https://liferay.github.io/liferay-frontend-projects/index.css",
 				entryHtmlName = "vanilla-counter",
 				entryName = "Vanilla Counter",

@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -54,9 +55,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.cm.Configuration;
@@ -187,6 +185,313 @@ public class AnalyticsSettingsManagerImpl implements AnalyticsSettingsManager {
 		return true;
 	}
 
+	@Override
+	public boolean isSiteIdSynced(long companyId, long groupId)
+		throws Exception {
+
+		if (!isAnalyticsEnabled(companyId)) {
+			return false;
+		}
+
+		AnalyticsConfiguration analyticsConfiguration =
+			getAnalyticsConfiguration(companyId);
+
+		if (analyticsConfiguration.liferayAnalyticsEnableAllGroupIds() ||
+			ArrayUtil.contains(
+				analyticsConfiguration.syncedGroupIds(),
+				String.valueOf(groupId))) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean syncedAccountFieldsChanged(long companyId) throws Exception {
+		AnalyticsConfiguration analyticsConfiguration =
+			getAnalyticsConfiguration(companyId);
+
+		String[] previousSyncedAccountFieldNames =
+			analyticsConfiguration.previousSyncedAccountFieldNames();
+
+		Arrays.sort(previousSyncedAccountFieldNames);
+
+		String[] syncedAccountFieldNames =
+			analyticsConfiguration.syncedAccountFieldNames();
+
+		Arrays.sort(syncedAccountFieldNames);
+
+		if ((previousSyncedAccountFieldNames.length != 0) &&
+			!Arrays.equals(
+				previousSyncedAccountFieldNames, syncedAccountFieldNames)) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean syncedAccountSettingsChanged(long companyId)
+		throws Exception {
+
+		AnalyticsConfiguration analyticsConfiguration =
+			getAnalyticsConfiguration(companyId);
+
+		if (analyticsConfiguration.previousSyncAllAccounts() !=
+				analyticsConfiguration.syncAllAccounts()) {
+
+			return true;
+		}
+
+		String[] previousSyncedAccountGroupIds =
+			analyticsConfiguration.previousSyncedAccountGroupIds();
+
+		Arrays.sort(previousSyncedAccountGroupIds);
+
+		String[] syncedAccountGroupIds =
+			analyticsConfiguration.syncedAccountGroupIds();
+
+		Arrays.sort(syncedAccountGroupIds);
+
+		if (!analyticsConfiguration.syncAllAccounts() &&
+			!Arrays.equals(
+				previousSyncedAccountGroupIds, syncedAccountGroupIds)) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean syncedAccountSettingsEnabled(long companyId)
+		throws Exception {
+
+		AnalyticsConfiguration analyticsConfiguration =
+			getAnalyticsConfiguration(companyId);
+
+		String[] previousSyncedAccountGroupIds =
+			analyticsConfiguration.previousSyncedAccountGroupIds();
+		String[] syncedAccountGroupIds =
+			analyticsConfiguration.syncedAccountGroupIds();
+
+		if (analyticsConfiguration.syncAllAccounts() ||
+			(previousSyncedAccountGroupIds.length != 0) ||
+			(syncedAccountGroupIds.length != 0)) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean syncedCommerceSettingsChanged(long companyId)
+		throws Exception {
+
+		AnalyticsConfiguration analyticsConfiguration =
+			getAnalyticsConfiguration(companyId);
+
+		String[] commerceSyncEnabledAnalyticsChannelIds =
+			analyticsConfiguration.commerceSyncEnabledAnalyticsChannelIds();
+
+		Arrays.sort(commerceSyncEnabledAnalyticsChannelIds);
+
+		String[] previousCommerceSyncEnabledAnalyticsChannelIds =
+			analyticsConfiguration.
+				previousCommerceSyncEnabledAnalyticsChannelIds();
+
+		Arrays.sort(previousCommerceSyncEnabledAnalyticsChannelIds);
+
+		String[] previousSyncedCommerceChannelIds =
+			analyticsConfiguration.previousSyncedCommerceChannelIds();
+
+		Arrays.sort(previousSyncedCommerceChannelIds);
+
+		String[] syncedCommerceChannelIds =
+			analyticsConfiguration.syncedCommerceChannelIds();
+
+		Arrays.sort(syncedCommerceChannelIds);
+
+		if (!Arrays.equals(
+				commerceSyncEnabledAnalyticsChannelIds,
+				previousCommerceSyncEnabledAnalyticsChannelIds) ||
+			!Arrays.equals(
+				previousSyncedCommerceChannelIds, syncedCommerceChannelIds)) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean syncedCommerceSettingsEnabled(long companyId)
+		throws Exception {
+
+		AnalyticsConfiguration analyticsConfiguration =
+			getAnalyticsConfiguration(companyId);
+
+		String[] commerceSyncEnabledAnalyticsChannelIds =
+			analyticsConfiguration.commerceSyncEnabledAnalyticsChannelIds();
+		String[] syncedCommerceChannelIds =
+			analyticsConfiguration.syncedCommerceChannelIds();
+
+		if ((commerceSyncEnabledAnalyticsChannelIds.length != 0) &&
+			(syncedCommerceChannelIds.length != 0)) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean syncedContactSettingsChanged(long companyId)
+		throws Exception {
+
+		AnalyticsConfiguration analyticsConfiguration =
+			getAnalyticsConfiguration(companyId);
+
+		if (analyticsConfiguration.previousSyncAllContacts() !=
+				analyticsConfiguration.syncAllContacts()) {
+
+			return true;
+		}
+
+		String[] previousSyncedOrganizationIds =
+			analyticsConfiguration.previousSyncedOrganizationIds();
+
+		Arrays.sort(previousSyncedOrganizationIds);
+
+		String[] previousSyncedUserGroupIds =
+			analyticsConfiguration.previousSyncedUserGroupIds();
+
+		Arrays.sort(previousSyncedUserGroupIds);
+
+		String[] syncedOrganizationIds =
+			analyticsConfiguration.syncedOrganizationIds();
+
+		Arrays.sort(syncedOrganizationIds);
+
+		String[] syncedUserGroupIds =
+			analyticsConfiguration.syncedUserGroupIds();
+
+		Arrays.sort(syncedUserGroupIds);
+
+		if (!analyticsConfiguration.syncAllContacts() &&
+			(!Arrays.equals(
+				previousSyncedOrganizationIds, syncedOrganizationIds) ||
+			 !Arrays.equals(previousSyncedUserGroupIds, syncedUserGroupIds))) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean syncedContactSettingsEnabled(long companyId)
+		throws Exception {
+
+		AnalyticsConfiguration analyticsConfiguration =
+			getAnalyticsConfiguration(companyId);
+
+		String[] syncedOrganizationIds =
+			analyticsConfiguration.syncedOrganizationIds();
+		String[] syncedUserGroupIds =
+			analyticsConfiguration.syncedUserGroupIds();
+
+		if (analyticsConfiguration.syncAllContacts() ||
+			(syncedOrganizationIds.length != 0) ||
+			(syncedUserGroupIds.length != 0)) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean syncedOrderFieldsChanged(long companyId) throws Exception {
+		AnalyticsConfiguration analyticsConfiguration =
+			getAnalyticsConfiguration(companyId);
+
+		String[] previousSyncedOrderFieldNames =
+			analyticsConfiguration.previousSyncedOrderFieldNames();
+
+		Arrays.sort(previousSyncedOrderFieldNames);
+
+		String[] syncedOrderFieldNames =
+			analyticsConfiguration.syncedOrderFieldNames();
+
+		Arrays.sort(syncedOrderFieldNames);
+
+		if ((previousSyncedOrderFieldNames.length != 0) &&
+			!Arrays.equals(
+				previousSyncedOrderFieldNames, syncedOrderFieldNames)) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean syncedProductFieldsChanged(long companyId) throws Exception {
+		AnalyticsConfiguration analyticsConfiguration =
+			getAnalyticsConfiguration(companyId);
+
+		String[] previousSyncedProductFieldNames =
+			analyticsConfiguration.previousSyncedProductFieldNames();
+
+		Arrays.sort(previousSyncedProductFieldNames);
+
+		String[] syncedProductFieldNames =
+			analyticsConfiguration.syncedProductFieldNames();
+
+		Arrays.sort(syncedProductFieldNames);
+
+		if ((previousSyncedProductFieldNames.length != 0) &&
+			!Arrays.equals(
+				previousSyncedProductFieldNames, syncedProductFieldNames)) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean syncedUserFieldsChanged(long companyId) throws Exception {
+		AnalyticsConfiguration analyticsConfiguration =
+			getAnalyticsConfiguration(companyId);
+
+		String[] previousSyncedContactFieldNames =
+			analyticsConfiguration.previousSyncedContactFieldNames();
+
+		Arrays.sort(previousSyncedContactFieldNames);
+
+		String[] previousSyncedUserFieldNames =
+			analyticsConfiguration.previousSyncedUserFieldNames();
+
+		Arrays.sort(previousSyncedUserFieldNames);
+
+		String[] syncedContactFieldNames =
+			analyticsConfiguration.syncedContactFieldNames();
+
+		Arrays.sort(syncedContactFieldNames);
+
+		String[] syncedUserFieldNames =
+			analyticsConfiguration.syncedUserFieldNames();
+
+		Arrays.sort(syncedUserFieldNames);
+
+		if ((previousSyncedContactFieldNames.length != 0) &&
+			(previousSyncedUserFieldNames.length != 0) &&
+			(!Arrays.equals(
+				previousSyncedUserFieldNames, syncedUserFieldNames) ||
+			 !Arrays.equals(
+				 previousSyncedContactFieldNames, syncedContactFieldNames))) {
+
+			return true;
+		}
+
+		return false;
+	}
+
 	public String[] updateCommerceChannelIds(
 			String analyticsChannelId, long companyId,
 			Long[] dataSourceCommerceChannelIds)
@@ -215,14 +520,10 @@ public class AnalyticsSettingsManagerImpl implements AnalyticsSettingsManager {
 			analyticsChannelId, _commerceChannelClassNameId, companyId,
 			removeCommerceChannelIds, true);
 
-		Stream<String> commerceChannelIdsStream = commerceChannelIds.stream();
-
-		return commerceChannelIdsStream.filter(
+		return ArrayUtil.filter(
+			commerceChannelIds.toArray(new String[0]),
 			commerceChannelId -> !ArrayUtil.contains(
-				removeCommerceChannelIds, String.valueOf(commerceChannelId))
-		).toArray(
-			String[]::new
-		);
+				removeCommerceChannelIds, String.valueOf(commerceChannelId)));
 	}
 
 	public void updateCompanyConfiguration(
@@ -287,13 +588,10 @@ public class AnalyticsSettingsManagerImpl implements AnalyticsSettingsManager {
 			analyticsChannelId, _groupClassNameId, companyId, removeSiteIds,
 			true);
 
-		Stream<String> siteIdsStream = siteIds.stream();
-
-		return siteIdsStream.filter(
-			siteId -> !ArrayUtil.contains(removeSiteIds, String.valueOf(siteId))
-		).toArray(
-			String[]::new
-		);
+		return ArrayUtil.filter(
+			siteIds.toArray(new String[0]),
+			siteId -> !ArrayUtil.contains(
+				removeSiteIds, String.valueOf(siteId)));
 	}
 
 	@Activate
@@ -349,12 +647,13 @@ public class AnalyticsSettingsManagerImpl implements AnalyticsSettingsManager {
 			return Collections.emptyMap();
 		}
 
-		List<String> keys = Collections.list(dictionary.keys());
+		Map<String, Object> map = new HashMap<>();
 
-		Stream<String> stream = keys.stream();
+		for (String key : Collections.list(dictionary.keys())) {
+			map.put(key, dictionary.get(key));
+		}
 
-		return stream.collect(
-			Collectors.toMap(Function.identity(), dictionary::get));
+		return map;
 	}
 
 	private <T> void _updateTypeSetting(
@@ -418,7 +717,7 @@ public class AnalyticsSettingsManagerImpl implements AnalyticsSettingsManager {
 	).put(
 		"syncedProductFieldNames", FieldProductConstants.FIELD_PRODUCT_NAMES
 	).put(
-		"syncedUserFieldNames", FieldPeopleConstants.FILED_USER_DEFAULTS
+		"syncedUserFieldNames", FieldPeopleConstants.FIELD_USER_DEFAULTS
 	).build();
 
 	private long _commerceChannelClassNameId;

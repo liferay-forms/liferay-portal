@@ -58,7 +58,7 @@ public class AnalyticsDeleteMessageAnalyticsDXPEntityBatchEngineTaskItemDelegate
 	public EntityModel getEntityModel(Map<String, List<String>> multivaluedMap)
 		throws Exception {
 
-		return new AnalyticsDXPEntityEntityModel();
+		return _entityModel;
 	}
 
 	@Override
@@ -132,6 +132,9 @@ public class AnalyticsDeleteMessageAnalyticsDXPEntityBatchEngineTaskItemDelegate
 
 		return new Date(GetterUtil.getLong(lowerTerm));
 	}
+
+	private static final EntityModel _entityModel =
+		new AnalyticsDXPEntityEntityModel();
 
 	@Reference
 	private AnalyticsDeleteMessageLocalService

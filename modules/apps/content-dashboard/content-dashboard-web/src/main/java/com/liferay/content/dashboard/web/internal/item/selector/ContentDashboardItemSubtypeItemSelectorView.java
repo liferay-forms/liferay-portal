@@ -194,16 +194,12 @@ public class ContentDashboardItemSubtypeItemSelectorView
 				continue;
 			}
 
-			Optional<ContentDashboardItemSubtypeFactory>
-				contentDashboardItemSubtypeFactoryOptional =
+			ContentDashboardItemSubtypeFactory
+				contentDashboardItemSubtypeFactory =
 					contentDashboardItemFactory.
-						getContentDashboardItemSubtypeFactoryOptional();
+						getContentDashboardItemSubtypeFactory();
 
-			if (contentDashboardItemSubtypeFactoryOptional.isPresent()) {
-				ContentDashboardItemSubtypeFactory
-					contentDashboardItemSubtypeFactory =
-						contentDashboardItemSubtypeFactoryOptional.get();
-
+			if (contentDashboardItemSubtypeFactory != null) {
 				_populateContentDashboardItemTypesJSONArray(
 					className, contentDashboardItemSubtypeFactory,
 					checkedContentDashboardItemSubtypesInfoItemReferences,
@@ -234,30 +230,29 @@ public class ContentDashboardItemSubtypeItemSelectorView
 	private String _getInfoItemFormVariationLabel(
 		InfoItemFormVariation infoItemFormVariation, Locale locale) {
 
-		Optional<Long> groupIdOptional =
-			infoItemFormVariation.getGroupIdOptional();
-
 		InfoLocalizedValue<String> labelInfoLocalizedValue =
 			infoItemFormVariation.getLabelInfoLocalizedValue();
 
-		return groupIdOptional.map(
-			groupId -> {
-				Group group = _groupLocalService.fetchGroup(groupId);
+		String label = labelInfoLocalizedValue.getValue(locale);
 
-				if (group == null) {
-					return labelInfoLocalizedValue.getValue(locale);
-				}
+		Group group = _groupLocalService.fetchGroup(
+			infoItemFormVariation.getGroupId());
 
-				return _language.format(
-					locale, "x-group-x",
-					new String[] {
-						labelInfoLocalizedValue.getValue(locale),
-						ContentDashboardGroupUtil.getGroupName(group, locale)
-					});
-			}
-		).orElseGet(
-			() -> labelInfoLocalizedValue.getValue(locale)
-		);
+		if (group == null) {
+			return label;
+		}
+
+		String value = _language.format(
+			locale, "x-group-x",
+			new String[] {
+				label, ContentDashboardGroupUtil.getGroupName(group, locale)
+			});
+
+		if (value != null) {
+			return value;
+		}
+
+		return label;
 	}
 
 	private void _populateContentDashboardItemTypesJSONArray(

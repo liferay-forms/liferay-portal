@@ -17,6 +17,8 @@ package com.liferay.list.type.service.impl;
 import com.liferay.list.type.exception.ListTypeDefinitionNameException;
 import com.liferay.list.type.exception.RequiredListTypeDefinitionException;
 import com.liferay.list.type.model.ListTypeDefinition;
+import com.liferay.list.type.model.ListTypeEntry;
+import com.liferay.list.type.service.ListTypeEntryLocalService;
 import com.liferay.list.type.service.base.ListTypeDefinitionLocalServiceBaseImpl;
 import com.liferay.list.type.service.persistence.ListTypeEntryPersistence;
 import com.liferay.object.service.ObjectFieldLocalService;
@@ -34,6 +36,7 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -70,7 +73,7 @@ public class ListTypeDefinitionLocalServiceImpl
 	@Override
 	public ListTypeDefinition addListTypeDefinition(
 			String externalReferenceCode, long userId,
-			Map<Locale, String> nameMap)
+			Map<Locale, String> nameMap, List<ListTypeEntry> listTypeEntries)
 		throws PortalException {
 
 		_validateName(nameMap, LocaleUtil.getSiteDefault());
@@ -79,8 +82,14 @@ public class ListTypeDefinitionLocalServiceImpl
 			listTypeDefinitionPersistence.create(
 				counterLocalService.increment());
 
-		return _addListTypeDefinition(
+		listTypeDefinition = _addListTypeDefinition(
 			listTypeDefinition, externalReferenceCode, userId, nameMap);
+
+		_addListTypeEntries(
+			userId, listTypeDefinition.getListTypeDefinitionId(),
+			listTypeEntries);
+
+		return listTypeDefinition;
 	}
 
 	@Indexable(type = IndexableType.DELETE)
@@ -127,7 +136,8 @@ public class ListTypeDefinitionLocalServiceImpl
 	@Override
 	public ListTypeDefinition updateListTypeDefinition(
 			String externalReferenceCode, long listTypeDefinitionId,
-			Map<Locale, String> nameMap)
+			long userId, Map<Locale, String> nameMap,
+			List<ListTypeEntry> listTypeEntries)
 		throws PortalException {
 
 		_validateName(nameMap, LocaleUtil.getSiteDefault());
@@ -139,7 +149,15 @@ public class ListTypeDefinitionLocalServiceImpl
 		listTypeDefinition.setExternalReferenceCode(externalReferenceCode);
 		listTypeDefinition.setNameMap(nameMap);
 
-		return listTypeDefinitionPersistence.update(listTypeDefinition);
+		listTypeDefinition = listTypeDefinitionPersistence.update(
+			listTypeDefinition);
+
+		_listTypeEntryLocalService.deleteListTypeEntryByListTypeDefinitionId(
+			listTypeDefinitionId);
+
+		_addListTypeEntries(userId, listTypeDefinitionId, listTypeEntries);
+
+		return listTypeDefinition;
 	}
 
 	private ListTypeDefinition _addListTypeDefinition(
@@ -168,6 +186,19 @@ public class ListTypeDefinitionLocalServiceImpl
 		return listTypeDefinition;
 	}
 
+	private void _addListTypeEntries(
+			long userId, long listTypeDefinitionId,
+			List<ListTypeEntry> listTypeEntries)
+		throws PortalException {
+
+		for (ListTypeEntry listTypeEntry : listTypeEntries) {
+			_listTypeEntryLocalService.addListTypeEntry(
+				listTypeEntry.getExternalReferenceCode(), userId,
+				listTypeDefinitionId, listTypeEntry.getKey(),
+				listTypeEntry.getNameMap());
+		}
+	}
+
 	private void _validateName(
 			Map<Locale, String> nameMap, Locale defaultLocale)
 		throws PortalException {
@@ -177,6 +208,9 @@ public class ListTypeDefinitionLocalServiceImpl
 				"Name is null for locale " + defaultLocale.getDisplayName());
 		}
 	}
+
+	@Reference
+	private ListTypeEntryLocalService _listTypeEntryLocalService;
 
 	@Reference
 	private ListTypeEntryPersistence _listTypeEntryPersistence;

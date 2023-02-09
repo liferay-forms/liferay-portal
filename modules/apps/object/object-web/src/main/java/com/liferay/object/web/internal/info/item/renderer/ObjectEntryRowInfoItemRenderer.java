@@ -15,15 +15,19 @@
 package com.liferay.object.web.internal.info.item.renderer;
 
 import com.liferay.asset.display.page.portlet.AssetDisplayPageFriendlyURLProvider;
+import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.info.item.renderer.InfoItemRenderer;
 import com.liferay.list.type.model.ListTypeEntry;
 import com.liferay.list.type.service.ListTypeEntryLocalService;
 import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectField;
+import com.liferay.object.model.ObjectRelationship;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
+import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.web.internal.constants.ObjectWebKeys;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -31,6 +35,7 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
@@ -62,18 +67,22 @@ public class ObjectEntryRowInfoItemRenderer
 
 	public ObjectEntryRowInfoItemRenderer(
 		AssetDisplayPageFriendlyURLProvider assetDisplayPageFriendlyURLProvider,
+		DLFileEntryLocalService dlFileEntryLocalService,
 		ListTypeEntryLocalService listTypeEntryLocalService,
 		ObjectDefinitionLocalService objectDefinitionLocalService,
 		ObjectEntryLocalService objectEntryLocalService,
 		ObjectFieldLocalService objectFieldLocalService,
+		ObjectRelationshipLocalService objectRelationshipLocalService,
 		ServletContext servletContext) {
 
 		_assetDisplayPageFriendlyURLProvider =
 			assetDisplayPageFriendlyURLProvider;
+		_dlFileEntryLocalService = dlFileEntryLocalService;
 		_listTypeEntryLocalService = listTypeEntryLocalService;
 		_objectDefinitionLocalService = objectDefinitionLocalService;
 		_objectEntryLocalService = objectEntryLocalService;
 		_objectFieldLocalService = objectFieldLocalService;
+		_objectRelationshipLocalService = objectRelationshipLocalService;
 		_servletContext = servletContext;
 	}
 
@@ -161,41 +170,66 @@ public class ObjectEntryRowInfoItemRenderer
 						return listTypeEntry.getName(
 							serviceContext.getLocale());
 					}
-					else if (Validator.isNull(
-								objectField.getRelationshipType())) {
+					else if (Objects.equals(
+								objectField.getBusinessType(),
+								ObjectFieldConstants.
+									BUSINESS_TYPE_ATTACHMENT)) {
 
-						if (Objects.equals(
+						long dlFileEntryId = GetterUtil.getLong(
+							values.get(objectField.getName()));
+
+						if (dlFileEntryId == GetterUtil.DEFAULT_LONG) {
+							return StringPool.BLANK;
+						}
+
+						DLFileEntry dlFileEntry =
+							_dlFileEntryLocalService.fetchDLFileEntry(
+								dlFileEntryId);
+
+						if (dlFileEntry == null) {
+							return StringPool.BLANK;
+						}
+
+						return dlFileEntry.getFileName();
+					}
+					else if (Objects.equals(
 								objectField.getDBType(),
 								ObjectFieldConstants.DB_TYPE_DATE)) {
 
-							Format dateFormat =
-								FastDateFormatFactoryUtil.getDate(
-									serviceContext.getLocale());
+						Format dateFormat = FastDateFormatFactoryUtil.getDate(
+							serviceContext.getLocale());
 
-							return dateFormat.format(entry.getValue());
+						return dateFormat.format(entry.getValue());
+					}
+					else if (Validator.isNotNull(
+								objectField.getRelationshipType())) {
+
+						Object value = values.get(objectField.getName());
+
+						if (GetterUtil.getLong(value) <= 0) {
+							return StringPool.BLANK;
 						}
 
-						return Optional.ofNullable(
-							entry.getValue()
-						).orElse(
-							StringPool.BLANK
-						);
+						try {
+							ObjectRelationship objectRelationship =
+								_objectRelationshipLocalService.
+									fetchObjectRelationshipByObjectFieldId2(
+										objectField.getObjectFieldId());
+
+							return _objectEntryLocalService.getTitleValue(
+								objectRelationship.getObjectDefinitionId1(),
+								(Long)values.get(objectField.getName()));
+						}
+						catch (PortalException portalException) {
+							throw new RuntimeException(portalException);
+						}
 					}
 
-					ObjectEntry relatedObjectEntry =
-						_objectEntryLocalService.fetchObjectEntry(
-							(Long)values.get(objectField.getName()));
-
-					if (relatedObjectEntry == null) {
-						return StringPool.BLANK;
-					}
-
-					try {
-						return relatedObjectEntry.getTitleValue();
-					}
-					catch (PortalException portalException) {
-						throw new RuntimeException(portalException);
-					}
+					return Optional.ofNullable(
+						entry.getValue()
+					).orElse(
+						StringPool.BLANK
+					);
 				},
 				(oldValue, newValue) -> oldValue, LinkedHashMap::new)
 		);
@@ -203,10 +237,13 @@ public class ObjectEntryRowInfoItemRenderer
 
 	private final AssetDisplayPageFriendlyURLProvider
 		_assetDisplayPageFriendlyURLProvider;
+	private final DLFileEntryLocalService _dlFileEntryLocalService;
 	private final ListTypeEntryLocalService _listTypeEntryLocalService;
 	private final ObjectDefinitionLocalService _objectDefinitionLocalService;
 	private final ObjectEntryLocalService _objectEntryLocalService;
 	private final ObjectFieldLocalService _objectFieldLocalService;
+	private final ObjectRelationshipLocalService
+		_objectRelationshipLocalService;
 	private final ServletContext _servletContext;
 
 }

@@ -38,19 +38,22 @@ import com.liferay.portal.util.FileImpl;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 
 import java.net.URL;
 
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
-import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -142,7 +145,11 @@ public class BatchEngineAutoDeployListenerTest {
 					BatchEngineImportTask batchEngineImportTask =
 						new BatchEngineImportTaskImpl();
 
+					batchEngineImportTask.setExternalReferenceCode(
+						(String)invocationOnMock.getArguments()[0]);
 					batchEngineImportTask.setCompanyId(
+						(long)invocationOnMock.getArguments()[1]);
+					batchEngineImportTask.setUserId(
 						(long)invocationOnMock.getArguments()[2]);
 					batchEngineImportTask.setBatchSize(
 						(long)invocationOnMock.getArguments()[3]);
@@ -154,8 +161,6 @@ public class BatchEngineAutoDeployListenerTest {
 						(String)invocationOnMock.getArguments()[7]);
 					batchEngineImportTask.setExecuteStatus(
 						(String)invocationOnMock.getArguments()[8]);
-					batchEngineImportTask.setExternalReferenceCode(
-						(String)invocationOnMock.getArguments()[0]);
 					batchEngineImportTask.setFieldNameMapping(
 						(Map<String, Serializable>)
 							invocationOnMock.getArguments()[9]);
@@ -165,9 +170,9 @@ public class BatchEngineAutoDeployListenerTest {
 						(String)invocationOnMock.getArguments()[11]);
 					batchEngineImportTask.setParameters(
 						(Map<String, Serializable>)
-							invocationOnMock.getArguments()[9]);
+							invocationOnMock.getArguments()[12]);
 					batchEngineImportTask.setTaskItemDelegateName(
-						(String)invocationOnMock.getArguments()[12]);
+						(String)invocationOnMock.getArguments()[13]);
 
 					return batchEngineImportTask;
 				}
@@ -483,34 +488,44 @@ public class BatchEngineAutoDeployListenerTest {
 		try (ZipOutputStream zipOutputStream = new ZipOutputStream(
 				new FileOutputStream(zipFile))) {
 
-			Stream<Path> stream = Files.walk(zipFileDirectoryPath);
+			Files.walkFileTree(
+				zipFileDirectoryPath,
+				new SimpleFileVisitor<Path>() {
 
-			stream.forEach(
-				zipEntryPath -> {
-					File zipEntryFile = zipEntryPath.toFile();
+					@Override
+					public FileVisitResult visitFile(
+							Path filePath,
+							BasicFileAttributes basicFileAttributes)
+						throws IOException {
 
-					if (zipEntryFile.isDirectory()) {
-						return;
+						File zipEntryFile = filePath.toFile();
+
+						if (zipEntryFile.isDirectory()) {
+							return FileVisitResult.CONTINUE;
+						}
+
+						Path relativePath = zipFileDirectoryPath.relativize(
+							filePath);
+
+						try (FileInputStream fileInputStream =
+								new FileInputStream(zipEntryFile)) {
+
+							zipOutputStream.putNextEntry(
+								new ZipEntry(relativePath.toString()));
+
+							zipOutputStream.write(
+								StreamUtil.toByteArray(fileInputStream));
+
+							zipOutputStream.closeEntry();
+						}
+						catch (Exception exception) {
+							throw new IllegalStateException(
+								"Unable to add new zip entry", exception);
+						}
+
+						return FileVisitResult.CONTINUE;
 					}
 
-					Path relativePath = zipFileDirectoryPath.relativize(
-						zipEntryPath);
-
-					try (FileInputStream fileInputStream = new FileInputStream(
-							zipEntryPath.toFile())) {
-
-						zipOutputStream.putNextEntry(
-							new ZipEntry(relativePath.toString()));
-
-						zipOutputStream.write(
-							StreamUtil.toByteArray(fileInputStream));
-
-						zipOutputStream.closeEntry();
-					}
-					catch (Exception exception) {
-						throw new IllegalStateException(
-							"Unable to add new zip entry", exception);
-					}
 				});
 		}
 		catch (Exception exception) {

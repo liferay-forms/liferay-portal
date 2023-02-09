@@ -536,7 +536,7 @@ public class DLFileEntryLocalServiceTest {
 				DLFileEntryLocalServiceUtil.copyFileEntry(
 					TestPropsValues.getUserId(), _group.getGroupId(),
 					_group.getGroupId(), fileEntry.getFileEntryId(),
-					destinationFolder.getFolderId(), serviceContext);
+					destinationFolder.getFolderId(), null, serviceContext);
 
 			ExpandoBridge expandoBridge = copyDLFileEntry.getExpandoBridge();
 
@@ -725,6 +725,47 @@ public class DLFileEntryLocalServiceTest {
 			StringUtil.randomString(), StringPool.BLANK, StringPool.BLANK,
 			DLFileEntryTypeConstants.FILE_ENTRY_TYPE_ID_BASIC_DOCUMENT,
 			ddmFormValuesMap, null, inputStream, 0, null, null, serviceContext);
+	}
+
+	@Test
+	public void testExtensionValidationWithSystemScopedFileEntryType()
+		throws Exception {
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+
+		DDMStructure ddmStructure = DDMStructureTestUtil.addStructure(
+			_group.getGroupId(), DLFileEntryMetadata.class.getName());
+
+		DLFileEntryType dlFileEntryType =
+			DLFileEntryTypeLocalServiceUtil.addFileEntryType(
+				TestPropsValues.getUserId(), _group.getGroupId(),
+				RandomTestUtil.randomString(), StringPool.BLANK,
+				new long[] {ddmStructure.getStructureId()}, serviceContext);
+
+		dlFileEntryType.setScope(
+			DLFileEntryTypeConstants.FILE_ENTRY_TYPE_SCOPE_SYSTEM);
+
+		DLFileEntryTypeLocalServiceUtil.updateDLFileEntryType(dlFileEntryType);
+
+		try (ConfigurationTemporarySwapper configurationTemporarySwapper =
+				new ConfigurationTemporarySwapper(
+					DLConfiguration.class.getName(),
+					HashMapDictionaryBuilder.<String, Object>put(
+						"fileExtensions", ".jpg"
+					).build())) {
+
+			DLFileEntryLocalServiceUtil.addFileEntry(
+				null, TestPropsValues.getUserId(), _group.getGroupId(),
+				_group.getGroupId(), DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
+				RandomTestUtil.randomString(),
+				ContentTypes.APPLICATION_OCTET_STREAM,
+				RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+				StringUtil.randomString(), RandomTestUtil.randomString(),
+				dlFileEntryType.getFileEntryTypeId(), null, null,
+				new UnsyncByteArrayInputStream(new byte[0]), 0, null, null,
+				serviceContext);
+		}
 	}
 
 	@Test

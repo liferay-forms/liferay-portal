@@ -14,7 +14,7 @@ To use the plugin, include it in your build script:
 ```gradle
 buildscript {
 	dependencies {
-		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.wsdd.builder", version: "1.0.17"
+		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.wsdd.builder", version: "1.0.20"
 	}
 
 	repositories {
@@ -111,6 +111,6 @@ manually adding a dependency to the `wsddBuilder` configuration:
 
 ```gradle
 dependencies {
-	wsddBuilder group: "com.liferay", name: "com.liferay.portal.tools.wsdd.builder", version: "1.0.11"
+	wsddBuilder group: "com.liferay", name: "com.liferay.portal.tools.wsdd.builder", version: "1.0.14"
 }
 ```

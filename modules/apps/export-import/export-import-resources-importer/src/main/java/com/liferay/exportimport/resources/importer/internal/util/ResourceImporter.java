@@ -31,6 +31,7 @@ import com.liferay.exportimport.resources.importer.portlet.preferences.PortletPr
 import com.liferay.journal.model.JournalFolder;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.journal.service.JournalFolderLocalService;
+import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactory;
@@ -86,8 +87,8 @@ public class ResourceImporter extends FileSystemImporter {
 		MimeTypes mimeTypes, Portal portal,
 		PortletPreferencesFactory portletPreferencesFactory,
 		PortletPreferencesLocalService portletPreferencesLocalService,
-		PortletPreferencesTranslator portletPreferencesTranslator,
-		Map<String, PortletPreferencesTranslator> portletPreferencesTranslators,
+		ServiceTrackerMap<String, PortletPreferencesTranslator>
+			serviceTrackerMap,
 		RepositoryLocalService repositoryLocalService, SAXReader saxReader,
 		ThemeLocalService themeLocalService, DLURLHelper dlURLHelper) {
 
@@ -101,8 +102,8 @@ public class ResourceImporter extends FileSystemImporter {
 			layoutPrototypeLocalService, layoutSetLocalService,
 			layoutSetPrototypeLocalService, mimeTypes, portal,
 			portletPreferencesFactory, portletPreferencesLocalService,
-			portletPreferencesTranslator, portletPreferencesTranslators,
-			repositoryLocalService, saxReader, themeLocalService, dlURLHelper);
+			serviceTrackerMap, repositoryLocalService, saxReader,
+			themeLocalService, dlURLHelper);
 	}
 
 	@Override

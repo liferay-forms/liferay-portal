@@ -13,7 +13,7 @@
  */
 
 import ClayForm from '@clayui/form';
-import {FocusEvent, useEffect} from 'react';
+import {FocusEvent, useEffect, useMemo} from 'react';
 import {useForm} from 'react-hook-form';
 import {useOutletContext, useParams} from 'react-router-dom';
 import {KeyedMutator} from 'swr';
@@ -33,7 +33,7 @@ import {
 	createRequirement,
 	updateRequirement,
 } from '../../../services/rest';
-import {searchUtil} from '../../../util/search';
+import {SearchBuilder} from '../../../util/search';
 
 type RequirementsFormType = typeof yupSchema.requirement.__outputType;
 
@@ -57,7 +57,7 @@ const RequirementsForm = () => {
 	const {
 		form: {onClose, onError, onSave, onSubmit},
 	} = useFormActions();
-	useHeader({timeout: 100, useTabs: []});
+	useHeader({tabs: [], timeout: 100});
 	const {projectId, requirementId} = useParams();
 	const {
 		mutateTestrayRequirement,
@@ -76,14 +76,16 @@ const RequirementsForm = () => {
 	const {data: testrayComponentsData} = useFetch<
 		APIResponse<TestrayComponent>
 	>(
-		`/components?fields=id,name&filter=${searchUtil.eq(
+		`/components?fields=id,name&filter=${SearchBuilder.eq(
 			'projectId',
 			projectId as string
 		)}&pageSize=1000`
 	);
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const testrayComponents = testrayComponentsData?.items || [];
+	const testrayComponents = useMemo(
+		() => testrayComponentsData?.items ?? [],
+		[testrayComponentsData?.items]
+	);
 
 	const _onSubmit = (form: RequirementsFormType) => {
 		if (!form.id) {

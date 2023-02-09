@@ -82,6 +82,16 @@ public class EditClientExtensionEntryDisplayContext<T extends CET> {
 			_clientExtensionEntry, _portletRequest, "externalReferenceCode");
 	}
 
+	public String getHelpLabel() {
+		ThemeDisplay themeDisplay = _getThemeDisplay();
+
+		return CETLabelUtil.getHelpLabel(themeDisplay.getLocale(), getType());
+	}
+
+	public String getLearnResourceKey() {
+		return CETLabelUtil.getLearnResourceKey(getType());
+	}
+
 	public String getName() {
 		return BeanParamUtil.getString(
 			_clientExtensionEntry, _portletRequest, "name");
@@ -95,7 +105,7 @@ public class EditClientExtensionEntryDisplayContext<T extends CET> {
 		boolean found = false;
 
 		if (Validator.isBlank(selectedPortletCategoryName)) {
-			selectedPortletCategoryName = "category.remote-apps";
+			selectedPortletCategoryName = "category.client-extensions";
 		}
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)_portletRequest.getAttribute(
@@ -116,7 +126,7 @@ public class EditClientExtensionEntryDisplayContext<T extends CET> {
 						portletCategory.getName())));
 
 			if (Objects.equals(
-					portletCategory.getName(), "category.remote-apps")) {
+					portletCategory.getName(), "category.client-extensions")) {
 
 				found = true;
 			}
@@ -126,10 +136,11 @@ public class EditClientExtensionEntryDisplayContext<T extends CET> {
 			selectOptions.add(
 				new SelectOption(
 					LanguageUtil.get(
-						themeDisplay.getLocale(), "category.remote-apps"),
-					"category.remote-apps",
+						themeDisplay.getLocale(), "category.client-extensions"),
+					"category.client-extensions",
 					Objects.equals(
-						selectedPortletCategoryName, "category.remote-apps")));
+						selectedPortletCategoryName,
+						"category.client-extensions")));
 		}
 
 		return ListUtil.sort(
@@ -177,10 +188,8 @@ public class EditClientExtensionEntryDisplayContext<T extends CET> {
 		ThemeDisplay themeDisplay = _getThemeDisplay();
 
 		if (_clientExtensionEntry == null) {
-			return LanguageUtil.get(
-				_getHttpServletRequest(),
-				CETLabelUtil.getNewLabel(
-					themeDisplay.getLocale(), _cet.getType()));
+			return CETLabelUtil.getNewLabel(
+				themeDisplay.getLocale(), _cet.getType());
 		}
 
 		return _cet.getName(themeDisplay.getLocale());
@@ -194,9 +203,7 @@ public class EditClientExtensionEntryDisplayContext<T extends CET> {
 	public String getTypeLabel() {
 		ThemeDisplay themeDisplay = _getThemeDisplay();
 
-		return LanguageUtil.get(
-			_getHttpServletRequest(),
-			CETLabelUtil.getTypeLabel(themeDisplay.getLocale(), getType()));
+		return CETLabelUtil.getTypeLabel(themeDisplay.getLocale(), getType());
 	}
 
 	public boolean isNew() {

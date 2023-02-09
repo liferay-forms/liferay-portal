@@ -26,7 +26,7 @@ ClientExtensionAdminDisplayContext clientExtensionAdminDisplayContext = (ClientE
 	dataProviderKey="<%= ClientExtensionAdminFDSNames.CLIENT_EXTENSION_TYPES %>"
 	id="<%= ClientExtensionAdminFDSNames.CLIENT_EXTENSION_TYPES %>"
 	itemsPerPage="<%= 10 %>"
-	propsTransformer="admin/js/FDSPropsTransformer"
 	selectedItemsKey="externalReferenceCode"
 	style="fluid"
+	uniformActionsDisplay="<%= true %>"
 />

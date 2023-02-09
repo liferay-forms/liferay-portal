@@ -26,6 +26,10 @@ String countryTwoLettersISOCode = BeanParamUtil.getString(commerceInventoryWareh
 String commerceRegionCode = BeanParamUtil.getString(commerceInventoryWarehouse, request, "commerceRegionCode");
 %>
 
+<liferay-ui:error exception="<%= CommerceGeocoderException.class %>">
+	<liferay-ui:message arguments="<%= HtmlUtil.escape(errorException.toString()) %>" key="an-unexpected-error-occurred-while-invoking-the-geolocation-service-x" translateArguments="<%= false %>" />
+</liferay-ui:error>
+
 <liferay-ui:error exception="<%= CommerceInventoryWarehouseActiveException.class %>" message="please-add-geolocation-information-to-the-warehouse-to-activate" />
 <liferay-ui:error exception="<%= CommerceInventoryWarehouseNameException.class %>" message="please-enter-a-valid-name" />
 <liferay-ui:error exception="<%= MVCCException.class %>" message="this-item-is-no-longer-valid-please-try-again" />
@@ -58,15 +62,30 @@ String commerceRegionCode = BeanParamUtil.getString(commerceInventoryWarehouse, 
 			</commerce-ui:panel>
 		</div>
 
-		<div class="col-lg-6">
+		<div class="col-lg-6 d-flex">
+			<portlet:actionURL name="/commerce_inventory_warehouse/edit_commerce_inventory_warehouse" var="geolocateURL">
+				<portlet:param name="<%= Constants.CMD %>" value="geolocate" />
+				<portlet:param name="redirect" value="<%= currentURL %>" />
+				<portlet:param name="commerceInventoryWarehouseId" value="<%= String.valueOf(commerceInventoryWarehouse.getCommerceInventoryWarehouseId()) %>" />
+			</portlet:actionURL>
+
 			<commerce-ui:panel
 				bodyClasses="flex-fill"
-				elementClasses="card-full-height h-100"
+				elementClasses="card-full-height w-100"
 				title='<%= LanguageUtil.get(request, "geolocation") %>'
 			>
 				<aui:input name="latitude" />
 
 				<aui:input name="longitude" />
+
+				<div>
+					<clay:link
+						displayType="secondary"
+						href="<%= geolocateURL.toString() %>"
+						label="geolocate"
+						type="button"
+					/>
+				</div>
 			</commerce-ui:panel>
 		</div>
 

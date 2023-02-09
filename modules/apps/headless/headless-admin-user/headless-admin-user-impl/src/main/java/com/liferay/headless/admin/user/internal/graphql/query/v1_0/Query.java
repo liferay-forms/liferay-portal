@@ -25,6 +25,7 @@ import com.liferay.headless.admin.user.dto.v1_0.Segment;
 import com.liferay.headless.admin.user.dto.v1_0.SegmentUser;
 import com.liferay.headless.admin.user.dto.v1_0.Site;
 import com.liferay.headless.admin.user.dto.v1_0.Subscription;
+import com.liferay.headless.admin.user.dto.v1_0.Ticket;
 import com.liferay.headless.admin.user.dto.v1_0.UserAccount;
 import com.liferay.headless.admin.user.dto.v1_0.UserGroup;
 import com.liferay.headless.admin.user.dto.v1_0.WebUrl;
@@ -39,6 +40,7 @@ import com.liferay.headless.admin.user.resource.v1_0.SegmentResource;
 import com.liferay.headless.admin.user.resource.v1_0.SegmentUserResource;
 import com.liferay.headless.admin.user.resource.v1_0.SiteResource;
 import com.liferay.headless.admin.user.resource.v1_0.SubscriptionResource;
+import com.liferay.headless.admin.user.resource.v1_0.TicketResource;
 import com.liferay.headless.admin.user.resource.v1_0.UserAccountResource;
 import com.liferay.headless.admin.user.resource.v1_0.UserGroupResource;
 import com.liferay.headless.admin.user.resource.v1_0.WebUrlResource;
@@ -164,6 +166,14 @@ public class Query {
 			subscriptionResourceComponentServiceObjects;
 	}
 
+	public static void setTicketResourceComponentServiceObjects(
+		ComponentServiceObjects<TicketResource>
+			ticketResourceComponentServiceObjects) {
+
+		_ticketResourceComponentServiceObjects =
+			ticketResourceComponentServiceObjects;
+	}
+
 	public static void setUserAccountResourceComponentServiceObjects(
 		ComponentServiceObjects<UserAccountResource>
 			userAccountResourceComponentServiceObjects) {
@@ -279,7 +289,7 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {accountByExternalReferenceCodeUserAccountByExternalReferenceCodeAccountRoles(accountExternalReferenceCode: ___, userAccountExternalReferenceCode: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {accountByExternalReferenceCodeUserAccountByExternalReferenceCodeAccountRoles(accountExternalReferenceCode: ___, externalReferenceCode: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField(
 		description = "Gets a user's account roles by their external reference code from an account by external reference code"
@@ -288,8 +298,8 @@ public class Query {
 			accountByExternalReferenceCodeUserAccountByExternalReferenceCodeAccountRoles(
 				@GraphQLName("accountExternalReferenceCode") String
 					accountExternalReferenceCode,
-				@GraphQLName("userAccountExternalReferenceCode") String
-					userAccountExternalReferenceCode)
+				@GraphQLName("externalReferenceCode") String
+					externalReferenceCode)
 		throws Exception {
 
 		return _applyComponentServiceObjects(
@@ -298,8 +308,7 @@ public class Query {
 			accountRoleResource -> new AccountRolePage(
 				accountRoleResource.
 					getAccountByExternalReferenceCodeUserAccountByExternalReferenceCodeAccountRolesPage(
-						accountExternalReferenceCode,
-						userAccountExternalReferenceCode)));
+						accountExternalReferenceCode, externalReferenceCode)));
 	}
 
 	/**
@@ -922,6 +931,43 @@ public class Query {
 			subscriptionResource ->
 				subscriptionResource.getMyUserAccountSubscription(
 					subscriptionId));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {userAccountEmailVerificationTicket(userAccountId: ___){expirationDate, extraInfo, id, key}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField(
+		description = "Retrieves the user's email verification ticket."
+	)
+	public Ticket userAccountEmailVerificationTicket(
+			@GraphQLName("userAccountId") Long userAccountId)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_ticketResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			ticketResource ->
+				ticketResource.getUserAccountEmailVerificationTicket(
+					userAccountId));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {userAccountPasswordResetTicket(userAccountId: ___){expirationDate, extraInfo, id, key}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField(description = "Retrieves the user's password reset ticket.")
+	public Ticket userAccountPasswordResetTicket(
+			@GraphQLName("userAccountId") Long userAccountId)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_ticketResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			ticketResource -> ticketResource.getUserAccountPasswordResetTicket(
+				userAccountId));
 	}
 
 	/**
@@ -1891,6 +1937,31 @@ public class Query {
 
 	}
 
+	@GraphQLTypeExtension(UserAccount.class)
+	public class GetUserAccountEmailVerificationTicketTypeExtension {
+
+		public GetUserAccountEmailVerificationTicketTypeExtension(
+			UserAccount userAccount) {
+
+			_userAccount = userAccount;
+		}
+
+		@GraphQLField(
+			description = "Retrieves the user's email verification ticket."
+		)
+		public Ticket emailVerificationTicket() throws Exception {
+			return _applyComponentServiceObjects(
+				_ticketResourceComponentServiceObjects,
+				Query.this::_populateResourceContext,
+				ticketResource ->
+					ticketResource.getUserAccountEmailVerificationTicket(
+						_userAccount.getId()));
+		}
+
+		private UserAccount _userAccount;
+
+	}
+
 	@GraphQLTypeExtension(Subscription.class)
 	public class GetSiteTypeExtension {
 
@@ -1926,6 +1997,31 @@ public class Query {
 				webUrlResource -> new WebUrlPage(
 					webUrlResource.getUserAccountWebUrlsPage(
 						_userAccount.getId())));
+		}
+
+		private UserAccount _userAccount;
+
+	}
+
+	@GraphQLTypeExtension(UserAccount.class)
+	public class GetUserAccountPasswordResetTicketTypeExtension {
+
+		public GetUserAccountPasswordResetTicketTypeExtension(
+			UserAccount userAccount) {
+
+			_userAccount = userAccount;
+		}
+
+		@GraphQLField(
+			description = "Retrieves the user's password reset ticket."
+		)
+		public Ticket passwordResetTicket() throws Exception {
+			return _applyComponentServiceObjects(
+				_ticketResourceComponentServiceObjects,
+				Query.this::_populateResourceContext,
+				ticketResource ->
+					ticketResource.getUserAccountPasswordResetTicket(
+						_userAccount.getId()));
 		}
 
 		private UserAccount _userAccount;
@@ -2386,6 +2482,39 @@ public class Query {
 
 	}
 
+	@GraphQLName("TicketPage")
+	public class TicketPage {
+
+		public TicketPage(Page ticketPage) {
+			actions = ticketPage.getActions();
+
+			items = ticketPage.getItems();
+			lastPage = ticketPage.getLastPage();
+			page = ticketPage.getPage();
+			pageSize = ticketPage.getPageSize();
+			totalCount = ticketPage.getTotalCount();
+		}
+
+		@GraphQLField
+		protected Map<String, Map> actions;
+
+		@GraphQLField
+		protected java.util.Collection<Ticket> items;
+
+		@GraphQLField
+		protected long lastPage;
+
+		@GraphQLField
+		protected long page;
+
+		@GraphQLField
+		protected long pageSize;
+
+		@GraphQLField
+		protected long totalCount;
+
+	}
+
 	@GraphQLName("UserAccountPage")
 	public class UserAccountPage {
 
@@ -2704,6 +2833,19 @@ public class Query {
 		subscriptionResource.setRoleLocalService(_roleLocalService);
 	}
 
+	private void _populateResourceContext(TicketResource ticketResource)
+		throws Exception {
+
+		ticketResource.setContextAcceptLanguage(_acceptLanguage);
+		ticketResource.setContextCompany(_company);
+		ticketResource.setContextHttpServletRequest(_httpServletRequest);
+		ticketResource.setContextHttpServletResponse(_httpServletResponse);
+		ticketResource.setContextUriInfo(_uriInfo);
+		ticketResource.setContextUser(_user);
+		ticketResource.setGroupLocalService(_groupLocalService);
+		ticketResource.setRoleLocalService(_roleLocalService);
+	}
+
 	private void _populateResourceContext(
 			UserAccountResource userAccountResource)
 		throws Exception {
@@ -2766,6 +2908,8 @@ public class Query {
 		_siteResourceComponentServiceObjects;
 	private static ComponentServiceObjects<SubscriptionResource>
 		_subscriptionResourceComponentServiceObjects;
+	private static ComponentServiceObjects<TicketResource>
+		_ticketResourceComponentServiceObjects;
 	private static ComponentServiceObjects<UserAccountResource>
 		_userAccountResourceComponentServiceObjects;
 	private static ComponentServiceObjects<UserGroupResource>

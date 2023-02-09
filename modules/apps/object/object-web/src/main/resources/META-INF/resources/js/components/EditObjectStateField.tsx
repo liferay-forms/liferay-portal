@@ -33,7 +33,11 @@ export default function EditObjectStateField({objectField, readOnly}: IProps) {
 				setPickListItems
 			);
 		}
-	}, [objectField.listTypeDefinitionId, setPickListItems]);
+	}, [
+		objectField.listTypeDefinitionId,
+		objectField.listTypeDefinitionExternalReferenceCode,
+		setPickListItems,
+	]);
 
 	const isStateOptionChecked = ({
 		currentKey,

@@ -108,8 +108,6 @@ import org.opensaml.xmlsec.context.SecurityParametersContext;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 /**
  * @author Mika Koivisto
@@ -254,18 +252,19 @@ public class SingleLogoutProfileImpl
 		if (requestPath.endsWith("/slo") &&
 			StringUtil.equalsIgnoreCase(method, HttpMethods.GET)) {
 
-			samlBinding = getSamlBinding(
+			samlBinding = samlBindingProvider.getSamlBinding(
 				SAMLConstants.SAML2_REDIRECT_BINDING_URI);
 		}
 		else if (requestPath.endsWith("/slo") &&
 				 StringUtil.equalsIgnoreCase(method, HttpMethods.POST)) {
 
-			samlBinding = getSamlBinding(SAMLConstants.SAML2_POST_BINDING_URI);
+			samlBinding = samlBindingProvider.getSamlBinding(
+				SAMLConstants.SAML2_POST_BINDING_URI);
 		}
 		else if (requestPath.endsWith("/slo_soap") &&
 				 StringUtil.equalsIgnoreCase(method, HttpMethods.POST)) {
 
-			samlBinding = getSamlBinding(
+			samlBinding = samlBindingProvider.getSamlBinding(
 				SAMLConstants.SAML2_SOAP11_BINDING_URI);
 		}
 		else {
@@ -315,14 +314,6 @@ public class SingleLogoutProfileImpl
 		catch (Exception exception) {
 			ExceptionHandlerUtil.handleException(exception);
 		}
-	}
-
-	@Reference(
-		cardinality = ReferenceCardinality.AT_LEAST_ONE,
-		policyOption = ReferencePolicyOption.GREEDY
-	)
-	public void setSamlBinding(SamlBinding samlBinding) {
-		addSamlBinding(samlBinding);
 	}
 
 	@Override
@@ -1169,7 +1160,7 @@ public class SingleLogoutProfileImpl
 
 		OpenSamlUtil.signObject(logoutRequest, credential, roleDescriptor);
 
-		SamlBinding samlBinding = getSamlBinding(
+		SamlBinding samlBinding = samlBindingProvider.getSamlBinding(
 			singleLogoutService.getBinding());
 
 		Supplier<HttpServletResponseMessageEncoder>
@@ -1354,7 +1345,7 @@ public class SingleLogoutProfileImpl
 
 		OpenSamlUtil.signObject(logoutRequest, credential, roleDescriptor);
 
-		SamlBinding samlBinding = getSamlBinding(
+		SamlBinding samlBinding = samlBindingProvider.getSamlBinding(
 			SAMLConstants.SAML2_SOAP11_BINDING_URI);
 
 		PipelineFactoryHttpSOAPClient<Object, Object>

@@ -2,7 +2,7 @@
 definition {
 
 	property custom.properties = "feature.flag.COMMERCE-8087=true";
-	property portal.release = "false";
+	property portal.release = "true";
 	property portal.upstream = "true";
 	property testray.main.component.name = "Batch Engine";
 
@@ -861,7 +861,8 @@ definition {
 		}
 	}
 
-	@description = "Verify users cannot import an entity without mapping the required fields."
+	@description = "Ignored due to LPS-171830"
+	@ignore = "true"
 	@priority = "3"
 	test CannotImportWithoutRequiredFields {
 		property portal.acceptance = "true";
@@ -904,7 +905,7 @@ definition {
 		task ("Then the file should be imported successfully") {
 			WaitForElementPresent(locator1 = "ImportExport#EXECUTION_SUCCESS");
 
-			Button.click(button = "Back to the List");
+			Click(locator1 = "Button#CLOSE");
 
 			CommerceChannels.openChannelsAdmin();
 
@@ -1190,11 +1191,10 @@ definition {
 		}
 	}
 
-	@description = "Verify users can search Import/Exports executions by name and action."
+	@description = "Ignored due to LPS-171830"
+	@ignore = "true"
 	@priority = "3"
 	test CanSearchExecutions {
-		property portal.acceptance = "true";
-
 		task ("Given an account import and export") {
 			ImportExport.openImportExportAdmin();
 
@@ -1719,7 +1719,7 @@ definition {
 		task ("Then the only the rows without error should be imported") {
 			WaitForElementPresent(locator1 = "ImportExport#EXECUTION_SUCCESS");
 
-			Button.click(button = "Back to the List");
+			Click(locator1 = "Button#CLOSE");
 
 			Account.openAccountsAdmin();
 

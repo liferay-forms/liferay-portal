@@ -22,6 +22,7 @@ import com.liferay.analytics.reports.info.item.provider.AnalyticsReportsInfoItem
 import com.liferay.analytics.reports.web.internal.constants.AnalyticsReportsPortletKeys;
 import com.liferay.analytics.reports.web.internal.info.item.provider.AnalyticsReportsInfoItemObjectProviderRegistry;
 import com.liferay.analytics.reports.web.internal.util.AnalyticsReportsUtil;
+import com.liferay.analytics.settings.rest.manager.AnalyticsSettingsManager;
 import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver;
 import com.liferay.info.item.ClassPKInfoItemIdentifier;
 import com.liferay.info.item.InfoItemReference;
@@ -29,6 +30,8 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.portlet.PortletURLFactory;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
@@ -56,7 +59,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javax.portlet.PortletRequest;
@@ -228,8 +230,19 @@ public class AnalyticsReportsProductNavigationControlMenuEntry
 			(ThemeDisplay)httpServletRequest.getAttribute(
 				WebKeys.THEME_DISPLAY);
 
-		if (!AnalyticsReportsUtil.isShowAnalyticsReportsPanel(
-				themeDisplay.getCompanyId(), httpServletRequest)) {
+		try {
+			if (!AnalyticsReportsUtil.isShowAnalyticsReportsPanel(
+					_analyticsSettingsManager, themeDisplay.getCompanyId(),
+					httpServletRequest)) {
+
+				return false;
+			}
+		}
+		catch (PortalException portalException) {
+			throw portalException;
+		}
+		catch (Exception exception) {
+			_log.error(exception);
 
 			return false;
 		}
@@ -311,17 +324,20 @@ public class AnalyticsReportsProductNavigationControlMenuEntry
 	private InfoItemReference _getInfoItemReference(
 		HttpServletRequest httpServletRequest) {
 
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)httpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
-
-		return Optional.ofNullable(
+		InfoItemReference infoItemReference =
 			(InfoItemReference)httpServletRequest.getAttribute(
-				AnalyticsReportsWebKeys.ANALYTICS_INFO_ITEM_REFERENCE)
-		).orElseGet(
-			() -> new InfoItemReference(
-				Layout.class.getName(), themeDisplay.getPlid())
-		);
+				AnalyticsReportsWebKeys.ANALYTICS_INFO_ITEM_REFERENCE);
+
+		if (infoItemReference == null) {
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)httpServletRequest.getAttribute(
+					WebKeys.THEME_DISPLAY);
+
+			return new InfoItemReference(
+				Layout.class.getName(), themeDisplay.getPlid());
+		}
+
+		return infoItemReference;
 	}
 
 	private void _processBodyBottomTagBody(PageContext pageContext)
@@ -412,12 +428,18 @@ public class AnalyticsReportsProductNavigationControlMenuEntry
 	private static final String _SESSION_CLICKS_KEY =
 		"com.liferay.analytics.reports.web_panelState";
 
+	private static final Log _log = LogFactoryUtil.getLog(
+		AnalyticsReportsProductNavigationControlMenuEntry.class);
+
 	@Reference
 	private AnalyticsReportsInfoItemObjectProviderRegistry
 		_analyticsReportsInfoItemObjectProviderRegistry;
 
 	@Reference
 	private AnalyticsReportsInfoItemRegistry _analyticsReportsInfoItemRegistry;
+
+	@Reference
+	private AnalyticsSettingsManager _analyticsSettingsManager;
 
 	@Reference
 	private Html _html;

@@ -3047,26 +3047,6 @@ log.sanitizer.enabled=false</echo>
 		</sequential>
 	</macrodef>
 
-	<target name="analytics-cloud-cucumber-tomcat90-mysql57-jdk8">
-		<set-tomcat-version-number liferay.portal.bundle="${test.portal.bundle.version}" />
-
-		<run-functional-test
-			app.server.type="tomcat"
-			database.type="mysql"
-			database.version="5.7"
-			functional.test.type="analytics-cloud"
-			test.build.fix.pack.zip.url="${test.build.fix.pack.zip.url}"
-			test.fix.pack.base.url="${test.fix.pack.base.url}"
-			test.license.xml.url="${test.license.xml.url}"
-			test.plugin.zip.url="${test.plugin.zip.url}"
-			test.plugins.war.zip.url="${test.plugins.war.zip.url}"
-			test.portal.bundle.version="${test.portal.bundle.version}"
-			test.portal.bundle.zip.url="${test.portal.bundle.zip.url}"
-			test.portal.lpkg.name="${test.portal.lpkg.name}"
-			test.sql.zip.url="${test.sql.zip.url}"
-		/>
-	</target>
-
 	<target name="archived-module-smoke-jdk8">
 		<run-archived-module-smoke />
 	</target>
@@ -4889,6 +4869,10 @@ log.sanitizer.enabled=false</echo>
 		<run-functional-test app.server.type="tomcat" browser.type="chrome" database.type="mysql" database.version="5.7" />
 	</target>
 
+	<target name="functional-tomcat90-mysql57-chrome100-jdk8_stable">
+		<run-functional-test app.server.type="tomcat" database.type="mysql" database.version="5.7" />
+	</target>
+
 	<target name="functional-tomcat90-mysql57-jdk8">
 		<run-functional-test app.server.type="tomcat" database.type="mysql" database.version="5.7" />
 	</target>
@@ -6449,7 +6433,7 @@ ${output.content}</echo>
 
 						<trycatch property="junit.failure.message">
 							<try>
-								<for keepgoing="true" list="patching-tool-auto-discovery" param="patchingtool.test.target">
+								<for keepgoing="true" list="patching-tool-auto-discovery,patching-tool-info" param="patchingtool.test.target">
 									<sequential>
 										<ant antfile="${project.dir}/build-test-patching-tool.xml" target="@{patchingtool.test.target}" />
 									</sequential>

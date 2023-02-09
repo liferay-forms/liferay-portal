@@ -268,8 +268,8 @@ public class MethodCallsOrderCheck extends BaseFileCheck {
 
 		Pattern pattern = Pattern.compile(
 			StringBundler.concat(
-				"(\\W(\\w+)\\.(<[\\w\\[\\]\\?<>, ]*>)?|[\n\t]\\)\\.)",
-				methodName, "\\("));
+				"(\\W(\\w+)\\.(", _GENERIC_TYPE_NAMES_PATTERN,
+				")?|[\n\t]\\)\\.)", methodName, "\\("));
 
 		Matcher matcher = pattern.matcher(content);
 
@@ -360,6 +360,10 @@ public class MethodCallsOrderCheck extends BaseFileCheck {
 		content = _sortChainedMethodCalls(
 			content, "put", 2, "ConcurrentHashMapBuilder", "HashMapBuilder",
 			"HashMapDictionaryBuilder", "JSONObject", "JSONUtil", "SoyContext",
+			"TreeMapBuilder", "UnicodePropertiesBuilder");
+		content = _sortChainedMethodCalls(
+			content, "putAll", 1, "ConcurrentHashMapBuilder", "HashMapBuilder",
+			"HashMapDictionaryBuilder", "JSONUtil", "SoyContext",
 			"TreeMapBuilder", "UnicodePropertiesBuilder");
 		content = _sortChainedMethodCalls(
 			content, "setParameter", 2, "PortletURLBuilder");
@@ -469,8 +473,16 @@ public class MethodCallsOrderCheck extends BaseFileCheck {
 		return content;
 	}
 
-	private static final Pattern _typeNamePattern = Pattern.compile(
-		"(\\A|\\W)(\\w+)\\.\\w+\\(");
+	private static final String _GENERIC_TYPE_NAMES_PATTERN;
+
+	private static final Pattern _typeNamePattern;
+
+	static {
+		_GENERIC_TYPE_NAMES_PATTERN = "<[\\w\\[\\]\\?<>, ]*>";
+
+		_typeNamePattern = Pattern.compile(
+			"(\\A|\\W)(\\w+)\\.(" + _GENERIC_TYPE_NAMES_PATTERN + ")?\\w+\\(");
+	}
 
 	private class MethodCallComparator extends ParameterNameComparator {
 

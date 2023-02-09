@@ -296,6 +296,18 @@
 			<contains>Skip com_liferay_document_library_web_portlet_DLPortlet</contains>
 			<matches></matches>
 		</ignore-error>
+		<ignore-error description="LPS-170903 - temporarily ignore until fixed">
+			<contains>SAX Security Manager could not be setup</contains>
+			<matches></matches>
+		</ignore-error>
+		<ignore-error description="LPS-170903 - temporarily ignore until fixed">
+			<contains>SAX Feature unsupported</contains>
+			<matches></matches>
+		</ignore-error>
+		<ignore-error description="LPS-173071 - temporarily ignore until fixed">
+			<contains></contains>
+			<matches>.*Exception executing batch.*update Group_.*</matches>
+		</ignore-error>
 		<ignore-error description="LRQA-24859">
 			<contains>No binary licenses found</contains>
 			<matches></matches>

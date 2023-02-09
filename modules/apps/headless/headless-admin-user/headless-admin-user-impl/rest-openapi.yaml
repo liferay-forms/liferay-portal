@@ -799,6 +799,23 @@ components:
                 siteId:
                     format: int64
                     type: integer
+        Ticket:
+            properties:
+                expirationDate:
+                    format: date-time
+                    readOnly: true
+                    type: string
+                extraInfo:
+                    readOnly: true
+                    type: string
+                id:
+                    format: int64
+                    readOnly: true
+                    type: integer
+                key:
+                    readOnly: true
+                    type: string
+            type: object
         UserAccount:
             description:
                 Represents a user.
@@ -1075,7 +1092,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.admin.user.client', and version '4.0.33'."
+        'com.liferay.headless.admin.user.client', and version '4.0.36'."
     license:
         name: "Apache 2.0"
         url: "http://www.apache.org/licenses/LICENSE-2.0.html"
@@ -1149,7 +1166,7 @@ paths:
                     description:
                         "Account successfully created"
             tags: ["Account"]
-    "/accounts/by-external-reference-code/{accountExternalReferenceCode}/account-roles/{accountRoleId}/user-accounts/by-external-reference-code/{userAccountExternalReferenceCode}":
+    "/accounts/by-external-reference-code/{accountExternalReferenceCode}/account-roles/{accountRoleId}/user-accounts/by-external-reference-code/{externalReferenceCode}":
         delete:
             # @review
             description:
@@ -1168,7 +1185,7 @@ paths:
                       format: int64
                       type: integer
                 - in: path
-                  name: userAccountExternalReferenceCode
+                  name: externalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -1196,7 +1213,7 @@ paths:
                       format: int64
                       type: integer
                 - in: path
-                  name: userAccountExternalReferenceCode
+                  name: externalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -1206,7 +1223,7 @@ paths:
                         application/json: {}
                         application/xml: {}
             tags: ["AccountRole"]
-    "/accounts/by-external-reference-code/{accountExternalReferenceCode}/user-accounts/by-external-reference-code/{userAccountExternalReferenceCode}":
+    "/accounts/by-external-reference-code/{accountExternalReferenceCode}/user-accounts/by-external-reference-code/{externalReferenceCode}":
         delete:
             # @review
             description:
@@ -1219,7 +1236,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: userAccountExternalReferenceCode
+                  name: externalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -1241,7 +1258,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: userAccountExternalReferenceCode
+                  name: externalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -1251,7 +1268,7 @@ paths:
                         application/json: {}
                         application/xml: {}
             tags: ["UserAccount"]
-    "/accounts/by-external-reference-code/{accountExternalReferenceCode}/user-accounts/by-external-reference-code/{userAccountExternalReferenceCode}/account-roles":
+    "/accounts/by-external-reference-code/{accountExternalReferenceCode}/user-accounts/by-external-reference-code/{externalReferenceCode}/account-roles":
         get:
             # @review
             description:
@@ -1264,7 +1281,7 @@ paths:
                   schema:
                       type: string
                 - in: path
-                  name: userAccountExternalReferenceCode
+                  name: externalReferenceCode
                   required: true
                   schema:
                       type: string
@@ -4130,6 +4147,50 @@ paths:
                                     $ref: "#/components/schemas/EmailAddress"
                                 type: array
             tags: ["EmailAddress"]
+    "/user-accounts/{userAccountId}/email-verification-ticket":
+        get:
+            description:
+                Retrieves the user's email verification ticket.
+            operationId: getUserAccountEmailVerificationTicket
+            parameters:
+                - in: path
+                  name: userAccountId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Ticket"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Ticket"
+            tags: ["Ticket"]
+    "/user-accounts/{userAccountId}/password-reset-ticket":
+        get:
+            description:
+                Retrieves the user's password reset ticket.
+            operationId: getUserAccountPasswordResetTicket
+            parameters:
+                - in: path
+                  name: userAccountId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Ticket"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Ticket"
+            tags: ["Ticket"]
     "/user-accounts/{userAccountId}/phones":
         get:
             description:

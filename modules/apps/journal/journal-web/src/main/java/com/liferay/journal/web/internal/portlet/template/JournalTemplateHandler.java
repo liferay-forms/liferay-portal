@@ -14,6 +14,7 @@
 
 package com.liferay.journal.web.internal.portlet.template;
 
+import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
@@ -38,7 +39,6 @@ import com.liferay.portal.kernel.template.TemplateHandler;
 import com.liferay.portal.kernel.template.TemplateVariableCodeHandler;
 import com.liferay.portal.kernel.template.TemplateVariableGroup;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -55,7 +55,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Jorge Ferrer
  */
 @Component(
-	immediate = true,
 	property = "javax.portlet.name=" + JournalPortletKeys.JOURNAL,
 	service = TemplateHandler.class
 )
@@ -87,8 +86,7 @@ public class JournalTemplateHandler extends BaseDDMTemplateHandler {
 	@Override
 	public String getName(Locale locale) {
 		String portletTitle = _portal.getPortletTitle(
-			JournalPortletKeys.JOURNAL,
-			ResourceBundleUtil.getBundle(locale, getClass()));
+			JournalPortletKeys.JOURNAL, locale);
 
 		return _language.format(locale, "x-template", portletTitle, false);
 	}
@@ -184,16 +182,22 @@ public class JournalTemplateHandler extends BaseDDMTemplateHandler {
 
 			String dataType = ddmStructure.getFieldDataType(fieldName);
 
+			DDMFormField ddmFormField = ddmStructure.getDDMFormField(fieldName);
+
+			if (Objects.equals(
+					ddmFormField.getType(),
+					DDMFormFieldTypeConstants.FIELDSET)) {
+
+				dataType = DDMFormFieldTypeConstants.FIELDSET;
+			}
+
 			if (Validator.isNull(dataType)) {
 				continue;
 			}
 
 			if (Objects.equals(
 					ddmStructure.getFieldType(fieldName),
-					"checkbox_multiple")) {
-
-				DDMFormField ddmFormField = ddmStructure.getDDMFormField(
-					fieldName);
+					DDMFormFieldTypeConstants.CHECKBOX_MULTIPLE)) {
 
 				DDMFormFieldOptions ddmFormFieldOptions =
 					(DDMFormFieldOptions)ddmFormField.getProperty("options");
@@ -244,7 +248,7 @@ public class JournalTemplateHandler extends BaseDDMTemplateHandler {
 			JournalTemplateHandler.class.getClassLoader(),
 			"com/liferay/journal/web/portlet/template/dependencies/",
 			SetUtil.fromArray(
-				"boolean", "date", "document-library", "geolocation", "image",
-				"journal-article", "link-to-page"));
+				"boolean", "date", "document-library", "fieldset",
+				"geolocation", "image", "journal-article", "link-to-page"));
 
 }

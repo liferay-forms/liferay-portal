@@ -40,7 +40,8 @@
 								"key": "DIALECT-dialect-text"
 							},
 							"fragmentConfig": {
-								"textType": "h2"
+								"textType": "h2",
+								"truncateText": false
 							},
 							"fragmentFields": [
 								{
@@ -71,7 +72,8 @@
 								"key": "DIALECT-dialect-text"
 							},
 							"fragmentConfig": {
-								"textType": "h5"
+								"textType": "h5",
+								"truncateText": false
 							},
 							"fragmentFields": [
 								{
@@ -164,6 +166,24 @@
 					{
 						"definition": {
 							"fragment": {
+								"key": "INPUTS-text-input"
+							},
+							"fragmentConfig": {
+								"inputFieldId": "ObjectField_smallDescription",
+								"inputRequired": true
+							},
+							"fragmentFields": [
+							],
+							"fragmentStyle": {
+								"marginBottom": "3"
+							},
+							"indexed": true
+						},
+						"type": "Fragment"
+					},
+					{
+						"definition": {
+							"fragment": {
 								"key": "BASIC_COMPONENT-separator"
 							},
 							"fragmentConfig": {
@@ -181,7 +201,8 @@
 								"key": "DIALECT-dialect-text"
 							},
 							"fragmentConfig": {
-								"textType": "h5"
+								"textType": "h5",
+								"truncateText": false
 							},
 							"fragmentFields": [
 								{
@@ -383,7 +404,8 @@
 								"key": "DIALECT-dialect-text"
 							},
 							"fragmentConfig": {
-								"textType": "h5"
+								"textType": "h5",
+								"truncateText": false
 							},
 							"fragmentFields": [
 								{
@@ -504,17 +526,30 @@
 					{
 						"definition": {
 							"fragment": {
-								"key": "INPUTS-text-input"
+								"key": "DIALECT-dialect-text"
 							},
 							"fragmentConfig": {
-								"inputFieldId": "ObjectField_smallDescription",
-								"inputRequired": true,
-								"placeholder": ""
+								"textType": "h5",
+								"truncateText": false
 							},
 							"fragmentFields": [
+								{
+									"id": "element-text",
+									"value": {
+										"fragmentLink": {
+										},
+										"text": {
+											"value_i18n": {
+												"en_US": "Banking Information"
+											}
+										}
+									}
+								}
 							],
 							"fragmentStyle": {
-								"marginBottom": "3"
+								"fontWeight": "fontWeightBold",
+								"marginBottom": "3",
+								"textColor": "colorNeutral9"
 							},
 							"indexed": true
 						},
@@ -523,13 +558,16 @@
 					{
 						"definition": {
 							"fragment": {
-								"key": "BASIC_COMPONENT-separator"
+								"key": "INPUTS-text-input"
 							},
 							"fragmentConfig": {
-								"bottomSpacing": "3"
+								"inputFieldId": "ObjectField_bankingInfo"
 							},
 							"fragmentFields": [
 							],
+							"fragmentStyle": {
+								"marginBottom": "3"
+							},
 							"indexed": true
 						},
 						"type": "Fragment"
@@ -646,7 +684,8 @@
 					{
 						"definition": {
 							"fragment": {
-								"key": "organization-form-handler"
+								"key": "organization-form-handler",
+								"siteKey": "[$GROUP_KEY$]"
 							},
 							"fragmentConfig": {
 							},

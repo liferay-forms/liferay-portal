@@ -32,7 +32,7 @@
 
 			<div class="h5"><liferay-ui:message key="order-by" /></div>
 
-			<aui:select label="" name="TypeSettingsProperties--orderByColumn1--" wrapperCssClass="d-inline-flex">
+			<aui:select aria-label='<%= LanguageUtil.get(request, "order-by") %>' label="" name="TypeSettingsProperties--orderByColumn1--" wrapperCssClass="d-inline-flex">
 				<aui:option label="title" selected='<%= Objects.equals(orderByColumn1, "title") %>' value="title" />
 				<aui:option label="create-date" selected='<%= Objects.equals(orderByColumn1, "createDate") %>' value="createDate" />
 				<aui:option label="modified-date" selected='<%= Objects.equals(orderByColumn1, "modifiedDate") %>' value="modifiedDate" />
@@ -46,22 +46,22 @@
 			%>
 
 			<div class="d-inline-flex order-by-type-container">
-				<liferay-ui:icon
+				<clay:button
+					borderless="<%= true %>"
 					cssClass='<%= StringUtil.equalsIgnoreCase(orderByType1, "DESC") ? "hide icon" : "icon" %>'
+					displayType="secondary"
 					icon="order-list-up"
-					linkCssClass="btn btn-outline-borderless btn-outline-secondary"
-					markupView="lexicon"
-					message="descending"
-					url="javascript:void(0);"
+					monospaced="<%= true %>"
+					title="descending"
 				/>
 
-				<liferay-ui:icon
+				<clay:button
+					borderless="<%= true %>"
 					cssClass='<%= StringUtil.equalsIgnoreCase(orderByType1, "ASC") ? "hide icon" : "icon" %>'
+					displayType="secondary"
 					icon="order-list-down"
-					linkCssClass="btn btn-outline-borderless btn-outline-secondary"
-					markupView="lexicon"
-					message="ascending"
-					url="javascript:void(0);"
+					monospaced="<%= true %>"
+					title="ascending"
 				/>
 
 				<aui:input cssClass="order-by-type-field" name="TypeSettingsProperties--orderByType1--" type="hidden" value="<%= orderByType1 %>" />
@@ -78,7 +78,7 @@
 
 			<div class="h5"><liferay-ui:message key="and-then-by" /></div>
 
-			<aui:select label="" name="TypeSettingsProperties--orderByColumn2--" wrapperCssClass="d-inline-flex">
+			<aui:select aria-label='<%= LanguageUtil.get(request, "and-then-by") %>' label="" name="TypeSettingsProperties--orderByColumn2--" wrapperCssClass="d-inline-flex">
 				<aui:option label="title" selected='<%= Objects.equals(orderByColumn2, "title") %>' value="title" />
 				<aui:option label="create-date" selected='<%= Objects.equals(orderByColumn2, "createDate") %>' value="createDate" />
 				<aui:option label="modified-date" selected='<%= Objects.equals(orderByColumn2, "modifiedDate") %>' value="modifiedDate" />
@@ -92,22 +92,22 @@
 			%>
 
 			<div class="d-inline-flex order-by-type-container">
-				<liferay-ui:icon
+				<clay:button
+					borderless="<%= true %>"
 					cssClass='<%= StringUtil.equalsIgnoreCase(orderByType2, "DESC") ? "hide icon" : "icon" %>'
+					displayType="secondary"
 					icon="order-list-up"
-					linkCssClass="btn btn-outline-borderless btn-outline-secondary"
-					markupView="lexicon"
-					message="descending"
-					url="javascript:void(0);"
+					monospaced="<%= true %>"
+					title="descending"
 				/>
 
-				<liferay-ui:icon
+				<clay:button
+					borderless="<%= true %>"
 					cssClass='<%= StringUtil.equalsIgnoreCase(orderByType2, "ASC") ? "hide icon" : "icon" %>'
+					displayType="secondary"
 					icon="order-list-down"
-					linkCssClass="btn btn-outline-borderless btn-outline-secondary"
-					markupView="lexicon"
-					message="ascending"
-					url="javascript:void(0);"
+					monospaced="<%= true %>"
+					title="ascending"
 				/>
 
 				<aui:input cssClass="order-by-type-field" name="TypeSettingsProperties--orderByType2--" type="hidden" value="<%= orderByType2 %>" />

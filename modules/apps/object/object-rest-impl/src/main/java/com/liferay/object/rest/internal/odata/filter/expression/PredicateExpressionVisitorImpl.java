@@ -72,7 +72,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * @author Marco Leo
@@ -97,13 +96,15 @@ public class PredicateExpressionVisitorImpl
 	public Predicate visitBinaryExpressionOperation(
 		BinaryExpression.Operation operation, Object left, Object right) {
 
-		Optional<Predicate> predicateOptional = _getPredicateOptional(
-			operation, left, right);
+		Predicate predicate = _getPredicate(operation, left, right);
 
-		return predicateOptional.orElseThrow(
-			() -> new UnsupportedOperationException(
-				"Unsupported method visitBinaryExpressionOperation with " +
-					"operation " + operation));
+		if (predicate != null) {
+			return predicate;
+		}
+
+		throw new UnsupportedOperationException(
+			"Unsupported method visitBinaryExpressionOperation with " +
+				"operation " + operation);
 	}
 
 	@Override
@@ -230,7 +231,9 @@ public class PredicateExpressionVisitorImpl
 					LiteralExpression.Type.STRING,
 					literalExpression.getType())) {
 
-			return StringUtil.unquote(literalExpression.getText());
+			return StringUtil.replace(
+				StringUtil.unquote(literalExpression.getText()),
+				StringPool.DOUBLE_APOSTROPHE, StringPool.APOSTROPHE);
 		}
 
 		return literalExpression.getText();
@@ -434,6 +437,56 @@ public class PredicateExpressionVisitorImpl
 		return entityModel;
 	}
 
+	private Predicate _getPredicate(
+		BinaryExpression.Operation operation, Object left, Object right) {
+
+		Predicate predicate = null;
+
+		if (Objects.equals(BinaryExpression.Operation.AND, operation)) {
+			predicate = Predicate.and(
+				Predicate.withParentheses((Predicate)left),
+				Predicate.withParentheses((Predicate)right));
+		}
+		else if (Objects.equals(BinaryExpression.Operation.OR, operation)) {
+			predicate = Predicate.or(
+				Predicate.withParentheses((Predicate)left),
+				Predicate.withParentheses((Predicate)right));
+		}
+		else {
+			ObjectField objectField = _objectFieldLocalService.fetchObjectField(
+				_objectDefinitionId, String.valueOf(left));
+
+			if ((objectField != null) &&
+				StringUtil.equals(
+					objectField.getBusinessType(),
+					ObjectFieldConstants.BUSINESS_TYPE_MULTISELECT_PICKLIST)) {
+
+				predicate = _contains(left, right);
+			}
+		}
+
+		if (predicate != null) {
+			return predicate;
+		}
+
+		if (_objectRelationship != null) {
+			try {
+				return _getPredicateForRelationships(operation, left, right);
+			}
+			catch (Exception exception) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(exception);
+				}
+
+				return null;
+			}
+		}
+
+		return _getExpressionPredicate(
+			_getColumn(left, _objectDefinitionId), operation,
+			_getValue(left, _objectDefinitionId, right));
+	}
+
 	private Predicate _getPredicateForRelationships(
 			BinaryExpression.Operation operation, Object left, Object right)
 		throws Exception {
@@ -457,54 +510,6 @@ public class PredicateExpressionVisitorImpl
 			_getExpressionPredicate(
 				_getColumn(_relatedFieldName, relatedObjectDefinitionId),
 				operation, _getValue(left, relatedObjectDefinitionId, right)));
-	}
-
-	private Optional<Predicate> _getPredicateOptional(
-		BinaryExpression.Operation operation, Object left, Object right) {
-
-		Predicate predicate = null;
-
-		if (Objects.equals(BinaryExpression.Operation.AND, operation)) {
-			predicate = Predicate.and((Predicate)left, (Predicate)right);
-		}
-		else if (Objects.equals(BinaryExpression.Operation.OR, operation)) {
-			predicate = Predicate.or((Predicate)left, (Predicate)right);
-		}
-		else {
-			ObjectField objectField = _objectFieldLocalService.fetchObjectField(
-				_objectDefinitionId, String.valueOf(left));
-
-			if ((objectField != null) &&
-				StringUtil.equals(
-					objectField.getBusinessType(),
-					ObjectFieldConstants.BUSINESS_TYPE_MULTISELECT_PICKLIST)) {
-
-				predicate = _contains(left, right);
-			}
-		}
-
-		if (predicate != null) {
-			return Optional.of(predicate);
-		}
-
-		if (_objectRelationship != null) {
-			try {
-				return Optional.ofNullable(
-					_getPredicateForRelationships(operation, left, right));
-			}
-			catch (Exception exception) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(exception);
-				}
-
-				return Optional.empty();
-			}
-		}
-
-		return Optional.ofNullable(
-			_getExpressionPredicate(
-				_getColumn(left, _objectDefinitionId), operation,
-				_getValue(left, _objectDefinitionId, right)));
 	}
 
 	private long _getRelatedObjectDefinitionId(
@@ -549,10 +554,6 @@ public class PredicateExpressionVisitorImpl
 		String entityFieldFilterableName = entityField.getFilterableName(null);
 		String entityFieldName = entityField.getName();
 
-		if (Objects.equals(entityFieldFilterableName, entityFieldName)) {
-			return right;
-		}
-
 		try {
 			ObjectField objectField = _objectFieldLocalService.getObjectField(
 				_objectDefinitionId, entityFieldFilterableName);
@@ -566,6 +567,13 @@ public class PredicateExpressionVisitorImpl
 
 			if (value == null) {
 				return right;
+			}
+
+			if (Objects.equals(
+					objectFieldBusinessType.getDBType(),
+					ObjectFieldConstants.DB_TYPE_LONG)) {
+
+				return GetterUtil.getLong(value);
 			}
 
 			return value;

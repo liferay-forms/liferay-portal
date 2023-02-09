@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Commerce Report Implementation
 Bundle-SymbolicName: com.liferay.commerce.report.impl
-Bundle-Version: 1.0.18
+Bundle-Version: 1.0.20
 DynamicImport-Package: *
 Import-Package:\
 	!antlr.*,\
@@ -16,6 +16,9 @@ Import-Package:\
 	!com.fasterxml.jackson.*,\
 	\
 	!com.github.kklisura.*,\
+	\
+	!com.graphbuilder.curve.*,\
+	!com.graphbuilder.geom.*,\
 	\
 	!com.keypoint.*,\
 	\

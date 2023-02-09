@@ -540,6 +540,16 @@
 	<td></td>
 </tr>
 <tr>
+	<td>MINI_CART_ITEM_QUANTITY_SELECTOR_SELECT_FIELD</td>
+	<td>//p[@class='item-sku' and contains(.,'${key_cartItemSku}')]/../../../../div[@class='mini-cart-item-quantity']//select</td>
+	<td></td>
+</tr>
+<tr>
+	<td>MINI_CART_ITEM_QUANTITY_SELECTOR_SELECT_FIELD_OPTION_VALUE</td>
+	<td>//p[@class='item-sku' and contains(.,'${key_cartItemSku}')]/../../../../div[@class='mini-cart-item-quantity']//select/option[@value='${key_optionValue}']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>MINI_CART_ITEM_PRICE_VALUE</td>
 	<td>//p[@class='item-sku' and contains(.,'${key_cartItemSku}')]/../../../..//span[@class='price-value']</td>
 	<td></td>
@@ -597,6 +607,29 @@
 <tr>
 	<td>MINI_CART_REMOVE_ITEM</td>
 	<td>//p[contains(text(),"${key_cartItemSku}")]/../../../../div//*[name()='svg'][contains(@class,'lexicon-icon lexicon-icon-times-circle-full')]</td>
+	<td></td>
+</tr>
+
+<!--QUICK_ADD_TO_CART-->
+
+<tr>
+	<td>QUICK_ADD_TO_CART_SEARCH_RESULT</td>
+	<td>//div[contains(@class,'autofit-col') and contains(.,"${key_productSku}")]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>QUICK_ADD_TO_CART_EMPTY_SEARCH_BAR</td>
+	<td>//input[contains(@class,"form-control") and @placeholder= '${key_searchBarValue}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>QUICK_ADD_TO_CART_BUTTON</td>
+	<td>//div[contains(@class,'input-group-item-shrink')]//button[contains(@class,'btn-primary')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PRODUCT_CHIP_REMOVE_ICON</td>
+	<td>//span[contains(.,"${key_productSku}")]//button[contains(@class,'close')]</td>
 	<td></td>
 </tr>
 

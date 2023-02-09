@@ -2329,6 +2329,84 @@ definition {
 		}
 	}
 
+	@description = "LPS-168141 Given a site is already selected as site scope
+	When the user selects another site as scope
+	Then the new site should replace the previous one"
+	@priority = "3"
+	test CanSelectSiteScope {
+		property custom.properties = "feature.flag.LPS-166954=true";
+
+		task ("Add segment with site scope selected") {
+			LexiconEntry.gotoAdd();
+
+			Segmentation.fillTitle(titleField = "CanSelectSiteScope Test");
+
+			AssertTextEquals(
+				locator1 = "Segmentation#SCOPE_CARD_SITE",
+				siteName = "Test Site Name",
+				value1 = "Test Site Name");
+		}
+
+		task ("Configure the site scope to the global site") {
+			Segmentation.configureScope(site = "Global");
+		}
+
+		task ("Assert the new site replaced the previous one") {
+			AssertTextEquals(
+				locator1 = "Segmentation#SCOPE_CARD_SITE",
+				siteName = "Global",
+				value1 = "Global");
+		}
+	}
+
+	@description = "LPS-168141 Given a segment entry is scoped to a site
+	When user navigates to that site
+	Then the segment can be used"
+	@priority = "4"
+	test CanUseSegmentScopedIndividualSite {
+		property custom.properties = "feature.flag.LPS-166954=true";
+		property portal.acceptance = "true";
+
+		task ("Add a segment scoped by Test Site Name") {
+			LexiconEntry.gotoAdd();
+
+			Segmentation.addProperties(propertyOption = "First Name");
+
+			Segmentation.fillProperty(criterionValue = "Test");
+
+			Segmentation.fillTitle(titleField = "CanUseSegmentScopedIndividualSite Test");
+
+			Button.clickSave();
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("Go to Test Site Name site and go to edit Content Page") {
+			ApplicationsMenu.gotoSite(site = "Test Site Name");
+
+			JSONLayout.addPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "Experience Content Page",
+				type = "content");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Experience Content Page",
+				siteName = "Test Site Name");
+		}
+
+		task ("Add an experience using the segment created") {
+			PageEditor.addExperience(
+				experienceName = "CanUseSegmentScopedIndividualSite Experience",
+				segmentName = "CanUseSegmentScopedIndividualSite Test");
+
+			PageEditor.prioritizeExperience(experienceName = "CanUseSegmentScopedIndividualSite Experience");
+
+			PageEditor.publish();
+
+			PageEditor.viewExperienceActiveInEditMode(experienceName = "CanUseSegmentScopedIndividualSite Experience");
+		}
+	}
+
 	@description = "LPS-135495 Validate if, The criteria default language must be tagged as such in the language selection dropdown."
 	@priority = "3"
 	test CheckDefaultLanguageTag {
@@ -2755,7 +2833,9 @@ definition {
 				locator1 = "Segmentation#CARD_HEADING",
 				panelHeader = "Scope");
 
-			AssertNotVisible(locator1 = "Segmentation#SCOPE_CARD_SITE");
+			AssertNotVisible(
+				locator1 = "Segmentation#SCOPE_CARD_SITE",
+				siteName = "Test Site Name");
 		}
 	}
 
@@ -3348,6 +3428,124 @@ definition {
 					key_typeName = "${fieldType}",
 					locator1 = "Segmentation#SEGMENT_FIELDS_TYPE");
 			}
+		}
+	}
+
+	@description = "LPS-168141 Given a segment entry is scoped to global site
+	When user navigates to any site
+	Then the segment can be used"
+	@priority = "5"
+	test ViewSegmentScopedGlobalDisplayedOnAnySite {
+		property custom.properties = "feature.flag.LPS-166954=true";
+		property portal.acceptance = "true";
+
+		task ("Add a segment scoped by the global site") {
+			LexiconEntry.gotoAdd();
+
+			Segmentation.addProperties(propertyOption = "First Name");
+
+			Segmentation.fillProperty(criterionValue = "Test");
+
+			Segmentation.fillTitle(titleField = "ViewSegmentScopedGlobalDisplayedOnAnySite Test");
+
+			Segmentation.configureScope(site = "Global");
+
+			Button.clickSave();
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("Go to Segment Admin on Test Site Name") {
+			Segmentation.openSegmentsAdmin(siteURLKey = "test-site-name");
+		}
+
+		task ("Go to edit the segment and assert that it is scoped by the global site") {
+			Segmentation.editSegment(entry = "ViewSegmentScopedGlobalDisplayedOnAnySite Test");
+
+			AssertTextEquals(
+				locator1 = "Segmentation#SCOPE_CARD_SITE",
+				siteName = "Global",
+				value1 = "Global");
+		}
+	}
+
+	@description = "LPS-168141 Given a segment entry is scoped to a site
+	When user navigates to another site
+	Then the segment can not be seen"
+	@priority = "4"
+	test ViewSegmentScopedIndividualSiteIsNotDisplayed {
+		property custom.properties = "feature.flag.LPS-166954=true";
+		property portal.acceptance = "true";
+
+		task ("Add a segment scoped by Test Site Name") {
+			LexiconEntry.gotoAdd();
+
+			Segmentation.addProperties(propertyOption = "First Name");
+
+			Segmentation.fillProperty(criterionValue = "Test");
+
+			Segmentation.fillTitle(titleField = "ViewSegmentScopedIndividualSiteIsNotDisplayed Test");
+
+			Button.clickSave();
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("Go to Segments Admin in Liferay DXP") {
+			Segmentation.openSegmentsAdmin(siteURLKey = "guest");
+		}
+
+		task ("Assert that segment is not present in Liferay DXP") {
+			AssertElementNotPresent(
+				key_tableEntry = "ViewSegmentScopedGlobalDisplayedOnAnySite Test",
+				locator1 = "LexiconTable#TABLE_ENTRY_TITLE_LINK",
+				value1 = "ViewSegmentScopedGlobalDisplayedOnAnySite Test");
+		}
+	}
+
+	@description = "LPS-168141 Given the scope card at the segment editor
+    When the user selects a site
+    And saves the segment
+    Then the select button disappears"
+	@priority = "3"
+	test ViewSelectButtonIsNotPresentAfterSaveSegment {
+		property custom.properties = "feature.flag.LPS-166954=true";
+
+		task ("Add a segment and assert the information message") {
+			LexiconEntry.gotoAdd();
+
+			Segmentation.addProperties(propertyOption = "First Name");
+
+			Segmentation.fillProperty(criterionValue = "Test");
+
+			Segmentation.fillTitle(titleField = "ViewSelectButtonIsNotPresentAfterSaveSegment Test");
+
+			AssertTextEquals(
+				locator1 = "Segmentation#SCOPE_CARD_MESSAGE",
+				value1 = "Select the scope of your segment to specify where it can be used. It will not be possible to modify the scope after the segment is saved.");
+
+			AssertElementPresent(locator1 = "Button#SELECT");
+		}
+
+		task ("Configure the segment to be scoped by the global site") {
+			Segmentation.configureScope(site = "Global");
+		}
+
+		task ("Saves the segment") {
+			Button.clickSave();
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("Assert that the Select button has disappeared") {
+			Segmentation.editSegment(entry = "ViewSelectButtonIsNotPresentAfterSaveSegment Test");
+
+			AssertTextEquals(
+				locator1 = "Segmentation#SCOPE_CARD_SITE",
+				siteName = "Global",
+				value1 = "Global");
+
+			AssertElementNotPresent(locator1 = "Button#SELECT");
 		}
 	}
 

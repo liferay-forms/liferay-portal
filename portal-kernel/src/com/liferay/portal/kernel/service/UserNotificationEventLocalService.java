@@ -72,6 +72,7 @@ public interface UserNotificationEventLocalService
 			long userId, NotificationEvent notificationEvent)
 		throws PortalException;
 
+	@Indexable(type = IndexableType.REINDEX)
 	public UserNotificationEvent addUserNotificationEvent(
 			long userId, String type, long timestamp, int deliveryType,
 			long deliverBy, boolean delivered, String payload,
@@ -146,7 +147,8 @@ public interface UserNotificationEventLocalService
 			long userNotificationEventId)
 		throws PortalException;
 
-	public void deleteUserNotificationEvent(String uuid, long companyId);
+	public void deleteUserNotificationEvent(String uuid, long companyId)
+		throws PortalException;
 
 	/**
 	 * Deletes the user notification event from the database. Also notifies the appropriate model listeners.
@@ -163,9 +165,11 @@ public interface UserNotificationEventLocalService
 		UserNotificationEvent userNotificationEvent);
 
 	public void deleteUserNotificationEvents(
-		Collection<String> uuids, long companyId);
+			Collection<String> uuids, long companyId)
+		throws PortalException;
 
-	public void deleteUserNotificationEvents(long userId);
+	public void deleteUserNotificationEvents(long userId)
+		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public <T> T dslQuery(DSLQuery dslQuery);
@@ -515,6 +519,7 @@ public interface UserNotificationEventLocalService
 			JSONObject notificationEventJSONObject)
 		throws PortalException;
 
+	@Indexable(type = IndexableType.REINDEX)
 	public UserNotificationEvent updateUserNotificationEvent(
 		String uuid, long companyId, boolean archive);
 

@@ -44,9 +44,10 @@ definition {
 	@priority = "5"
 	test CanRaylifeAPCreated {
 		property portal.acceptance = "true";
+		property solutions.acceptance = "true";
 
 		task ("Go to Raylife AP Site") {
-			ApplicationsMenu.gotoSite(site = "${testSiteName}");
+			RaylifeAP.goToRaylifeAPSiteWithRefresh();
 		}
 
 		task ("Assert the Raylife AP Welcome Page is present") {

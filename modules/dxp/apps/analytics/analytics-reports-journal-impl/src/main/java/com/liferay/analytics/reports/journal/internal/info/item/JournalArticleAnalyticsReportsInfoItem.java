@@ -35,7 +35,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -55,24 +54,24 @@ public class JournalArticleAnalyticsReportsInfoItem
 
 	@Override
 	public String getAuthorName(JournalArticle journalArticle) {
-		return _getUser(
-			journalArticle
-		).map(
-			User::getFullName
-		).orElse(
-			StringPool.BLANK
-		);
+		User user = _getUser(journalArticle);
+
+		if (user == null) {
+			return StringPool.BLANK;
+		}
+
+		return user.getFullName();
 	}
 
 	@Override
 	public long getAuthorUserId(JournalArticle journalArticle) {
-		return _getUser(
-			journalArticle
-		).map(
-			User::getUserId
-		).orElse(
-			0L
-		);
+		User user = _getUser(journalArticle);
+
+		if (user == null) {
+			return 0L;
+		}
+
+		return user.getUserId();
 	}
 
 	@Override
@@ -154,14 +153,16 @@ public class JournalArticleAnalyticsReportsInfoItem
 					journalArticle.getResourcePrimKey()));
 	}
 
-	private Optional<User> _getUser(JournalArticle journalArticle) {
-		return Optional.ofNullable(
+	private User _getUser(JournalArticle journalArticle) {
+		JournalArticle latestArticle =
 			_journalArticleLocalService.fetchLatestArticle(
-				journalArticle.getResourcePrimKey())
-		).map(
-			latestArticle -> _userLocalService.fetchUser(
-				latestArticle.getUserId())
-		);
+				journalArticle.getResourcePrimKey());
+
+		if (latestArticle == null) {
+			return null;
+		}
+
+		return _userLocalService.fetchUser(latestArticle.getUserId());
 	}
 
 	@Reference

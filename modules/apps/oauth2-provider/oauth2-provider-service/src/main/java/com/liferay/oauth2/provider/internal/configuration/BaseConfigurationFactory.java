@@ -15,6 +15,7 @@
 package com.liferay.oauth2.provider.internal.configuration;
 
 import com.liferay.oauth2.provider.model.OAuth2Application;
+import com.liferay.oauth2.provider.scope.spi.scope.finder.ScopeFinder;
 import com.liferay.oauth2.provider.service.OAuth2ApplicationLocalService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -29,12 +30,14 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.osgi.service.component.ComponentConstants;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 /**
  * @author Raymond Augé
@@ -68,6 +71,14 @@ public abstract class BaseConfigurationFactory {
 	}
 
 	protected abstract Log getLog();
+
+	protected String getName(String name, String defaultValue) {
+		if (Validator.isNotNull(name)) {
+			return name;
+		}
+
+		return defaultValue;
+	}
 
 	protected String getServiceAddress(Company company) {
 		return Http.HTTPS_WITH_SLASH.concat(company.getVirtualHostname());
@@ -137,6 +148,9 @@ public abstract class BaseConfigurationFactory {
 
 	@Reference(cardinality = ReferenceCardinality.OPTIONAL)
 	protected PortalK8sConfigMapModifier portalK8sConfigMapModifier;
+
+	@Reference(policyOption = ReferencePolicyOption.GREEDY)
+	protected Collection<ScopeFinder> scopeFinders;
 
 	@Reference
 	protected UserLocalService userLocalService;

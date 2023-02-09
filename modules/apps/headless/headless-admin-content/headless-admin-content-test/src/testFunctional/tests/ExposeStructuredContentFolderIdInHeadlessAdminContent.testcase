@@ -1,10 +1,10 @@
-@component-name = "portal-headless"
+@component-name = "portal-wcm"
 @disable-webdriver = "true"
 definition {
 
 	property portal.release = "true";
 	property portal.upstream = "true";
-	property testray.main.component.name = "Headless";
+	property testray.main.component.name = "Echo Headless";
 
 	setUp {
 		TestCase.setUpPortalInstance();

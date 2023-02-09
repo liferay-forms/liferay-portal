@@ -2,6 +2,7 @@
 @ignore = "true"
 definition {
 
+	property app.server.bundles.size = "12890";
 	property portal.release = "true";
 	property portal.upstream = "true";
 	property testray.main.component.name = "Smoke";
@@ -23,6 +24,7 @@ definition {
 	echo(${test});
 
 	var reference = ${testRef};
+	var test = StringUtil.replace(${test}, ${test}, "${test} ${test2}");
 
 	setUp {
 		TestCase.setUpPortalInstance();
@@ -35,7 +37,7 @@ definition {
 	}
 
 	@description = "Ensure that a user can add multiple Blogs Entries."
-	@priority = "4"
+	@priority = 4
 	@simple-annotation
 	test AddBlogsEntries {
 		property testray.component.names = "Blogs";
@@ -43,6 +45,11 @@ definition {
 
 		task ("Add a blogs entry called 'Blogs Entry1 Title' with content 'Blogs Entry1 Content'") {
 			Navigator.openURL();
+
+			ListUtil.add(${orderID}, ${orderIDs});
+
+			var camelCase = StringUtil.replace(${camelCase}, " ", "");
+			var payload = StringUtil.replace(${payload}, ${payload}, "${payload}}");
 
 			ProductMenu.gotoPortlet(
 				category = "Content",
@@ -70,7 +77,7 @@ definition {
 		var portalInstanceIds = StringUtil.regexReplaceAll(${portalInstanceIds}, "[\[\]\"]", "");
 	}
 
-	@priority = "5"
+	@priority = 5
 	test AddUser {
 
 		// This is a comment
@@ -86,7 +93,8 @@ definition {
 		var specialCharacters = "\"\\"";
 		var userEmailAddress = "userea@liferay.com";
 		var userFirstName = "userfn";
-		var userLastName = "userln";
+
+		var userLastName = "${userFirstName} userln";
 
 		FormFields.editText(
 			fieldName = "label",
@@ -161,7 +169,7 @@ definition {
 	}
 
 	@description = "Ensure that the super admin can add pages, add portlets, navigate to the product menu, use the WYSIWYG editor, and view alert messages."
-	@priority = "5"
+	@priority = 5
 	test Smoke {
 		property portal.smoke = "true";
 		property test.assert.warning.exceptions = "true";

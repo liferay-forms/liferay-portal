@@ -8,6 +8,12 @@ definition {
 			siteTemplateName = "Raylife AP");
 	}
 
+	macro assertFieldRequiredMessage {
+		AssertElementPresent(
+			key_field = "${field}",
+			locator1 = "RaylifeAP#FIELD_REQUIRED_MESSAGE");
+	}
+
 	macro assertPageHeader {
 		AssertElementPresent(
 			key_header = "${key_header}",
@@ -84,6 +90,14 @@ definition {
 		Click(locator1 = "Button#MODAL_DELETE");
 
 		Alert.viewSuccessMessage();
+	}
+
+	// Workaround for LPS-172183
+
+	macro goToRaylifeAPSiteWithRefresh {
+		ApplicationsMenu.gotoSite(site = "Raylife AP");
+
+		Refresh();
 	}
 
 }

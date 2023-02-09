@@ -15,7 +15,6 @@
 /// <reference types="react" />
 
 import {CustomItem, SidebarCategory} from '@liferay/object-js-components-web';
-import './ActionBuilder.scss';
 import {ActionError} from '../index';
 interface ActionBuilderProps {
 	errors: ActionError;
@@ -30,6 +29,10 @@ interface ActionBuilderProps {
 	systemObject: boolean;
 	validateExpressionURL: string;
 	values: Partial<ObjectAction>;
+}
+export interface WarningStates {
+	mandatoryRelationships: boolean;
+	requiredFields: boolean;
 }
 export default function ActionBuilder({
 	errors,

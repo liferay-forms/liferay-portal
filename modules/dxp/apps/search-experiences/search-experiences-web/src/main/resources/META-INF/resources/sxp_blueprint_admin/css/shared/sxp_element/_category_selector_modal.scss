@@ -1,0 +1,40 @@
+.sxp-category-selector-modal-root {
+	.selector-modal-tree {
+		background-color: $lightL1;
+		border-radius: 4px;
+		height: 382px;
+		margin-top: 24px;
+		overflow: auto;
+		padding: 16px;
+
+		.no-subcategories {
+			margin-left: 24px;
+		}
+
+		.quick-action-item {
+			&:focus {
+				opacity: 1;
+			}
+
+			opacity: 0;
+		}
+
+		.treeview-link:hover {
+			background-color: $secondaryL3;
+
+			.quick-action-item {
+				opacity: 1;
+			}
+		}
+	}
+
+	.subnav-tbar {
+		&.secondary {
+			background-color: $light;
+		}
+
+		.component-text {
+			font-size: 12px;
+		}
+	}
+}

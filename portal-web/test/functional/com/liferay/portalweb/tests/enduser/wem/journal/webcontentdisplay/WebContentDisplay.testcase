@@ -173,7 +173,7 @@ definition {
 		task ("View web content is shown in the first page") {
 			WebContentDisplayPortlet.viewContent(
 				webContentContent = "Web Content Content",
-				webContentTitle = "Web Content Display (Test Page Name 1)");
+				webContentTitle = "Web Content Title");
 		}
 
 		task ("View web content is not shown in the second page") {
@@ -191,7 +191,7 @@ definition {
 
 			WebContentDisplayPortlet.viewContent(
 				webContentContent = "Web Content Content",
-				webContentTitle = "Web Content Display (Test Page Name 1)");
+				webContentTitle = "Web Content Title");
 		}
 	}
 
@@ -854,6 +854,49 @@ Welcome to Liferay Community Edition Portal 7.4.0 CE GA1''';
 		}
 	}
 
+	@description = "This is a test for LPS-169728. The site designer could search folders when select web content in Web Content Display."
+	@priority = "4"
+	test SearchWebContentFolder {
+		property portal.acceptance = "true";
+
+		task ("Given a site designer has web content folders") {
+			JSONWebcontent.addFolder(
+				folderName = "Brake System",
+				groupName = "Test Site Name");
+
+			JSONWebcontent.addFolder(
+				folderName = "ABS Sensor",
+				groupName = "Test Site Name",
+				parentFolderName = "Brake System");
+
+			HeadlessWebcontent.addBasicWebContent(
+				content = "Tesla ABS Wheel Speed Sensor",
+				folderName = "ABS Sensor",
+				groupName = "Test Site Name",
+				title = "Tesla ABS Wheel Speed Sensor");
+		}
+
+		task ("When the site designer select web content in Web Content Display") {
+			Navigator.gotoSitePage(
+				pageName = "Test Page Name",
+				siteName = "Test Site Name");
+
+			WebContentDisplayPortlet.gotoSelectWebContent();
+		}
+
+		task ("Then the site designer searches folder on modal") {
+			Search.searchCP(searchTerm = "ABS Sensor");
+
+			AssertTextEquals(
+				locator1 = "Search#SEARCH_INFO",
+				value1 = "2 Results for \"ABS Sensor\"");
+
+			for (var entryTitle : list "ABS Sensor,Tesla ABS Wheel Speed Sensor") {
+				LexiconList.viewListEntryTitle(listEntry = "${entryTitle}");
+			}
+		}
+	}
+
 	@description = "User can select a web content in Web Content Display widget."
 	@priority = "5"
 	test SelectWebContent {
@@ -919,13 +962,75 @@ Welcome to Liferay Community Edition Portal 7.4.0 CE GA1''';
 		task ("View web content is shown in Web Content Display") {
 			WebContentDisplayPortlet.viewContent(
 				webContentContent = "Web Content Content",
-				webContentTitle = "Web Content Display (Global)");
+				webContentTitle = "Web Content Title");
 		}
 
 		task ("Delete web content in Global site") {
 			JSONWebcontent.deleteWebContent(
 				groupName = "Global",
 				title = "Web Content Title");
+		}
+	}
+
+	@description = "This is a test for LPS-169728. The site designer could see folders hierarchy when select web content in Web Content Display."
+	@priority = "5"
+	test SelectWebContentUnderFolder {
+		property portal.acceptance = "true";
+
+		task ("Given a site designer has web contents under different folders") {
+			JSONWebcontent.addFolder(
+				folderName = "Brake System",
+				groupName = "Test Site Name");
+
+			JSONWebcontent.addFolder(
+				folderName = "Exhaust System",
+				groupName = "Test Site Name");
+
+			JSONWebcontent.addFolder(
+				folderName = "ABS Sensor",
+				groupName = "Test Site Name",
+				parentFolderName = "Brake System");
+
+			HeadlessWebcontent.addBasicWebContent(
+				content = "Tesla ABS Wheel Speed Sensor",
+				folderName = "ABS Sensor",
+				groupName = "Test Site Name",
+				title = "Tesla ABS Wheel Speed Sensor");
+
+			HeadlessWebcontent.addBasicWebContent(
+				content = "Tesla Model 3",
+				groupName = "Test Site Name",
+				title = "Tesla Model 3");
+		}
+
+		task ("When the site designer select web content in Web Content Display") {
+			Navigator.gotoSitePage(
+				pageName = "Test Page Name",
+				siteName = "Test Site Name");
+
+			WebContentDisplayPortlet.gotoSelectWebContent();
+		}
+
+		task ("Then the site designer sees the folders hierachy on modal") {
+			for (var entryTitle : list "Brake System,Exhaust System,Tesla Model 3") {
+				LexiconList.viewListEntryTitle(listEntry = "${entryTitle}");
+			}
+
+			LexiconList.clickListEntryTitle(listEntry = "Brake System");
+
+			LexiconList.clickListEntryTitle(listEntry = "ABS Sensor");
+
+			LexiconList.viewListEntryTitle(listEntry = "Tesla ABS Wheel Speed Sensor");
+
+			Click(
+				key_breadcrumbName = "Test Site Name",
+				locator1 = "Breadcrumb#BREADCRUMB_ENTRY");
+
+			LexiconList.clickListEntryTitle(listEntry = "Exhaust System");
+
+			AssertTextEquals(
+				locator1 = "Message#EMPTY_INFO",
+				value1 = "No web content was found.");
 		}
 	}
 

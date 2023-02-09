@@ -21,7 +21,7 @@ import com.liferay.batch.engine.configuration.BatchEngineTaskCompanyConfiguratio
 import com.liferay.batch.engine.internal.item.BatchEngineTaskItemDelegateExecutor;
 import com.liferay.batch.engine.internal.item.BatchEngineTaskItemDelegateExecutorFactory;
 import com.liferay.batch.engine.internal.writer.BatchEngineExportTaskItemWriter;
-import com.liferay.batch.engine.internal.writer.BatchEngineExportTaskItemWriterFactory;
+import com.liferay.batch.engine.internal.writer.BatchEngineExportTaskItemWriterBuilder;
 import com.liferay.batch.engine.model.BatchEngineExportTask;
 import com.liferay.batch.engine.pagination.Page;
 import com.liferay.batch.engine.service.BatchEngineExportTaskLocalService;
@@ -46,6 +46,7 @@ import com.liferay.portal.odata.filter.FilterParserProvider;
 import com.liferay.portal.odata.sort.SortParserProvider;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 import java.util.Collection;
 import java.util.Date;
@@ -67,10 +68,10 @@ public class BatchEngineExportTaskExecutorImpl
 
 	@Override
 	public void execute(BatchEngineExportTask batchEngineExportTask) {
-		try (SafeCloseable safeCloseable =
-				CompanyThreadLocal.setWithSafeCloseable(
-					batchEngineExportTask.getCompanyId())) {
+		SafeCloseable safeCloseable = CompanyThreadLocal.setWithSafeCloseable(
+			batchEngineExportTask.getCompanyId());
 
+		try {
 			batchEngineExportTask.setExecuteStatus(
 				BatchEngineTaskExecuteStatus.STARTED.toString());
 			batchEngineExportTask.setStartTime(new Date());
@@ -107,6 +108,13 @@ public class BatchEngineExportTaskExecutorImpl
 					portalException);
 			}
 		}
+		finally {
+
+			// LPS-167011 Because of call to _updateBatchEngineImportTask when
+			// catching a Throwable
+
+			safeCloseable.close();
+		}
 	}
 
 	@Activate
@@ -139,17 +147,8 @@ public class BatchEngineExportTaskExecutorImpl
 				batchEngineExportTask.getContentType(),
 				unsyncByteArrayOutputStream);
 			BatchEngineExportTaskItemWriter batchEngineExportTaskItemWriter =
-				_batchEngineExportTaskItemWriterFactory.create(
-					BatchEngineTaskContentType.valueOf(
-						batchEngineExportTask.getContentType()),
-					GetterUtil.getString(
-						_getCSVFileColumnDelimiter(
-							batchEngineExportTask.getCompanyId()),
-						StringPool.COMMA),
-					batchEngineExportTask.getFieldNamesList(),
-					_batchEngineTaskMethodRegistry.getItemClass(
-						batchEngineExportTask.getClassName()),
-					zipOutputStream, batchEngineExportTask.getParameters())) {
+				_getBatchEngineExportTaskItemWriter(
+					batchEngineExportTask, zipOutputStream)) {
 
 			int exportBatchSize = _getExportBatchSize(
 				batchEngineExportTask.getCompanyId());
@@ -198,9 +197,37 @@ public class BatchEngineExportTaskExecutorImpl
 			batchEngineExportTask);
 	}
 
-	private String _getCSVFileColumnDelimiter(long companyId)
-		throws ConfigurationException {
+	private BatchEngineExportTaskItemWriter _getBatchEngineExportTaskItemWriter(
+			BatchEngineExportTask batchEngineExportTask,
+			OutputStream outputStream)
+		throws Exception {
 
+		BatchEngineExportTaskItemWriterBuilder
+			batchEngineExportTaskItemWriterBuilder =
+				new BatchEngineExportTaskItemWriterBuilder();
+
+		return batchEngineExportTaskItemWriterBuilder.
+			batchEngineTaskContentType(
+				BatchEngineTaskContentType.valueOf(
+					batchEngineExportTask.getContentType())
+			).csvFileColumnDelimiter(
+				GetterUtil.getString(
+					_getCSVFileColumnDelimiter(
+						batchEngineExportTask.getCompanyId()),
+					StringPool.COMMA)
+			).fieldNames(
+				batchEngineExportTask.getFieldNamesList()
+			).itemClass(
+				_batchEngineTaskMethodRegistry.getItemClass(
+					batchEngineExportTask.getClassName())
+			).outputStream(
+				outputStream
+			).parameters(
+				batchEngineExportTask.getParameters()
+			).build();
+	}
+
+	private String _getCSVFileColumnDelimiter(long companyId) throws Exception {
 		BatchEngineTaskCompanyConfiguration
 			batchEngineTaskCompanyConfiguration =
 				_configurationProvider.getCompanyConfiguration(
@@ -256,10 +283,6 @@ public class BatchEngineExportTaskExecutorImpl
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		BatchEngineExportTaskExecutorImpl.class);
-
-	private final BatchEngineExportTaskItemWriterFactory
-		_batchEngineExportTaskItemWriterFactory =
-			new BatchEngineExportTaskItemWriterFactory();
 
 	@Reference
 	private BatchEngineExportTaskLocalService

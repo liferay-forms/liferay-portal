@@ -27,24 +27,26 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.TextExtractor;
+import com.liferay.portal.tika.internal.configuration.helper.TikaConfigurationHelper;
 import com.liferay.portal.tika.internal.util.ProcessConfigUtil;
-import com.liferay.portal.tika.internal.util.TikaConfigUtil;
-import com.liferay.portal.util.PropsValues;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import java.nio.charset.Charset;
 
+import java.util.Objects;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.tika.Tika;
+import org.apache.tika.detect.Detector;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.extractor.EmbeddedDocumentExtractor;
 import org.apache.tika.extractor.ParsingEmbeddedDocumentExtractor;
 import org.apache.tika.metadata.Metadata;
+import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.parser.txt.UniversalEncodingDetector;
@@ -72,34 +74,25 @@ public class TextExtractorImpl implements TextExtractor {
 		String text = null;
 
 		try {
-			Tika tika = new Tika(TikaConfigUtil.getTikaConfig());
+			Tika tika = new Tika(_tikaConfigurationHelper.getTikaConfig());
 
 			tika.setMaxStringLength(maxStringLength);
-
-			boolean forkProcess = false;
 
 			if (!inputStream.markSupported()) {
 				inputStream = new UnsyncBufferedInputStream(inputStream);
 			}
 
-			if (PropsValues.TEXT_EXTRACTION_FORK_PROCESS_ENABLED) {
-				String mimeType = tika.detect(inputStream);
+			if (_tikaConfigurationHelper.useForkProcess(
+					tika.detect(inputStream))) {
 
-				if (ArrayUtil.contains(
-						PropsValues.TEXT_EXTRACTION_FORK_PROCESS_MIME_TYPES,
-						mimeType)) {
-
-					forkProcess = true;
-				}
-			}
-
-			if (forkProcess) {
 				InputStream finalInputStream = inputStream;
 
 				ProcessChannel<String> processChannel =
 					_processExecutor.execute(
 						ProcessConfigUtil.getProcessConfig(),
 						new ExtractTextProcessCallable(
+							tika.getParser(), tika.getDetector(),
+							tika.getMaxStringLength(),
 							StreamUtil.toByteArray(finalInputStream)));
 
 				Future<String> future =
@@ -108,7 +101,9 @@ public class TextExtractorImpl implements TextExtractor {
 				text = future.get();
 			}
 			else {
-				text = _parseToString(tika, inputStream);
+				text = _parseToString(
+					tika.getParser(), tika.getDetector(),
+					tika.getMaxStringLength(), inputStream);
 			}
 		}
 		catch (Exception exception) {
@@ -117,10 +112,16 @@ public class TextExtractorImpl implements TextExtractor {
 			}
 		}
 
+		if (_log.isDebugEnabled()) {
+			_log.debug("Extracted text: " + text);
+		}
+
 		return text;
 	}
 
-	private static String _parseToString(Tika tika, InputStream inputStream)
+	private static String _parseToString(
+			Parser parser, Detector detector, int maxStringLength,
+			InputStream inputStream)
 		throws IOException, TikaException {
 
 		inputStream.mark(1);
@@ -155,11 +156,9 @@ public class TextExtractorImpl implements TextExtractor {
 		}
 
 		WriteOutContentHandler writeOutContentHandler =
-			new WriteOutContentHandler(tika.getMaxStringLength());
+			new WriteOutContentHandler(maxStringLength);
 
 		try {
-			Parser parser = tika.getParser();
-
 			ParseContext parseContext = new ParseContext();
 
 			parseContext.set(
@@ -173,9 +172,12 @@ public class TextExtractorImpl implements TextExtractor {
 							boolean outputHtml)
 						throws IOException, SAXException {
 
-						String mimeType = tika.detect(inputStream);
+						MediaType mediaType = detector.detect(
+							inputStream, new Metadata());
 
-						if (mimeType.equals(ContentTypes.IMAGE_PNG)) {
+						if (Objects.equals(
+								ContentTypes.IMAGE_PNG, mediaType.toString())) {
+
 							return;
 						}
 
@@ -209,6 +211,9 @@ public class TextExtractorImpl implements TextExtractor {
 	@Reference
 	private ProcessExecutor _processExecutor;
 
+	@Reference
+	private TikaConfigurationHelper _tikaConfigurationHelper;
+
 	private static class ExtractTextProcessCallable
 		implements ProcessCallable<String> {
 
@@ -227,24 +232,32 @@ public class TextExtractorImpl implements TextExtractor {
 
 			logger.setLevel(Level.SEVERE);
 
-			Tika tika = new Tika(TikaConfigUtil.getTikaConfig());
-
 			try {
 				return _parseToString(
-					tika, new UnsyncByteArrayInputStream(_data));
+					_parser, _detector, _maxStringLength,
+					new UnsyncByteArrayInputStream(_data));
 			}
 			catch (Exception exception) {
 				throw new ProcessException(exception);
 			}
 		}
 
-		private ExtractTextProcessCallable(byte[] data) {
+		private ExtractTextProcessCallable(
+			Parser parser, Detector detector, int maxStringLength,
+			byte[] data) {
+
+			_parser = parser;
+			_detector = detector;
+			_maxStringLength = maxStringLength;
 			_data = data;
 		}
 
 		private static final long serialVersionUID = 1L;
 
 		private final byte[] _data;
+		private final Detector _detector;
+		private final int _maxStringLength;
+		private final Parser _parser;
 
 	}
 

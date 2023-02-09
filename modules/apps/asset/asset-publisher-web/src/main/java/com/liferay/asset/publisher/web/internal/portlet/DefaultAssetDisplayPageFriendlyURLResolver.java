@@ -74,7 +74,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import javax.portlet.WindowState;
 
@@ -200,25 +199,25 @@ public class DefaultAssetDisplayPageFriendlyURLResolver
 	}
 
 	private AssetEntry _getAssetEntry(JournalArticle journalArticle) {
+		AssetEntry assetEntry = _assetEntryLocalService.fetchEntry(
+			JournalArticle.class.getName(), journalArticle.getPrimaryKey());
+
+		if (assetEntry != null) {
+			return assetEntry;
+		}
+
 		AssetRendererFactory<?> assetRendererFactory =
 			AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(
 				JournalArticle.class.getName());
 
-		return Optional.ofNullable(
-			_assetEntryLocalService.fetchEntry(
-				JournalArticle.class.getName(), journalArticle.getPrimaryKey())
-		).orElseGet(
-			() -> {
-				try {
-					return assetRendererFactory.getAssetEntry(
-						JournalArticle.class.getName(),
-						journalArticle.getResourcePrimKey());
-				}
-				catch (PortalException portalException) {
-					throw new RuntimeException(portalException);
-				}
-			}
-		);
+		try {
+			return assetRendererFactory.getAssetEntry(
+				JournalArticle.class.getName(),
+				journalArticle.getResourcePrimKey());
+		}
+		catch (PortalException portalException) {
+			throw new RuntimeException(portalException);
+		}
 	}
 
 	private String _getBasicLayoutURL(

@@ -20,15 +20,12 @@ import com.liferay.analytics.settings.rest.internal.dto.v1_0.converter.ContactUs
 import com.liferay.analytics.settings.rest.internal.dto.v1_0.converter.ContactUserGroupDTOConverterContext;
 import com.liferay.analytics.settings.rest.manager.AnalyticsSettingsManager;
 import com.liferay.analytics.settings.rest.resource.v1_0.ContactUserGroupResource;
-import com.liferay.portal.kernel.model.UserGroupTable;
+import com.liferay.portal.kernel.model.UserGroup;
+import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.service.UserGroupLocalService;
-import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
-import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
-
-import java.util.LinkedHashMap;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -59,29 +56,22 @@ public class ContactUserGroupResourceImpl
 
 		Sort sort = sorts[0];
 
+		BaseModelSearchResult<UserGroup> userGroupBaseModelSearchResult =
+			_userGroupLocalService.searchUserGroups(
+				contextCompany.getCompanyId(), keywords, null,
+				pagination.getStartPosition(), pagination.getEndPosition(),
+				sort);
+
 		return Page.of(
 			transform(
-				_userGroupLocalService.search(
-					contextCompany.getCompanyId(), keywords, _getParams(),
-					pagination.getStartPosition(), pagination.getEndPosition(),
-					OrderByComparatorFactoryUtil.create(
-						UserGroupTable.INSTANCE.getTableName(),
-						sort.getFieldName(), !sort.isReverse())),
+				userGroupBaseModelSearchResult.getBaseModels(),
 				userGroup -> _contactUserGroupDTOConverter.toDTO(
 					new ContactUserGroupDTOConverterContext(
 						userGroup.getUserGroupId(),
 						contextAcceptLanguage.getPreferredLocale(),
 						analyticsConfiguration.syncedUserGroupIds()),
 					userGroup)),
-			pagination,
-			_userGroupLocalService.searchCount(
-				contextCompany.getCompanyId(), keywords, _getParams()));
-	}
-
-	private LinkedHashMap<String, Object> _getParams() {
-		return LinkedHashMapBuilder.<String, Object>put(
-			"active", Boolean.TRUE
-		).build();
+			pagination, userGroupBaseModelSearchResult.getLength());
 	}
 
 	@Reference

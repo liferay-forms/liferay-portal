@@ -95,6 +95,7 @@ const FrontendDataSet = ({
 	sidePanelId,
 	sorting: sortingProp,
 	style,
+	uniformActionsDisplay,
 	views,
 }) => {
 	const wrapperRef = useRef(null);
@@ -131,9 +132,13 @@ const FrontendDataSet = ({
 			);
 
 			if (activeViewName) {
-				initialActiveView = views.find(
+				const activeView = views.find(
 					({name}) => name === activeViewName
 				);
+
+				if (activeView) {
+					initialActiveView = activeView;
+				}
 			}
 
 			if (visibleFieldNames) {
@@ -764,6 +769,7 @@ const FrontendDataSet = ({
 				sorting,
 				style,
 				toggleItemInlineEdit,
+				uniformActionsDisplay,
 				updateDataSetItems,
 				updateItem,
 				updateSearchParam: setSearchParam,

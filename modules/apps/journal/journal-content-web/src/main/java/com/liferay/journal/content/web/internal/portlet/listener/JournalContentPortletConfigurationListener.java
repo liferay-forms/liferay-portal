@@ -38,7 +38,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Lourdes Fernández Besada
  */
 @Component(
-	immediate = true,
 	property = "javax.portlet.name=" + JournalContentPortletKeys.JOURNAL_CONTENT,
 	service = PortletConfigurationListener.class
 )
@@ -58,40 +57,14 @@ public class JournalContentPortletConfigurationListener
 		}
 
 		try {
-			long groupId = GetterUtil.getLong(
-				portletPreferences.getValue("groupId", "0"));
+			portletPreferences.reset("portletSetupUseCustomTitle");
 
-			if (groupId == 0) {
-				return;
+			if (_resetValues(portletPreferences)) {
+				portletPreferences.reset("articleId");
+				portletPreferences.reset("assetEntryId");
+				portletPreferences.reset("ddmTemplateKey");
+				portletPreferences.reset("groupId");
 			}
-
-			Group group = _groupLocalService.fetchGroup(groupId);
-
-			if (group == null) {
-				return;
-			}
-
-			String lfrScopeType = portletPreferences.getValue(
-				"lfrScopeType", StringPool.BLANK);
-
-			if (group.isCompany() && Objects.equals("company", lfrScopeType)) {
-				return;
-			}
-
-			if (group.isLayout() && Objects.equals("layout", lfrScopeType)) {
-				return;
-			}
-
-			if (!group.isCompany() && !group.isLayout() &&
-				Validator.isNull(lfrScopeType)) {
-
-				return;
-			}
-
-			portletPreferences.reset("assetEntryId");
-			portletPreferences.reset("articleId");
-			portletPreferences.reset("ddmTemplateKey");
-			portletPreferences.reset("groupId");
 
 			portletPreferences.store();
 		}
@@ -102,6 +75,40 @@ public class JournalContentPortletConfigurationListener
 
 			throw new PortletConfigurationListenerException(exception);
 		}
+	}
+
+	private boolean _resetValues(PortletPreferences portletPreferences) {
+		long groupId = GetterUtil.getLong(
+			portletPreferences.getValue("groupId", "0"));
+
+		if (groupId == 0) {
+			return false;
+		}
+
+		Group group = _groupLocalService.fetchGroup(groupId);
+
+		if (group == null) {
+			return false;
+		}
+
+		String lfrScopeType = portletPreferences.getValue(
+			"lfrScopeType", StringPool.BLANK);
+
+		if (group.isCompany() && Objects.equals("company", lfrScopeType)) {
+			return false;
+		}
+
+		if (group.isLayout() && Objects.equals("layout", lfrScopeType)) {
+			return false;
+		}
+
+		if (!group.isCompany() && !group.isLayout() &&
+			Validator.isNull(lfrScopeType)) {
+
+			return false;
+		}
+
+		return true;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

@@ -107,6 +107,11 @@ public abstract class SyntaxLogger {
 			Element testCaseElement = PoshiContext.getTestCaseCommandElement(
 				classCommandName, namespace);
 
+			if (testCaseElement == null) {
+				throw new PoshiRunnerLoggerException(
+					"No test case element found for " + classCommandName);
+			}
+
 			childContainerLoggerElement.addChildLoggerElement(
 				getLoggerElementFromElement(testCaseElement));
 

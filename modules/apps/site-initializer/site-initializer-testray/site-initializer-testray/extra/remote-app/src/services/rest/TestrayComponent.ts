@@ -16,13 +16,13 @@ import TestrayError from '../../TestrayError';
 import i18n from '../../i18n';
 import {State} from '../../pages/Standalone/Teams/TeamsFormModal';
 import yupSchema from '../../schema/yup';
-import {SearchBuilder, searchUtil} from '../../util/search';
+import {SearchBuilder} from '../../util/search';
 import Rest from './Rest';
 import {APIResponse, TestrayComponent} from './types';
 
 type Component = typeof yupSchema.component.__outputType;
 class TestrayComponentImpl extends Rest<Component, TestrayComponent> {
-	private UNASSIGNED_TEAM_ID = '0';
+	public UNASSIGNED_TEAM_ID = '0';
 
 	constructor() {
 		super({
@@ -107,7 +107,7 @@ class TestrayComponentImpl extends Rest<Component, TestrayComponent> {
 		teamId: number
 	): Promise<APIResponse<TestrayComponent> | undefined> {
 		return this.fetcher<APIResponse<TestrayComponent>>(
-			`/components?filter=${searchUtil.eq('teamId', teamId)}`
+			`/components?filter=${SearchBuilder.eq('teamId', teamId)}`
 		);
 	}
 }

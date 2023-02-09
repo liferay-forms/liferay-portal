@@ -71,20 +71,22 @@ public class SearchEngineHelperImplTest {
 
 		BundleContext bundleContext = bundle.getBundleContext();
 
-		ComponentConfigurationDTO componentConfigurationDTO =
-			_getElasticsearchSearchEngineComponentConfigurationDTO(
-				bundleContext);
+		SearchEngine searchEngine = _searchEngineHelper.getSearchEngine();
 
-		// Assert ElasticsearchSearchEngine is on duty
+		String vendor = searchEngine.getVendor();
+
+		ComponentConfigurationDTO componentConfigurationDTO =
+			_getRealSearchEngineComponentConfigurationDTO(
+				bundleContext, vendor);
+
+		// Assert real search engine is on duty
 
 		Assert.assertEquals(
 			ComponentConfigurationDTO.ACTIVE, componentConfigurationDTO.state);
 
-		SearchEngine searchEngine = _searchEngineHelper.getSearchEngine();
+		Assert.assertNotEquals("MockSearchEngine", vendor);
 
-		Assert.assertEquals("Elasticsearch", searchEngine.getVendor());
-
-		// Register mock SeachEngine to swap out ElasticsearchSearchEngine
+		// Register mock SeachEngine to swap out real search engine
 
 		MockIndexSearcher mockIndexSearcher = new MockIndexSearcher();
 
@@ -104,8 +106,8 @@ public class SearchEngineHelperImplTest {
 			Assert.assertEquals("MockSearchEngine", searchEngine.getVendor());
 
 			componentConfigurationDTO =
-				_getElasticsearchSearchEngineComponentConfigurationDTO(
-					bundleContext);
+				_getRealSearchEngineComponentConfigurationDTO(
+					bundleContext, vendor);
 
 			// Assert search request went to MockIndexSearcher
 
@@ -122,7 +124,7 @@ public class SearchEngineHelperImplTest {
 
 			Assert.assertSame(document, mockIndexWriter._document);
 
-			// Assert ElasticsearchSearchEngine is off duty
+			// Assert real search engine is off duty
 
 			Assert.assertEquals(
 				ComponentConfigurationDTO.SATISFIED,
@@ -133,27 +135,27 @@ public class SearchEngineHelperImplTest {
 		}
 
 		componentConfigurationDTO =
-			_getElasticsearchSearchEngineComponentConfigurationDTO(
-				bundleContext);
+			_getRealSearchEngineComponentConfigurationDTO(
+				bundleContext, vendor);
 
-		// Assert ElasticsearchSearchEngine is back on duty
+		// Assert real search engine is back on duty
 
 		Assert.assertEquals(
 			ComponentConfigurationDTO.ACTIVE, componentConfigurationDTO.state);
 
 		searchEngine = _searchEngineHelper.getSearchEngine();
 
-		Assert.assertEquals("Elasticsearch", searchEngine.getVendor());
+		Assert.assertEquals(vendor, searchEngine.getVendor());
 	}
 
 	private ComponentConfigurationDTO
-			_getElasticsearchSearchEngineComponentConfigurationDTO(
-				BundleContext bundleContext)
+			_getRealSearchEngineComponentConfigurationDTO(
+				BundleContext bundleContext, String vendor)
 		throws Exception {
 
 		Collection<ServiceReference<SearchEngine>> serviceReferences =
 			bundleContext.getServiceReferences(
-				SearchEngine.class, "(search.engine.impl=Elasticsearch)");
+				SearchEngine.class, "(search.engine.impl=" + vendor + ")");
 
 		Assert.assertEquals(
 			serviceReferences.toString(), 1, serviceReferences.size());

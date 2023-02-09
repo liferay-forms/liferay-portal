@@ -79,7 +79,7 @@ public abstract class BaseTestrayServer implements TestrayServer {
 	}
 
 	@Override
-	public TestrayProject getTestrayProjectByID(int projectID) {
+	public TestrayProject getTestrayProjectByID(long projectID) {
 		_initTestrayProjects();
 
 		return _testrayProjectsByID.get(projectID);
@@ -338,7 +338,7 @@ public abstract class BaseTestrayServer implements TestrayServer {
 
 	private JenkinsResultsParserUtil.HTTPAuthorization _httpAuthorization;
 	private Map<String, TestrayCaseType> _testrayCaseTypes;
-	private Map<Integer, TestrayProject> _testrayProjectsByID;
+	private Map<Long, TestrayProject> _testrayProjectsByID;
 	private Map<String, TestrayProject> _testrayProjectsByName;
 	private final URL _url;
 

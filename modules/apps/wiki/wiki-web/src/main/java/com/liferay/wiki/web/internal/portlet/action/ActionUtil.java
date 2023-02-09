@@ -14,6 +14,8 @@
 
 package com.liferay.wiki.web.internal.portlet.action;
 
+import com.liferay.petra.lang.SafeCloseable;
+import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -164,8 +166,13 @@ public class ActionUtil {
 				serviceContext.setAddGuestPermissions(false);
 			}
 
-			node = WikiNodeLocalServiceUtil.addDefaultNode(
-				themeDisplay.getDefaultUserId(), serviceContext);
+			try (SafeCloseable safeCloseable =
+					CTCollectionThreadLocal.
+						setProductionModeWithSafeCloseable()) {
+
+				node = WikiNodeLocalServiceUtil.addDefaultNode(
+					themeDisplay.getDefaultUserId(), serviceContext);
+			}
 		}
 		else {
 			node = getFirstNode(portletRequest);
@@ -194,6 +201,8 @@ public class ActionUtil {
 			nodeId, wikiGroupServiceConfiguration.frontPageName(), 0);
 
 		if (page == null) {
+			WikiNode node = WikiNodeLocalServiceUtil.getNode(nodeId);
+
 			ThemeDisplay themeDisplay =
 				(ThemeDisplay)portletRequest.getAttribute(
 					WebKeys.THEME_DISPLAY);
@@ -206,7 +215,10 @@ public class ActionUtil {
 
 			boolean workflowEnabled = WorkflowThreadLocal.isEnabled();
 
-			try {
+			try (SafeCloseable safeCloseable =
+					CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
+						node.getCtCollectionId())) {
+
 				WorkflowThreadLocal.setEnabled(false);
 
 				page = WikiPageLocalServiceUtil.addPage(

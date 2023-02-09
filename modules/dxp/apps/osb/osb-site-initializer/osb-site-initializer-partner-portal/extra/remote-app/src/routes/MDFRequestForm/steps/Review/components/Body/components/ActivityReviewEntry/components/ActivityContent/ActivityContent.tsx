@@ -18,68 +18,76 @@ interface IProps {
 	mdfRequestActivity: MDFRequestActivity;
 }
 
-const ActivityContent = ({mdfRequestActivity}: IProps) => (
-	<>
-		<Table
-			borderless
-			className="bg-brand-primary-lighten-6 border-top table-striped"
-			columns={[
-				{
-					columnKey: 'title',
-					label: 'Budget Breakdown',
-				},
-				{
-					columnKey: 'value',
-					label: '',
-				},
-			]}
-			rows={mdfRequestActivity.budgets.map((budget) => ({
-				title: budget.expense.name,
-				value: getIntlNumberFormat().format(budget.cost),
-			}))}
-		/>
+const ActivityContent = ({mdfRequestActivity}: IProps) => {
+	const leadList = [
+		{
+			title: 'Is a lead list an outcome of this activity?',
+			value: getBooleanValue(
+				mdfRequestActivity?.activityDescription?.leadGenerated as string
+			),
+		},
+	];
 
-		<Table
-			borderless
-			className="bg-brand-primary-lighten-6 border-top table-striped"
-			columns={[
-				{
-					columnKey: 'title',
-					label: 'Lead List',
-				},
-				{
-					columnKey: 'value',
-					label: '',
-				},
-			]}
-			rows={[
-				{
-					title: 'Is a lead list an outcome of this activity?',
-					value: getBooleanValue(
-						mdfRequestActivity?.activityDescription
-							?.leadGenerated as string
-					),
-				},
-				{
-					title: 'Target # of Leads',
-					value:
-						mdfRequestActivity?.activityDescription?.targetOfLeads,
-				},
-				{
-					title: 'Lead Follow Up strategy',
-					value: mdfRequestActivity?.activityDescription?.leadFollowUpStrategies?.join(
-						'; '
-					),
-				},
-				{
-					title: 'Details on Lead Follow Up',
-					value:
-						mdfRequestActivity?.activityDescription
-							?.detailsLeadFollowUp,
-				},
-			]}
-			truncate
-		/>
-	</>
-);
+	if (
+		getBooleanValue(
+			mdfRequestActivity?.activityDescription?.leadGenerated as string
+		)
+	) {
+		leadList.push(
+			{
+				title: 'Target # of Leads',
+				value: mdfRequestActivity?.activityDescription
+					?.targetOfLeads as string,
+			},
+			{
+				title: 'Lead Follow Up strategy',
+				value: mdfRequestActivity?.activityDescription?.leadFollowUpStrategies?.join(
+					', '
+				) as string,
+			},
+			{
+				title: 'Details on Lead Follow Up',
+				value: mdfRequestActivity?.activityDescription
+					?.detailsLeadFollowUp as string,
+			}
+		);
+	}
+
+	return (
+		<>
+			<Table
+				className="bg-brand-primary-lighten-6 border-top table-striped"
+				columns={[
+					{
+						columnKey: 'title',
+						label: 'Budget Breakdown',
+					},
+					{
+						columnKey: 'value',
+						label: '',
+					},
+				]}
+				rows={mdfRequestActivity.budgets.map((budget) => ({
+					title: budget.expense.name,
+					value: getIntlNumberFormat().format(budget.cost),
+				}))}
+			/>
+
+			<Table
+				className="bg-brand-primary-lighten-6 border-top table-striped"
+				columns={[
+					{
+						columnKey: 'title',
+						label: 'Lead List',
+					},
+					{
+						columnKey: 'value',
+						label: '',
+					},
+				]}
+				rows={leadList}
+			/>
+		</>
+	);
+};
 export default ActivityContent;

@@ -38,8 +38,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Stream;
 
 /**
  * @author Cristina González
@@ -159,34 +157,35 @@ public class ContentStructureUtil {
 				showLabel = ddmFormField.isShowLabel();
 
 				setOptions(
-					() -> Optional.ofNullable(
-						ddmFormField.getDDMFormFieldOptions()
-					).map(
-						DDMFormFieldOptions::getOptions
-					).map(
-						Map::entrySet
-					).map(
-						Set::stream
-					).orElseGet(
-						Stream::empty
-					).map(
-						entry -> new Option() {
-							{
-								LocalizedValue localizedValue =
-									entry.getValue();
+					() -> {
+						DDMFormFieldOptions ddmFormFieldOptions =
+							ddmFormField.getDDMFormFieldOptions();
 
-								setLabel(_toString(localizedValue, locale));
-								setLabel_i18n(
-									LocalizedMapUtil.getI18nMap(
-										acceptAllLanguage,
-										localizedValue.getValues()));
-
-								setValue(entry.getKey());
-							}
+						if (ddmFormFieldOptions == null) {
+							return new Option[0];
 						}
-					).toArray(
-						Option[]::new
-					));
+
+						Map<String, LocalizedValue> map =
+							ddmFormFieldOptions.getOptions();
+
+						return TransformUtil.transformToArray(
+							map.entrySet(),
+							entry -> new Option() {
+								{
+									LocalizedValue localizedValue =
+										entry.getValue();
+
+									setLabel(_toString(localizedValue, locale));
+									setLabel_i18n(
+										LocalizedMapUtil.getI18nMap(
+											acceptAllLanguage,
+											localizedValue.getValues()));
+
+									setValue(entry.getKey());
+								}
+							},
+							Option.class);
+					});
 			}
 		};
 	}

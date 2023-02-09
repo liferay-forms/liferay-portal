@@ -204,9 +204,6 @@
 										"key": "moreInfoRequested"
 									},
 									{
-										"key": "expired"
-									},
-									{
 										"key": "rejected"
 									},
 									{
@@ -218,19 +215,7 @@
 								"key": "approved",
 								"objectStateTransitions": [
 									{
-										"key": "pendingMarketingReview"
-									},
-									{
-										"key": "marketingDirectorReview"
-									},
-									{
-										"key": "moreInfoRequested"
-									},
-									{
 										"key": "expired"
-									},
-									{
-										"key": "rejected"
 									},
 									{
 										"key": "canceled"
@@ -241,22 +226,19 @@
 								"key": "marketingDirectorReview",
 								"objectStateTransitions": [
 									{
-										"key": "pendingMarketingReview"
-									},
-									{
 										"key": "approved"
 									},
 									{
 										"key": "moreInfoRequested"
 									},
 									{
-										"key": "expired"
-									},
-									{
 										"key": "rejected"
 									},
 									{
 										"key": "canceled"
+									},
+									{
+										"key": "pendingMarketingReview"
 									}
 								]
 							},
@@ -264,22 +246,16 @@
 								"key": "moreInfoRequested",
 								"objectStateTransitions": [
 									{
-										"key": "pendingMarketingReview"
-									},
-									{
-										"key": "approved"
-									},
-									{
 										"key": "marketingDirectorReview"
 									},
 									{
 										"key": "expired"
 									},
 									{
-										"key": "rejected"
+										"key": "canceled"
 									},
 									{
-										"key": "canceled"
+										"key": "draft"
 									}
 								]
 							},
@@ -287,19 +263,10 @@
 								"key": "expired",
 								"objectStateTransitions": [
 									{
-										"key": "pendingMarketingReview"
-									},
-									{
-										"key": "approved"
-									},
-									{
 										"key": "marketingDirectorReview"
 									},
 									{
 										"key": "moreInfoRequested"
-									},
-									{
-										"key": "rejected"
 									},
 									{
 										"key": "canceled"
@@ -313,16 +280,10 @@
 										"key": "pendingMarketingReview"
 									},
 									{
-										"key": "approved"
-									},
-									{
 										"key": "marketingDirectorReview"
 									},
 									{
 										"key": "moreInfoRequested"
-									},
-									{
-										"key": "expired"
 									},
 									{
 										"key": "canceled"
@@ -333,22 +294,7 @@
 								"key": "canceled",
 								"objectStateTransitions": [
 									{
-										"key": "pendingMarketingReview"
-									},
-									{
 										"key": "approved"
-									},
-									{
-										"key": "marketingDirectorReview"
-									},
-									{
-										"key": "moreInfoRequested"
-									},
-									{
-										"key": "expired"
-									},
-									{
-										"key": "rejected"
 									}
 								]
 							},
@@ -357,6 +303,12 @@
 								"objectStateTransitions": [
 									{
 										"key": "pendingMarketingReview"
+									},
+									{
+										"key": "canceled"
+									},
+									{
+										"key": "marketingDirectorReview"
 									}
 								]
 							}
@@ -370,6 +322,7 @@
 			"type": "String"
 		}
 	],
+	"panelCategoryKey": "control_panel.object",
 	"pluralLabel": {
 		"en_US": "MDF Requests"
 	},

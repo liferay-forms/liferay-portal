@@ -14,12 +14,13 @@
 
 package com.liferay.object.admin.rest.dto.v1_0.util;
 
+import com.liferay.notification.model.NotificationTemplate;
+import com.liferay.notification.service.NotificationTemplateLocalService;
 import com.liferay.object.admin.rest.dto.v1_0.ObjectAction;
 import com.liferay.object.admin.rest.dto.v1_0.Status;
 import com.liferay.object.constants.ObjectActionConstants;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.service.ObjectDefinitionLocalService;
-import com.liferay.object.util.LocalizedMapUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -28,6 +29,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
+import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,6 +44,7 @@ public class ObjectActionUtil {
 
 	public static ObjectAction toObjectAction(
 		Map<String, Map<String, String>> actions, Locale locale,
+		NotificationTemplateLocalService notificationTemplateLocalService,
 		ObjectDefinitionLocalService objectDefinitionLocalService,
 		com.liferay.object.model.ObjectAction serviceBuilderObjectAction) {
 
@@ -59,6 +62,8 @@ public class ObjectActionUtil {
 				description = serviceBuilderObjectAction.getDescription();
 				errorMessage = LocalizedMapUtil.getLanguageIdMap(
 					serviceBuilderObjectAction.getErrorMessageMap());
+				externalReferenceCode =
+					serviceBuilderObjectAction.getExternalReferenceCode();
 				id = serviceBuilderObjectAction.getObjectActionId();
 				label = LocalizedMapUtil.getLanguageIdMap(
 					serviceBuilderObjectAction.getLabelMap());
@@ -68,6 +73,7 @@ public class ObjectActionUtil {
 				objectActionTriggerKey =
 					serviceBuilderObjectAction.getObjectActionTriggerKey();
 				parameters = toParameters(
+					notificationTemplateLocalService,
 					objectDefinitionLocalService,
 					serviceBuilderObjectAction.
 						getParametersUnicodeProperties());
@@ -91,6 +97,7 @@ public class ObjectActionUtil {
 	}
 
 	public static Map<String, Object> toParameters(
+		NotificationTemplateLocalService notificationTemplateLocalService,
 		ObjectDefinitionLocalService objectDefinitionLocalService,
 		UnicodeProperties parametersUnicodeProperties) {
 
@@ -102,6 +109,20 @@ public class ObjectActionUtil {
 			Object value = entry.getValue();
 
 			if (Objects.equals(entry.getKey(), "notificationTemplateId")) {
+				try {
+					NotificationTemplate notificationTemplate =
+						notificationTemplateLocalService.
+							getNotificationTemplate(GetterUtil.getLong(value));
+
+					parameters.put(
+						"notificationTemplateExternalReferenceCode",
+						notificationTemplate.getExternalReferenceCode());
+					parameters.put("type", notificationTemplate.getType());
+				}
+				catch (PortalException portalException) {
+					_log.error(portalException);
+				}
+
 				value = GetterUtil.getLong(value);
 			}
 			else if (Objects.equals(entry.getKey(), "objectDefinitionId")) {

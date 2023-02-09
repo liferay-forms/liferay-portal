@@ -199,16 +199,15 @@ definition {
 	@uitest
 	test ViewSiteCreationMessage {
 		property portal.acceptance = "true";
-		property portal.release = "false";
 
 		task ("Navigate to the Sites admin") {
 			Site.openSitesAdmin();
 		}
 
-		task ("Add a new site based on Raylife D2C") {
+		task ("Add a new site based on Masterclass") {
 			LexiconEntry.gotoAdd();
 
-			LexiconCard.clickCard(card = "Raylife D2C");
+			LexiconCard.clickCard(card = "Masterclass");
 
 			SelectFrame(locator1 = "IFrame#MODAL_BODY");
 
@@ -236,6 +235,8 @@ definition {
 		}
 
 		task ("View the new site is created") {
+			WaitForTextNotPresent(value1 = "The creation of the site may take some time. Closing the window will not cancel the process.");
+
 			SelectFrameTop();
 
 			Alert.viewSuccessMessageText(successMessage = "Site was successfully added.");

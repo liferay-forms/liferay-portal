@@ -70,7 +70,7 @@ const PartnerOpportunitiesList = ({
 		filtersTerm,
 		sort
 	);
-
+	const {totalCount: totalPagination} = data;
 	const filteredData = data.items && getFilteredItems(data.items);
 
 	const siteURL = useLiferayNavigate();
@@ -137,16 +137,14 @@ const PartnerOpportunitiesList = ({
 			return (
 				<div className="mt-3">
 					<Table<PartnerOpportunitiesItem>
-						borderless
 						columns={columns}
 						customClickOnRow={handleCustomClickOnRow}
-						responsive
 						rows={items}
 					/>
 
 					<ClayPaginationBarWithBasicItems
 						{...pagination}
-						totalItems={totalCount}
+						totalItems={totalPagination as number}
 					/>
 				</div>
 			);

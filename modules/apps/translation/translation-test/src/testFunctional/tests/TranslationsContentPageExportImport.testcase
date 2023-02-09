@@ -635,7 +635,9 @@ definition {
 			pageName = "TranslationContentPage",
 			siteName = "Guest");
 
-		ContentPages.changeExperience(experienceName = "NewAnyoneExperience");
+		ContentPages.changeExperience(
+			experienceName = "NewAnyoneExperience",
+			locale = "es");
 
 		Navigator.ensureLocaleURL(locale = "es");
 
@@ -984,7 +986,9 @@ definition {
 				pageName = "TranslationContentPage${i}",
 				siteName = "Guest");
 
-			ContentPages.changeExperience(experienceName = "NewAnyoneExperience");
+			ContentPages.changeExperience(
+				experienceName = "NewAnyoneExperience",
+				locale = "es");
 
 			Navigator.ensureLocaleURL(locale = "es");
 
@@ -1191,7 +1195,7 @@ definition {
 
 		AntCommand(
 			locator1 = "build-test-translation.xml",
-			value1 = "copy-translation-file -Dtranslation.zip.file.name=TranslationContentPage3-en_US -Dtranslation.file.name=TranslationContentPage3-en_US-es_ES.xlf");
+			value1 = "copy-translation-file -Dtranslation.file.name=TranslationContentPage3-en_US-es_ES.xlf -Dtranslation.zip.file.name=TranslationContentPage3-en_US");
 
 		PagesAdmin.openPagesAdmin(siteURLKey = "guest");
 

@@ -22,13 +22,12 @@ import ListView, {ListViewProps} from '../../../components/ListView';
 import {TableProps} from '../../../components/Table';
 import {ListViewContextProviderProps} from '../../../context/ListViewContext';
 import i18n from '../../../i18n';
-import {filters} from '../../../schema/filter';
 import {
 	getRequirementsTransformData,
 	requirementsResource,
 } from '../../../services/rest';
 import {Action} from '../../../types';
-import {searchUtil} from '../../../util/search';
+import {SearchBuilder} from '../../../util/search';
 import useRequirementActions from './useRequirementActions';
 
 type RequirementListViewProps = {
@@ -67,7 +66,7 @@ const RequirementListView: React.FC<RequirementListViewProps> = ({
 						</ClayManagementToolbar.Item>
 					</>
 				),
-				filterFields: filters.requirement as any,
+				filterSchema: 'requirements',
 				title: i18n.translate('requirements'),
 			}}
 			resource={requirementsResource}
@@ -140,7 +139,7 @@ const Requirements = () => {
 			<RequirementListView
 				actions={actions}
 				variables={{
-					filter: searchUtil.eq('projectId', projectId as string),
+					filter: SearchBuilder.eq('projectId', projectId as string),
 				}}
 			/>
 		</Container>

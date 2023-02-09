@@ -23,42 +23,28 @@ interface ObjectManagementToolbarProps {
 	isApproved: boolean;
 	label: string;
 	objectDefinitionId: number;
+	onSubmit: (draft: boolean) => void;
 	portletNamespace: string;
 	screenNavigationCategoryKey: string;
 	system: boolean;
 }
 
-export default function ObjectManagementToolbar(
-	props: ObjectManagementToolbarProps
-) {
-	const {
-		externalReferenceCode,
-		hasPublishObjectPermission,
-		hasUpdateObjectDefinitionPermission,
-		objectDefinitionId,
-		portletNamespace,
-		system,
-	} = props;
-
-	const submitObjectDefinition = (draft: boolean) => {
-		const form = document.getElementById(`${portletNamespace}fm`);
-
-		if (!draft) {
-			form?.querySelector(`#${portletNamespace}cmd`)?.setAttribute(
-				'value',
-				'publish'
-			);
-		}
-
-		form?.querySelector(
-			`#${portletNamespace}externalReferenceCode`
-		)?.setAttribute('value', externalReferenceCode);
-
-		(form as HTMLFormElement)?.submit();
-	};
-
+export default function ObjectManagementToolbar({
+	backURL,
+	externalReferenceCode,
+	hasPublishObjectPermission,
+	hasUpdateObjectDefinitionPermission,
+	isApproved,
+	label,
+	objectDefinitionId,
+	onSubmit,
+	portletNamespace,
+	screenNavigationCategoryKey,
+	system,
+}: ObjectManagementToolbarProps) {
 	return (
 		<ManagementToolbar
+			backURL={backURL}
 			badgeClassName={system ? 'label-info' : 'label-warning'}
 			badgeLabel={
 				system
@@ -66,16 +52,21 @@ export default function ObjectManagementToolbar(
 					: Liferay.Language.get('custom')
 			}
 			className="border-bottom"
+			enableBoxShadow={false}
 			entityId={objectDefinitionId}
+			externalReferenceCode={externalReferenceCode}
 			externalReferenceCodeSaveURL={`/o/object-admin/v1.0/object-definitions/${objectDefinitionId}`}
 			hasPublishPermission={hasPublishObjectPermission}
 			hasUpdatePermission={hasUpdateObjectDefinitionPermission}
 			helpMessage={Liferay.Language.get(
 				'internal-key-to-reference-the-object-definition'
 			)}
+			isApproved={isApproved}
+			label={label}
 			onGetEntity={() => API.getObjectDefinitionById(objectDefinitionId)}
-			onSubmit={submitObjectDefinition}
-			{...props}
+			onSubmit={onSubmit}
+			portletNamespace={portletNamespace}
+			screenNavigationCategoryKey={screenNavigationCategoryKey}
 		/>
 	);
 }

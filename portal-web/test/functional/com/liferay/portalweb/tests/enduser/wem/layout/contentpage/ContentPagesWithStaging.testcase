@@ -304,9 +304,7 @@ definition {
 				pageName = "Test Page Name",
 				siteName = "Test Site Name Staging");
 
-			PageEditor.createPageTemplate(
-				collectionName = "Page Template Collection",
-				pageTemplateName = "Content Page Template Name");
+			PageEditor.createPageTemplate(collectionName = "Page Template Collection");
 		}
 
 		task ("View the content page template shown in Page Templates admin") {
@@ -314,15 +312,15 @@ definition {
 
 			Navigator.gotoNavNested(navNested = "Page Template Collection");
 
-			PageTemplatesAdmin.viewPageTemplatePresent(pageTemplateName = "Content Page Template Name");
+			PageTemplatesAdmin.viewPageTemplatePresent(pageTemplateName = "Test Page Name - Page Template");
 
 			PageTemplatesAdmin.viewEntryWorkflowStatus(
-				entry = "Content Page Template Name",
+				entry = "Test Page Name - Page Template",
 				workflowStatus = "Draft");
 		}
 
 		task ("View the Heading and Asset Publisher are shown in content page template") {
-			PageTemplatesAdmin.gotoPageTemplate(pageTemplateName = "Content Page Template Name");
+			PageTemplatesAdmin.gotoPageTemplate(pageTemplateName = "Test Page Name - Page Template");
 
 			for (var elementName : list "Heading,Asset Publisher") {
 				PageEditor.viewFragment(fragmentName = "${elementName}");
@@ -1037,6 +1035,7 @@ definition {
 		property app.server.types = "jboss,tcserver,tomcat,weblogic,websphere,wildfly";
 		property database.types = "db2,hypersonic,mariadb,mysql,oracle,postgresql,sqlserver,sybase";
 		property environment.acceptance = "true";
+		property operating.system.types = "alpine,amazonlinux,centos,debian,fedora,orcllinux,osx,redhat,solaris,suse,ubuntu,windows";
 		property portal.acceptance = "true";
 
 		task ("Add a content page") {

@@ -653,7 +653,15 @@ definition {
 			itemKey = "PicklistItemKeyTest",
 			picklistItemOption = "View");
 
-		Picklist.assertPicklistItemDetails();
+		IFrame.selectTopFrame();
+
+		SelectFrame(locator1 = "Picklist#IFRAME_PICKLIST_ITEM_MODAL");
+
+		AssertValue(
+			key_itemKey = "PicklistItemKeyTest",
+			key_itemName = "Picklist Item Name Test",
+			locator1 = "Picklist#ADD_PICKLIST_ITEM_NAME",
+			value1 = "PicklistItemKeyTest");
 	}
 
 	@description = "LPS-136595 - Verify the empty state message when there is no Picklist"
@@ -697,7 +705,7 @@ definition {
 	@description = "LPS-136595 - Verify that the translated Picklist item's name will be displayed on Forms"
 	@priority = "3"
 	test ViewTranslatedPicklistItemNameOnForms {
-		property portal.upstream = "quarantine";
+		property test.name.skip.portal.instance = "Picklist#ViewTranslatedPicklistItemNameOnForms";
 
 		task ("Add a Custom Picklist and a Item (via API)") {
 			Picklist.addPicklistViaAPI(picklistName = "Picklist Test");
@@ -950,7 +958,7 @@ definition {
 	@description = "LPS-136595 - Verify that the translated Picklist name will be displayed on the Object Admin"
 	@priority = "3"
 	test ViewTranslatedPicklistNameOnObjectAdmin {
-		property portal.acceptance = "quarantine";
+		property test.name.skip.portal.instance = "Picklist#ViewTranslatedPicklistNameOnObjectAdmin";
 
 		task ("Add a Custom Picklist (via API)") {
 			Picklist.addPicklistViaAPI(picklistName = "Picklist Test");
@@ -1004,9 +1012,9 @@ definition {
 
 			ObjectField.selectType(fieldType = "Lista de seleção");
 
-			Select(
-				locator1 = "ObjectAdmin#OBJECT_FIELDS_PICKLIST",
-				value1 = "Teste na lista");
+			ObjectField.selectPicklist(
+				dropdownLabel = "Lista de seleção",
+				picklistName = "Teste na lista");
 
 			Button.click(button = "Salvar");
 		}

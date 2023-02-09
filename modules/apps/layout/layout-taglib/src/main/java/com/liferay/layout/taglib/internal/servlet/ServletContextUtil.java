@@ -24,9 +24,11 @@ import com.liferay.info.list.renderer.InfoListRendererRegistry;
 import com.liferay.layout.adaptive.media.LayoutAdaptiveMediaProcessor;
 import com.liferay.layout.display.page.LayoutDisplayPageProviderRegistry;
 import com.liferay.layout.helper.CollectionPaginationHelper;
+import com.liferay.layout.list.permission.provider.LayoutListPermissionProviderRegistry;
 import com.liferay.layout.list.retriever.LayoutListRetrieverRegistry;
 import com.liferay.layout.list.retriever.ListObjectReferenceFactoryRegistry;
 import com.liferay.layout.provider.LayoutStructureProvider;
+import com.liferay.layout.taglib.internal.helper.LayoutClassedModelUsagesHelper;
 import com.liferay.layout.util.LayoutClassedModelUsageRecorder;
 import com.liferay.layout.util.LayoutsTree;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -102,10 +104,22 @@ public class ServletContextUtil {
 		return _layoutClassedModelUsageRecorders;
 	}
 
+	public static LayoutClassedModelUsagesHelper
+		getLayoutClassedModelUsagesHelper() {
+
+		return _layoutClassedModelUsagesHelper;
+	}
+
 	public static LayoutDisplayPageProviderRegistry
 		getLayoutDisplayPageProviderRegistry() {
 
 		return _layoutDisplayPageProviderRegistry;
+	}
+
+	public static LayoutListPermissionProviderRegistry
+		getLayoutListPermissionProviderRegistry() {
+
+		return _layoutListPermissionProviderRegistry;
 	}
 
 	public static LayoutListRetrieverRegistry getLayoutListRetrieverRegistry() {
@@ -242,10 +256,26 @@ public class ServletContextUtil {
 	}
 
 	@Reference(unbind = "-")
+	protected void setLayoutClassedModelUsagesHelper(
+		LayoutClassedModelUsagesHelper layoutClassedModelUsagesHelper) {
+
+		_layoutClassedModelUsagesHelper = layoutClassedModelUsagesHelper;
+	}
+
+	@Reference(unbind = "-")
 	protected void setLayoutDisplayPageProviderRegistry(
 		LayoutDisplayPageProviderRegistry layoutDisplayPageProviderRegistry) {
 
 		_layoutDisplayPageProviderRegistry = layoutDisplayPageProviderRegistry;
+	}
+
+	@Reference(unbind = "-")
+	protected void setLayoutListPermissionProviderRegistry(
+		LayoutListPermissionProviderRegistry
+			layoutListPermissionProviderRegistry) {
+
+		_layoutListPermissionProviderRegistry =
+			layoutListPermissionProviderRegistry;
 	}
 
 	@Reference(unbind = "-")
@@ -317,8 +347,12 @@ public class ServletContextUtil {
 	private static LayoutAdaptiveMediaProcessor _layoutAdaptiveMediaProcessor;
 	private static final Map<String, LayoutClassedModelUsageRecorder>
 		_layoutClassedModelUsageRecorders = new ConcurrentHashMap<>();
+	private static LayoutClassedModelUsagesHelper
+		_layoutClassedModelUsagesHelper;
 	private static LayoutDisplayPageProviderRegistry
 		_layoutDisplayPageProviderRegistry;
+	private static LayoutListPermissionProviderRegistry
+		_layoutListPermissionProviderRegistry;
 	private static LayoutListRetrieverRegistry _layoutListRetrieverRegistry;
 	private static LayoutsTree _layoutsTree;
 	private static LayoutStructureProvider _layoutStructureProvider;

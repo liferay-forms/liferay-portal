@@ -18,7 +18,6 @@ import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.asset.list.model.AssetListEntry;
-import com.liferay.asset.list.model.AssetListEntryModel;
 import com.liferay.asset.list.service.AssetListEntryLocalService;
 import com.liferay.fragment.constants.FragmentEntryLinkConstants;
 import com.liferay.fragment.entry.processor.helper.FragmentEntryProcessorHelper;
@@ -79,7 +78,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 import javax.portlet.PortletURL;
 import javax.portlet.ResourceRequest;
@@ -161,7 +159,7 @@ public class GetCollectionFieldMVCResourceCommand
 			resourceRequest, resourceResponse, jsonObject);
 	}
 
-	private Optional<AssetListEntry> _getAssetListEntryOptional(
+	private AssetListEntry _getAssetListEntry(
 		ListObjectReference listObjectReference) {
 
 		// LPS-133832
@@ -170,18 +168,11 @@ public class GetCollectionFieldMVCResourceCommand
 			ClassedModelListObjectReference classedModelListObjectReference =
 				(ClassedModelListObjectReference)listObjectReference;
 
-			AssetListEntry assetListEntry =
-				_assetListEntryLocalService.fetchAssetListEntry(
-					classedModelListObjectReference.getClassPK());
-
-			if (assetListEntry == null) {
-				return Optional.empty();
-			}
-
-			return Optional.of(assetListEntry);
+			return _assetListEntryLocalService.fetchAssetListEntry(
+				classedModelListObjectReference.getClassPK());
 		}
 
-		return Optional.empty();
+		return null;
 	}
 
 	private JSONObject _getCollectionFieldsJSONObject(
@@ -251,14 +242,16 @@ public class GetCollectionFieldMVCResourceCommand
 				_portal.getUserId(httpServletRequest),
 				_requestContextMapper.map(httpServletRequest)));
 
-		Optional<AssetListEntry> assetListEntryOptional =
-			_getAssetListEntryOptional(listObjectReference);
+		String originalItemType = null;
 
-		String originalItemType = assetListEntryOptional.map(
-			AssetListEntryModel::getAssetEntryType
-		).orElse(
-			listObjectReference.getItemType()
-		);
+		AssetListEntry assetListEntry = _getAssetListEntry(listObjectReference);
+
+		if (assetListEntry != null) {
+			originalItemType = assetListEntry.getAssetEntryType();
+		}
+		else {
+			originalItemType = listObjectReference.getItemType();
+		}
 
 		String itemType = _infoSearchClassMapperRegistry.getClassName(
 			originalItemType);
@@ -323,11 +316,13 @@ public class GetCollectionFieldMVCResourceCommand
 			"items", jsonArray
 		).put(
 			"itemSubtype",
-			assetListEntryOptional.map(
-				AssetListEntry::getAssetEntrySubtype
-			).orElse(
-				null
-			)
+			() -> {
+				if (assetListEntry == null) {
+					return null;
+				}
+
+				return assetListEntry.getAssetEntrySubtype();
+			}
 		).put(
 			"itemType", originalItemType
 		).put(

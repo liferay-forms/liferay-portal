@@ -93,8 +93,7 @@ import com.liferay.portal.kernel.portlet.PortletProviderUtil;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.repository.model.FileEntry;
-import com.liferay.portal.kernel.search.Indexer;
-import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.service.permission.PortletPermissionUtil;
@@ -216,9 +215,22 @@ public class AssetPublisherDisplayContext {
 			return _assetListEntry;
 		}
 
-		_assetListEntry = AssetListEntryServiceUtil.fetchAssetListEntry(
-			GetterUtil.getLong(
-				_portletPreferences.getValue("assetListEntryId", null)));
+		long assetListEntryId = GetterUtil.getLong(
+			_portletPreferences.getValue("assetListEntryId", null));
+
+		if (assetListEntryId <= 0) {
+			return null;
+		}
+
+		try {
+			_assetListEntry = AssetListEntryServiceUtil.fetchAssetListEntry(
+				assetListEntryId);
+		}
+		catch (PrincipalException principalException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(principalException);
+			}
+		}
 
 		return _assetListEntry;
 	}
@@ -708,15 +720,9 @@ public class AssetPublisherDisplayContext {
 			return _availableClassNameIds;
 		}
 
-		_availableClassNameIds = ArrayUtil.filter(
-			AssetRendererFactoryRegistryUtil.getClassNameIds(
-				_themeDisplay.getCompanyId(), true),
-			availableClassNameId -> {
-				Indexer<?> indexer = IndexerRegistryUtil.getIndexer(
-					_portal.getClassName(availableClassNameId));
-
-				return indexer != null;
-			});
+		_availableClassNameIds =
+			AssetRendererFactoryRegistryUtil.getIndexableClassNameIds(
+				_themeDisplay.getCompanyId(), true);
 
 		return _availableClassNameIds;
 	}
@@ -841,7 +847,7 @@ public class AssetPublisherDisplayContext {
 	}
 
 	public Integer getDelta() {
-		return _assetPublisherCustomizer.getDelta(_httpServletRequest);
+		return _assetPublisherCustomizer.getDelta(_portletPreferences);
 	}
 
 	public String getDisplayStyle() {

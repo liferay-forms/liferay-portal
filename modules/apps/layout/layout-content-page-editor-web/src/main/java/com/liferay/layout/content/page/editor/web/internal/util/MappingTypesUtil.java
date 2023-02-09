@@ -19,11 +19,14 @@ import com.liferay.info.item.InfoItemFormVariation;
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.info.item.provider.InfoItemFormVariationsProvider;
 import com.liferay.info.localized.InfoLocalizedValue;
+import com.liferay.info.permission.provider.InfoPermissionProvider;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.PropsUtil;
 
 import java.util.Collection;
 import java.util.Locale;
@@ -39,13 +42,56 @@ public class MappingTypesUtil {
 
 		JSONArray mappingTypesJSONArray = JSONFactoryUtil.createJSONArray();
 
+		if (!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-169923"))) {
+			for (InfoItemClassDetails infoItemClassDetails :
+					infoItemServiceRegistry.getInfoItemClassDetails(
+						themeDisplay.getScopeGroupId(), itemCapabilityKey,
+						themeDisplay.getPermissionChecker())) {
+
+				mappingTypesJSONArray.put(
+					JSONUtil.put(
+						"label",
+						infoItemClassDetails.getLabel(themeDisplay.getLocale())
+					).put(
+						"subtypes",
+						_getMappingFormVariationsJSONArray(
+							infoItemClassDetails, infoItemServiceRegistry,
+							themeDisplay.getScopeGroupId(),
+							themeDisplay.getLocale())
+					).put(
+						"value",
+						String.valueOf(
+							PortalUtil.getClassNameId(
+								infoItemClassDetails.getClassName()))
+					));
+			}
+
+			return mappingTypesJSONArray;
+		}
+
 		for (InfoItemClassDetails infoItemClassDetails :
 				infoItemServiceRegistry.getInfoItemClassDetails(
-					themeDisplay.getScopeGroupId(), itemCapabilityKey,
-					themeDisplay.getPermissionChecker())) {
+					itemCapabilityKey)) {
 
 			mappingTypesJSONArray.put(
 				JSONUtil.put(
+					"isRestricted",
+					() -> {
+						InfoPermissionProvider infoPermissionProvider =
+							infoItemServiceRegistry.getFirstInfoItemService(
+								InfoPermissionProvider.class,
+								infoItemClassDetails.getClassName());
+
+						if ((infoPermissionProvider == null) ||
+							infoPermissionProvider.hasViewPermission(
+								themeDisplay.getPermissionChecker())) {
+
+							return false;
+						}
+
+						return true;
+					}
+				).put(
 					"label",
 					infoItemClassDetails.getLabel(themeDisplay.getLocale())
 				).put(

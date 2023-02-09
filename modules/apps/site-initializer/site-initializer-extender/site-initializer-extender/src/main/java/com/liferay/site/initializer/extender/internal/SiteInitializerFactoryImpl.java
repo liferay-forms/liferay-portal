@@ -41,7 +41,9 @@ import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.layout.importer.LayoutsImporter;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
+import com.liferay.layout.page.template.service.LayoutPageTemplateStructureRelLocalService;
 import com.liferay.layout.util.LayoutCopyHelper;
+import com.liferay.layout.utility.page.service.LayoutUtilityPageEntryLocalService;
 import com.liferay.notification.rest.resource.v1_0.NotificationTemplateResource;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectDefinitionResource;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectFieldResource;
@@ -127,7 +129,8 @@ public class SiteInitializerFactoryImpl implements SiteInitializerFactory {
 			_knowledgeBaseFolderResourceFactory, _layoutCopyHelper,
 			_layoutLocalService, _layoutPageTemplateEntryLocalService,
 			_layoutsImporter, _layoutPageTemplateStructureLocalService,
-			_layoutSetLocalService, _listTypeDefinitionResource,
+			_layoutPageTemplateStructureRelLocalService, _layoutSetLocalService,
+			_layoutUtilityPageEntryLocalService, _listTypeDefinitionResource,
 			_listTypeDefinitionResourceFactory, _listTypeEntryResource,
 			_listTypeEntryResourceFactory, _notificationTemplateResourceFactory,
 			_objectActionLocalService, _objectDefinitionLocalService,
@@ -248,10 +251,18 @@ public class SiteInitializerFactoryImpl implements SiteInitializerFactory {
 		_layoutPageTemplateStructureLocalService;
 
 	@Reference
+	private LayoutPageTemplateStructureRelLocalService
+		_layoutPageTemplateStructureRelLocalService;
+
+	@Reference
 	private LayoutSetLocalService _layoutSetLocalService;
 
 	@Reference
 	private LayoutsImporter _layoutsImporter;
+
+	@Reference
+	private LayoutUtilityPageEntryLocalService
+		_layoutUtilityPageEntryLocalService;
 
 	@Reference
 	private ListTypeDefinitionResource _listTypeDefinitionResource;

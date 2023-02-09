@@ -14,9 +14,15 @@ import ClayPanel from '@clayui/panel';
 import ClayTable from '@clayui/table';
 import React, {useEffect, useState} from 'react';
 
+const findRequestIdUrl = (paramsUrl) => {
+	const splitParamsUrl = paramsUrl.split('?');
+
+	return splitParamsUrl[0];
+};
+
 function getSiteVariables() {
 	const currentPath = Liferay.currentURL.split('/');
-	const mdfClaimId = +currentPath.at(-1);
+	const mdfClaimId = findRequestIdUrl(currentPath.at(-1));
 
 	return mdfClaimId;
 }
@@ -71,7 +77,7 @@ const ReimbursementInvoice = () => {
 		const getDocuments = async () => {
 			// eslint-disable-next-line @liferay/portal/no-global-fetch
 			const response = await fetch(
-				`/o/c/mdfclaims/${mdfClaimId}/mdfClaimToMdfClaimDocuments`,
+				`/o/c/mdfclaims/${mdfClaimId}/mdfClmToMDFClmDocs`,
 				{
 					headers: {
 						'accept': 'application/json',
@@ -92,7 +98,9 @@ const ReimbursementInvoice = () => {
 			});
 		};
 
-		getDocuments();
+		if (!isNaN(mdfClaimId)) {
+			getDocuments();
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -177,7 +185,7 @@ const BudgetBreakdownTable = ({activityId}) => {
 		const getBudgets = async () => {
 			// eslint-disable-next-line @liferay/portal/no-global-fetch
 			const response = await fetch(
-				`/o/c/mdfclaimactivities/${activityId}/mdfClaimActivityToMdfClaimBudgets`,
+				`/o/c/mdfclaimactivities/${activityId}/mdfClmActToMDFClmBgts`,
 				{
 					headers: {
 						'accept': 'application/json',
@@ -228,7 +236,7 @@ export default function () {
 		const getActivities = async () => {
 			// eslint-disable-next-line @liferay/portal/no-global-fetch
 			const response = await fetch(
-				`/o/c/mdfclaims/${mdfClaimId}/mdfClaimToMdfClaimActivities`,
+				`/o/c/mdfclaims/${mdfClaimId}/mdfClmToMDFClmActs`,
 				{
 					headers: {
 						'accept': 'application/json',
@@ -249,7 +257,9 @@ export default function () {
 			});
 		};
 
-		getActivities();
+		if (!isNaN(mdfClaimId)) {
+			getActivities();
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

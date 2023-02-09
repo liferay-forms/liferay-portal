@@ -230,6 +230,85 @@ definition {
 		SearchBarSuggestions.viewSuggestionResultDetails(searchAssetTitle = "Apple Pie");
 	}
 
+	@description = "This is a use case for LPS-166050. When using a Blueprint to drive Search Bar suggestions, I can configure a character threshold that applies to this group"
+	@priority = "3"
+	test ConfigureBlueprintContributorCharacterThresholds {
+		task ("Add Web Content and Blueprint") {
+			JSONWebcontent.addWebContent(
+				content = "WC WebContent Content",
+				groupName = "Guest",
+				title = "Pineapple");
+
+			Blueprints.openBlueprintsAdmin();
+
+			Blueprints.createBlueprint(title = "Empty Blueprint");
+		}
+
+		Navigator.gotoPage(pageName = "Home");
+
+		task ("Add and configure Contributors") {
+			SearchBarSuggestions.configureEmbeddedSearchBarSuggestions(
+				characterThreshold = "1",
+				suggestionContributor = "Blueprint",
+				suggestionContributorBlueprint = "Empty Blueprint",
+				suggestionContributorDisplayGroupName = "Blueprint 1",
+				suggestionContributorOrder = "1",
+				suggestionContributorSize = "2");
+
+			Refresh();
+
+			SearchBarSuggestions.configureEmbeddedSearchBarSuggestions(
+				addContributor = "true",
+				characterThreshold = "3",
+				suggestionContributor = "Blueprint",
+				suggestionContributorBlueprint = "Empty Blueprint",
+				suggestionContributorDisplayGroupName = "Blueprint 3",
+				suggestionContributorOrder = "2",
+				suggestionContributorSize = "2");
+
+			Refresh();
+
+			SearchBarSuggestions.configureEmbeddedSearchBarSuggestions(
+				addContributor = "true",
+				characterThreshold = "5",
+				suggestionContributor = "Blueprint",
+				suggestionContributorBlueprint = "Empty Blueprint",
+				suggestionContributorDisplayGroupName = "Blueprint 5",
+				suggestionContributorOrder = "3",
+				suggestionContributorSize = "2");
+		}
+
+		task ("Assert that 'Blueprint 1' shows up as a display group and 'Pineapple' appears as a suggestion in that group") {
+			Type(
+				locator1 = "Search#EMBEDDED_SEARCH_BAR",
+				value1 = "p");
+
+			SearchBarSuggestions.viewSuggestions(
+				searchAssetTitle = "Pineapple",
+				suggestionContributorDisplayGroupName = "Blueprint 1");
+		}
+
+		task ("Assert that 'Blueprint 3' shows up as a display group and 'Pineapple' appears as a suggestion in that group") {
+			Type(
+				locator1 = "Search#EMBEDDED_SEARCH_BAR",
+				value1 = "pin");
+
+			SearchBarSuggestions.viewSuggestions(
+				searchAssetTitle = "Pineapple",
+				suggestionContributorDisplayGroupName = "Blueprint 3");
+		}
+
+		task ("Assert that 'Blueprint 5' shows up as a display group and 'Pineapple' appears as a suggestion in that group") {
+			Type(
+				locator1 = "Search#EMBEDDED_SEARCH_BAR",
+				value1 = "pinea");
+
+			SearchBarSuggestions.viewSuggestions(
+				searchAssetTitle = "Pineapple",
+				suggestionContributorDisplayGroupName = "Blueprint 5");
+		}
+	}
+
 	@description = "This is a use case for LPS-155317"
 	@priority = "4"
 	test DisablingSuggestionsSAPHidesSuggestionsFromGuests {
@@ -353,13 +432,22 @@ definition {
 
 	@priority = "4"
 	test ShowHTMLAsPlainText {
+		JSONLayout.addPublicLayout(
+			groupName = "Guest",
+			layoutName = "Test Content Page Name",
+			type = "content");
+
+		JSONLayout.publishLayout(
+			groupName = "Guest",
+			layoutName = "Test Content Page Name");
+
 		Type(
 			locator1 = "Search#EMBEDDED_SEARCH_BAR",
 			value1 = "test");
 
 		SearchBarSuggestions.viewSuggestions(
-			searchAssetDescription = "Page: Home",
-			searchAssetTitle = "Home",
+			searchAssetDescription = "Page: Test Content Page Name",
+			searchAssetTitle = "Test Content Page Name",
 			suggestionContributorDisplayGroupName = "Suggestions");
 	}
 
@@ -405,6 +493,42 @@ definition {
 		SearchBarSuggestions.viewSuggestions(
 			searchAssetDescription = "DM Document Description",
 			searchAssetTitle = "Apple Pie");
+	}
+
+	@priority = "3"
+	test ViewBlueprintContributorZeroCharacterThreshold {
+		JSONWebcontent.addWebContent(
+			content = "WC WebContent Content",
+			groupName = "Guest",
+			title = "Software");
+
+		Blueprints.openBlueprintsAdmin();
+
+		Blueprints.createBlueprint(title = "Test Blueprint");
+
+		Blueprints.addElement(element = "Text Match Over Multiple Fields");
+
+		Type(
+			ariaLabel = "Text to Match",
+			locator1 = "TextInput#ANY_WITH_AIRA_LABEL",
+			value1 = "software");
+
+		PortletEntry.save();
+
+		Navigator.gotoPage(pageName = "Home");
+
+		SearchBarSuggestions.configureEmbeddedSearchBarSuggestions(
+			characterThreshold = "0",
+			suggestionContributor = "Blueprint",
+			suggestionContributorBlueprint = "Test Blueprint",
+			suggestionContributorDisplayGroupName = "Blueprint 0",
+			suggestionContributorSize = "5");
+
+		Click(locator1 = "Search#EMBEDDED_SEARCH_BAR");
+
+		SearchBarSuggestions.viewSuggestions(
+			searchAssetTitle = "Software",
+			suggestionContributorDisplayGroupName = "Blueprint 0");
 	}
 
 	@priority = "5"

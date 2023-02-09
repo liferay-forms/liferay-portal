@@ -162,10 +162,17 @@ definition {
 			locator1 = "TextInput#DESTINATION_URL",
 			value1 = "${destinationURL}");
 
-		Click(locator1 = "Button#SAVE");
+		ClickNoError(locator1 = "Button#SAVE");
 
-		if (isSet(error)) {
-			Alert.viewErrorMessage(errorMessage = "Your request failed to complete.");
+		if (isSet(destinationFieldError)) {
+			AssertTextEquals(
+				locator1 = "Message#ERROR_FORM_FIELD_REQUIRED",
+				value1 = "Please enter a valid URL.");
+
+			AssertElementPresent(locator1 = "Button#DISABLED_BUTTON");
+		}
+		else if (isSet(patternFieldError)) {
+			Alert.viewErrorMessage(errorMessage = "Error:Patterns must be valid regular expressions.");
 		}
 		else {
 			Alert.viewSuccessMessage();

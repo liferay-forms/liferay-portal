@@ -311,7 +311,10 @@ definition {
 		PortletEntry.inputName(name = "${accountName}");
 
 		if ("${addTagMethod}" == "Select") {
-			Click(locator1 = "AssetCategorization#TAGS_SELECT_BUTTON");
+			Click(
+				key_fieldLabel = "Tags",
+				key_text = "Select",
+				locator1 = "Button#ANY_WITH_LABEL");
 
 			IFrame.selectTagFrame();
 
@@ -1071,6 +1074,8 @@ definition {
 			key_text = "Email Addresses",
 			locator1 = "TextInput#ANY",
 			value1 = "\RETURN");
+
+		SelectFrameTop();
 
 		Button.click(button = "Invite");
 	}

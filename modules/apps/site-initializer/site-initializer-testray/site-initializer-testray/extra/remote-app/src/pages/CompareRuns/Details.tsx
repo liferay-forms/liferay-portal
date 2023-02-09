@@ -25,5 +25,4 @@ const CompareRunsComponents = () => (
 		/>
 	</Container>
 );
-
 export default CompareRunsComponents;

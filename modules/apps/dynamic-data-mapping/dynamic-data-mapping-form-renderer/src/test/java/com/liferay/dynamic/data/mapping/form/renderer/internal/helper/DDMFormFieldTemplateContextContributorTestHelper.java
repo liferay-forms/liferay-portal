@@ -22,6 +22,9 @@ import com.liferay.dynamic.data.mapping.form.field.type.internal.numeric.Numeric
 import com.liferay.dynamic.data.mapping.form.field.type.internal.radio.RadioDDMFormFieldTemplateContextContributor;
 import com.liferay.dynamic.data.mapping.form.field.type.internal.select.SelectDDMFormFieldTemplateContextContributor;
 import com.liferay.dynamic.data.mapping.form.field.type.internal.text.TextDDMFormFieldTemplateContextContributor;
+import com.liferay.dynamic.data.mapping.service.DDMFormInstanceLocalService;
+import com.liferay.list.type.service.ListTypeEntryLocalService;
+import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.language.Language;
@@ -104,6 +107,43 @@ public class DDMFormFieldTemplateContextContributorTestHelper {
 			selectDDMFormFieldTemplateContextContributor =
 				new SelectDDMFormFieldTemplateContextContributor();
 
+		DDMFormInstanceLocalService ddmFormInstanceLocalService = Mockito.mock(
+			DDMFormInstanceLocalService.class);
+
+		Mockito.when(
+			ddmFormInstanceLocalService.fetchDDMFormInstance(0)
+		).thenReturn(
+			null
+		);
+
+		ReflectionTestUtil.setFieldValue(
+			selectDDMFormFieldTemplateContextContributor,
+			"_ddmFormInstanceLocalService", ddmFormInstanceLocalService);
+
+		ReflectionTestUtil.setFieldValue(
+			selectDDMFormFieldTemplateContextContributor, "_language",
+			_language);
+
+		ListTypeEntryLocalService listTypeEntryLocalService = Mockito.mock(
+			ListTypeEntryLocalService.class);
+
+		Mockito.when(
+			listTypeEntryLocalService.getListTypeEntries(Mockito.anyLong())
+		).thenReturn(
+			null
+		);
+
+		ReflectionTestUtil.setFieldValue(
+			selectDDMFormFieldTemplateContextContributor,
+			"_listTypeEntryLocalService", listTypeEntryLocalService);
+
+		ObjectDefinitionLocalService objectDefinitionLocalService =
+			Mockito.mock(ObjectDefinitionLocalService.class);
+
+		ReflectionTestUtil.setFieldValue(
+			selectDDMFormFieldTemplateContextContributor,
+			"_objectDefinitionLocalService", objectDefinitionLocalService);
+
 		ReflectionTestUtil.setFieldValue(
 			selectDDMFormFieldTemplateContextContributor,
 			"ddmFormFieldOptionsFactory", new DDMFormFieldOptionsFactoryImpl());
@@ -112,10 +152,6 @@ public class DDMFormFieldTemplateContextContributorTestHelper {
 			_jsonFactory);
 		ReflectionTestUtil.setFieldValue(
 			selectDDMFormFieldTemplateContextContributor, "portal", _portal);
-
-		ReflectionTestUtil.setFieldValue(
-			selectDDMFormFieldTemplateContextContributor, "_language",
-			_language);
 
 		return selectDDMFormFieldTemplateContextContributor;
 	}

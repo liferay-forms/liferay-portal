@@ -13,10 +13,10 @@
  */
 
 import ImageProcessor from '../../../../src/main/resources/META-INF/resources/page_editor/app/processors/ImageProcessor';
-import {openImageSelector} from '../../../../src/main/resources/META-INF/resources/page_editor/core/openImageSelector';
+import {openImageSelector} from '../../../../src/main/resources/META-INF/resources/page_editor/common/openImageSelector';
 
 jest.mock(
-	'../../../../src/main/resources/META-INF/resources/page_editor/core/openImageSelector',
+	'../../../../src/main/resources/META-INF/resources/page_editor/common/openImageSelector',
 	() => ({
 		openImageSelector: jest.fn(),
 	})
@@ -140,6 +140,25 @@ describe('ImageProcessor', () => {
 			expect(image.parentElement instanceof HTMLAnchorElement).toBe(true);
 			expect(image.parentElement.getAttribute('href')).toBe(
 				'http://localpie'
+			);
+			expect(image.parentElement.getAttribute('target')).toBe('_blank');
+			expect(image.getAttribute('src')).toBe('apple-pie.webp');
+		});
+
+		it('sets prefix to the href', () => {
+			const div = document.createElement('div');
+			const image = document.createElement('img');
+
+			div.appendChild(image);
+
+			ImageProcessor.render(div, 'apple-pie.webp', {
+				href: 'pablo@pablo.me',
+				prefix: 'mailto:',
+				target: '_blank',
+			});
+
+			expect(image.parentElement.getAttribute('href')).toBe(
+				'mailto:pablo@pablo.me'
 			);
 			expect(image.parentElement.getAttribute('target')).toBe('_blank');
 			expect(image.getAttribute('src')).toBe('apple-pie.webp');

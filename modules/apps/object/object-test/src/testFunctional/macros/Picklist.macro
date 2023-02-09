@@ -42,7 +42,7 @@ definition {
 	macro addPicklistItemViaUI {
 		SelectFrame(locator1 = "Picklist#IFRAME_PICKLIST_MODAL");
 
-		WaitForPageLoad();
+		WaitForElementPresent(locator1 = "Picklist#ADD_ITEM_BUTTON");
 
 		Click.javaScriptClick(locator1 = "Picklist#ADD_ITEM_BUTTON");
 
@@ -95,6 +95,8 @@ definition {
 	}
 
 	macro addPicklistViaUI {
+		WaitForElementPresent(locator1 = "Picklist#ADD_PICKLIST_BUTTON");
+
 		Click.javaScriptClick(locator1 = "Picklist#ADD_PICKLIST_BUTTON");
 
 		WaitForElementPresent(
@@ -215,14 +217,6 @@ definition {
 		AssertTextEquals(
 			locator1 = "Picklist#EDIT_ITEM_NAME",
 			value1 = "${nameItem}");
-	}
-
-	macro assertPicklistItemDetails {
-		IFrame.selectTopFrame();
-
-		SelectFrame(locator1 = "Picklist#IFRAME_PICKLIST_ITEM_MODAL");
-
-		AssertElementPresent(locator1 = "Picklist#PICKLIST_ITEM_DETAILS");
 	}
 
 	macro assertPicklistItemInTable {

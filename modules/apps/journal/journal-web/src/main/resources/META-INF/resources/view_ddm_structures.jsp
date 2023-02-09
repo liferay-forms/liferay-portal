@@ -107,7 +107,7 @@ JournalDDMStructuresManagementToolbarDisplayContext journalDDMStructuresManageme
 						<liferay-ui:message key="<%= exception.getMessage() %>" />
 					</c:when>
 					<c:otherwise>
-						<liferay-ui:message key="the-structure-was-not-successfully-imported" />
+						<liferay-ui:message key="the-structure-failed-to-import" />
 					</c:otherwise>
 				</c:choose>
 			</c:otherwise>

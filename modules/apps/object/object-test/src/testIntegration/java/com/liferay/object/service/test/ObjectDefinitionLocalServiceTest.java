@@ -39,9 +39,9 @@ import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.service.test.util.ObjectDefinitionTestUtil;
 import com.liferay.object.system.BaseSystemObjectDefinitionMetadata;
 import com.liferay.object.system.JaxRsApplicationDescriptor;
-import com.liferay.object.util.LocalizedMapUtil;
 import com.liferay.petra.sql.dsl.Column;
 import com.liferay.petra.sql.dsl.Table;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.db.DBInspector;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -49,6 +49,7 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.messaging.MessageBus;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.UserNotificationEvent;
 import com.liferay.portal.kernel.model.UserNotificationEventTable;
 import com.liferay.portal.kernel.service.ResourceActionLocalService;
@@ -62,6 +63,7 @@ import com.liferay.portal.kernel.util.TextFormatter;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
 import java.sql.Connection;
 
@@ -405,6 +407,45 @@ public class ObjectDefinitionLocalServiceTest {
 
 		Assert.assertEquals(
 			WorkflowConstants.STATUS_APPROVED, objectDefinition.getStatus());
+
+		_objectDefinitionLocalService.deleteObjectDefinition(objectDefinition);
+	}
+
+	@Test
+	public void testAddObjectDefinition() throws Exception {
+		String externalReferenceCode = RandomTestUtil.randomString();
+		User user = TestPropsValues.getUser();
+
+		ObjectDefinition objectDefinition =
+			_objectDefinitionLocalService.addObjectDefinition(
+				externalReferenceCode, user.getUserId());
+
+		Assert.assertEquals(
+			externalReferenceCode, objectDefinition.getExternalReferenceCode());
+		Assert.assertEquals(
+			TestPropsValues.getCompanyId(), objectDefinition.getCompanyId());
+		Assert.assertEquals(user.getUserId(), objectDefinition.getUserId());
+		Assert.assertEquals(user.getFullName(), objectDefinition.getUserName());
+		Assert.assertFalse(objectDefinition.isAccountEntryRestricted());
+		Assert.assertFalse(objectDefinition.isActive());
+		Assert.assertEquals(
+			StringPool.BLANK, objectDefinition.getDBTableName());
+		Assert.assertEquals(externalReferenceCode, objectDefinition.getLabel());
+		Assert.assertFalse(objectDefinition.isEnableCategorization());
+		Assert.assertFalse(objectDefinition.isEnableComments());
+		Assert.assertFalse(objectDefinition.isEnableObjectEntryHistory());
+		Assert.assertEquals(externalReferenceCode, objectDefinition.getName());
+		Assert.assertEquals(
+			externalReferenceCode, objectDefinition.getPluralLabel());
+		Assert.assertEquals(
+			ObjectDefinitionConstants.SCOPE_COMPANY,
+			objectDefinition.getScope());
+		Assert.assertEquals(
+			ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
+			objectDefinition.getStorageType());
+		Assert.assertFalse(objectDefinition.isSystem());
+		Assert.assertEquals(
+			WorkflowConstants.STATUS_DRAFT, objectDefinition.getStatus());
 
 		_objectDefinitionLocalService.deleteObjectDefinition(objectDefinition);
 	}
@@ -888,8 +929,8 @@ public class ObjectDefinitionLocalServiceTest {
 
 		// Messaging
 
-		Assert.assertFalse(
-			_messageBus.hasDestination(objectDefinition.getDestinationName()));
+		Assert.assertNull(
+			_messageBus.getDestination(objectDefinition.getDestinationName()));
 
 		// Resources
 
@@ -980,8 +1021,8 @@ public class ObjectDefinitionLocalServiceTest {
 
 		// Messaging
 
-		Assert.assertFalse(
-			_messageBus.hasDestination(objectDefinition.getDestinationName()));
+		Assert.assertNull(
+			_messageBus.getDestination(objectDefinition.getDestinationName()));
 
 		// Resources
 

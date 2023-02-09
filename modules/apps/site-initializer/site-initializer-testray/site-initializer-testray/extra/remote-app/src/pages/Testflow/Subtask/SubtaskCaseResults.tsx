@@ -30,7 +30,7 @@ import {
 	testraySubTaskImpl,
 } from '../../../services/rest';
 import {testraySubtaskCaseResultImpl} from '../../../services/rest/TestraySubtaskCaseResults';
-import {searchUtil} from '../../../util/search';
+import {SearchBuilder} from '../../../util/search';
 import {SubTaskStatuses} from '../../../util/statuses';
 
 type OutletContext = {
@@ -66,10 +66,7 @@ const SubtasksCaseResults = () => {
 		}
 
 		const subtaskStatusCheck = () => {
-			const subtasksWithOpenStatus =
-				testraySubtask.dueStatus?.key === SubTaskStatuses.OPEN;
-
-			if (subtasksWithOpenStatus) {
+			if (testraySubtask.dueStatus?.key !== SubTaskStatuses.IN_ANALYSIS) {
 				return [
 					{
 						text: i18n.sub(
@@ -257,7 +254,7 @@ const SubtasksCaseResults = () => {
 				testraySubtaskCaseResultImpl.transformDataFromList(response)
 			}
 			variables={{
-				filter: searchUtil.eq('subtaskId', subtaskId as string),
+				filter: SearchBuilder.eq('subtaskId', subtaskId as string),
 			}}
 		>
 			{({items}, {dispatch, listViewContext: {selectedRows}, mutate}) => {

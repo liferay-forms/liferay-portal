@@ -14,6 +14,7 @@
 
 package com.liferay.segments.asah.connector.internal.model.listener;
 
+import com.liferay.analytics.settings.rest.manager.AnalyticsSettingsManager;
 import com.liferay.portal.kernel.exception.ModelListenerException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -22,9 +23,9 @@ import com.liferay.portal.kernel.model.ModelListener;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.segments.asah.connector.internal.client.AsahFaroBackendClientImpl;
-import com.liferay.segments.asah.connector.internal.client.JSONWebServiceClient;
 import com.liferay.segments.asah.connector.internal.processor.AsahSegmentsExperimentProcessor;
 import com.liferay.segments.asah.connector.internal.util.AsahUtil;
 import com.liferay.segments.model.SegmentsExperiment;
@@ -50,14 +51,15 @@ public class SegmentsExperimentModelListener
 			SegmentsExperiment segmentsExperiment)
 		throws ModelListenerException {
 
-		if (AsahUtil.isSkipAsahEvent(
-				segmentsExperiment.getCompanyId(),
-				segmentsExperiment.getGroupId())) {
-
-			return;
-		}
-
 		try {
+			if (AsahUtil.isSkipAsahEvent(
+					_analyticsSettingsManager,
+					segmentsExperiment.getCompanyId(),
+					segmentsExperiment.getGroupId())) {
+
+				return;
+			}
+
 			_asahSegmentsExperimentProcessor.processUpdateSegmentsExperiment(
 				segmentsExperiment);
 		}
@@ -73,14 +75,15 @@ public class SegmentsExperimentModelListener
 	public void onBeforeCreate(SegmentsExperiment segmentsExperiment)
 		throws ModelListenerException {
 
-		if (AsahUtil.isSkipAsahEvent(
-				segmentsExperiment.getCompanyId(),
-				segmentsExperiment.getGroupId())) {
-
-			return;
-		}
-
 		try {
+			if (AsahUtil.isSkipAsahEvent(
+					_analyticsSettingsManager,
+					segmentsExperiment.getCompanyId(),
+					segmentsExperiment.getGroupId())) {
+
+				return;
+			}
+
 			_asahSegmentsExperimentProcessor.processAddSegmentsExperiment(
 				segmentsExperiment);
 		}
@@ -96,14 +99,15 @@ public class SegmentsExperimentModelListener
 	public void onBeforeRemove(SegmentsExperiment segmentsExperiment)
 		throws ModelListenerException {
 
-		if (AsahUtil.isSkipAsahEvent(
-				segmentsExperiment.getCompanyId(),
-				segmentsExperiment.getGroupId())) {
-
-			return;
-		}
-
 		try {
+			if (AsahUtil.isSkipAsahEvent(
+					_analyticsSettingsManager,
+					segmentsExperiment.getCompanyId(),
+					segmentsExperiment.getGroupId())) {
+
+				return;
+			}
+
 			_asahSegmentsExperimentProcessor.processDeleteSegmentsExperiment(
 				segmentsExperiment);
 		}
@@ -120,7 +124,8 @@ public class SegmentsExperimentModelListener
 	@Activate
 	protected void activate() {
 		_asahSegmentsExperimentProcessor = new AsahSegmentsExperimentProcessor(
-			new AsahFaroBackendClientImpl(_jsonWebServiceClient),
+			_analyticsSettingsManager,
+			new AsahFaroBackendClientImpl(_analyticsSettingsManager, _http),
 			_companyLocalService, _groupLocalService, _layoutLocalService,
 			_portal, _segmentsEntryLocalService,
 			_segmentsExperienceLocalService);
@@ -134,6 +139,9 @@ public class SegmentsExperimentModelListener
 	private static final Log _log = LogFactoryUtil.getLog(
 		SegmentsExperimentModelListener.class);
 
+	@Reference
+	private AnalyticsSettingsManager _analyticsSettingsManager;
+
 	private AsahSegmentsExperimentProcessor _asahSegmentsExperimentProcessor;
 
 	@Reference
@@ -143,7 +151,7 @@ public class SegmentsExperimentModelListener
 	private GroupLocalService _groupLocalService;
 
 	@Reference
-	private JSONWebServiceClient _jsonWebServiceClient;
+	private Http _http;
 
 	@Reference
 	private LayoutLocalService _layoutLocalService;

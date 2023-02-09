@@ -17,7 +17,7 @@
 <%@ include file="/init.jsp" %>
 
 <liferay-layout:render-layout-utility-page-entry
-	type="<%= LayoutUtilityPageEntryTypesConstants.TERMS_OF_USE %>"
+	type="<%= LayoutUtilityPageEntryConstants.TYPE_TERMS_OF_USE %>"
 >
 
 	<%

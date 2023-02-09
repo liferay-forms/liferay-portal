@@ -19,16 +19,11 @@ import com.liferay.fragment.contributor.FragmentCollectionContributor;
 import com.liferay.fragment.contributor.FragmentCollectionContributorRegistry;
 import com.liferay.fragment.model.FragmentComposition;
 import com.liferay.fragment.model.FragmentEntry;
-import com.liferay.fragment.model.FragmentEntryLinkTable;
 import com.liferay.fragment.processor.FragmentEntryProcessorRegistry;
 import com.liferay.fragment.service.FragmentEntryLinkLocalService;
 import com.liferay.fragment.validator.FragmentEntryValidator;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
-import com.liferay.petra.sql.dsl.DSLFunctionFactoryUtil;
-import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
-import com.liferay.petra.sql.dsl.expression.Predicate;
-import com.liferay.petra.sql.dsl.query.DSLQuery;
 import com.liferay.petra.string.CharPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -222,66 +217,6 @@ public class FragmentCollectionContributorRegistryImpl
 	@Reference
 	protected FragmentEntryValidator fragmentEntryValidator;
 
-	private List<Long> _getFragmentEntryLinkIds(FragmentEntry fragmentEntry) {
-		DSLQuery dslQuery = DSLQueryFactoryUtil.select(
-			FragmentEntryLinkTable.INSTANCE.fragmentEntryLinkId
-		).from(
-			FragmentEntryLinkTable.INSTANCE
-		).where(
-			FragmentEntryLinkTable.INSTANCE.rendererKey.eq(
-				fragmentEntry.getFragmentEntryKey()
-			).and(
-				Predicate.withParentheses(
-					DSLFunctionFactoryUtil.castClobText(
-						FragmentEntryLinkTable.INSTANCE.configuration
-					).neq(
-						fragmentEntry.getConfiguration()
-					).or(
-						DSLFunctionFactoryUtil.castClobText(
-							FragmentEntryLinkTable.INSTANCE.css
-						).neq(
-							fragmentEntry.getCss()
-						)
-					).or(
-						DSLFunctionFactoryUtil.castClobText(
-							FragmentEntryLinkTable.INSTANCE.html
-						).neq(
-							fragmentEntry.getHtml()
-						)
-					).or(
-						DSLFunctionFactoryUtil.castClobText(
-							FragmentEntryLinkTable.INSTANCE.js
-						).neq(
-							fragmentEntry.getJs()
-						)
-					).or(
-						FragmentEntryLinkTable.INSTANCE.type.neq(
-							fragmentEntry.getType())
-					))
-			)
-		).orderBy(
-			FragmentEntryLinkTable.INSTANCE.fragmentEntryLinkId.ascending()
-		);
-
-		return _fragmentEntryLinkLocalService.dslQuery(dslQuery);
-	}
-
-	private void _updateFragmentEntryLinks(FragmentEntry fragmentEntry) {
-		for (Long fragmentEntryLinkId :
-				_getFragmentEntryLinkIds(fragmentEntry)) {
-
-			try {
-				_fragmentEntryLinkLocalService.updateLatestChanges(
-					fragmentEntry,
-					_fragmentEntryLinkLocalService.getFragmentEntryLink(
-						fragmentEntryLinkId));
-			}
-			catch (PortalException portalException) {
-				_log.error(portalException);
-			}
-		}
-	}
-
 	private boolean _validateFragmentEntry(FragmentEntry fragmentEntry) {
 		try {
 			fragmentEntryValidator.validateConfiguration(
@@ -368,7 +303,12 @@ public class FragmentCollectionContributorRegistryImpl
 					fragmentEntries.put(
 						fragmentEntry.getFragmentEntryKey(), fragmentEntry);
 
-					_updateFragmentEntryLinks(fragmentEntry);
+					_fragmentEntryLinkLocalService.
+						updateFragmentEntryLinksByRendererKey(
+							fragmentEntry.getFragmentEntryKey(),
+							fragmentEntry.getConfiguration(),
+							fragmentEntry.getCss(), fragmentEntry.getHtml(),
+							fragmentEntry.getJs(), fragmentEntry.getType());
 				}
 			}
 

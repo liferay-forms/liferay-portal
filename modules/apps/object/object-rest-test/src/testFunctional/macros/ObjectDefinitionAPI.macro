@@ -37,12 +37,12 @@ definition {
 
 		var curl = '''
 			${portalURL}/o/c/employees \
-			-u test@liferay.com:test \
-			-H Content-Type: application/json \
-			-d {
-				"firstname": "${firstname}",
-				"r_supervisor_c_managerId": "${managerId}"
-			}
+				-u test@liferay.com:test \
+				-H Content-Type: application/json \
+				-d {
+					"firstname": "${firstname}",
+					"r_supervisor_c_managerId": "${managerId}"
+				}
 		''';
 
 		var employeeId = JSONCurlUtil.post("${curl}", "$.id");
@@ -55,11 +55,11 @@ definition {
 
 		var curl = '''
 			${portalURL}/o/c/managers \
-			-u test@liferay.com:test \
-			-H Content-Type: application/json \
-			-d {
-				"firstname": "${firstname}"
-			}
+				-u test@liferay.com:test \
+				-H Content-Type: application/json \
+				-d {
+					"firstname": "${firstname}"
+				}
 		''';
 
 		var managerId = JSONCurlUtil.post("${curl}", "$.id");
@@ -70,36 +70,45 @@ definition {
 	macro _createObjectDefinition {
 		Variables.assertDefined(parameterList = "${en_US_label},${name},${requiredStringFieldName},${en_US_plural_label}");
 
-		var portalURL = JSONCompany.getPortalURL();
+		if (isSet(virtualHost)) {
+			if (!(isSet(port))) {
+				var port = "8080";
+			}
+
+			var portalURL = "http://${virtualHost}:${port}";
+		}
+		else {
+			var portalURL = JSONCompany.getPortalURL();
+		}
 
 		var curl = '''
 			${portalURL}/o/object-admin/v1.0/object-definitions \
-			-u test@liferay.com:test \
-			-H Content-Type: application/json \
-			-d {
-				"active": true,
-				"label": {
-					"en_US": "${en_US_label}"
-				},
-				"name": "${name}",
-				"objectFields": [{
-					"DBType": "String",
-					"businessType": "Text",
-					"indexed": true,
-					"indexedAsKeyword": true,
+				-u test@liferay.com:test \
+				-H Content-Type: application/json \
+				-d {
+					"active": true,
 					"label": {
-						"en_US": "${requiredStringFieldName}"
+						"en_US": "${en_US_label}"
 					},
-					"name": "${requiredStringFieldName}",
-					"required": true,
-					"dbtype": "String"
-				}],
-				"pluralLabel": {
-					"en_US": "${en_US_plural_label}"
-				},
-				"portlet": true,
-				"scope": "company"
-			}
+					"name": "${name}",
+					"objectFields": [{
+						"DBType": "String",
+						"businessType": "Text",
+						"indexed": true,
+						"indexedAsKeyword": true,
+						"label": {
+							"en_US": "${requiredStringFieldName}"
+						},
+						"name": "${requiredStringFieldName}",
+						"required": true,
+						"dbtype": "String"
+					}],
+					"pluralLabel": {
+						"en_US": "${en_US_plural_label}"
+					},
+					"portlet": true,
+					"scope": "company"
+				}
 		''';
 
 		var objectDefinitionId = JSONCurlUtil.post("${curl}", "$.id");
@@ -111,16 +120,31 @@ definition {
 		Variables.assertDefined(parameterList = "${en_US_plural_label},${name}");
 
 		var en_US_plural_label_lowercase = StringUtil.lowerCase("${en_US_plural_label}");
-		var portalURL = JSONCompany.getPortalURL();
 
-		var curl = '''
-			${portalURL}/o/c/${en_US_plural_label_lowercase} \
-			-u test@liferay.com:test \
-			-H Content-Type: application/json \
-			-d {
-				"name": "${name}"
+		if (isSet(virtualHost)) {
+			if (!(isSet(port))) {
+				var port = "8080";
 			}
+
+			var portalURL = "http://${virtualHost}:${port}";
+		}
+		else {
+			var portalURL = JSONCompany.getPortalURL();
+		}
+
+		var body = '''"name": "${name}"''';
+
+		if (isSet(secondField)) {
+			var body = StringUtil.add("${body},", "\"secondField\":\"${secondFieldValue}\"", "");
+		}
+
+		var curlWithoutBody = '''
+			${portalURL}/o/c/${en_US_plural_label_lowercase} \
+				-u test@liferay.com:test \
+				-H Content-Type: application/json \
 		''';
+
+		var curl = StringUtil.add("${curlWithoutBody}", "-d {${body}}", " ");
 
 		var objectId = JSONCurlUtil.post("${curl}", "$.id");
 
@@ -134,17 +158,17 @@ definition {
 
 		var curl = '''
 			${portalURL}/o/object-admin/v1.0/object-definitions/${objectDefinitionId1}/object-relationships \
-			-u test@liferay.com:test \
-			-H Content-Type: application/json \
-			-d {
-				"deletionType": "${deletionType}",
-				"label": {
-					"en_US": "${en_US_label}"
-				},
-				"name": "${name}",
-				"objectDefinitionId2": "${objectDefinitionId2}",
-				"type": "${type}"
-			}
+				-u test@liferay.com:test \
+				-H Content-Type: application/json \
+				-d {
+					"deletionType": "${deletionType}",
+					"label": {
+						"en_US": "${en_US_label}"
+					},
+					"name": "${name}",
+					"objectDefinitionId2": "${objectDefinitionId2}",
+					"type": "${type}"
+				}
 		''';
 
 		var relationshipId = JSONCurlUtil.post("${curl}", "$.id");
@@ -159,8 +183,8 @@ definition {
 
 		var curl = '''
 			${portalURL}/o/c/employees/${employeeId} \
-			-u test@liferay.com:test \
-			-H accept: application/json
+				-u test@liferay.com:test \
+				-H accept: application/json
 		''';
 
 		var response = JSONCurlUtil.delete("${curl}");
@@ -176,8 +200,8 @@ definition {
 
 		var curl = '''
 			${portalURL}/o/c/${en_US_plural_label_lowercase}/${objectEntryId} \
-			-u test@liferay.com:test \
-			-H accept: application/json
+				-u test@liferay.com:test \
+				-H accept: application/json
 		''';
 
 		var response = JSONCurlUtil.delete("${curl}");
@@ -192,8 +216,8 @@ definition {
 
 		var curl = '''
 			${portalURL}/o/object-admin/v1.0/object-relationships/${relationshipId} \
-			-u test@liferay.com:test \
-			-H accept: application/json
+				-u test@liferay.com:test \
+				-H accept: application/json
 		''';
 
 		var response = JSONCurlUtil.delete("${curl}");
@@ -208,7 +232,7 @@ definition {
 
 		var curl = '''
 			${portalURL}/o/c/employees/${employeeId} \
-			-u test@liferay.com:test
+				-u test@liferay.com:test
 		''';
 
 		var employeeFirstname = JSONCurlUtil.get("${curl}", "$.firstname");
@@ -223,7 +247,7 @@ definition {
 
 		var curl = '''
 			${portalURL}/o/c/managers/${managerId} \
-			-u test@liferay.com:test
+				-u test@liferay.com:test
 		''';
 
 		var managerFirstname = JSONCurlUtil.get("${curl}", "$.firstname");
@@ -246,11 +270,20 @@ definition {
 	macro _getObjectDefinitionStatusById {
 		Variables.assertDefined(parameterList = "${objectDefinitionId}");
 
-		var portalURL = JSONCompany.getPortalURL();
+		if (isSet(virtualHost)) {
+			if (!(isSet(port))) {
+				var port = "8080";
+			}
+
+			var portalURL = "http://${virtualHost}:${port}";
+		}
+		else {
+			var portalURL = JSONCompany.getPortalURL();
+		}
 
 		var curl = '''
 			${portalURL}/o/object-admin/v1.0/object-definitions/${objectDefinitionId} \
-			-u test@liferay.com:test
+				-u test@liferay.com:test
 		''';
 
 		var objectDefinitionStatus = JSONCurlUtil.get("${curl}", "$.active");
@@ -262,11 +295,21 @@ definition {
 		Variables.assertDefined(parameterList = "${en_US_plural_label},${objectId}");
 
 		var en_US_plural_label_lowercase = StringUtil.lowerCase("${en_US_plural_label}");
-		var portalURL = JSONCompany.getPortalURL();
+
+		if (isSet(virtualHost)) {
+			if (!(isSet(port))) {
+				var port = "8080";
+			}
+
+			var portalURL = "http://${virtualHost}:${port}";
+		}
+		else {
+			var portalURL = JSONCompany.getPortalURL();
+		}
 
 		var curl = '''
 			${portalURL}/o/c/${en_US_plural_label_lowercase}/${objectId} \
-			-u test@liferay.com:test
+				-u test@liferay.com:test
 		''';
 
 		var objectName = JSONCurlUtil.get("${curl}", "$.name");
@@ -282,8 +325,8 @@ definition {
 
 		var curl = '''
 			${portalURL}/o/c/${en_US_plural_label_lowercase}/${objectId}/${relationshipName} \
-			-H accept: application/json \
-			-u test@liferay.com:test
+				-H accept: application/json \
+				-u test@liferay.com:test
 		''';
 
 		var json = JSONCurlUtil.get("${curl}");
@@ -304,7 +347,7 @@ definition {
 
 		var curl = '''
 			${portalURL}/o/c/${objects}?aggregationTerms=${aggregationTermsValue} \
-			-u test@liferay.com:test
+				-u test@liferay.com:test
 		''';
 
 		var json = JSONCurlUtil.get("${curl}");
@@ -319,7 +362,7 @@ definition {
 
 		var curl = '''
 			${portalURL}/o/c/${objects}?nestedFields=${nestedField} \
-			-u test@liferay.com:test
+				-u test@liferay.com:test
 		''';
 
 		var json = JSONCurlUtil.get("${curl}");
@@ -334,7 +377,7 @@ definition {
 
 		var curl = '''
 			${portalURL}/o/object-admin/v1.0/object-definitions/${objectDefinitionId}/object-relationships \
-			-u test@liferay.com:test
+				-u test@liferay.com:test
 		''';
 
 		if (isSet(relationshipName)) {
@@ -354,7 +397,7 @@ definition {
 
 		var curl = '''
 			${portalURL}/o/object-admin/v1.0/object-relationships/${relationshipId} \
-			-u test@liferay.com:test
+				-u test@liferay.com:test
 		''';
 
 		var relationshipName = JSONCurlUtil.get("${curl}", "$.name");
@@ -369,12 +412,12 @@ definition {
 
 		var curl = '''
 			${portalURL}/o/object-admin/v1.0/object-relationships/${relationshipId} \
-			-u test@liferay.com:test \
-			-H Content-Type: application/json \
-			-H accept: application/json \
-			-d {
-				"deletionType": "${deletionType}"
-			}
+				-u test@liferay.com:test \
+				-H Content-Type: application/json \
+				-H accept: application/json \
+				-d {
+					"deletionType": "${deletionType}"
+				}
 		''';
 
 		var relationshipDeletionType = JSONCurlUtil.put("${curl}");
@@ -385,11 +428,20 @@ definition {
 	macro _publishObjectDefinition {
 		Variables.assertDefined(parameterList = "${objectDefinitionId}");
 
-		var portalURL = JSONCompany.getPortalURL();
+		if (isSet(virtualHost)) {
+			if (!(isSet(port))) {
+				var port = "8080";
+			}
+
+			var portalURL = "http://${virtualHost}:${port}";
+		}
+		else {
+			var portalURL = JSONCompany.getPortalURL();
+		}
 
 		var curl = '''
 			${portalURL}/o/object-admin/v1.0/object-definitions/${objectDefinitionId}/publish \
-			-u test@liferay.com:test
+				-u test@liferay.com:test
 		''';
 
 		var json = JSONCurlUtil.post("${curl}");
@@ -405,7 +457,7 @@ definition {
 
 		var curl = '''
 			${portalURL}/o/c/${en_US_plural_label_lowercase}/${objectEntry1}/${relationshipName}/${objectEntry2} \
-			-u test@liferay.com:test
+				-u test@liferay.com:test
 		''';
 
 		var response = JSONCurlUtil.put("${curl}");
@@ -420,12 +472,12 @@ definition {
 
 		var curl = '''
 			${portalURL}/o/c/employees/${employeeId} \
-			-u test@liferay.com:test \
-			-H Content-Type: application/json \
-			-d {
-				"firstname": "${firstname}",
-				"r_supervisor_c_managerId": "${managerId}"
-			}
+				-u test@liferay.com:test \
+				-H Content-Type: application/json \
+				-d {
+					"firstname": "${firstname}",
+					"r_supervisor_c_managerId": "${managerId}"
+				}
 		''';
 
 		var response = JSONCurlUtil.put("${curl}");
@@ -477,8 +529,8 @@ definition {
 		for (var objectSchema : list "${objectSchemas}") {
 			var curl = '''
 				${portalURL}/o/object-admin/v1.0/object-definitions/${objectDefinitionId}/${objectSchema} \
-				-H Content-Type: application/json \
-				-u test@liferay.com:test
+					-H Content-Type: application/json \
+					-u test@liferay.com:test
 			''';
 
 			var response = JSONCurlUtil.get("${curl}");
@@ -606,11 +658,16 @@ definition {
 			en_US_label = "${en_US_label}",
 			en_US_plural_label = "${en_US_plural_label}",
 			name = "${name}",
-			requiredStringFieldName = "${requiredStringFieldName}");
+			requiredStringFieldName = "${requiredStringFieldName}",
+			virtualHost = "${virtualHost}");
 
-		ObjectDefinitionAPI._publishObjectDefinition(objectDefinitionId = "${objectDefinitionId}");
+		ObjectDefinitionAPI._publishObjectDefinition(
+			objectDefinitionId = "${objectDefinitionId}",
+			virtualHost = "${virtualHost}");
 
-		var objectDefinitionStatus = ObjectDefinitionAPI._getObjectDefinitionStatusById(objectDefinitionId = "${objectDefinitionId}");
+		var objectDefinitionStatus = ObjectDefinitionAPI._getObjectDefinitionStatusById(
+			objectDefinitionId = "${objectDefinitionId}",
+			virtualHost = "${virtualHost}");
 
 		TestUtils.assertEquals(
 			actual = "${objectDefinitionStatus}",
@@ -648,11 +705,14 @@ definition {
 	macro createObjectEntryWithName {
 		var objectId = ObjectDefinitionAPI._createObjectEntryWithName(
 			en_US_plural_label = "${en_US_plural_label}",
-			name = "${name}");
+			name = "${name}",
+			secondFieldValue = "${secondFieldValue}",
+			virtualHost = "${virtualHost}");
 
 		var actualName = ObjectDefinitionAPI._getObjectEntryNameById(
 			en_US_plural_label = "${en_US_plural_label}",
-			objectId = "${objectId}");
+			objectId = "${objectId}",
+			virtualHost = "${virtualHost}");
 
 		TestUtils.assertEquals(
 			actual = "${actualName}",
@@ -714,8 +774,8 @@ definition {
 
 		var curl = '''
 			${portalURL}/o/object-admin/v1.0/object-definitions?filter=name%20eq%20%27${name}%27 \
-			-H Content-Type: application/json \
-			-u test@liferay.com:test
+				-H Content-Type: application/json \
+				-u test@liferay.com:test
 		''';
 
 		var objectDefinitionId = JSONCurlUtil.get("${curl}", "$.items[?(@['name'] == '${name}')]['id']");
@@ -728,8 +788,8 @@ definition {
 
 		var curl = '''
 			${portalURL}/o/object-admin/v1.0/object-definitions \
-			-H Content-Type: application/json \
-			-u test@liferay.com:test
+				-H Content-Type: application/json \
+				-u test@liferay.com:test
 		''';
 
 		var response = JSONCurlUtil.get("${curl}");
@@ -741,11 +801,21 @@ definition {
 		Variables.assertDefined(parameterList = "${en_US_plural_label}");
 
 		var en_US_plural_label_lowercase = StringUtil.lowerCase("${en_US_plural_label}");
-		var portalURL = JSONCompany.getPortalURL();
+
+		if (isSet(virtualHost)) {
+			if (!(isSet(port))) {
+				var port = "8080";
+			}
+
+			var portalURL = "http://${virtualHost}:${port}";
+		}
+		else {
+			var portalURL = JSONCompany.getPortalURL();
+		}
 
 		var curl = '''
 			${portalURL}/o/c/${en_US_plural_label_lowercase}/ \
-			-u test@liferay.com:test
+				-u test@liferay.com:test
 		''';
 
 		var response = JSONCurlUtil.get("${curl}");

@@ -37,9 +37,6 @@ import com.liferay.portal.vulcan.pagination.Page;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
-import javax.servlet.ServletContext;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -114,11 +111,11 @@ public class PortalInstanceResourceImpl extends BasePortalInstanceResourceImpl {
 	public PortalInstance postPortalInstance(PortalInstance portalInstance)
 		throws Exception {
 
-		long companyId = Optional.ofNullable(
-			portalInstance.getCompanyId()
-		).orElse(
-			0L
-		);
+		Long companyId = portalInstance.getCompanyId();
+
+		if (companyId == null) {
+			companyId = 0L;
+		}
 
 		Company company = _companyService.addCompany(
 			companyId, portalInstance.getPortalInstanceId(),
@@ -155,8 +152,7 @@ public class PortalInstanceResourceImpl extends BasePortalInstanceResourceImpl {
 					company.getCompanyId())) {
 
 			_portalInstancesLocalService.initializePortalInstance(
-				company.getCompanyId(), portalInstance.getSiteInitializerKey(),
-				_servletContext);
+				company.getCompanyId(), portalInstance.getSiteInitializerKey());
 		}
 
 		_portalInstancesLocalService.synchronizePortalInstances();
@@ -222,11 +218,6 @@ public class PortalInstanceResourceImpl extends BasePortalInstanceResourceImpl {
 
 	@Reference
 	private PortalInstancesLocalService _portalInstancesLocalService;
-
-	@Reference(
-		target = "(&(original.bean=true)(bean.id=javax.servlet.ServletContext))"
-	)
-	private ServletContext _servletContext;
 
 	@Reference
 	private UserLocalService _userLocalService;

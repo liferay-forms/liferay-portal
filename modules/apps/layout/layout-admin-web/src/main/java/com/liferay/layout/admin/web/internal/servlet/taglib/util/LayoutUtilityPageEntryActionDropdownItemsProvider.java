@@ -29,6 +29,8 @@ import com.liferay.layout.utility.page.service.LayoutUtilityPageEntryLocalServic
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
@@ -89,9 +91,7 @@ public class LayoutUtilityPageEntryActionDropdownItemsProvider {
 			dropdownGroupItem -> {
 				dropdownGroupItem.setDropdownItems(
 					DropdownItemListBuilder.add(
-						() -> LayoutUtilityPageEntryPermission.contains(
-							_themeDisplay.getPermissionChecker(),
-							_layoutUtilityPageEntry, ActionKeys.UPDATE),
+						() -> _hasUpdatePermission(),
 						_getEditLayoutUtilityPageEntryActionUnsafeConsumer()
 					).add(
 						() -> LayoutUtilityPageEntryPermission.contains(
@@ -105,20 +105,22 @@ public class LayoutUtilityPageEntryActionDropdownItemsProvider {
 			dropdownGroupItem -> {
 				dropdownGroupItem.setDropdownItems(
 					DropdownItemListBuilder.add(
-						() -> LayoutUtilityPageEntryPermission.contains(
-							_themeDisplay.getPermissionChecker(),
-							_layoutUtilityPageEntry, ActionKeys.UPDATE),
+						() ->
+							_hasAssignDefaultLayoutUtilityPagePermission() &&
+							_hasUpdatePermission(),
 						_getMarkAsDefaultLayoutUtilityPageEntryActionUnsafeConsumer()
 					).add(
-						() -> LayoutUtilityPageEntryPermission.contains(
-							_themeDisplay.getPermissionChecker(),
-							_layoutUtilityPageEntry, ActionKeys.UPDATE),
+						() -> _hasUpdatePermission(),
 						_getRenameLayoutUtilityPageEntryActionUnsafeConsumer()
 					).add(
-						() -> LayoutUtilityPageEntryPermission.contains(
-							_themeDisplay.getPermissionChecker(),
-							_layoutUtilityPageEntry, ActionKeys.UPDATE),
+						() -> _hasUpdatePermission(),
 						_getUpdateLayoutUtilityPageEntryPreviewActionUnsafeConsumer()
+					).add(
+						() ->
+							_hasUpdatePermission() &&
+							(_layoutUtilityPageEntry.getPreviewFileEntryId() >
+								0),
+						_getDeleteLayoutUtilityPageEntryPreviewActionUnsafeConsumer()
 					).build());
 				dropdownGroupItem.setSeparator(true);
 			}
@@ -160,9 +162,7 @@ public class LayoutUtilityPageEntryActionDropdownItemsProvider {
 			dropdownGroupItem -> {
 				dropdownGroupItem.setDropdownItems(
 					DropdownItemListBuilder.add(
-						() -> LayoutUtilityPageEntryPermission.contains(
-							_themeDisplay.getPermissionChecker(),
-							_layoutUtilityPageEntry, ActionKeys.DELETE),
+						() -> _hasDeletePermission(),
 						_getDeleteLayoutUtilityPageEntryActionUnsafeConsumer()
 					).build());
 				dropdownGroupItem.setSeparator(true);
@@ -224,6 +224,33 @@ public class LayoutUtilityPageEntryActionDropdownItemsProvider {
 			dropdownItem.setIcon("trash");
 			dropdownItem.setLabel(
 				LanguageUtil.get(_httpServletRequest, "delete"));
+		};
+	}
+
+	private UnsafeConsumer<DropdownItem, Exception>
+		_getDeleteLayoutUtilityPageEntryPreviewActionUnsafeConsumer() {
+
+		return dropdownItem -> {
+			dropdownItem.putData(
+				"action", "deleteLayoutUtilityPageEntryPreview");
+			dropdownItem.putData(
+				"deleteLayoutUtilityPageEntryPreviewURL",
+				PortletURLBuilder.createActionURL(
+					_renderResponse
+				).setActionName(
+					"/layout_admin/delete_layout_utility_page_entry_preview"
+				).setRedirect(
+					_themeDisplay.getURLCurrent()
+				).setParameter(
+					"layoutUtilityPageEntryId",
+					_layoutUtilityPageEntry.getLayoutUtilityPageEntryId()
+				).buildString());
+			dropdownItem.putData(
+				"layoutUtilityPageEntryId",
+				String.valueOf(
+					_layoutUtilityPageEntry.getLayoutUtilityPageEntryId()));
+			dropdownItem.setLabel(
+				LanguageUtil.get(_httpServletRequest, "remove-thumbnail"));
 		};
 	}
 
@@ -468,6 +495,82 @@ public class LayoutUtilityPageEntryActionDropdownItemsProvider {
 		};
 	}
 
+	private boolean _hasAssignDefaultLayoutUtilityPagePermission() {
+		if (_assignDefaultLayoutUtilityPagePermission != null) {
+			return _assignDefaultLayoutUtilityPagePermission;
+		}
+
+		try {
+			_assignDefaultLayoutUtilityPagePermission =
+				GroupPermissionUtil.contains(
+					_themeDisplay.getPermissionChecker(),
+					_layoutUtilityPageEntry.getGroupId(),
+					LayoutUtilityPageActionKeys.
+						ASSIGN_DEFAULT_LAYOUT_UTILITY_PAGE_ENTRY);
+		}
+		catch (Exception exception) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(exception);
+			}
+
+			return false;
+		}
+
+		return _assignDefaultLayoutUtilityPagePermission;
+	}
+
+	private boolean _hasDeletePermission() {
+		if (_deletePermission != null) {
+			return _deletePermission;
+		}
+
+		Boolean deletePermission = null;
+
+		try {
+			deletePermission = LayoutUtilityPageEntryPermission.contains(
+				_themeDisplay.getPermissionChecker(), _layoutUtilityPageEntry,
+				ActionKeys.DELETE);
+		}
+		catch (Exception exception) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(exception);
+			}
+
+			deletePermission = false;
+		}
+
+		if (!deletePermission) {
+			_deletePermission = false;
+
+			return false;
+		}
+
+		_deletePermission = _hasAssignDefaultLayoutUtilityPagePermission();
+
+		return _deletePermission;
+	}
+
+	private boolean _hasUpdatePermission() {
+		if (_updatePermission != null) {
+			return _updatePermission;
+		}
+
+		try {
+			_updatePermission = LayoutUtilityPageEntryPermission.contains(
+				_themeDisplay.getPermissionChecker(), _layoutUtilityPageEntry,
+				ActionKeys.UPDATE);
+		}
+		catch (Exception exception) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(exception);
+			}
+
+			return false;
+		}
+
+		return _updatePermission;
+	}
+
 	private boolean _isLiveGroup() {
 		Group group = _themeDisplay.getScopeGroup();
 
@@ -481,6 +584,11 @@ public class LayoutUtilityPageEntryActionDropdownItemsProvider {
 		return false;
 	}
 
+	private static final Log _log = LogFactoryUtil.getLog(
+		LayoutUtilityPageEntryActionDropdownItemsProvider.class);
+
+	private Boolean _assignDefaultLayoutUtilityPagePermission;
+	private Boolean _deletePermission;
 	private final Layout _draftLayout;
 	private final HttpServletRequest _httpServletRequest;
 	private final ItemSelector _itemSelector;
@@ -490,5 +598,6 @@ public class LayoutUtilityPageEntryActionDropdownItemsProvider {
 		_layoutUtilityPageThumbnailConfiguration;
 	private final RenderResponse _renderResponse;
 	private final ThemeDisplay _themeDisplay;
+	private Boolean _updatePermission;
 
 }

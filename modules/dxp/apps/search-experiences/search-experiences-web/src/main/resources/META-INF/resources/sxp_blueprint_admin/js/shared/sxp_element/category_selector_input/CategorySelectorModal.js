@@ -17,7 +17,7 @@ import ClayModal, {useModal} from '@clayui/modal';
 import getCN from 'classnames';
 import React, {useState} from 'react';
 
-import {fetchData} from '../../../utils/fetch';
+import fetchData from '../../../utils/fetch/fetch_data';
 import {FETCH_URLS} from './index';
 
 /**
@@ -308,7 +308,7 @@ function CategorySelectorModal({
 
 	return (
 		<ClayModal
-			className="category-selector-modal"
+			className="sxp-category-selector-modal-root"
 			observer={observer}
 			size="md"
 		>

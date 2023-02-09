@@ -14,7 +14,7 @@ import React from 'react';
 function Container({children, className, footer, title}) {
 	return (
 		<div
-			className={`bg-neutral-0 d-flex flex-column justify-content-between py-4 rounded shadow-sm ${className}`}
+			className={`bg-neutral-0 d-flex flex-column justify-content-between py-4 rounded ${className}`}
 		>
 			<div>
 				<div className="font-weight-semi-bold h5 m-0">{title}</div>
@@ -26,15 +26,17 @@ function Container({children, className, footer, title}) {
 
 			<div className="align-items-stretch d-flex flex-column">
 				{children}
-
-				{footer && (
-					<div>
-						<hr className="mb-3 mt-1" />
-
-						<div className="d-flex">{footer}</div>
-					</div>
-				)}
 			</div>
+
+			<div>
+				<hr className="mb-3 mt-1" />
+			</div>
+
+			{footer && (
+				<div className="d-flex justify-content-end">
+					<div>{footer}</div>
+				</div>
+			)}
 		</div>
 	);
 }

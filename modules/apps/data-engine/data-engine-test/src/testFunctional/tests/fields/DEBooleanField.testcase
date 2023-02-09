@@ -159,8 +159,6 @@ definition {
 	@description = "Verify that a structure with the boolean field can be Required."
 	@priority = "5"
 	test CanBeRequired {
-		property portal.acceptance = "quarantine";
-
 		NavItem.gotoStructures();
 
 		WebContentStructures.addCP(structureName = "Structure 1");
@@ -176,6 +174,8 @@ definition {
 		Check.checkToggleSwitch(
 			checkboxName = "Required Field",
 			locator1 = "Checkbox#ANY_CHECKBOX");
+
+		WaitForVisible(locator1 = "Icon#ASTERISK");
 
 		WebContentStructures.saveCP();
 

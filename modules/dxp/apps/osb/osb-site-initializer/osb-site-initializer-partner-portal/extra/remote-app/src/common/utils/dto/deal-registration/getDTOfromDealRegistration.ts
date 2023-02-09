@@ -14,7 +14,8 @@ import DealRegistrationDTO from '../../../interfaces/dto/dealRegistrationDTO';
 
 export function getDTOFromDealRegistration(
 	dealRegistration: DealRegistration,
-	leadExternalReferenceCode?: string
+	leadExternalReferenceCode?: string,
+	leadQualificationExternalReferenceCode?: string
 ): DealRegistrationDTO {
 	return {
 		accountExternalReferenceCodeSF:
@@ -28,15 +29,18 @@ export function getDTOFromDealRegistration(
 		additionalInformationAboutTheOpportunity:
 			dealRegistration.additionalInformationAboutTheOpportunity,
 		leadExternalReferenceCode,
+		leadQualificationExternalReferenceCode,
+		leadStatusDetail: dealRegistration.leadStatusDetails,
 		mdfActivityExternalReferenceCodeSF:
 			dealRegistration.mdfActivityAssociated.externalReferenceCodeSF,
 		primaryProspectBusinessUnit:
 			dealRegistration.primaryProspect.businessUnit,
-		primaryProspectDepartment: dealRegistration.primaryProspect.department,
+		primaryProspectDepartment:
+			dealRegistration.primaryProspect.department.name,
 		primaryProspectEmailAddress:
 			dealRegistration.primaryProspect.emailAddress,
 		primaryProspectFirstName: dealRegistration.primaryProspect.firstName,
-		primaryProspectJobRole: dealRegistration.primaryProspect.jobRole,
+		primaryProspectJobRole: dealRegistration.primaryProspect.jobRole.name,
 		primaryProspectLastName: dealRegistration.primaryProspect.lastName,
 		primaryProspectPhone: dealRegistration.primaryProspect.phone,
 		projectCategories: dealRegistration.projectCategories.join('; '),
@@ -47,14 +51,11 @@ export function getDTOFromDealRegistration(
 		prospectCity: dealRegistration.prospect.city,
 		prospectCountry: dealRegistration.prospect.country,
 		prospectCountryCode: dealRegistration.prospect.country.key,
-		prospectIndustry: dealRegistration.prospect.industry,
+		prospectIndustry: dealRegistration.prospect.industry.name,
 		prospectPostalCode: dealRegistration.prospect.postalCode,
 		prospectState: dealRegistration.prospect.state,
 		prospectStateCode: dealRegistration.prospect.state.key,
-		r_accountToDealRegistrations_accountEntryId:
-			dealRegistration.partnerAccount.id,
-		r_activityToDealRegistrations_c_activityId:
-			dealRegistration.mdfActivityAssociated.id,
-		registrationStatus: dealRegistration.registrationStatus,
+		r_accToDealRegs_accountEntryId: dealRegistration.partnerAccount.id,
+		r_actToDealRegs_c_activityId: dealRegistration.mdfActivityAssociated.id,
 	};
 }

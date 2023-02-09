@@ -159,8 +159,8 @@ public class SelectSegmentsEntryDisplayContext {
 		searchContainer.setOrderByType(getOrderByType());
 		searchContainer.setResultsAndTotal(
 			_segmentsEntryLocalService.searchSegmentsEntries(
-				_themeDisplay.getCompanyId(), _themeDisplay.getScopeGroupId(),
-				_getKeywords(), true,
+				_themeDisplay.getCompanyId(), _getGroupId(), _getKeywords(),
+				true,
 				LinkedHashMapBuilder.<String, Object>put(
 					"excludedSegmentsEntryIds", _getExcludedSegmentsEntryIds()
 				).put(
@@ -239,6 +239,22 @@ public class SelectSegmentsEntryDisplayContext {
 					LanguageUtil.get(_httpServletRequest, "all"));
 			}
 		).build();
+	}
+
+	private long _getGroupId() {
+		if (_groupId > 0) {
+			return _groupId;
+		}
+
+		long groupId = ParamUtil.getLong(_httpServletRequest, "groupId");
+
+		if (groupId == 0) {
+			groupId = _themeDisplay.getScopeGroupId();
+		}
+
+		_groupId = groupId;
+
+		return _groupId;
 	}
 
 	private String _getKeywords() {
@@ -379,6 +395,7 @@ public class SelectSegmentsEntryDisplayContext {
 	private String _eventName;
 	private long[] _excludedSegmentsEntryIds;
 	private String[] _excludedSources;
+	private long _groupId;
 	private final HttpServletRequest _httpServletRequest;
 	private String _keywords;
 	private String _orderByCol;

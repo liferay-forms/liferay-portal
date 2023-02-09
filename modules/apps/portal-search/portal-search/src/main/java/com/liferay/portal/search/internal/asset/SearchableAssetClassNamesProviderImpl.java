@@ -54,16 +54,6 @@ public class SearchableAssetClassNamesProviderImpl
 			}
 		}
 
-		for (String searchEngineHelperEntryClassName :
-				searchEngineHelper.getEntryClassNames()) {
-
-			if (searchEngineHelperEntryClassName.startsWith(
-					"com.liferay.object.model.ObjectDefinition#")) {
-
-				classNames.add(searchEngineHelperEntryClassName);
-			}
-		}
-
 		return classNames.toArray(new String[0]);
 	}
 

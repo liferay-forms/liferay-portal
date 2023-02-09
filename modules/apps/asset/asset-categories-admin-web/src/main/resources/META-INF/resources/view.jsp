@@ -122,21 +122,20 @@
 														%>"
 													>
 														<span class="text-truncate"><%= HtmlUtil.escape(vocabulary.getTitle(locale)) %></span>
-
-														<liferay-ui:icon
-															icon="lock"
-															iconCssClass="ml-1 text-muted"
-															markupView="lexicon"
-															message="this-vocabulary-can-only-be-edited-from-the-global-site"
-														/>
+														<span class="lfr-portal-tooltip" title="<%= LanguageUtil.get(request, "this-vocabulary-can-only-be-edited-from-the-global-site") %>">
+															<clay:icon
+																cssClass="ml-1 mt-1 text-muted"
+																symbol="lock"
+															/>
+														</span>
 
 														<c:if test="<%= vocabulary.getVisibilityType() == AssetVocabularyConstants.VISIBILITY_TYPE_INTERNAL %>">
-															<liferay-ui:icon
-																icon="low-vision"
-																iconCssClass="ml-1 text-muted"
-																markupView="lexicon"
-																message="for-internal-use-only"
-															/>
+															<span class="lfr-portal-tooltip" title="<%= LanguageUtil.get(request, "for-internal-use-only") %>">
+																<clay:icon
+																	cssClass="ml-1 mt-1 text-muted"
+																	symbol="low-vision"
+																/>
+															</span>
 														</c:if>
 													</a>
 												</li>
@@ -177,12 +176,12 @@
 													<span class="text-truncate"><%= HtmlUtil.escape(vocabulary.getTitle(locale)) %></span>
 
 													<c:if test="<%= vocabulary.getVisibilityType() == AssetVocabularyConstants.VISIBILITY_TYPE_INTERNAL %>">
-														<liferay-ui:icon
-															icon="low-vision"
-															iconCssClass="ml-1 text-muted"
-															markupView="lexicon"
-															message="for-internal-use-only"
-														/>
+														<span class="lfr-portal-tooltip" title="<%= LanguageUtil.get(request, "for-internal-use-only") %>">
+															<clay:icon
+																cssClass="ml-1 mt-1 text-muted"
+																symbol="low-vision"
+															/>
+														</span>
 													</c:if>
 												</a>
 											</li>
@@ -281,13 +280,10 @@
 					</p>
 
 					<c:if test="<%= assetCategoriesDisplayContext.isAssetCategoriesLimitExceeded() %>">
-						<div class="alert alert-warning">
-							<span class="alert-indicator">
-								<aui:icon image="warning" markupView="lexicon" />
-							</span>
-
-							<liferay-ui:message arguments="<%= assetCategoriesDisplayContext.getMaximumNumberOfCategoriesPerVocabulary() %>" key="you-have-reached-the-limit-of-x-categories-for-this-vocabulary" />
-						</div>
+						<clay:alert
+							displayType="warning"
+							message='<%= LanguageUtil.format(request, "you-have-reached-the-limit-of-x-categories-for-this-vocabulary", assetCategoriesDisplayContext.getMaximumNumberOfCategoriesPerVocabulary()) %>'
+						/>
 					</c:if>
 
 					<clay:sheet-section>

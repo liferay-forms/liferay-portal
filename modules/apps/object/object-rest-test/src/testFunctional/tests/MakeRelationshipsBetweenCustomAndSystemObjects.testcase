@@ -51,13 +51,19 @@ definition {
 		}
 
 		AccountAPI.deleteAccount(accountId = "${staticAccountId}");
+
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCPNoSelenium();
+		}
 	}
 
 	@disable-webdriver = "true"
-	@ignore = "true"
 	@priority = "5"
 	test CanCreateMultipleManyToManyRelationshipsBetweenTwoObjects {
 		property portal.acceptance = "true";
+		property test.name.skip.portal.instance = "MakeRelationshipWithSystemObject#CanCreateMultipleManyToManyRelationshipsBetweenTwoObjects";
 
 		task ("And Given manyToMany accountsUniversities relationship created") {
 			ObjectDefinitionAPI.createRelationship(
@@ -87,10 +93,10 @@ definition {
 	}
 
 	@disable-webdriver = "true"
-	@ignore = "true"
 	@priority = "5"
 	test CanCreateMultipleOneToManyRelationshipsBetweenTwoObjects {
 		property portal.acceptance = "true";
+		property test.name.skip.portal.instance = "MakeRelationshipsBetweenCustomAndSystemObjects#CanCreateMultipleOneToManyRelationshipsBetweenTwoObjects";
 
 		task ("And Given oneToMany subjectAccounts relationship created") {
 			ObjectDefinitionAPI.createRelationship(
@@ -126,10 +132,10 @@ definition {
 	}
 
 	@disable-webdriver = "true"
-	@ignore = "true"
 	@priority = "4"
 	test CanGetEmptyPageWithNoEntriesRelated {
 		property portal.acceptance = "true";
+		property test.name.skip.portal.instance = "MakeRelationshipsBetweenCustomAndSystemObjects#CanGetEmptyPageWithNoEntriesRelated";
 
 		task ("And Given I request PUT to relate University entry to the Account entry with /o/c/universities/{universityId}/universitiesAccounts/{accountId}") {
 			ObjectDefinitionAPI.relateObjectEntries(

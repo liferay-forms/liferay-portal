@@ -40,6 +40,7 @@ import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.util.DDMUtil;
 import com.liferay.dynamic.data.mapping.util.DDMXML;
+import com.liferay.exportimport.resources.importer.internal.constants.ResourcesImporterConstants;
 import com.liferay.exportimport.resources.importer.portlet.preferences.PortletPreferencesTranslator;
 import com.liferay.journal.configuration.JournalServiceConfiguration;
 import com.liferay.journal.constants.JournalArticleConstants;
@@ -47,6 +48,7 @@ import com.liferay.journal.constants.JournalFolderConstants;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.journal.service.JournalFolderLocalService;
+import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -147,8 +149,8 @@ public class FileSystemImporter extends BaseImporter {
 		MimeTypes mimeTypes, Portal portal,
 		PortletPreferencesFactory portletPreferencesFactory,
 		PortletPreferencesLocalService portletPreferencesLocalService,
-		PortletPreferencesTranslator portletPreferencesTranslator,
-		Map<String, PortletPreferencesTranslator> portletPreferencesTranslators,
+		ServiceTrackerMap<String, PortletPreferencesTranslator>
+			serviceTrackerMap,
 		RepositoryLocalService repositoryLocalService, SAXReader saxReader,
 		ThemeLocalService themeLocalService, DLURLHelper dlURLHelper) {
 
@@ -175,9 +177,7 @@ public class FileSystemImporter extends BaseImporter {
 		this.portal = portal;
 		this.portletPreferencesFactory = portletPreferencesFactory;
 		this.portletPreferencesLocalService = portletPreferencesLocalService;
-		this.portletPreferencesTranslators =
-			new DefaultedPortletPreferencesTranslatorMap(
-				portletPreferencesTranslators, portletPreferencesTranslator);
+		this.serviceTrackerMap = serviceTrackerMap;
 		this.repositoryLocalService = repositoryLocalService;
 		this.saxReader = saxReader;
 		this.themeLocalService = themeLocalService;
@@ -1283,11 +1283,11 @@ public class FileSystemImporter extends BaseImporter {
 	protected final PortletPreferencesFactory portletPreferencesFactory;
 	protected final PortletPreferencesLocalService
 		portletPreferencesLocalService;
-	protected final Map<String, PortletPreferencesTranslator>
-		portletPreferencesTranslators;
 	protected final RepositoryLocalService repositoryLocalService;
 	protected final SAXReader saxReader;
 	protected ServiceContext serviceContext;
+	protected final ServiceTrackerMap<String, PortletPreferencesTranslator>
+		serviceTrackerMap;
 	protected final ThemeLocalService themeLocalService;
 
 	private void _addApplicationDisplayTemplates(String dirName)
@@ -1505,7 +1505,12 @@ public class FileSystemImporter extends BaseImporter {
 			(LayoutTypePortlet)layout.getLayoutType();
 
 		PortletPreferencesTranslator portletPreferencesTranslator =
-			portletPreferencesTranslators.get(rootPortletId);
+			serviceTrackerMap.getService(rootPortletId);
+
+		if (portletPreferencesTranslator == null) {
+			portletPreferencesTranslator = serviceTrackerMap.getService(
+				ResourcesImporterConstants.PORTLET_ID_DEFAULT);
+		}
 
 		String portletId = layoutTypePortlet.addPortletId(
 			userId, rootPortletId, columnId, -1, false);
@@ -2039,34 +2044,5 @@ public class FileSystemImporter extends BaseImporter {
 	private final Map<String, FileEntry> _fileEntries = new HashMap<>();
 	private final Map<String, Set<Long>> _primaryKeys = new HashMap<>();
 	private File _resourcesDir;
-
-	private class DefaultedPortletPreferencesTranslatorMap
-		extends HashMap<String, PortletPreferencesTranslator> {
-
-		public DefaultedPortletPreferencesTranslatorMap(
-			Map<String, PortletPreferencesTranslator>
-				portletPreferencesTranslators,
-			PortletPreferencesTranslator portletPreferencesTranslator) {
-
-			super(portletPreferencesTranslators);
-
-			_portletPreferencesTranslator = portletPreferencesTranslator;
-		}
-
-		@Override
-		public PortletPreferencesTranslator get(Object key) {
-			PortletPreferencesTranslator value = super.get(key);
-
-			if (value == null) {
-				value = _portletPreferencesTranslator;
-			}
-
-			return value;
-		}
-
-		private final PortletPreferencesTranslator
-			_portletPreferencesTranslator;
-
-	}
 
 }

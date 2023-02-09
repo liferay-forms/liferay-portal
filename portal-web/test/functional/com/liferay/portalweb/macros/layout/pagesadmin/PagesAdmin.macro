@@ -8,11 +8,11 @@ definition {
 
 		SelectFrame(locator1 = "IFrame#MODAL_BODY");
 
+		PortletEntry.inputName(name = "${pageName}");
+
 		PagesAdmin._addPageToNavigationMenu(
 			assertCheckboxMissing = "${assertCheckboxMissing}",
 			navigationMenus = "${navigationMenus}");
-
-		PortletEntry.inputName(name = "${pageName}");
 
 		if (isSet(categoryName)) {
 			AssetCategorization.addCategory(
@@ -139,7 +139,7 @@ definition {
 	macro _addPageTypePanel {
 		var key_componentOrPortletName = "${componentName}";
 
-		Click(locator1 = "PagesAdmin#PAGE_TYPE_PANEL_CHECKBOX");
+		Check.checkNotVisible(locator1 = "PagesAdmin#PAGE_TYPE_PANEL_CHECKBOX");
 
 		var key_componentOrPortletName = StringUtil.lowerCase("${componentName}");
 
@@ -626,6 +626,23 @@ definition {
 		SelectFrameTop();
 	}
 
+	macro addUtilityPage {
+		LexiconEntry.gotoAdd();
+
+		if (isSet(masterLayoutName)) {
+			LexiconCard.clickCard(card = "${masterLayoutName}");
+		}
+		else {
+			LexiconCard.clickCard(card = "Blank");
+		}
+
+		PortletEntry.inputName(name = "${pageName}");
+
+		Button.click(button = "Save");
+
+		Alert.viewSuccessMessage();
+	}
+
 	macro cannotDeletePagesAssociatedWithSiteTemplate {
 		if (isSet(pageName)) {
 			Click(
@@ -982,6 +999,12 @@ definition {
 			parentPagesHierarchy = "${parentPagesHierarchy}");
 
 		MenuItem.click(menuItem = "${menuItem}");
+	}
+
+	macro gotoUtilityPageEllipsisMenuItem {
+		LexiconCard.clickEllipsisItem(
+			card = "${pageName}",
+			item = "${menuItem}");
 	}
 
 	macro manageDeviceFamilyActions {

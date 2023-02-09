@@ -9,18 +9,44 @@
  * distribution rights of the Software.
  */
 
+import {TacticKeys} from '../../../../../../../../../common/enums/mdfRequestTactics';
 import MDFRequestActivity from '../../../../../../../../../common/interfaces/mdfRequestActivity';
 
 export default function getEventFields(mdfRequestActivity: MDFRequestActivity) {
-	return [
+	const eventFields = [
 		{
 			title: 'Activity Description',
 			value: mdfRequestActivity.activityDescription?.description,
 		},
-		{
-			title: 'Venue Name',
-			value: mdfRequestActivity.activityDescription?.venueName,
-		},
+	];
+
+	if (mdfRequestActivity.tactic.key === TacticKeys.WEBINAR) {
+		eventFields.push(
+			{
+				title: 'Webinar Topic',
+				value: mdfRequestActivity.activityDescription?.webinarTopic,
+			},
+			{
+				title: 'Webinar Host/Platform',
+				value:
+					mdfRequestActivity.activityDescription?.webinarHostPlatform,
+			}
+		);
+	}
+	else {
+		eventFields.push(
+			{
+				title: 'Location',
+				value: mdfRequestActivity.activityDescription?.location,
+			},
+			{
+				title: 'Venue Name',
+				value: mdfRequestActivity.activityDescription?.venueName,
+			}
+		);
+	}
+
+	eventFields.push(
 		{
 			title: 'Liferay Branding',
 			value: mdfRequestActivity.activityDescription?.liferayBranding,
@@ -40,6 +66,8 @@ export default function getEventFields(mdfRequestActivity: MDFRequestActivity) {
 		{
 			title: 'Activity Promotion',
 			value: mdfRequestActivity.activityDescription?.activityPromotion,
-		},
-	];
+		}
+	);
+
+	return eventFields;
 }

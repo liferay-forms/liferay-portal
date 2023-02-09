@@ -44,10 +44,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.portlet.PortletPreferences;
 import javax.portlet.RenderRequest;
@@ -80,15 +77,7 @@ public class CPSpecificationOptionsFacetDisplayContextBuilder
 	}
 
 	public void parameterValues(String... parameterValues) {
-		_selectedCPSpecificationOptionIds = Stream.of(
-			Objects.requireNonNull(parameterValues)
-		).map(
-			GetterUtil::getLong
-		).filter(
-			cpSpecificationOptionId -> cpSpecificationOptionId > 0
-		).collect(
-			Collectors.toList()
-		);
+		_parameterValues = parameterValues;
 	}
 
 	public void portal(Portal portal) {
@@ -336,11 +325,15 @@ public class CPSpecificationOptionsFacetDisplayContextBuilder
 	}
 
 	private String _getFirstParameterValueString() {
-		if (_selectedCPSpecificationOptionIds.isEmpty()) {
-			return StringPool.BLANK;
+		if (_parameterValues != null) {
+			for (String parameterValue : _parameterValues) {
+				if (GetterUtil.getLong(parameterValue) > 0) {
+					return parameterValue;
+				}
+			}
 		}
 
-		return String.valueOf(_selectedCPSpecificationOptionIds.get(0));
+		return StringPool.BLANK;
 	}
 
 	private String _getPaginationStartParameterName(
@@ -405,12 +398,11 @@ public class CPSpecificationOptionsFacetDisplayContextBuilder
 	private Locale _locale;
 	private int _maxTerms = 10;
 	private String _paginationStartParameterName;
+	private String[] _parameterValues;
 	private Portal _portal;
 	private PortletSharedSearchRequest _portletSharedSearchRequest;
 	private PortletSharedSearchResponse _portletSharedSearchResponse;
 	private RenderRequest _renderRequest;
-	private List<Long> _selectedCPSpecificationOptionIds =
-		Collections.emptyList();
 	private List<Tuple> _tuples;
 
 }

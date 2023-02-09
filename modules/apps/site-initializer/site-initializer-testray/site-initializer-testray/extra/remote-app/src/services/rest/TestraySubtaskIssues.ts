@@ -13,7 +13,7 @@
  */
 
 import yupSchema from '../../schema/yup';
-import {searchUtil} from '../../util/search';
+import {SearchBuilder} from '../../util/search';
 import Rest from './Rest';
 import {TestraySubTaskIssue} from './types';
 
@@ -53,9 +53,9 @@ class TestraySubtaskIssuesImpl extends Rest<
 	}
 
 	public async createIfNotExist(data: SubtaskIssues) {
-		const response = await this.getAll(
-			searchUtil.eq('name', data.name as string)
-		);
+		const response = await this.getAll({
+			filter: SearchBuilder.eq('name', data.name as string),
+		});
 
 		if ((response?.totalCount ?? 0) > 0) {
 			return response?.items[0];

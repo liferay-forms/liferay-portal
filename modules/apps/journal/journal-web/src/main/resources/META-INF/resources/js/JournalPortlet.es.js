@@ -75,6 +75,25 @@ export default function _JournalPortlet({
 
 	const editingDefaultValues = classNameId && classNameId !== '0';
 
+	if (editingDefaultValues) {
+		const resetInput = (inputName) => {
+			const input = document.getElementById(`${namespace}${inputName}`);
+
+			if (input) {
+				input.value = '';
+			}
+		};
+
+		resetInput('displayDate');
+		resetInput('displayDateAmPm');
+		resetInput('displayDateDay');
+		resetInput('displayDateHour');
+		resetInput('displayDateMinute');
+		resetInput('displayDateMonth');
+		resetInput('displayDateTime');
+		resetInput('displayDateYear');
+	}
+
 	const handleContextualSidebarButton = () => {
 		contextualSidebarContainer?.classList.toggle(
 			'contextual-sidebar-visible'
@@ -111,6 +130,12 @@ export default function _JournalPortlet({
 	const handleDDMFormError = (error) => {
 		publishingLock.unlock();
 		console.error(error);
+
+		const workflowActionInput = document.getElementById(
+			`${namespace}workflowAction`
+		);
+
+		workflowActionInput.value = Liferay.Workflow.ACTION_SAVE_DRAFT;
 
 		const titleInputComponent = Liferay.component(
 			`${namespace}titleMapAsXML`

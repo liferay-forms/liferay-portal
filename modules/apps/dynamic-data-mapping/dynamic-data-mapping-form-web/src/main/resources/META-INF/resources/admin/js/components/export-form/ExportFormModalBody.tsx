@@ -16,16 +16,12 @@ import ClayAlert from '@clayui/alert';
 import ClayForm, {ClaySelect} from '@clayui/form';
 import React, {useState} from 'react';
 
-import {TFileExtensions} from './types';
-
 const ExportFormModalBody: React.FC<IProps> = ({
 	csvExport = 'enabled-with-warning',
 	fileExtensions,
 	portletNamespace,
 }) => {
-	const [fileExtension, setFileExtension] = useState(
-		Object.keys(fileExtensions)[0]
-	);
+	const [fileExtension, setFileExtension] = useState(fileExtensions[0]);
 
 	return (
 		<>
@@ -75,14 +71,12 @@ const ExportFormModalBody: React.FC<IProps> = ({
 					}
 					value={fileExtension}
 				>
-					{Object.entries(
-						fileExtensions
-					).map(([fileExtension, label]) =>
+					{fileExtensions.map((fileExtension) =>
 						fileExtension === 'csv' &&
 						csvExport === 'disabled' ? null : (
 							<ClaySelect.Option
 								key={fileExtension}
-								label={label}
+								label={fileExtension.toUpperCase()}
 								value={fileExtension}
 							/>
 						)
@@ -95,7 +89,7 @@ const ExportFormModalBody: React.FC<IProps> = ({
 
 interface IProps {
 	csvExport: string;
-	fileExtensions: TFileExtensions;
+	fileExtensions: string[];
 	portletNamespace: string;
 }
 

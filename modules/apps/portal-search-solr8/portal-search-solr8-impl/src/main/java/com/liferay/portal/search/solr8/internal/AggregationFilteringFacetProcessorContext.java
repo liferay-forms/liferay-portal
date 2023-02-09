@@ -15,13 +15,11 @@
 package com.liferay.portal.search.solr8.internal;
 
 import com.liferay.petra.string.StringPool;
+import com.liferay.petra.string.StringUtil;
 import com.liferay.portal.kernel.search.facet.Facet;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author André de Oliveira
@@ -34,31 +32,29 @@ public class AggregationFilteringFacetProcessorContext
 
 		if (basicFacetSelection) {
 			return new AggregationFilteringFacetProcessorContext(
-				Optional.of(getAllNamesString(facets)));
+				getAllNamesString(facets));
 		}
 
-		return new AggregationFilteringFacetProcessorContext(Optional.empty());
+		return new AggregationFilteringFacetProcessorContext(null);
 	}
 
 	@Override
-	public Optional<String> getExcludeTagsStringOptional() {
-		return _excludeTagsStringOptional;
+	public String getExcludeTagsString() {
+		return _excludeTagsString;
 	}
 
 	protected static String getAllNamesString(Map<String, Facet> facets) {
 		Collection<String> names = facets.keySet();
 
-		Stream<String> stream = names.stream();
-
-		return stream.collect(Collectors.joining(StringPool.COMMA));
+		return StringUtil.merge(names, StringPool.COMMA);
 	}
 
 	private AggregationFilteringFacetProcessorContext(
-		Optional<String> excludeTagsStringOptional) {
+		String excludeTagsString) {
 
-		_excludeTagsStringOptional = excludeTagsStringOptional;
+		_excludeTagsString = excludeTagsString;
 	}
 
-	private final Optional<String> _excludeTagsStringOptional;
+	private final String _excludeTagsString;
 
 }

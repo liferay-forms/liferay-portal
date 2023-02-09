@@ -112,6 +112,7 @@ public class JournalTransformer {
 			JournalArticle article, DDMTemplate ddmTemplate,
 			JournalHelper journalHelper, String languageId,
 			LayoutDisplayPageProviderRegistry layoutDisplayPageProviderRegistry,
+			List<TransformerListener> transformerListeners,
 			PortletRequestModel portletRequestModel, boolean propagateException,
 			String script, ThemeDisplay themeDisplay, String viewMode)
 		throws Exception {
@@ -147,9 +148,6 @@ public class JournalTransformer {
 		if (_logTransformBefore.isDebugEnabled()) {
 			_logTransformBefore.debug(document);
 		}
-
-		List<TransformerListener> transformerListeners =
-			JournalTransformerListenerRegistryUtil.getTransformerListeners();
 
 		for (TransformerListener transformerListener : transformerListeners) {
 
@@ -338,9 +336,8 @@ public class JournalTransformer {
 			else if (exception instanceof TransformException) {
 				throw (TransformException)exception;
 			}
-			else {
-				throw new TransformException("Unhandled exception", exception);
-			}
+
+			throw new TransformException("Unhandled exception", exception);
 		}
 		finally {
 			if ((httpServletRequest != null) && (portletRequestModel != null)) {
@@ -406,37 +403,53 @@ public class JournalTransformer {
 				continue;
 			}
 
-			TemplateNode firstChildTemplateNode = childTemplateNodes.get(0);
+			String fieldSetName = templateNode.getName();
 
-			if (Objects.equals(
-					firstChildTemplateNode.getType(),
-					DDMFormFieldTypeConstants.FIELDSET)) {
+			if (!fieldSetName.endsWith("FieldSet")) {
+				continue;
+			}
 
+			String name = fieldSetName.substring(
+				0, fieldSetName.indexOf("FieldSet"));
+
+			TemplateNode mainChildTemplateNode = templateNode.getChild(name);
+
+			if (mainChildTemplateNode == null) {
 				backwardsCompatibilityTemplateNodes.addAll(
 					includeBackwardsCompatibilityTemplateNodes(
-						Arrays.asList(firstChildTemplateNode), parentOffset));
+						childTemplateNodes, parentOffset));
 
 				continue;
 			}
 
-			firstChildTemplateNode =
-				(TemplateNode)firstChildTemplateNode.clone();
+			if (Objects.equals(
+					mainChildTemplateNode.getType(),
+					DDMFormFieldTypeConstants.FIELDSET)) {
+
+				backwardsCompatibilityTemplateNodes.addAll(
+					includeBackwardsCompatibilityTemplateNodes(
+						Arrays.asList(mainChildTemplateNode), parentOffset));
+
+				continue;
+			}
 
 			List<TemplateNode> newChildTemplateNodes = new ArrayList<>(
 				childTemplateNodes);
 
-			newChildTemplateNodes.remove(0);
-
-			firstChildTemplateNode.appendChildren(
-				includeBackwardsCompatibilityTemplateNodes(
-					newChildTemplateNodes, parentOffset));
+			newChildTemplateNodes.remove(mainChildTemplateNode);
 
 			List<TemplateNode> newSiblingsTemplateNodes = new ArrayList<>(
-				firstChildTemplateNode.getSiblings());
+				mainChildTemplateNode.getSiblings());
 
 			if (!newSiblingsTemplateNodes.isEmpty()) {
-				newSiblingsTemplateNodes.remove(0);
+				newSiblingsTemplateNodes.remove(mainChildTemplateNode);
 			}
+
+			mainChildTemplateNode = (TemplateNode)mainChildTemplateNode.clone();
+
+			mainChildTemplateNode.appendChildren(
+				includeBackwardsCompatibilityTemplateNodes(
+					newChildTemplateNodes, parentOffset));
 
 			List<TemplateNode> siblingsTemplateNodes =
 				templateNode.getSiblings();
@@ -448,18 +461,18 @@ public class JournalTransformer {
 						siblingsTemplateNodes.size()));
 			}
 
-			List<TemplateNode> firstChildSiblingsTemplateNodes =
-				firstChildTemplateNode.getSiblings();
+			List<TemplateNode> mainChildSiblingsTemplateNodes =
+				mainChildTemplateNode.getSiblings();
 
-			firstChildSiblingsTemplateNodes.clear();
+			mainChildSiblingsTemplateNodes.clear();
 
-			firstChildSiblingsTemplateNodes.add(firstChildTemplateNode);
+			mainChildSiblingsTemplateNodes.add(mainChildTemplateNode);
 
-			firstChildSiblingsTemplateNodes.addAll(
+			mainChildSiblingsTemplateNodes.addAll(
 				includeBackwardsCompatibilityTemplateNodes(
 					newSiblingsTemplateNodes, parentOffset));
 
-			backwardsCompatibilityTemplateNodes.add(firstChildTemplateNode);
+			backwardsCompatibilityTemplateNodes.add(mainChildTemplateNode);
 		}
 
 		return backwardsCompatibilityTemplateNodes;
@@ -471,8 +484,8 @@ public class JournalTransformer {
 		Map<String, String> tokens) {
 
 		_addReservedEl(
-			article.getArticleId(), templateNodes, themeDisplay, tokens,
-			JournalStructureConstants.RESERVED_ARTICLE_ID);
+			JournalStructureConstants.RESERVED_ARTICLE_ID, templateNodes,
+			themeDisplay, tokens, article.getArticleId());
 
 		_addReservedEl(
 			JournalStructureConstants.RESERVED_ARTICLE_VERSION, templateNodes,

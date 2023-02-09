@@ -10,33 +10,61 @@
  */
 
 import MDFRequestDTO from '../../../interfaces/dto/mdfRequestDTO';
-import LiferayPicklist from '../../../interfaces/liferayPicklist';
 import MDFRequest from '../../../interfaces/mdfRequest';
 
-export function getMDFRequestFromDTO(
-	mdfRequest: MDFRequestDTO,
-	requestUpdateStatus: LiferayPicklist
-): MDFRequest {
+export function getMDFRequestFromDTO(mdfRequest: MDFRequestDTO): MDFRequest {
 	return {
 		...mdfRequest,
 		activities:
-			mdfRequest.mdfRequestToActivities?.map((activity) => ({
-				...activity,
-				budgets: activity.activityToBudgets || [],
-				endDate: activity.endDate?.split('T')[0],
-				leadFollowUpStrategies: activity.leadFollowUpStrategies?.split(
-					'; '
-				),
-				leadGenerated: String(activity.leadGenerated),
-				mdfRequestId: activity.r_mdfRequestToActivities_c_mdfRequestId,
-				startDate: activity.startDate?.split('T')[0],
-			})) || [],
+			mdfRequest.mdfReqToActs?.map((activityItem) => {
+				const {
+					actToBgts,
+					endDate,
+					id,
+					mdfRequestAmount,
+					mdfRequestExternalReferenceCodeSF,
+					name,
+					r_accToActs_accountEntryId,
+					r_mdfReqToActs_c_mdfRequestId,
+					startDate,
+					tactic,
+					totalCostOfExpense,
+					typeActivity,
+					...activityDescription
+				} = activityItem;
+
+				return {
+					activityDescription: {
+						...activityDescription,
+						assetsLiferayRequired: String(
+							activityItem.assetsLiferayRequired
+						),
+						leadFollowUpStrategies: activityItem.leadFollowUpStrategies?.split(
+							', '
+						),
+						leadGenerated: String(activityItem.leadGenerated),
+					},
+					budgets: actToBgts || [],
+					endDate: endDate?.split('T')[0],
+					id,
+					mdfRequestAmount,
+					mdfRequestExternalReferenceCodeSF,
+					mdfRequestId: r_mdfReqToActs_c_mdfRequestId,
+					name,
+					r_accToActs_accountEntryId,
+					r_mdfReqToActs_c_mdfRequestId,
+					startDate: startDate?.split('T')[0],
+					tactic,
+					totalCostOfExpense,
+					typeActivity,
+				};
+			}) || [],
 		additionalOption: mdfRequest.additionalOption,
-		company: mdfRequest.r_accountToMDFRequests_accountEntry,
+		company: mdfRequest.r_accToMDFReqs_accountEntry,
 		liferayBusinessSalesGoals: mdfRequest.liferayBusinessSalesGoals?.split(
 			'; '
 		),
-		mdfRequestStatus: requestUpdateStatus,
+		mdfRequestStatus: mdfRequest.mdfRequestStatus,
 		targetAudienceRoles: mdfRequest.targetAudienceRoles?.split('; '),
 		targetMarkets: mdfRequest.targetMarkets?.split('; '),
 	};

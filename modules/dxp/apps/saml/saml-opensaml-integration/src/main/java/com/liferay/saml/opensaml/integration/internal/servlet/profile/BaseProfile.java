@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.saml.constants.SamlWebKeys;
 import com.liferay.saml.opensaml.integration.internal.binding.SamlBinding;
+import com.liferay.saml.opensaml.integration.internal.binding.SamlBindingProvider;
 import com.liferay.saml.opensaml.integration.internal.metadata.MetadataManager;
 import com.liferay.saml.opensaml.integration.internal.util.OpenSamlUtil;
 import com.liferay.saml.persistence.model.SamlSpSession;
@@ -33,8 +34,6 @@ import com.liferay.saml.persistence.service.SamlSpSessionLocalService;
 import com.liferay.saml.runtime.SamlException;
 import com.liferay.saml.runtime.configuration.SamlProviderConfigurationHelper;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Supplier;
 
 import javax.servlet.http.Cookie;
@@ -329,21 +328,6 @@ public abstract class BaseProfile {
 		return messageContext;
 	}
 
-	public SamlBinding getSamlBinding(String communicationProfileId)
-		throws PortalException {
-
-		for (SamlBinding samlBinding : _samlBindings) {
-			if (communicationProfileId.equals(
-					samlBinding.getCommunicationProfileId())) {
-
-				return samlBinding;
-			}
-		}
-
-		throw new SamlException(
-			"Unsupported binding " + communicationProfileId);
-	}
-
 	public SamlSpSession getSamlSpSession(
 		HttpServletRequest httpServletRequest) {
 
@@ -447,7 +431,8 @@ public abstract class BaseProfile {
 
 		Endpoint endpoint = samlPeerEndpointContext.getEndpoint();
 
-		SamlBinding samlBinding = getSamlBinding(endpoint.getBinding());
+		SamlBinding samlBinding = samlBindingProvider.getSamlBinding(
+			endpoint.getBinding());
 
 		if (_log.isDebugEnabled()) {
 			try {
@@ -523,22 +508,6 @@ public abstract class BaseProfile {
 			httpServletRequest.isSecure());
 	}
 
-	protected void addSamlBinding(SamlBinding samlBinding) {
-		_samlBindings.add(samlBinding);
-	}
-
-	protected void removeSamlBinding(SamlBinding samlBinding) {
-		_samlBindings.remove(samlBinding);
-	}
-
-	protected void setSamlBindings(List<SamlBinding> samlBindings) {
-		_samlBindings = samlBindings;
-	}
-
-	protected void unsetSamlBinding(SamlBinding samlBinding) {
-		removeSamlBinding(samlBinding);
-	}
-
 	@Reference
 	protected IdentifierGenerationStrategyFactory
 		identifierGenerationStrategyFactory;
@@ -550,13 +519,14 @@ public abstract class BaseProfile {
 	protected Portal portal;
 
 	@Reference
+	protected SamlBindingProvider samlBindingProvider;
+
+	@Reference
 	protected SamlProviderConfigurationHelper samlProviderConfigurationHelper;
 
 	@Reference
 	protected SamlSpSessionLocalService samlSpSessionLocalService;
 
 	private static final Log _log = LogFactoryUtil.getLog(BaseProfile.class);
-
-	private List<SamlBinding> _samlBindings = new ArrayList<>();
 
 }

@@ -384,6 +384,9 @@ export default class Blogs {
 
 				const bodyData = addNamespace(
 					{
+						addEntryResources: this._getElementById(
+							'addEntryResources'
+						).value,
 						allowPingbacks: allowPingbacks?.value,
 						allowTrackbacks: allowTrackbacks?.value,
 						assetCategoryIds: this._getValuesByName(

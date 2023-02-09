@@ -20,6 +20,7 @@ import ClayModal, {useModal} from '@clayui/modal';
 import ClaySticker from '@clayui/sticker';
 import ClayTabs from '@clayui/tabs';
 import {ReactDOMServer, useEventListener} from '@liferay/frontend-js-react-web';
+import {useId} from '@liferay/layout-content-page-editor-web';
 import classNames from 'classnames';
 import {fetch, navigate, openSelectionModal} from 'frontend-js-web';
 import PropTypes from 'prop-types';
@@ -30,16 +31,16 @@ import '../css/ApplicationsMenu.scss';
 const getOpenMenuTooltip = (keyLabel) => (
 	<>
 		<div>{Liferay.Language.get('open-applications-menu')}</div>
-		<kbd className="c-kbd c-kbd-dark">
+		<kbd className="c-kbd c-kbd-dark mt-1">
+			<kbd className="c-kbd">Ctrl</kbd>
+
+			<span className="c-kbd-separator">+</span>
+
 			<kbd className="c-kbd">{keyLabel}</kbd>
 
 			<span className="c-kbd-separator">+</span>
 
-			<kbd className="c-kbd">⇧</kbd>
-
-			<span className="c-kbd-separator">+</span>
-
-			<kbd className="c-kbd">M</kbd>
+			<kbd className="c-kbd">A</kbd>
 		</kbd>
 	</>
 );
@@ -47,7 +48,7 @@ const getOpenMenuTooltip = (keyLabel) => (
 const SitesPanel = ({portletNamespace, sites, virtualInstance}) => {
 	return (
 		<div className="applications-menu-sites c-p-3 c-px-md-4">
-			<h2 className="applications-menu-sites-label c-mt-2 c-mt-md-0 text-uppercase">
+			<h2 className="applications-menu-sites-label c-mt-2 c-mt-md-0 mb-0 text-uppercase">
 				{Liferay.Language.get('sites')}
 			</h2>
 
@@ -245,6 +246,9 @@ const AppsPanel = ({
 
 								<ClayLayout.ContentCol>
 									<ClayButtonWithIcon
+										aria-label={Liferay.Language.get(
+											'close'
+										)}
 										displayType="unstyled"
 										onClick={handleCloseButtonClick}
 										size="sm"
@@ -397,6 +401,7 @@ const ApplicationsMenu = ({
 }) => {
 	const [appsPanelData, setAppsPanelData] = useState({});
 	const buttonRef = useRef();
+	const buttonTitleId = useId();
 	const [visible, setVisible] = useState(false);
 
 	const {observer, onClose} = useModal({
@@ -407,7 +412,7 @@ const ApplicationsMenu = ({
 	});
 
 	const buttonTitle = useMemo(() => {
-		const keyLabel = Liferay.Browser.isMac() ? '⌘' : 'Ctrl';
+		const keyLabel = Liferay.Browser.isMac() ? '⌥' : 'Alt';
 
 		return getOpenMenuTooltip(keyLabel);
 	}, []);
@@ -440,14 +445,12 @@ const ApplicationsMenu = ({
 	useEventListener(
 		'keydown',
 		(event) => {
-			const isCMDPressed = Liferay.Browser.isMac()
-				? event.metaKey
-				: event.ctrlKey;
+			const AKey = Liferay.Browser.isMac() ? 'å' : 'a';
 
 			if (
-				isCMDPressed &&
-				event.shiftKey &&
-				event.key.toLowerCase() === 'm'
+				event.ctrlKey &&
+				event.altKey &&
+				event.key.toLowerCase() === AKey
 			) {
 				event.preventDefault();
 
@@ -487,7 +490,7 @@ const ApplicationsMenu = ({
 						{Liferay.Language.get('applications-menu')}
 					</ClayModal.Header>
 
-					<ClayModal.Body>
+					<ClayModal.Body className="p-0">
 						<AppsPanel
 							handleCloseButtonClick={onClose}
 							liferayLogoURL={liferayLogoURL}
@@ -500,17 +503,10 @@ const ApplicationsMenu = ({
 			)}
 
 			<ClayButtonWithIcon
-				aria-label={
-					Liferay.Browser.isMac()
-						? Liferay.Language.get(
-								'open-applications-menu-or-use-cmd-shift-m'
-						  )
-						: Liferay.Language.get(
-								'open-applications-menu-or-use-ctrl-shift-m'
-						  )
-				}
+				aria-labelledby={buttonTitleId}
 				className="dropdown-toggle lfr-portal-tooltip"
 				data-qa-id="applicationsMenu"
+				data-title={ReactDOMServer.renderToString(buttonTitle)}
 				data-title-set-as-html
 				data-tooltip-align="bottom-left"
 				displayType="unstyled"
@@ -520,8 +516,11 @@ const ApplicationsMenu = ({
 				ref={buttonRef}
 				size="sm"
 				symbol="grid"
-				title={ReactDOMServer.renderToString(buttonTitle)}
 			/>
+
+			<div className="sr-only" id={buttonTitleId}>
+				{buttonTitle}
+			</div>
 		</>
 	);
 };

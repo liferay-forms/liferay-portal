@@ -19,6 +19,7 @@ import {
 	API,
 	Input,
 	InputLocalized,
+	REQUIRED_MSG,
 	invalidateRequired,
 } from '@liferay/object-js-components-web';
 import {openToast} from 'frontend-js-web';
@@ -28,7 +29,6 @@ import {specialCharactersInString, toCamelCase} from '../../utils/string';
 import {ObjectValidationErrors} from './ListTypeFormBase';
 import {fixLocaleKeys} from './utils';
 
-const REQUIRED_MSG = Liferay.Language.get('required');
 const defaultLanguageId = Liferay.ThemeDisplay.getDefaultLanguageId();
 export interface IModalState extends Partial<PickListItem> {
 	header?: string;
@@ -77,15 +77,17 @@ function ListTypeEntriesModal() {
 		}));
 	};
 
-	const handleNameChange = (name_i18n: LocalizedValue<string>) => {
+	const handleNameChange = (newName_i18n: LocalizedValue<string>) => {
+		let newItemKey = itemKey;
+
+		if (modalType !== 'edit' && keyChanged === false) {
+			newItemKey = toCamelCase(newName_i18n[defaultLanguageId] as string);
+		}
+
 		setState((previousValues) => ({
 			...previousValues,
-			...(modalType !== 'edit' &&
-				keyChanged === false &&
-				name_i18n?.[defaultLanguageId] && {
-					itemKey: toCamelCase(name_i18n[defaultLanguageId]!),
-				}),
-			name_i18n: {...name_i18n},
+			itemKey: newItemKey,
+			name_i18n: newName_i18n,
 		}));
 	};
 
@@ -236,7 +238,7 @@ function ListTypeEntriesModal() {
 					error={errors.name_i18n}
 					id="locale"
 					label={Liferay.Language.get('name')}
-					onChange={(name_i18n) => handleNameChange(name_i18n)}
+					onChange={handleNameChange}
 					required
 					translations={name_i18n ?? {[defaultLanguageId]: ''}}
 				/>

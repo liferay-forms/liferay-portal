@@ -24,7 +24,7 @@ import i18n from '../../../i18n';
 import yupSchema, {yupResolver} from '../../../schema/yup';
 import {APIResponse, TestrayFactor} from '../../../services/rest';
 import {testrayFactorRest} from '../../../services/rest/TestrayFactor';
-import {searchUtil} from '../../../util/search';
+import {SearchBuilder} from '../../../util/search';
 import FactorsToOptions from './FactorsToOptions';
 
 type EnvironmentFactorsModalProps = {
@@ -66,11 +66,14 @@ const EnvironmentFactorsModal: React.FC<EnvironmentFactorsModalProps> = ({
 	>(`/factorcategories`);
 
 	const {data: factorResponse, mutate} = useFetch<APIResponse<TestrayFactor>>(
-		`${testrayFactorRest.resource}&filter=${searchUtil.eq(
-			'routineId',
-			routineId
-		)}`,
-		(response) => testrayFactorRest.transformDataFromList(response)
+		testrayFactorRest.resource,
+		{
+			params: {
+				filter: SearchBuilder.eq('routineId', routineId),
+			},
+			transformData: (response) =>
+				testrayFactorRest.transformDataFromList(response),
+		}
 	);
 
 	const factors = useMemo(() => factorResponse?.items || [], [
@@ -97,8 +100,7 @@ const EnvironmentFactorsModal: React.FC<EnvironmentFactorsModalProps> = ({
 
 	useEffect(() => {
 		getCategoryDualBox();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [getCategoryDualBox]);
 
 	const lastStep = step === 1;
 

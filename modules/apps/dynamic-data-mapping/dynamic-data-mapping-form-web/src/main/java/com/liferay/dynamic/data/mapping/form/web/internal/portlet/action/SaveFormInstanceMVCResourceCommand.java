@@ -21,9 +21,11 @@ import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
+import com.liferay.portal.kernel.security.auth.AuthToken;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.TransactionConfig;
 import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
+import com.liferay.portal.kernel.util.Portal;
 
 import java.io.IOException;
 
@@ -54,6 +56,10 @@ public class SaveFormInstanceMVCResourceCommand
 		throws IOException {
 
 		try {
+			_authToken.checkCSRFToken(
+				_portal.getHttpServletRequest(resourceRequest),
+				SaveFormInstanceMVCResourceCommand.class.getName());
+
 			DDMFormInstance formInstance = _saveFormInstanceInTransaction(
 				resourceRequest, resourceResponse);
 
@@ -96,5 +102,11 @@ public class SaveFormInstanceMVCResourceCommand
 
 		_transactionConfig = builder.build();
 	}
+
+	@Reference
+	private AuthToken _authToken;
+
+	@Reference
+	private Portal _portal;
 
 }

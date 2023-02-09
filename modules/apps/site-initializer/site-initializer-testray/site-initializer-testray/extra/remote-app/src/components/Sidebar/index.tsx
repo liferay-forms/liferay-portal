@@ -22,6 +22,7 @@ import i18n from '../../i18n';
 import {TestrayIcon, TestrayIconBrand} from '../../images';
 import CompareRunsPopover from '../CompareRunsPopover';
 import TestrayIcons from '../Icons/TestrayIcon';
+import Tooltip from '../Tooltip';
 import SidebarFooter from './SidebarFooter';
 import SidebarItem from './SidebarItem';
 import TaskSidebar from './TasksSidebar';
@@ -45,7 +46,7 @@ const Sidebar = () => {
 					'testray-sidebar-text-expanded': expanded,
 				})}
 			>
-				{i18n.translate('compare-runs')}
+				{i18n.sub('compare-x', 'runs')}
 			</span>
 		</div>
 	);
@@ -71,7 +72,16 @@ const Sidebar = () => {
 					})}
 					onClick={() => setVisible((show) => !show)}
 				>
-					{CompareRunsContent}
+					<Tooltip
+						position="right"
+						title={
+							expanded
+								? undefined
+								: i18n.translate('compare-runs')
+						}
+					>
+						{CompareRunsContent}
+					</Tooltip>
 				</div>
 			),
 		},

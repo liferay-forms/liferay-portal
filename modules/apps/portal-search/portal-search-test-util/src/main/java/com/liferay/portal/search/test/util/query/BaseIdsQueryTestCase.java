@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.test.util.query;
 
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.search.document.Document;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
@@ -32,7 +33,6 @@ import com.liferay.portal.search.test.util.indexing.BaseIndexingTestCase;
 
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 import org.junit.Test;
 
@@ -110,20 +110,15 @@ public abstract class BaseIdsQueryTestCase extends BaseIndexingTestCase {
 		SearchSearchResponse searchSearchResponse = searchEngineAdapter.execute(
 			searchSearchRequest);
 
-		Stream<Document> stream = getDocumentsStream(
-			searchSearchResponse.getSearchHits());
-
 		DocumentsAssert.assertValues(
-			searchSearchResponse.getSearchRequestString(), stream,
-			Field.USER_NAME, expected);
+			searchSearchResponse.getSearchRequestString(),
+			getDocuments(searchSearchResponse.getSearchHits()), Field.USER_NAME,
+			expected);
 	}
 
-	protected Stream<Document> getDocumentsStream(SearchHits searchHits) {
-		List<SearchHit> list = searchHits.getSearchHits();
-
-		Stream<SearchHit> stream = list.stream();
-
-		return stream.map(SearchHit::getDocument);
+	protected List<Document> getDocuments(SearchHits searchHits) {
+		return TransformUtil.transform(
+			searchHits.getSearchHits(), SearchHit::getDocument);
 	}
 
 	protected SearchSearchRequest getSearchSearchRequest(Query query) {

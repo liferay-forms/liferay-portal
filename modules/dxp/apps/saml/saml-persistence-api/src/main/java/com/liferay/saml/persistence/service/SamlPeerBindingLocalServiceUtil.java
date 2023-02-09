@@ -228,12 +228,13 @@ public class SamlPeerBindingLocalServiceUtil {
 	}
 
 	public static SamlPeerBinding fetchSamlPeerBinding(
-		long companyId, String samlNameIdFormat, String samlNameIdNameQualifier,
-		String samlNameIdValue, String samlSpEntityId) {
+		long companyId, boolean deleted, String samlNameIdFormat,
+		String samlNameIdNameQualifier, String samlNameIdValue,
+		String samlPeerEntityId) {
 
 		return getService().fetchSamlPeerBinding(
-			companyId, samlNameIdFormat, samlNameIdNameQualifier,
-			samlNameIdValue, samlSpEntityId);
+			companyId, deleted, samlNameIdFormat, samlNameIdNameQualifier,
+			samlNameIdValue, samlPeerEntityId);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
@@ -297,6 +298,16 @@ public class SamlPeerBindingLocalServiceUtil {
 		return getService().getSamlPeerBindings(start, end);
 	}
 
+	public static List<SamlPeerBinding> getSamlPeerBindings(
+		long companyId, boolean deleted, String samlNameIdFormat,
+		String samlNameIdNameQualifier, String samlNameIdValue,
+		String samlPeerEntityId) {
+
+		return getService().getSamlPeerBindings(
+			companyId, deleted, samlNameIdFormat, samlNameIdNameQualifier,
+			samlNameIdValue, samlPeerEntityId);
+	}
+
 	/**
 	 * Returns the number of saml peer bindings.
 	 *
@@ -304,6 +315,16 @@ public class SamlPeerBindingLocalServiceUtil {
 	 */
 	public static int getSamlPeerBindingsCount() {
 		return getService().getSamlPeerBindingsCount();
+	}
+
+	public static List<SamlPeerBinding> getUserSamlPeerBindings(
+			long userId, boolean deleted, String samlNameIdFormat,
+			String samlNameIdNameQualifier, String samlPeerEntityId)
+		throws PortalException {
+
+		return getService().getUserSamlPeerBindings(
+			userId, deleted, samlNameIdFormat, samlNameIdNameQualifier,
+			samlPeerEntityId);
 	}
 
 	/**

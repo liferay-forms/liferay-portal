@@ -98,7 +98,7 @@ public class ObjectServiceUpgradeStepRegistrator
 		registry.register(
 			"3.3.0", "3.4.0",
 			UpgradeProcessFactory.addColumns(
-				"ObjectAction", "description STRING null"));
+				"ObjectAction", "description VARCHAR(75) null"));
 
 		registry.register(
 			"3.4.0", "3.5.0",
@@ -247,6 +247,24 @@ public class ObjectServiceUpgradeStepRegistrator
 			"3.27.0", "3.27.1",
 			new com.liferay.object.internal.upgrade.v3_27_1.
 				ObjectFieldSettingUpgradeProcess());
+
+		registry.register(
+			"3.27.1", "3.28.0",
+			new BaseExternalReferenceCodeUpgradeProcess() {
+
+				@Override
+				protected String[][] getTableAndPrimaryKeyColumnNames() {
+					return new String[][] {{"ObjectAction", "objectActionId"}};
+				}
+
+			});
+
+		registry.register(
+			"3.28.0", "4.0.0",
+			UpgradeProcessFactory.alterColumnType(
+				"ObjectAction", "description", "VARCHAR(75) null"),
+			UpgradeProcessFactory.alterColumnType(
+				"ObjectValidationRule", "script", "TEXT null"));
 	}
 
 	@Reference

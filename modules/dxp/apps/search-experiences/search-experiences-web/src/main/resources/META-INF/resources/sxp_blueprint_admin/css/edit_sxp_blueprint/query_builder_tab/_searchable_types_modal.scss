@@ -1,0 +1,17 @@
+.sxp-searchable-types-modal-root {
+	tr {
+		cursor: pointer;
+	}
+
+	.component-text {
+		margin-left: 12px;
+
+		& + .btn-link {
+			font-weight: 600;
+		}
+	}
+
+	.inline-scroller {
+		max-height: unset;
+	}
+}

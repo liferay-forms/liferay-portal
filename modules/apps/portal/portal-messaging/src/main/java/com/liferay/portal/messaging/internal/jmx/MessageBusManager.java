@@ -45,7 +45,6 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
  * @author Brian Wing Shun Chan
  */
 @Component(
-	immediate = true,
 	property = {
 		"jmx.objectname=com.liferay.portal.messaging:classification=message_bus,name=MessageBusManager",
 		"jmx.objectname.cache.key=MessageBusManager"
@@ -61,7 +60,7 @@ public class MessageBusManager
 
 	@Override
 	public int getDestinationCount() {
-		return _messageBus.getDestinationCount();
+		return _mbeanServiceRegistrations.size();
 	}
 
 	@Override

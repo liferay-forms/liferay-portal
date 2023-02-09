@@ -17,6 +17,7 @@ package com.liferay.portal.tools.rest.builder.internal.freemarker.tool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TextFormatter;
@@ -57,8 +58,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author Peter Shin
@@ -91,14 +90,16 @@ public class FreeMarkerTool {
 	public boolean containsJavaMethodSignature(
 		List<JavaMethodSignature> javaMethodSignatures, String text) {
 
-		Stream<JavaMethodSignature> stream = javaMethodSignatures.stream();
+		for (JavaMethodSignature javaMethodSignature : javaMethodSignatures) {
+			String javaMethodSignatureMethodName =
+				javaMethodSignature.getMethodName();
 
-		return stream.map(
-			JavaMethodSignature::getMethodName
-		).anyMatch(
-			javaMethodSignatureMethodName ->
-				javaMethodSignatureMethodName.contains(text)
-		);
+			if (javaMethodSignatureMethodName.contains(text)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public boolean generateBatch(
@@ -436,16 +437,11 @@ public class FreeMarkerTool {
 		JavaMethodSignature javaMethodSignature,
 		List<JavaMethodSignature> javaMethodSignatures) {
 
-		Stream<JavaMethodSignature> stream = javaMethodSignatures.stream();
-
 		return GraphQLNamingUtil.getGraphQLPropertyName(
 			javaMethodSignature.getMethodName(),
 			javaMethodSignature.getReturnType(),
-			stream.map(
-				JavaMethodSignature::getMethodName
-			).collect(
-				Collectors.toList()
-			));
+			ListUtil.toList(
+				javaMethodSignatures, JavaMethodSignature::getMethodName));
 	}
 
 	public List<JavaMethodSignature> getGraphQLRelationJavaMethodSignatures(
@@ -555,15 +551,15 @@ public class FreeMarkerTool {
 	public JavaMethodSignature getJavaMethodSignature(
 		List<JavaMethodSignature> javaMethodSignatures, String methodName) {
 
-		Stream<JavaMethodSignature> stream = javaMethodSignatures.stream();
+		for (JavaMethodSignature javaMethodSignature : javaMethodSignatures) {
+			if (!methodName.equals(javaMethodSignature.getMethodName())) {
+				continue;
+			}
 
-		return stream.filter(
-			javaMethodSignature -> methodName.equals(
-				javaMethodSignature.getMethodName())
-		).findFirst(
-		).orElse(
-			null
-		);
+			return javaMethodSignature;
+		}
+
+		return null;
 	}
 
 	public String getObjectFieldStringValue(String type, Object value) {
@@ -819,14 +815,16 @@ public class FreeMarkerTool {
 	public boolean hasJavaMethodSignature(
 		List<JavaMethodSignature> javaMethodSignatures, String methodName) {
 
-		Stream<JavaMethodSignature> stream = javaMethodSignatures.stream();
+		for (JavaMethodSignature javaMethodSignature : javaMethodSignatures) {
+			String javaMethodSignatureMethodName =
+				javaMethodSignature.getMethodName();
 
-		return stream.map(
-			JavaMethodSignature::getMethodName
-		).anyMatch(
-			javaMethodSignatureMethodName ->
-				javaMethodSignatureMethodName.equals(methodName)
-		);
+			if (javaMethodSignatureMethodName.equals(methodName)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public boolean hasParameter(

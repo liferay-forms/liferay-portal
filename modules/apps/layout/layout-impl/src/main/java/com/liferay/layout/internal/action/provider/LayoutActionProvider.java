@@ -32,12 +32,14 @@ import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletProvider;
 import com.liferay.portal.kernel.portlet.PortletProviderUtil;
 import com.liferay.portal.kernel.portlet.PortletQName;
+import com.liferay.portal.kernel.portlet.url.builder.ActionURLBuilder;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.permission.LayoutPermissionUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -49,10 +51,12 @@ import com.liferay.product.navigation.product.menu.constants.ProductNavigationPr
 import com.liferay.product.navigation.product.menu.constants.ProductNavigationProductMenuWebKeys;
 import com.liferay.site.navigation.model.SiteNavigationMenu;
 import com.liferay.site.navigation.service.SiteNavigationMenuLocalService;
+import com.liferay.taglib.security.PermissionsURLTag;
 
 import java.util.Map;
 import java.util.Objects;
 
+import javax.portlet.ActionURL;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 
@@ -83,7 +87,10 @@ public class LayoutActionProvider {
 			WebKeys.THEME_DISPLAY);
 	}
 
-	public JSONArray getActionsJSONArray(Layout layout) throws Exception {
+	public JSONArray getActionsJSONArray(
+			Layout layout, Layout afterDeleteSelectedLayout)
+		throws Exception {
+
 		JSONArray itemsJSONArray = JSONFactoryUtil.createJSONArray();
 
 		if (_isShowPreviewDraftAction(layout)) {
@@ -155,6 +162,32 @@ public class LayoutActionProvider {
 		}
 
 		itemsJSONArray.put(
+			JSONUtil.put("type", "divider")
+		).put(
+			JSONUtil.put(
+				"data",
+				JSONUtil.put(
+					"id", "copy-page"
+				).put(
+					"modalTitle",
+					_language.get(_themeDisplay.getLocale(), "copy-page")
+				).put(
+					"url", _getCopyLayoutRenderURL(layout)
+				)
+			).put(
+				"href", StringPool.POUND
+			).put(
+				"id", "copy-page"
+			).put(
+				"label", _language.get(_themeDisplay.getLocale(), "copy-page")
+			).put(
+				"symbolLeft", "copy"
+			).put(
+				"type", "item"
+			)
+		).put(
+			JSONUtil.put("type", "divider")
+		).put(
 			JSONUtil.put(
 				"href",
 				StringUtil.replace(
@@ -169,7 +202,8 @@ public class LayoutActionProvider {
 				"symbolLeft", "cog"
 			).put(
 				"type", "item"
-			));
+			)
+		);
 
 		if (layout.isTypeCollection() &&
 			Validator.isNotNull(_getViewCollectionItemsURL())) {
@@ -203,6 +237,81 @@ public class LayoutActionProvider {
 					"type", "item"
 				));
 		}
+
+		itemsJSONArray.put(
+			JSONUtil.put(
+				"data",
+				JSONUtil.put(
+					"id", "permissions"
+				).put(
+					"modalTitle",
+					_language.get(_themeDisplay.getLocale(), "permissions")
+				).put(
+					"url", _getPermissionsURL(layout)
+				)
+			).put(
+				"href", StringPool.POUND
+			).put(
+				"id", "permissions"
+			).put(
+				"label", _language.get(_themeDisplay.getLocale(), "permissions")
+			).put(
+				"symbolLeft", "password-policies"
+			).put(
+				"type", "item"
+			)
+		).put(
+			JSONUtil.put("type", "divider")
+		).put(
+			JSONUtil.put(
+				"data",
+				HashMapBuilder.put(
+					"message",
+					() -> {
+						String messageKey =
+							"are-you-sure-you-want-to-delete-the-page-x.-it-" +
+								"will-be-removed-immediately";
+
+						if (layout.hasChildren() && _hasScopeGroup(layout)) {
+							messageKey = StringBundler.concat(
+								"are-you-sure-you-want-to-delete-the-page-x.-",
+								"this-page-serves-as-a-scope-for-content-and-",
+								"also-contains-child-pages");
+						}
+						else if (layout.hasChildren()) {
+							messageKey = StringBundler.concat(
+								"are-you-sure-you-want-to-delete-the-page-x.-",
+								"this-page-contains-child-pages-that-will-",
+								"also-be-removed");
+						}
+						else if (_hasScopeGroup(layout)) {
+							messageKey =
+								"are-you-sure-you-want-to-delete-the-page-x.-" +
+									"this-page-serves-as-a-scope-for-content";
+						}
+
+						return _language.format(
+							_httpServletRequest, messageKey,
+							HtmlUtil.escape(
+								layout.getName(_themeDisplay.getLocale())));
+					}
+				).put(
+					"modalTitle",
+					_language.get(_themeDisplay.getLocale(), "delete-page")
+				).put(
+					"url",
+					_getDeleteLayoutURL(layout, afterDeleteSelectedLayout)
+				).build()
+			).put(
+				"id", "delete"
+			).put(
+				"label", _language.get(_themeDisplay.getLocale(), "delete")
+			).put(
+				"symbolLeft", "trash"
+			).put(
+				"type", "item"
+			)
+		);
 
 		return JSONUtil.putAll(
 			JSONUtil.put(
@@ -342,6 +451,74 @@ public class LayoutActionProvider {
 			PortletQName.PUBLIC_RENDER_PARAMETER_NAMESPACE, "selPlid={plid}");
 	}
 
+	private String _getCopyLayoutRenderURL(Layout layout) {
+		return PortletURLBuilder.create(
+			PortalUtil.getControlPanelPortletURL(
+				_httpServletRequest, LayoutAdminPortletKeys.GROUP_PAGES,
+				PortletRequest.RENDER_PHASE)
+		).setMVCRenderCommandName(
+			"/layout_admin/add_layout"
+		).setRedirect(
+			ParamUtil.getString(
+				_liferayPortletRequest, "redirect",
+				_themeDisplay.getURLCurrent())
+		).setParameter(
+			"privateLayout", layout.isPrivateLayout()
+		).setParameter(
+			"sourcePlid", layout.getPlid()
+		).setWindowState(
+			LiferayWindowState.POP_UP
+		).buildString();
+	}
+
+	private String _getDeleteLayoutURL(
+			Layout layout, Layout afterDeleteSelectedLayout)
+		throws Exception {
+
+		Group scopeGroup = _themeDisplay.getScopeGroup();
+
+		if (scopeGroup.isStaged() && !scopeGroup.isStagingGroup()) {
+			return null;
+		}
+
+		String redirect = ParamUtil.getString(
+			_liferayPortletRequest, "redirect", _themeDisplay.getURLCurrent());
+
+		Layout curLayout = _themeDisplay.getLayout();
+
+		Layout draftLayout = layout.fetchDraftLayout();
+
+		if (Objects.equals(curLayout.getPlid(), layout.getPlid()) ||
+			((draftLayout != null) &&
+			 Objects.equals(curLayout.getPlid(), draftLayout.getPlid()))) {
+
+			if (afterDeleteSelectedLayout != null) {
+				redirect = PortalUtil.getLayoutRelativeURL(
+					afterDeleteSelectedLayout, _themeDisplay);
+			}
+			else {
+				redirect = String.valueOf(
+					PortalUtil.getControlPanelPortletURL(
+						_httpServletRequest, LayoutAdminPortletKeys.GROUP_PAGES,
+						PortletRequest.RENDER_PHASE));
+			}
+		}
+
+		return ActionURLBuilder.createActionURL(
+			(ActionURL)PortalUtil.getControlPanelPortletURL(
+				_liferayPortletRequest, LayoutAdminPortletKeys.GROUP_PAGES,
+				PortletRequest.ACTION_PHASE)
+		).setActionName(
+			"/layout_admin/delete_layout"
+		).setRedirect(
+			redirect
+		).setParameter(
+			"hideDefaultSuccessMessage", true
+		).setParameter(
+			"selPlid", String.valueOf(layout.getPlid())
+		).buildString();
+	}
+
 	private long _getGroupId() {
 		if (_groupId != null) {
 			return _groupId;
@@ -382,6 +559,15 @@ public class LayoutActionProvider {
 		_pageTypeSelectedOption = pageTypeSelectedOption;
 
 		return _pageTypeSelectedOption;
+	}
+
+	private String _getPermissionsURL(Layout layout) throws Exception {
+		return PermissionsURLTag.doTag(
+			StringPool.BLANK, Layout.class.getName(),
+			HtmlUtil.escape(layout.getName(_themeDisplay.getLocale())), null,
+			String.valueOf(layout.getPlid()),
+			LiferayWindowState.POP_UP.toString(), null,
+			_themeDisplay.getRequest());
 	}
 
 	private String _getRedirect() {
@@ -430,6 +616,20 @@ public class LayoutActionProvider {
 			"collectionPK={collectionPK}&",
 			PortalUtil.getPortletNamespace(AssetListPortletKeys.ASSET_LIST),
 			"collectionType={collectionType}");
+	}
+
+	private boolean _hasScopeGroup(Layout layout) throws Exception {
+		if (layout.hasScopeGroup()) {
+			return true;
+		}
+
+		Layout draftLayout = layout.fetchDraftLayout();
+
+		if (draftLayout == null) {
+			return false;
+		}
+
+		return draftLayout.hasScopeGroup();
 	}
 
 	private boolean _isPageHierarchyOption(String pageTypeOption) {

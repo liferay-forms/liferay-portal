@@ -42,10 +42,10 @@ public class DLUtil {
 	}
 
 	public static String getAbsolutePath(
-			PortletRequest portletRequest, long folderId)
+			PortletRequest portletRequest, long rootFolderId, long folderId)
 		throws PortalException {
 
-		return _dl.getAbsolutePath(portletRequest, folderId);
+		return _dl.getAbsolutePath(portletRequest, rootFolderId, folderId);
 	}
 
 	public static Set<String> getAllMediaGalleryMimeTypes() {

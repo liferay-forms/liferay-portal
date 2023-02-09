@@ -41,8 +41,6 @@ import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.journal.service.JournalFeedLocalServiceUtil;
 import com.liferay.journal.service.JournalFolderLocalServiceUtil;
 import com.liferay.journal.util.JournalConverter;
-import com.liferay.journal.util.JournalHelper;
-import com.liferay.layout.display.page.LayoutDisplayPageProviderRegistry;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -52,7 +50,6 @@ import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.portlet.PortletRequestModel;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
@@ -60,11 +57,9 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -72,24 +67,13 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.kernel.xml.Attribute;
-import com.liferay.portal.kernel.xml.Document;
-import com.liferay.portal.kernel.xml.Element;
-import com.liferay.portal.kernel.xml.Node;
-import com.liferay.portal.kernel.xml.SAXReaderUtil;
-import com.liferay.portal.kernel.xml.UnsecureSAXReaderUtil;
-import com.liferay.portal.kernel.xml.XPath;
 import com.liferay.rss.util.RSSUtil;
-
-import java.lang.reflect.Method;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -739,17 +723,6 @@ public class JournalTestUtil {
 			ddmStructureKey, ddmTemplateKey, serviceContext);
 	}
 
-	public static Element addDynamicElementElement(
-		Element element, String type, String name) {
-
-		Element dynamicElementElement = element.addElement("dynamic-element");
-
-		dynamicElementElement.addAttribute("name", name);
-		dynamicElementElement.addAttribute("type", type);
-
-		return dynamicElementElement;
-	}
-
 	public static JournalFeed addFeed(
 			long groupId, long plid, String name, String ddmStructureKey,
 			String ddmTemplateKey, String rendererTemplateKey)
@@ -906,22 +879,6 @@ public class JournalTestUtil {
 			groupId, content, dataDefinition.getDataDefinitionKey(), null);
 	}
 
-	public static Element addMetadataElement(
-		Element element, String locale, String label) {
-
-		Element metadataElement = element.addElement("meta-data");
-
-		metadataElement.addAttribute("locale", locale);
-
-		Element entryElement = metadataElement.addElement("entry");
-
-		entryElement.addAttribute("name", "label");
-
-		entryElement.addCDATA(label);
-
-		return entryElement;
-	}
-
 	public static void expireArticle(long groupId, JournalArticle article)
 		throws PortalException {
 
@@ -937,20 +894,6 @@ public class JournalTestUtil {
 		return JournalArticleLocalServiceUtil.expireArticle(
 			article.getUserId(), article.getGroupId(), article.getArticleId(),
 			version, null, ServiceContextTestUtil.getServiceContext(groupId));
-	}
-
-	public static Method getJournalUtilGetTokensMethod() {
-		return ReflectionTestUtil.getMethod(
-			_JOURNAL_UTIL_CLASS, "getTokens", JournalArticle.class,
-			DDMTemplate.class, PortletRequestModel.class, ThemeDisplay.class);
-	}
-
-	public static Method getJournalUtilTransformMethod() {
-		return ReflectionTestUtil.getMethod(
-			_JOURNAL_UTIL_CLASS, "transform", JournalArticle.class,
-			DDMTemplate.class, JournalHelper.class, String.class,
-			LayoutDisplayPageProviderRegistry.class, PortletRequestModel.class,
-			boolean.class, String.class, ThemeDisplay.class, String.class);
 	}
 
 	public static String getSampleTemplateFTL() {
@@ -982,34 +925,6 @@ public class JournalTestUtil {
 		Hits results = getSearchArticles(companyId, groupId);
 
 		return results.getLength();
-	}
-
-	public static Map<String, Map<String, String>> getXsdMap(String xsd)
-		throws Exception {
-
-		Map<String, Map<String, String>> map = new HashMap<>();
-
-		Document document = UnsecureSAXReaderUtil.read(xsd);
-
-		XPath xPathSelector = SAXReaderUtil.createXPath("//dynamic-element");
-
-		List<Node> nodes = xPathSelector.selectNodes(document);
-
-		for (Node node : nodes) {
-			Element dynamicElementElement = (Element)node;
-
-			String type = dynamicElementElement.attributeValue("type");
-
-			if (Objects.equals(type, "selection_break")) {
-				continue;
-			}
-
-			String name = dynamicElementElement.attributeValue("name");
-
-			map.put(name, _getMap(dynamicElementElement));
-		}
-
-		return map;
 	}
 
 	public static JournalArticle updateArticle(JournalArticle article)
@@ -1252,47 +1167,6 @@ public class JournalTestUtil {
 		}
 
 		return valuesMap;
-	}
-
-	private static Map<String, String> _getMap(Element dynamicElementElement) {
-		Map<String, String> map = new HashMap<>();
-
-		Element parentElement = dynamicElementElement.getParent();
-
-		String parentType = parentElement.attributeValue("type");
-
-		// Attributes
-
-		for (Attribute attribute : dynamicElementElement.attributes()) {
-
-			// Option element should not contain index type atribute
-
-			if ((Objects.equals(parentType, "list") ||
-				 Objects.equals(parentType, "multi-list")) &&
-				Objects.equals(attribute.getName(), "index-type")) {
-
-				continue;
-			}
-
-			map.put(attribute.getName(), attribute.getValue());
-		}
-
-		// Metadata
-
-		Element metadadataElement = dynamicElementElement.element("meta-data");
-
-		if (metadadataElement == null) {
-			return map;
-		}
-
-		List<Element> entryElements = metadadataElement.elements("entry");
-
-		for (Element entryElement : entryElements) {
-			map.put(
-				entryElement.attributeValue("name"), entryElement.getText());
-		}
-
-		return map;
 	}
 
 	private static JSONObject _getOptionsJSONObject(

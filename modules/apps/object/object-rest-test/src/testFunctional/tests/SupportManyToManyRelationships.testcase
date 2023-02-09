@@ -33,6 +33,7 @@ definition {
 	@priority = "4"
 	test CanDeleteObjectEntryWithDisassociateDeletionTypeRelationshipCreated_1 {
 		property portal.acceptance = "true";
+		property test.name.skip.portal.instance = "SupportManyToManyRelationships#CanDeleteObjectEntryWithDisassociateDeletionTypeRelationshipCreated_1";
 
 		task ("Given manyToMany relationship universitySubjects with deletionType Disassociate created") {
 			var relationshipName = ObjectDefinitionAPI.createRelationship(
@@ -103,6 +104,7 @@ definition {
 	@priority = "4"
 	test CanDeleteObjectEntryWithDisassociateDeletionTypeRelationshipCreated_2 {
 		property portal.acceptance = "true";
+		property test.name.skip.portal.instance = "SupportManyToManyRelationships#CanDeleteObjectEntryWithDisassociateDeletionTypeRelationshipCreated_2";
 
 		task ("Given manyToMany relationship universitySubjects with deletionType Disassociate created") {
 			var relationshipName = ObjectDefinitionAPI.createRelationship(
@@ -176,6 +178,7 @@ definition {
 	@priority = "5"
 	test CanGetFirstObjectEntiresRelatedToSecondObjectByManyToMany {
 		property portal.acceptance = "true";
+		property test.name.skip.portal.instance = "SupportManyToManyRelationships#CanGetFirstObjectEntiresRelatedToSecondObjectByManyToMany";
 
 		task ("Given manyToMany relationship universitySubjects created") {
 			var relationshipName = ObjectDefinitionAPI.createRelationship(
@@ -226,6 +229,7 @@ definition {
 	@priority = "5"
 	test CanGetManyToManyRelationshipDetailsAsNestedFields_1 {
 		property portal.acceptance = "true";
+		property test.name.skip.portal.instance = "SupportManyToManyRelationships#CanGetManyToManyRelationshipDetailsAsNestedFields_1";
 
 		task ("Given manyToMany relationship universitySubjects created") {
 			var relationshipName = ObjectDefinitionAPI.createRelationship(
@@ -282,6 +286,7 @@ definition {
 	@priority = "5"
 	test CanGetManyToManyRelationshipDetailsAsNestedFields_2 {
 		property portal.acceptance = "true";
+		property test.name.skip.portal.instance = "SupportManyToManyRelationships#CanGetManyToManyRelationshipDetailsAsNestedFields_2";
 
 		task ("Given manyToMany relationship universitySubjects created") {
 			var relationshipName = ObjectDefinitionAPI.createRelationship(
@@ -338,6 +343,7 @@ definition {
 	@priority = "5"
 	test CanGetManyToManyRelationshipDetailsAsNestedFields_3 {
 		property portal.acceptance = "true";
+		property test.name.skip.portal.instance = "SupportManyToManyRelationships#CanGetManyToManyRelationshipDetailsAsNestedFields_3";
 
 		task ("Given manyToMany relationship universitySubjects created") {
 			var relationshipName = ObjectDefinitionAPI.createRelationship(
@@ -394,6 +400,7 @@ definition {
 	@priority = "5"
 	test CanGetManyToManyRelationshipDetailsAsNestedFields_4 {
 		property portal.acceptance = "true";
+		property test.name.skip.portal.instance = "SupportManyToManyRelationships#CanGetManyToManyRelationshipDetailsAsNestedFields_4";
 
 		task ("Given manyToMany relationship universitySubjects created") {
 			var relationshipName = ObjectDefinitionAPI.createRelationship(
@@ -450,6 +457,7 @@ definition {
 	@priority = "5"
 	test CanGetManyToManyRelationshipDetailsAsNestedFields_5 {
 		property portal.acceptance = "true";
+		property test.name.skip.portal.instance = "SupportManyToManyRelationships#CanGetManyToManyRelationshipDetailsAsNestedFields_5";
 
 		task ("Given manyToMany relationship universitySubjects created") {
 			var relationshipName = ObjectDefinitionAPI.createRelationship(
@@ -518,6 +526,7 @@ definition {
 	@priority = "5"
 	test CanGetManyToManyRelationshipDetailsAsNestedFields_6 {
 		property portal.acceptance = "true";
+		property test.name.skip.portal.instance = "SupportManyToManyRelationships#CanGetManyToManyRelationshipDetailsAsNestedFields_6";
 
 		task ("Given manyToMany relationship universitySubjects created") {
 			var relationshipName = ObjectDefinitionAPI.createRelationship(
@@ -586,6 +595,7 @@ definition {
 	@priority = "4"
 	test CanGetMultipleManyToManyRelationshipDetailsAsNestedFields {
 		property portal.acceptance = "true";
+		property test.name.skip.portal.instance = "SupportManyToManyRelationships#CanGetMultipleManyToManyRelationshipDetailsAsNestedFields";
 
 		task ("Given active student object definition created") {
 			var objectDefinitionId3 = ObjectDefinitionAPI.createAndPublishObjectDefinition(
@@ -678,6 +688,7 @@ definition {
 	@priority = "5"
 	test CanGetObjectEntiresRelatedByManyToManyWhenDifferentRelationshipTypesCreated {
 		property portal.acceptance = "true";
+		property test.name.skip.portal.instance = "SupportManyToManyRelationships#CanGetObjectEntiresRelatedByManyToManyWhenDifferentRelationshipTypesCreated";
 
 		task ("Given active student object definition created") {
 			var objectDefinitionId3 = ObjectDefinitionAPI.createAndPublishObjectDefinition(
@@ -762,6 +773,7 @@ definition {
 	@priority = "5"
 	test CanGetObjectEntiresRelatedByOneToManyWhenDifferentRelationshipTypesCreated {
 		property portal.acceptance = "true";
+		property test.name.skip.portal.instance = "SupportManyToManyRelationships#CanGetObjectEntiresRelatedByOneToManyWhenDifferentRelationshipTypesCreated";
 
 		task ("Given active student object definition created") {
 			var objectDefinitionId3 = ObjectDefinitionAPI.createAndPublishObjectDefinition(
@@ -846,6 +858,7 @@ definition {
 	@priority = "5"
 	test CanGetSecondObjectEntiresRelatedToFirstObjectByManyToMany {
 		property portal.acceptance = "true";
+		property test.name.skip.portal.instance = "SupportManyToManyRelationships#CanGetSecondObjectEntiresRelatedToFirstObjectByManyToMany";
 
 		task ("Given manyToMany relationship universitySubjects created") {
 			var relationshipName = ObjectDefinitionAPI.createRelationship(
@@ -896,6 +909,7 @@ definition {
 	@priority = "4"
 	test DeletedObjectDoesNotAppearInManyToManyRelationshipDetailsNestedFields_1 {
 		property portal.acceptance = "true";
+		property test.name.skip.portal.instance = "SupportManyToManyRelationships#DeletedObjectDoesNotAppearInManyToManyRelationshipDetailsNestedFields_1";
 
 		task ("Given manyToMany relationship universitySubjects created") {
 			var relationshipName = ObjectDefinitionAPI.createRelationship(
@@ -966,6 +980,7 @@ definition {
 	@priority = "4"
 	test DeletedObjectDoesNotAppearInManyToManyRelationshipDetailsNestedFields_2 {
 		property portal.acceptance = "true";
+		property test.name.skip.portal.instance = "SupportManyToManyRelationships#DeletedObjectDoesNotAppearInManyToManyRelationshipDetailsNestedFields_2";
 
 		task ("Given manyToMany relationship universitySubjects created") {
 			var relationshipName = ObjectDefinitionAPI.createRelationship(
@@ -1041,11 +1056,10 @@ definition {
 	}
 
 	@disable-webdriver = "true"
-	@ignore = "true"
 	@priority = "4"
 	test ObjectEntryDeletionImpossibleWithPreventDeletionTypeRelationshipCreated {
 		property portal.acceptance = "true";
-		property portal.upstream = "quarantine";
+		property test.name.skip.portal.instance = "SupportManyToManyRelationships#ObjectEntryDeletionImpossibleWithPreventDeletionTypeRelationshipCreated";
 
 		task ("Given manyToMany relationship universitySubjects with deletionType prevent created") {
 			var relationshipName = ObjectDefinitionAPI.createRelationship(
@@ -1057,16 +1071,10 @@ definition {
 				type = "manyToMany");
 		}
 
-		task ("Given three university entries created") {
+		task ("Given a university entry created") {
 			var universityId1 = ObjectDefinitionAPI.createObjectEntryWithName(
 				en_US_plural_label = "universities",
 				name = "Liferay First University");
-			var universityId2 = ObjectDefinitionAPI.createObjectEntryWithName(
-				en_US_plural_label = "universities",
-				name = "Liferay Second University");
-			var universityId3 = ObjectDefinitionAPI.createObjectEntryWithName(
-				en_US_plural_label = "universities",
-				name = "Liferay Third University");
 		}
 
 		task ("Given subject entry created") {
@@ -1075,43 +1083,31 @@ definition {
 				name = "Liferay Foundations");
 		}
 
-		task ("When I relate subject entry with all three universities through universities PUT endpoint") {
+		task ("When I relate subject entry with the university") {
 			ObjectDefinitionAPI.relateObjectEntries(
 				en_US_plural_label = "universities",
 				objectEntry1 = "${universityId1}",
 				objectEntry2 = "${subjectId}",
 				relationshipName = "universitiesSubjects");
-
-			ObjectDefinitionAPI.relateObjectEntries(
-				en_US_plural_label = "universities",
-				objectEntry1 = "${universityId2}",
-				objectEntry2 = "${subjectId}",
-				relationshipName = "universitiesSubjects");
-
-			ObjectDefinitionAPI.relateObjectEntries(
-				en_US_plural_label = "universities",
-				objectEntry1 = "${universityId3}",
-				objectEntry2 = "${subjectId}",
-				relationshipName = "universitiesSubjects");
 		}
 
-		task ("When deleting subject entry") {
+		task ("When deleting the university entry and asserting that the university was not deleted") {
 			var responseToParse = ObjectDefinitionAPI.deleteObjectEntry(
-				en_US_plural_label = "subjects",
-				objectEntryId = "${subjectId}");
-		}
-
-		task ("Then assert bad response and subject entry is not deleted") {
-			var responseToParse1 = ObjectDefinitionAPI.getObjectsWithNestedField(
-				nestedField = "universitiesSubjects",
-				objects = "universities");
+				en_US_plural_label = "universities",
+				objectEntryId = "${universityId1}");
 
 			ObjectDefinitionAPI.assertStatusInResponse(
 				expectedValue = "BAD_REQUEST",
 				responseToParse = "${responseToParse}");
+		}
+
+		task ("Then assert subject entry is not deleted") {
+			var responseToParse1 = ObjectDefinitionAPI.getObjectsWithNestedField(
+				nestedField = "universitiesSubjects",
+				objects = "universities");
 
 			ObjectDefinitionAPI.assertResponseIncludeCorrectDetailsOfNotDeletedObject(
-				expectedValue = "Liferay Foundations,Liferay Foundations,Liferay Foundations",
+				expectedValue = "Liferay Foundations",
 				objectEntryId = "${subjectId}",
 				responseToParse = "${responseToParse1}");
 		}
@@ -1121,6 +1117,7 @@ definition {
 	@priority = "5"
 	test RelationshipEnpointGetsDeletedWhenObjectDefinitionDeleted {
 		property portal.acceptance = "true";
+		property test.name.skip.portal.instance = "SupportManyToManyRelationships#RelationshipEnpointGetsDeletedWhenObjectDefinitionDeleted";
 
 		task ("Given manyToMany relationship universitySubjects created") {
 			var relationshipName = ObjectDefinitionAPI.createRelationship(

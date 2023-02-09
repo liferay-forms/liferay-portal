@@ -18,14 +18,14 @@ import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
 import com.liferay.portal.kernel.module.util.SystemBundleUtil;
-import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Stream;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.osgi.framework.BundleContext;
 
@@ -38,19 +38,13 @@ public class AssetRendererFactoryRegistryUtil {
 	public static List<AssetRendererFactory<?>> getAssetRendererFactories(
 		long companyId) {
 
-		return ListUtil.fromMapValues(
-			_filterAssetRendererFactories(
-				companyId, _classNameAssetRenderFactoriesServiceTrackerMap,
-				false));
+		return _filterAssetRendererFactories(companyId, false);
 	}
 
 	public static List<AssetRendererFactory<?>> getAssetRendererFactories(
 		long companyId, boolean filterSelectable) {
 
-		return ListUtil.fromMapValues(
-			_filterAssetRendererFactories(
-				companyId, _classNameAssetRenderFactoriesServiceTrackerMap,
-				filterSelectable));
+		return _filterAssetRendererFactories(companyId, filterSelectable);
 	}
 
 	public static <T> AssetRendererFactory<T> getAssetRendererFactoryByClass(
@@ -89,17 +83,15 @@ public class AssetRendererFactoryRegistryUtil {
 		long companyId, boolean filterSelectable) {
 
 		if (companyId > 0) {
-			Map<String, AssetRendererFactory<?>> assetRenderFactories =
-				_filterAssetRendererFactories(
-					companyId, _classNameAssetRenderFactoriesServiceTrackerMap,
-					filterSelectable);
+			List<AssetRendererFactory<?>> assetRenderFactories =
+				_filterAssetRendererFactories(companyId, filterSelectable);
 
 			long[] classNameIds = new long[assetRenderFactories.size()];
 
 			int i = 0;
 
 			for (AssetRendererFactory<?> assetRendererFactory :
-					assetRenderFactories.values()) {
+					assetRenderFactories) {
 
 				classNameIds[i] = assetRendererFactory.getClassNameId();
 
@@ -109,38 +101,57 @@ public class AssetRendererFactoryRegistryUtil {
 			return classNameIds;
 		}
 
+		int i = 0;
+
 		Set<String> classNames =
 			_classNameAssetRenderFactoriesServiceTrackerMap.keySet();
 
-		Stream<String> stream = classNames.stream();
+		long[] classNameIds = new long[classNames.size()];
 
-		return stream.map(
-			_classNameAssetRenderFactoriesServiceTrackerMap::getService
-		).map(
-			AssetRendererFactory::getClassNameId
-		).mapToLong(
-			classNameId -> classNameId
-		).toArray();
+		for (String className : classNames) {
+			AssetRendererFactory<?> assetRendererFactory =
+				_classNameAssetRenderFactoriesServiceTrackerMap.getService(
+					className);
+
+			classNameIds[i++] = assetRendererFactory.getClassNameId();
+		}
+
+		return classNameIds;
 	}
 
-	private static Map<String, AssetRendererFactory<?>>
-		_filterAssetRendererFactories(
-			long companyId,
-			ServiceTrackerMap<String, AssetRendererFactory<?>>
-				assetRendererFactories,
-			boolean filterSelectable) {
+	public static long[] getIndexableClassNameIds(
+		long companyId, boolean filterSelectable) {
 
-		Map<String, AssetRendererFactory<?>> filteredAssetRendererFactories =
-			new ConcurrentHashMap<>();
+		return ArrayUtil.filter(
+			getClassNameIds(companyId, filterSelectable),
+			classNameId -> {
+				Indexer<?> indexer = IndexerRegistryUtil.getIndexer(
+					PortalUtil.getClassName(classNameId));
 
-		for (String key : assetRendererFactories.keySet()) {
+				if (indexer == null) {
+					return false;
+				}
+
+				return true;
+			});
+	}
+
+	private static List<AssetRendererFactory<?>> _filterAssetRendererFactories(
+		long companyId, boolean filterSelectable) {
+
+		List<AssetRendererFactory<?>> filteredAssetRendererFactories =
+			new CopyOnWriteArrayList<>();
+
+		for (String key :
+				_classNameAssetRenderFactoriesServiceTrackerMap.keySet()) {
+
 			AssetRendererFactory<?> assetRendererFactory =
-				assetRendererFactories.getService(key);
+				_classNameAssetRenderFactoriesServiceTrackerMap.getService(key);
 
 			if (assetRendererFactory.isActive(companyId) &&
 				(!filterSelectable || assetRendererFactory.isSelectable())) {
 
-				filteredAssetRendererFactories.put(key, assetRendererFactory);
+				filteredAssetRendererFactories.add(assetRendererFactory);
 			}
 		}
 

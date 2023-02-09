@@ -134,6 +134,7 @@ const Question = ({
 		questionId,
 		sectionTitle,
 		setError,
+		setShowDeleteModalPanel,
 	});
 
 	const fetchMessages = useCallback(() => {
@@ -528,7 +529,16 @@ const Question = ({
 												'viewed-x-times'
 											),
 											[question.viewCount]
-										)}`}
+										)} `}
+
+										{question.dateCreated !==
+											question.dateModified && (
+											<span className="question-edited">
+												(
+												{Liferay.Language.get('edited')}
+												)
+											</span>
+										)}
 									</div>
 								</div>
 							</div>

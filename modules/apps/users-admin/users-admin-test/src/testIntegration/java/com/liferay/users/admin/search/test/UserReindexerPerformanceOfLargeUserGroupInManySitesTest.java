@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HashMapDictionary;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.search.configuration.ReindexerConfiguration;
 import com.liferay.portal.search.query.BooleanQuery;
 import com.liferay.portal.search.query.Queries;
@@ -56,8 +57,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang.time.StopWatch;
@@ -85,12 +84,12 @@ public class UserReindexerPerformanceOfLargeUserGroupInManySitesTest {
 	@Before
 	public void setUp() throws Exception {
 		if (_STRESS_MODE_10_MIN_TO_RUN_ALL_TESTS) {
-			_groupCount = 5;
-			_userCount = 100;
+			_groupsCount = 5;
+			_usersCount = 100;
 		}
 		else {
-			_groupCount = 2;
-			_userCount = 3;
+			_groupsCount = 2;
+			_usersCount = 3;
 		}
 
 		groupSearchFixture = new GroupSearchFixture();
@@ -125,12 +124,12 @@ public class UserReindexerPerformanceOfLargeUserGroupInManySitesTest {
 
 	@Test
 	public void testAddUsersOnly() throws Exception {
-		addUsers(_userCount);
+		addUsers(_usersCount);
 	}
 
 	@Test
 	public void testAddUsersThenReindex() throws Exception {
-		List<User> users = addUsers(_userCount);
+		List<User> users = addUsers(_usersCount);
 
 		reindex(users);
 	}
@@ -159,14 +158,10 @@ public class UserReindexerPerformanceOfLargeUserGroupInManySitesTest {
 		return groupSearchFixture.addGroup(new GroupBlueprint());
 	}
 
-	protected void addGroups(int groupCount, List<Group> groups) {
-		Stream.generate(
-			this::addGroup
-		).limit(
-			groupCount
-		).forEach(
-			groups::add
-		);
+	protected void addGroups(int groupsCount, List<Group> groups) {
+		for (int i = 0; i < groupsCount; i++) {
+			groups.add(addGroup());
+		}
 	}
 
 	protected void addGroupUserGroup(Group group, UserGroup userGroup) {
@@ -233,7 +228,7 @@ public class UserReindexerPerformanceOfLargeUserGroupInManySitesTest {
 
 		List<User> users = new ArrayList<>();
 
-		measure(timesMap, "addUsers", () -> addUsers(_userCount, users));
+		measure(timesMap, "addUsers", () -> addUsers(_usersCount, users));
 
 		measure(
 			timesMap, "addUserGroupUsers",
@@ -244,7 +239,7 @@ public class UserReindexerPerformanceOfLargeUserGroupInManySitesTest {
 
 		List<Group> groups = new ArrayList<>();
 
-		measure(timesMap, "addGroups", () -> addGroups(_groupCount, groups));
+		measure(timesMap, "addGroups", () -> addGroups(_groupsCount, groups));
 
 		for (Group group : groups) {
 			measure(
@@ -259,9 +254,8 @@ public class UserReindexerPerformanceOfLargeUserGroupInManySitesTest {
 			groups, getTestUserId());
 
 		DocumentsAssert.assertValuesIgnoreRelevance(
-			searchResponse.getRequestString(),
-			searchResponse.getDocumentsStream(), Field.USER_ID,
-			_getUserIdsStream(users));
+			searchResponse.getRequestString(), searchResponse.getDocuments(),
+			Field.USER_ID, _getUserIdsStream(users));
 	}
 
 	protected SearchRequestBuilder getSearchRequestBuilder(long companyId) {
@@ -293,15 +287,17 @@ public class UserReindexerPerformanceOfLargeUserGroupInManySitesTest {
 	}
 
 	protected void reindex(List<User> users) {
+		long[] userIds = new long[users.size()];
+
+		for (int i = 0; i < users.size(); i++) {
+			User user = users.get(i);
+
+			userIds[i] = user.getUserId();
+		}
+
 		User user = users.get(0);
 
-		Stream<Long> stream = _getUserIdsStream(users);
-
-		_reindexer.reindex(
-			user.getCompanyId(), _CLASS_NAME,
-			stream.mapToLong(
-				Long::longValue
-			).toArray());
+		_reindexer.reindex(user.getCompanyId(), _CLASS_NAME, userIds);
 	}
 
 	protected SearchResponse searchUsersInAllGroups(
@@ -338,16 +334,16 @@ public class UserReindexerPerformanceOfLargeUserGroupInManySitesTest {
 	protected UserSearchFixture userSearchFixture;
 
 	private String _getTimesReport(Map<String, String> map) {
-		Set<Map.Entry<String, String>> set = map.entrySet();
+		StringBundler sb = new StringBundler((2 * map.size()) + 1);
 
-		Stream<Map.Entry<String, String>> stream = set.stream();
+		sb.append(StringPool.NEW_LINE);
 
-		return stream.map(
-			String::valueOf
-		).collect(
-			Collectors.joining(
-				StringPool.NEW_LINE, StringPool.NEW_LINE, StringPool.NEW_LINE)
-		);
+		for (Map.Entry<String, String> entry : map.entrySet()) {
+			sb.append(String.valueOf(entry));
+			sb.append(StringPool.NEW_LINE);
+		}
+
+		return sb.toString();
 	}
 
 	private Stream<Long> _getUserIdsStream(List<User> users) {
@@ -390,20 +386,20 @@ public class UserReindexerPerformanceOfLargeUserGroupInManySitesTest {
 	@DeleteAfterTestRun
 	private List<Address> _addresses = new ArrayList<>();
 
-	private int _groupCount;
-
 	@DeleteAfterTestRun
 	private List<Group> _groups;
 
+	private int _groupsCount;
+
 	@DeleteAfterTestRun
 	private List<Organization> _organizations;
-
-	private int _userCount;
 
 	@DeleteAfterTestRun
 	private List<UserGroup> _userGroups;
 
 	@DeleteAfterTestRun
 	private List<User> _users;
+
+	private int _usersCount;
 
 }

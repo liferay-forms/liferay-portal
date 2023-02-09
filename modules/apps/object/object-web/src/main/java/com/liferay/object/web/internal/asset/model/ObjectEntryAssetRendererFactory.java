@@ -20,7 +20,7 @@ import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.service.ObjectEntryService;
 import com.liferay.object.web.internal.object.entries.display.context.ObjectEntryDisplayContextFactory;
-import com.liferay.object.web.internal.util.ObjectDefinitionPermissionUtil;
+import com.liferay.object.web.internal.security.permission.resource.util.ObjectDefinitionResourcePermissionUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -40,6 +40,7 @@ public class ObjectEntryAssetRendererFactory
 		ObjectEntryService objectEntryService, ServletContext servletContext) {
 
 		setClassName(objectDefinition.getClassName());
+		setSearchable(true);
 		setPortletId(objectDefinition.getPortletId());
 
 		_objectDefinition = objectDefinition;
@@ -73,8 +74,9 @@ public class ObjectEntryAssetRendererFactory
 		throws Exception {
 
 		try {
-			return ObjectDefinitionPermissionUtil.hasModelResourcePermission(
-				_objectDefinition, classPK, _objectEntryService, actionId);
+			return ObjectDefinitionResourcePermissionUtil.
+				hasModelResourcePermission(
+					_objectDefinition, classPK, _objectEntryService, actionId);
 		}
 		catch (PortalException portalException) {
 			if (_log.isDebugEnabled()) {
@@ -83,6 +85,15 @@ public class ObjectEntryAssetRendererFactory
 
 			return false;
 		}
+	}
+
+	@Override
+	public boolean isActive(long companyId) {
+		if (_objectDefinition.getCompanyId() == companyId) {
+			return true;
+		}
+
+		return false;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

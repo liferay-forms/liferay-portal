@@ -53,7 +53,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.util.Locale;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.servlet.Servlet;
@@ -170,22 +169,26 @@ public class ExportTranslationServlet extends HttpServlet {
 			String[] targetLanguageIds, Locale locale)
 		throws IOException, PortalException {
 
+		TranslationInfoItemFieldValuesExporter
+			translationInfoItemFieldValuesExporter =
+				_translationInfoItemFieldValuesExporterRegistry.
+					getTranslationInfoItemFieldValuesExporter(exportMimeType);
+
+		if (translationInfoItemFieldValuesExporter == null) {
+			throw new PortalException(
+				"Unknown export mime type: " + exportMimeType);
+		}
+
 		InfoItemHelper infoItemHelper = new InfoItemHelper(
 			className, _infoItemServiceRegistry);
 
-		Optional<String> infoItemTitleOptional =
-			infoItemHelper.getInfoItemTitleOptional(classPK, locale);
+		String infoItemTitle = infoItemHelper.getInfoItemTitle(classPK, locale);
 
-		String infoItemTitle = infoItemTitleOptional.orElseGet(
-			() ->
+		if (infoItemTitle == null) {
+			infoItemTitle =
 				_language.get(locale, "model.resource." + className) +
-					StringPool.SPACE + classPK);
-
-		Optional<TranslationInfoItemFieldValuesExporter>
-			exportFileFormatOptional =
-				_translationInfoItemFieldValuesExporterRegistry.
-					getTranslationInfoItemFieldValuesExporterOptional(
-						exportMimeType);
+					StringPool.SPACE + classPK;
+		}
 
 		InfoItemFieldValuesProvider<Object> infoItemFieldValuesProvider =
 			_infoItemServiceRegistry.getFirstInfoItemService(
@@ -196,12 +199,6 @@ public class ExportTranslationServlet extends HttpServlet {
 				InfoItemObjectProvider.class, className);
 
 		Object object = infoItemObjectProvider.getInfoItem(classPK);
-
-		TranslationInfoItemFieldValuesExporter
-			translationInfoItemFieldValuesExporter =
-				exportFileFormatOptional.orElseThrow(
-					() -> new PortalException(
-						"Unknown export mime type: " + exportMimeType));
 
 		for (String targetLanguageId : targetLanguageIds) {
 			zipWriter.addEntry(
@@ -254,17 +251,19 @@ public class ExportTranslationServlet extends HttpServlet {
 	}
 
 	private String _getPrefixName(
-		long classPK, String classNameTitle,
-		Optional<String> infoItemTitleOptional, boolean multipleModels,
-		Locale locale) {
+		long classPK, String classNameTitle, String infoItemTitle,
+		boolean multipleModels, Locale locale) {
 
 		if (multipleModels) {
 			return classNameTitle + StringPool.SPACE +
 				_language.get(locale, "translations");
 		}
 
-		return infoItemTitleOptional.orElseGet(
-			() -> classNameTitle + StringPool.SPACE + classPK);
+		if (infoItemTitle != null) {
+			return infoItemTitle;
+		}
+
+		return classNameTitle + StringPool.SPACE + classPK;
 	}
 
 	private String _getXLIFFFileName(
@@ -286,14 +285,13 @@ public class ExportTranslationServlet extends HttpServlet {
 		InfoItemHelper infoItemHelper = new InfoItemHelper(
 			className, _infoItemServiceRegistry);
 
-		Optional<String> infoItemTitleOptional =
-			infoItemHelper.getInfoItemTitleOptional(classPK, locale);
+		String infoItemTitle = infoItemHelper.getInfoItemTitle(classPK, locale);
 
 		return StringBundler.concat(
 			StringUtil.removeSubstrings(
 				_getPrefixName(
-					classPK, classNameTitle, infoItemTitleOptional,
-					multipleModels, locale),
+					classPK, classNameTitle, infoItemTitle, multipleModels,
+					locale),
 				PropsValues.DL_CHAR_BLACKLIST),
 			StringPool.DASH, sourceLanguageId, ".zip");
 	}

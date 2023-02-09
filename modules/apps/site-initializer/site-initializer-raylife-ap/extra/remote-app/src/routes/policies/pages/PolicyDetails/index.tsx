@@ -19,10 +19,10 @@ import {
 	getPolicyByExternalReferenceCode,
 } from '../../../../common/services';
 import {getQuotesById} from '../../../../common/services/Quote';
+import Activities from '../components/Activities';
 import PolicyActiveClaims from '../components/PolicyActiveClaims';
 import PolicyDetail from '../components/PolicyDetail';
 import PolicySummary from '../components/PolicySummary';
-
 interface PolicySummary {
 	boundDate: Date;
 	commission: number;
@@ -83,7 +83,7 @@ const PolicyDetails = () => {
 			<div className="d-flex policy-detail-content">
 				{policy && (
 					<>
-						<div className="mb-3 mr-3 summary-policy-content">
+						<div className="mr-3 summary-policy-content">
 							<PolicySummary
 								application={application}
 								policy={policy}
@@ -105,6 +105,8 @@ const PolicyDetails = () => {
 				dataJSON={policy?.data?.dataJSON}
 				id={policy?.data?.id}
 			/>
+
+			<Activities />
 		</div>
 	);
 };

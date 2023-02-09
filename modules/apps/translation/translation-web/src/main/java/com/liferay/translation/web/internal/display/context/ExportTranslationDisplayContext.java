@@ -16,6 +16,7 @@ package com.liferay.translation.web.internal.display.context;
 
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.info.localized.InfoLocalizedValue;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -49,13 +50,12 @@ import com.liferay.translation.info.item.provider.InfoItemLanguagesProvider;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -138,22 +138,10 @@ public class ExportTranslationDisplayContext {
 	public Map<String, Object> getExportTranslationData() throws Exception {
 		return HashMapBuilder.<String, Object>put(
 			"availableExportFileFormats",
-			() -> {
-				Collection<TranslationInfoItemFieldValuesExporter>
-					translationInfoItemFieldValuesExporters =
-						_translationInfoItemFieldValuesExporterRegistry.
-							getTranslationInfoItemFieldValuesExporters();
-
-				Stream<TranslationInfoItemFieldValuesExporter>
-					translationInfoItemFieldValuesExportersStream =
-						translationInfoItemFieldValuesExporters.stream();
-
-				return translationInfoItemFieldValuesExportersStream.map(
-					this::_getExportFileFormatJSONObject
-				).collect(
-					Collectors.toList()
-				);
-			}
+			() -> TransformUtil.transform(
+				_translationInfoItemFieldValuesExporterRegistry.
+					getTranslationInfoItemFieldValuesExporters(),
+				this::_getExportFileFormatJSONObject)
 		).put(
 			"availableSourceLocales",
 			_getLocalesJSONArray(
@@ -203,6 +191,8 @@ public class ExportTranslationDisplayContext {
 	}
 
 	private Set<Locale> _getAvailableSourceLocales() throws Exception {
+		Set<Locale> availableSourceLocales = new HashSet<>();
+
 		InfoItemLanguagesProvider<Object> infoItemLanguagesProvider =
 			_infoItemServiceRegistry.getFirstInfoItemService(
 				InfoItemLanguagesProvider.class, _className);
@@ -216,12 +206,9 @@ public class ExportTranslationDisplayContext {
 					infoItemLanguagesProvider.getAvailableLanguageIds(model)));
 		}
 
-		Stream<String> stream = languageIds.stream();
-
-		Stream<Locale> localesStream = stream.map(LocaleUtil::fromLanguageId);
-
-		Set<Locale> availableSourceLocales = localesStream.collect(
-			Collectors.toSet());
+		for (String languageId : languageIds) {
+			availableSourceLocales.add(LocaleUtil.fromLanguageId(languageId));
+		}
 
 		if (!availableSourceLocales.contains(
 				PortalUtil.getSiteDefaultLocale(_groupId))) {

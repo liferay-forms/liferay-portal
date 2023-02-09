@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.elasticsearch7.internal.index.instant;
 
+import com.liferay.portal.kernel.module.util.SystemBundleUtil;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchFixture;
@@ -39,12 +40,16 @@ import org.elasticsearch.client.IndicesClient;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
+
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 
 /**
  * @author André de Oliveira
@@ -57,6 +62,8 @@ public class InstantIndexesTest {
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
+		_bundleContext = SystemBundleUtil.getBundleContext();
+
 		_elasticsearchFixture = new ElasticsearchFixture(
 			InstantIndexesTest.class.getSimpleName());
 
@@ -73,13 +80,13 @@ public class InstantIndexesTest {
 		IndexDefinitionsRegistryImpl indexDefinitionsRegistryImpl =
 			new IndexDefinitionsRegistryImpl();
 
-		IndexSynchronizerImpl indexSynchronizerImpl = _createIndexSynchronizer(
+		_indexSynchronizerImpl = _createIndexSynchronizer(
 			_elasticsearchFixture, indexDefinitionsRegistryImpl);
 
 		IndexSynchronizationPortalInitializedListener
 			indexSynchronizationPortalInitializedListener =
 				_createIndexSynchronizationPortalInitializedListener(
-					indexSynchronizerImpl);
+					_indexSynchronizerImpl);
 
 		Microcontainer microcontainer = new MicrocontainerImpl();
 
@@ -89,7 +96,7 @@ public class InstantIndexesTest {
 			indexSynchronizationPortalInitializedListener::addIndexDefinition);
 
 		microcontainer.wire(
-			IndexRegistrar.class, indexSynchronizerImpl::addIndexRegistrar,
+			IndexRegistrar.class,
 			indexSynchronizationPortalInitializedListener::addIndexRegistrar);
 
 		_eventsIndexDefinition = new EventsIndexDefinition();
@@ -98,7 +105,17 @@ public class InstantIndexesTest {
 		_instancesAndProcessesIndexRegistrar =
 			new InstancesAndProcessesIndexRegistrar();
 		_microcontainer = microcontainer;
+		_serviceRegistration = _bundleContext.registerService(
+			IndexRegistrar.class, _instancesAndProcessesIndexRegistrar, null);
 		_tasksIndexDefinition = new TasksIndexDefinition();
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		ReflectionTestUtil.invoke(
+			_indexSynchronizerImpl, "deactivate", new Class<?>[0]);
+
+		_serviceRegistration.unregister();
 	}
 
 	@Test
@@ -204,13 +221,21 @@ public class InstantIndexesTest {
 		ElasticsearchFixture elasticsearchFixture,
 		IndexDefinitionsRegistryImpl indexDefinitionsRegistryImpl) {
 
-		return new IndexSynchronizerImpl() {
-			{
-				setCreateIndexRequestExecutor(
-					_createCreateIndexRequestExecutor(elasticsearchFixture));
-				setIndexDefinitionsHolder(indexDefinitionsRegistryImpl);
-			}
-		};
+		IndexSynchronizerImpl indexSynchronizerImpl =
+			new IndexSynchronizerImpl();
+
+		ReflectionTestUtil.setFieldValue(
+			indexSynchronizerImpl, "_createIndexRequestExecutor",
+			_createCreateIndexRequestExecutor(elasticsearchFixture));
+		ReflectionTestUtil.setFieldValue(
+			indexSynchronizerImpl, "_indexDefinitionsRegistry",
+			indexDefinitionsRegistryImpl);
+
+		ReflectionTestUtil.invoke(
+			indexSynchronizerImpl, "activate",
+			new Class<?>[] {BundleContext.class}, _bundleContext);
+
+		return indexSynchronizerImpl;
 	}
 
 	private void _deployComponents(Object... components) {
@@ -237,14 +262,17 @@ public class InstantIndexesTest {
 		_microcontainer.start();
 	}
 
+	private static BundleContext _bundleContext;
 	private static ElasticsearchFixture _elasticsearchFixture;
 
 	private EventsIndexDefinition _eventsIndexDefinition;
 	private IndexSynchronizationPortalInitializedListener
 		_indexSynchronizationPortalInitializedListener;
+	private IndexSynchronizerImpl _indexSynchronizerImpl;
 	private InstancesAndProcessesIndexRegistrar
 		_instancesAndProcessesIndexRegistrar;
 	private Microcontainer _microcontainer;
+	private ServiceRegistration<IndexRegistrar> _serviceRegistration;
 	private TasksIndexDefinition _tasksIndexDefinition;
 
 }

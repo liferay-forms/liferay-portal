@@ -62,7 +62,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -154,6 +153,21 @@ public class SalesforceObjectEntryManagerImpl
 	}
 
 	@Override
+	public void executeObjectAction(
+			DTOConverterContext dtoConverterContext, String objectActionName,
+			ObjectDefinition objectDefinition, long objectEntryId)
+		throws Exception {
+	}
+
+	@Override
+	public void executeObjectAction(
+			long companyId, DTOConverterContext dtoConverterContext,
+			String externalReferenceCode, String objectActionName,
+			ObjectDefinition objectDefinition, String scopeKey)
+		throws Exception {
+	}
+
+	@Override
 	public ObjectEntry fetchObjectEntry(
 			DTOConverterContext dtoConverterContext,
 			ObjectDefinition objectDefinition, long objectEntryId)
@@ -195,7 +209,9 @@ public class SalesforceObjectEntryManagerImpl
 			Sort[] sorts)
 		throws Exception {
 
-		return null;
+		return _getObjectEntries(
+			companyId, objectDefinition, scopeKey, dtoConverterContext,
+			pagination, search, sorts);
 	}
 
 	@Override
@@ -503,7 +519,7 @@ public class SalesforceObjectEntryManagerImpl
 					"delete", Collections.<String, String>emptyMap()
 				).build();
 				creator = CreatorUtil.toCreator(
-					_portal, Optional.empty(),
+					_portal, null,
 					_userLocalService.fetchUserByExternalReferenceCode(
 						jsonObject.getString("OwnerId"), companyId));
 				dateCreated = dateFormat.parse(

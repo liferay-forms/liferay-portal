@@ -142,10 +142,6 @@ public class PropsValues {
 		GetterUtil.getBoolean(
 			PropsUtil.get(PropsKeys.ASSET_BROWSER_SEARCH_WITH_DATABASE));
 
-	public static final boolean ASSET_CATEGORIES_SEARCH_HIERARCHICAL =
-		GetterUtil.getBoolean(
-			PropsUtil.get(PropsKeys.ASSET_CATEGORIES_SEARCH_HIERARCHICAL));
-
 	public static final int ASSET_CATEGORIES_SELECTOR_MAX_ENTRIES =
 		GetterUtil.getInteger(
 			PropsUtil.get(PropsKeys.ASSET_CATEGORIES_SELECTOR_MAX_ENTRIES));
@@ -2298,13 +2294,6 @@ public class PropsValues {
 
 	public static boolean TERMS_OF_USE_REQUIRED = GetterUtil.getBoolean(
 		PropsUtil.get(PropsKeys.TERMS_OF_USE_REQUIRED));
-
-	public static final boolean TEXT_EXTRACTION_FORK_PROCESS_ENABLED =
-		GetterUtil.getBoolean(
-			PropsUtil.get(PropsKeys.TEXT_EXTRACTION_FORK_PROCESS_ENABLED));
-
-	public static final String[] TEXT_EXTRACTION_FORK_PROCESS_MIME_TYPES =
-		PropsUtil.getArray(PropsKeys.TEXT_EXTRACTION_FORK_PROCESS_MIME_TYPES);
 
 	public static boolean THEME_CSS_FAST_LOAD = GetterUtil.getBoolean(
 		PropsUtil.get(PropsKeys.THEME_CSS_FAST_LOAD));

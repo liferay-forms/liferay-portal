@@ -4,6 +4,14 @@
 	display: none;
 }
 
+.date-picker-hidden {
+	display: none;
+}
+
+.text-cell-editor-hidden {
+	display: none;
+}
+
 .portlet-content-container {
 	.button-holder {
 		margin-top: 1em;
@@ -211,6 +219,16 @@
 	}
 }
 
+.tab-selected .tab-content {
+	color: #272833;
+
+	&::after {
+		background-color: #80acff;
+		content: '';
+		height: 0.125rem;
+	}
+}
+
 textarea.script {
 	min-height: 200px !important;
 }
@@ -394,7 +412,7 @@ textarea.script {
 	border: 0.0625rem solid $secondary-l3;
 	border-radius: 0.25rem;
 	margin-top: 0.5rem;
-	padding: 0.625rem;
+	padding: 1.3rem;
 
 	.form-builder-field-node {
 		display: inline;

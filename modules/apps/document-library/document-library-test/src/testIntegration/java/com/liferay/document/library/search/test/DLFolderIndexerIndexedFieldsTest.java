@@ -112,7 +112,8 @@ public class DLFolderIndexerIndexedFieldsTest extends BaseDLIndexerTestCase {
 
 		populateExpectedFieldValues(childFolder, map);
 
-		FieldValuesAssert.assertFieldValues(map, searchResponse);
+		FieldValuesAssert.assertFieldValues(
+			map, name -> !name.equals("score"), searchResponse);
 	}
 
 	protected ServiceContext getServiceContext() {
@@ -203,6 +204,8 @@ public class DLFolderIndexerIndexedFieldsTest extends BaseDLIndexerTestCase {
 		List<String> treePathValues = new ArrayList<>(
 			Arrays.asList(
 				StringUtil.split(dlFolder.getTreePath(), CharPool.SLASH)));
+
+		treePathValues.remove(String.valueOf(dlFolder.getFolderId()));
 
 		if (treePathValues.size() == 1) {
 			map.put(Field.TREE_PATH, treePathValues.get(0));

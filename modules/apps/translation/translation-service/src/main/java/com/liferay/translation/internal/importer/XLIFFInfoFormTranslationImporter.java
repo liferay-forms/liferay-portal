@@ -46,15 +46,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import net.sf.okapi.common.Event;
 import net.sf.okapi.common.LocaleId;
@@ -191,31 +189,31 @@ public class XLIFFInfoFormTranslationImporter
 	private InfoItemReference _getInfoItemReference(List<Event> events)
 		throws XLIFFFileException {
 
-		Stream<Event> stream = events.stream();
+		Event eventStartSubdocument = null;
 
-		Optional<Event> optional = stream.filter(
-			Event::isStartSubDocument
-		).findFirst();
-
-		return optional.flatMap(
-			event -> {
-				StartSubDocument startSubDocument = event.getStartSubDocument();
-
-				Matcher matcher = _pattern.matcher(startSubDocument.getName());
-
-				if (!matcher.matches()) {
-					return Optional.empty();
-				}
-
-				return Optional.of(
-					new InfoItemReference(
-						matcher.group(1),
-						GetterUtil.getLong(matcher.group(2))));
+		for (Event event : events) {
+			if (event.isStartSubDocument()) {
+				eventStartSubdocument = event;
 			}
-		).orElseThrow(
-			() -> new XLIFFFileException.MustBeWellFormed(
-				"The XLIFF file is not well formed")
-		);
+		}
+
+		if (eventStartSubdocument == null) {
+			throw new XLIFFFileException.MustBeWellFormed(
+				"The XLIFF file is not well formed");
+		}
+
+		StartSubDocument startSubDocument =
+			eventStartSubdocument.getStartSubDocument();
+
+		Matcher matcher = _pattern.matcher(startSubDocument.getName());
+
+		if (!matcher.matches()) {
+			throw new XLIFFFileException.MustBeWellFormed(
+				"The XLIFF file is not well formed");
+		}
+
+		return new InfoItemReference(
+			matcher.group(1), GetterUtil.getLong(matcher.group(2)));
 	}
 
 	private InfoItemReference _getInfoItemReference(XLIFFDocument xliffDocument)
@@ -312,6 +310,8 @@ public class XLIFFInfoFormTranslationImporter
 			XLIFFInfoFormTranslationImporter.class.getClassLoader());
 
 		try (AutoXLIFFFilter autoXLIFFFilter = new AutoXLIFFFilter()) {
+			List<Event> events = new ArrayList<>();
+
 			File tempFile = FileUtil.createTempFile(inputStream);
 
 			Document document = _saxReader.read(tempFile);
@@ -326,9 +326,9 @@ public class XLIFFInfoFormTranslationImporter
 					tempFile.toURI(), document.getXMLEncoding(), sourceLocaleId,
 					targetLocaleId));
 
-			Stream<Event> stream = autoXLIFFFilter.stream();
-
-			List<Event> events = stream.collect(Collectors.toList());
+			while (autoXLIFFFilter.hasNext()) {
+				events.add(autoXLIFFFilter.next());
+			}
 
 			if (_isVersion20(events)) {
 				return new TranslationSnapshot(

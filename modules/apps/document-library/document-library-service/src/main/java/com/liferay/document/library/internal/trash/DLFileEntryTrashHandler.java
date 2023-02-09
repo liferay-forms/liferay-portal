@@ -18,6 +18,7 @@ import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFileEntryConstants;
 import com.liferay.document.library.kernel.model.DLFileVersion;
 import com.liferay.document.library.kernel.model.DLFolder;
+import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.document.library.kernel.service.DLFileVersionLocalService;
@@ -187,7 +188,9 @@ public class DLFileEntryTrashHandler extends BaseDLTrashHandler {
 
 		DLFolder dlFolder = dlFileEntry.getFolder();
 
-		return DLUtil.getAbsolutePath(portletRequest, dlFolder.getFolderId());
+		return DLUtil.getAbsolutePath(
+			portletRequest, DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
+			dlFolder.getFolderId());
 	}
 
 	@Override

@@ -273,12 +273,19 @@ public class ObjectRelationshipLocalServiceUtil {
 	}
 
 	public static ObjectRelationship
-			fetchObjectRelationshipByObjectDefinitionId(
-				long objectDefinitionId, String name)
-		throws Exception {
+		fetchObjectRelationshipByObjectDefinitionId(
+			long objectDefinitionId, String name) {
 
 		return getService().fetchObjectRelationshipByObjectDefinitionId(
 			objectDefinitionId, name);
+	}
+
+	public static ObjectRelationship
+		fetchObjectRelationshipByObjectDefinitionId1(
+			long objectDefinitionId1, String name) {
+
+		return getService().fetchObjectRelationshipByObjectDefinitionId1(
+			objectDefinitionId1, name);
 	}
 
 	public static ObjectRelationship fetchObjectRelationshipByObjectFieldId2(
@@ -358,11 +365,11 @@ public class ObjectRelationshipLocalServiceUtil {
 	}
 
 	public static ObjectRelationship getObjectRelationshipByObjectDefinitionId(
-			long objectDefinitionId, String objectRelationshipName)
+			long objectDefinitionId, String name)
 		throws Exception {
 
 		return getService().getObjectRelationshipByObjectDefinitionId(
-			objectDefinitionId, objectRelationshipName);
+			objectDefinitionId, name);
 	}
 
 	/**

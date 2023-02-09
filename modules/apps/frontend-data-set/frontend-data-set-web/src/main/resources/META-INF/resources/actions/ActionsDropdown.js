@@ -72,19 +72,27 @@ function ActionsDropdown({
 	onMenuActiveChange,
 	setLoading,
 }) {
-	const context = useContext(FrontendDataSetContext);
+	const frontendDataSetContext = useContext(FrontendDataSetContext);
+
+	const {
+		inlineEditingSettings,
+		loadData,
+		openSidePanel,
+		uniformActionsDisplay,
+	} = frontendDataSetContext;
 
 	const inlineEditingAvailable =
-		context.inlineEditingSettings && itemData.actions?.update;
+		inlineEditingSettings && itemData.actions?.update;
 	const inlineEditingAlwaysOn =
-		inlineEditingAvailable && context.inlineEditingSettings.alwaysOn;
+		inlineEditingAvailable && inlineEditingSettings.alwaysOn;
 
 	const isMounted = useIsMounted();
 
-	const editModeActive = !!context.itemsChanges[itemId];
+	const editModeActive = !!frontendDataSetContext.itemsChanges[itemId];
 	const itemChanges =
-		editModeActive && Object.keys(context.itemsChanges[itemId]).length
-			? context.itemsChanges[itemId]
+		editModeActive &&
+		Object.keys(frontendDataSetContext.itemsChanges[itemId]).length
+			? frontendDataSetContext.itemsChanges[itemId]
 			: null;
 
 	const inlineEditingActions = (
@@ -93,7 +101,9 @@ function ActionsDropdown({
 				className="mr-1"
 				disabled={inlineEditingAlwaysOn && !itemChanges}
 				displayType="secondary"
-				onClick={() => context.toggleItemInlineEdit(itemId)}
+				onClick={() =>
+					frontendDataSetContext.toggleItemInlineEdit(itemId)
+				}
 				small
 				symbol="times-small"
 			/>
@@ -106,11 +116,13 @@ function ActionsDropdown({
 					monospaced
 					onClick={() => {
 						setLoading(true);
-						context.applyItemInlineUpdates(itemId).finally(() => {
-							if (isMounted()) {
-								setLoading(false);
-							}
-						});
+						frontendDataSetContext
+							.applyItemInlineUpdates(itemId)
+							.finally(() => {
+								if (isMounted()) {
+									setLoading(false);
+								}
+							});
 					}}
 					small
 					symbol="check"
@@ -127,7 +139,11 @@ function ActionsDropdown({
 		return null;
 	}
 
-	if (!inlineEditingAlwaysOn && actions.length === 1) {
+	if (
+		!inlineEditingAlwaysOn &&
+		!uniformActionsDisplay &&
+		actions.length === 1
+	) {
 		const [action] = actions;
 		const {data: actionData} = action;
 
@@ -145,7 +161,8 @@ function ActionsDropdown({
 			action.label
 		);
 
-		const onActionDropdownItemClick = context.onActionDropdownItemClick;
+		const onActionDropdownItemClick =
+			frontendDataSetContext.onActionDropdownItemClick;
 
 		const url = formatActionURL(action.href, itemData);
 
@@ -168,6 +185,8 @@ function ActionsDropdown({
 							action,
 							event,
 							itemData,
+							loadData,
+							openSidePanel,
 						});
 					}
 				}}
@@ -187,6 +206,8 @@ function ActionsDropdown({
 							action,
 							event,
 							itemData,
+							loadData,
+							openSidePanel,
 						});
 					}
 
@@ -201,7 +222,7 @@ function ActionsDropdown({
 							url,
 							...action,
 						},
-						context
+						frontendDataSetContext
 					);
 				}}
 			>

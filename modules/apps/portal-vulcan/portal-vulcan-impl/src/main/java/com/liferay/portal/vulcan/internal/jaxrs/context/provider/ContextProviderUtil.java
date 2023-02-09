@@ -15,6 +15,7 @@
 package com.liferay.portal.vulcan.internal.jaxrs.context.provider;
 
 import com.liferay.portal.odata.entity.EntityModel;
+import com.liferay.portal.vulcan.jaxrs.constants.JaxRsConstants;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
 
 import java.util.Arrays;
@@ -66,10 +67,12 @@ public class ContextProviderUtil {
 	public static Object getMatchedResource(Message message) {
 		Exchange exchange = message.getExchange();
 
-		Object root = exchange.get(JAXRSUtils.ROOT_INSTANCE);
+		Object resource = _fetchExistingResource(
+			exchange, JAXRSUtils.ROOT_INSTANCE,
+			JaxRsConstants.LAST_SERVICE_OBJECT);
 
-		if (root != null) {
-			return root;
+		if (resource != null) {
+			return resource;
 		}
 
 		OperationResourceInfo operationResourceInfo = exchange.get(
@@ -111,6 +114,18 @@ public class ContextProviderUtil {
 				}
 			}
 		};
+	}
+
+	private static Object _fetchExistingResource(
+		Exchange exchange, String... keys) {
+
+		Object resource = null;
+
+		for (int i = 0; (i < keys.length) && (resource == null); i++) {
+			resource = exchange.get(keys[i]);
+		}
+
+		return resource;
 	}
 
 	private static MultivaluedMap<String, String> _getPathParameters(

@@ -1258,10 +1258,22 @@
 		</check>
 	</source-processor>
 	<source-processor name="PoshiSourceProcessor">
+		<check name="PoshiAntCommandParametersOrderCheck">
+			<category name="Styling" />
+			<description name="Sorts parameters in AntCommand call in Poshi Script files." />
+		</check>
 		<check name="PoshiDependenciesFileLocationCheck">
 			<category name="Bug Prevention" />
 			<description name="Checks that dependencies files are located in the correct directory." />
 			<property name="enabled" value="false" />
+		</check>
+		<check name="PoshiImportsCheck">
+			<category name="Styling" />
+			<description name="Sorts and groups imports in Poshi Script files." />
+		</check>
+		<check name="PoshiIndentationCheck">
+			<category name="Styling" />
+			<description name="Finds incorrect indentation in Poshi Script files." />
 		</check>
 		<check name="PoshiPauseUsageCheck">
 			<category name="Performance" />
@@ -1558,6 +1570,10 @@
 		<check name="XMLLog4jFileCheck">
 			<category name="Styling" />
 			<description name="Checks the order of categories in `*-log4j.xml` file." />
+		</check>
+		<check name="XMLLog4jLoggersCheck">
+			<category name="Miscellaneous" />
+			<description name="Checks the loggers defined in `*-log4j.xml` file." />
 		</check>
 		<check name="XMLLookAndFeelCompatibilityVersionCheck">
 			<category name="Bug Prevention" />

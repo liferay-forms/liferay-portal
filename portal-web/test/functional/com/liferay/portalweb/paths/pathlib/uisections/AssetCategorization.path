@@ -17,7 +17,7 @@
 </tr>
 <tr>
 	<td>CATEGORY</td>
-	<td>//div[contains(@id,'assetCategoriesSelector') or contains(@class,'field-content')]//span[contains(.,'${key_categoryName}')]</td>
+	<td>//div[contains(@id,'assetCategoriesSelector') or contains(@class,'field-content')]//span[contains(.,'${key_categoryName}')]/parent::span</td>
 	<td></td>
 </tr>
 <tr>
@@ -32,7 +32,7 @@
 </tr>
 <tr>
 	<td>ITEM_REMOVE</td>
-	<td>//span[(contains(@class,'label-dismissible'))][contains(.,'${key_itemName}')]//button[contains(@class,'close')]</td>
+	<td>//span[(contains(@class,'label-secondary'))][contains(.,'${key_itemName}')]//button[contains(@class,'close')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -47,7 +47,7 @@
 </tr>
 <tr>
 	<td>TAG</td>
-	<td>//div[contains(@id,'assetTagsSelector')]//span[(contains(@class,'label-dismissible'))][contains(.,'${key_tagName}')] | //div[contains(@class,'tags-selector')]//span[(contains(@class,'label-dismissible'))][contains(.,'${key_tagName}')]</td>
+	<td>//div[contains(@id,'assetTagsSelector')]//span[(contains(@class,'label-item'))][contains(.,'${key_tagName}')] | //label[normalize-space(text())='Tags']//following-sibling::div[contains(@class,'input-group')]//span[(contains(@class,'label-item'))][contains(.,'${key_tagName}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -66,13 +66,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>TAGS_SELECT_BUTTON</td>
-	<td>//div[contains(@class,'tags-selector')]//button[contains(.,'Select')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>TAGS_REMOVE_ICON_GENERIC</td>
-	<td>//span[(contains(@class,'label-dismissible'))]//button[contains(@class,'close')]</td>
+	<td>//span[(contains(@class,'label-item'))]//button[contains(@class,'close')]</td>
 	<td></td>
 </tr>
 </tbody>

@@ -22,7 +22,6 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.search.web.internal.modified.facet.constants.ModifiedFacetPortletKeys;
 import com.liferay.portal.search.web.internal.modified.facet.display.context.ModifiedFacetDisplayContext;
-import com.liferay.portal.search.web.internal.modified.facet.display.context.ModifiedFacetTermDisplayContext;
 import com.liferay.portal.search.web.internal.modified.facet.portlet.ModifiedFacetPortlet;
 import com.liferay.portlet.display.template.constants.PortletDisplayTemplateConstants;
 
@@ -32,7 +31,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -40,7 +38,6 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	configurationPid = "com.liferay.portal.search.web.internal.modified.facet.configuration.SearchFacetsWebTemplateConfiguration",
-	configurationPolicy = ConfigurationPolicy.OPTIONAL,
 	property = "javax.portlet.name=" + ModifiedFacetPortletKeys.MODIFIED_FACET,
 	service = TemplateHandler.class
 )
@@ -93,7 +90,7 @@ public class ModifiedFacetPortletDisplayTemplateHandler
 			"getLabel()");
 		templateVariableGroup.addCollectionVariable(
 			"terms", List.class, PortletDisplayTemplateConstants.ENTRIES,
-			"term", ModifiedFacetTermDisplayContext.class,
+			"term", ModifiedFacetDisplayContext.class,
 			PortletDisplayTemplateConstants.ENTRY, "getLabel()");
 
 		TemplateVariableGroup categoriesServicesTemplateVariableGroup =

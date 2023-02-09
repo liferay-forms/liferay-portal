@@ -61,6 +61,7 @@ definition {
 
 	test AddElementToQueryBuilder {
 		property environment.acceptance = "true";
+		property operating.system.types = "alpine,amazonlinux,centos,debian,fedora,orcllinux,osx,redhat,solaris,suse,ubuntu,windows";
 		property portal.acceptance = "true";
 
 		Blueprints.openBlueprintsAdmin();
@@ -1991,7 +1992,7 @@ definition {
 			index = "5",
 			locator1 = "Blueprints#BLUEPRINTS_ADMIN_NTH_ENTRY");
 
-		Click(locator1 = "Pagination#NEXT_LINK");
+		Click(locator1 = "Blueprints#PAGINATION_NEXT_LINK");
 
 		Pagination.viewResults(results = "Showing 5 to 5 of 5");
 
@@ -2003,7 +2004,7 @@ definition {
 			index = "2",
 			locator1 = "Blueprints#BLUEPRINTS_ADMIN_NTH_ENTRY");
 
-		Click(locator1 = "Pagination#PREVIOUS_LINK");
+		Click(locator1 = "Blueprints#PAGINATION_PREVIOUS_LINK");
 
 		Pagination.viewResults(results = "Showing 1 to 4 of 5");
 
@@ -2076,7 +2077,7 @@ definition {
 			locator1 = "Blueprints#BLUEPRINTS_PREVIEW_SEARCH_RESULT_SPECIFIC_RANKING",
 			resultRanking = "11");
 
-		Click(locator1 = "Pagination#NEXT_LINK");
+		Click(locator1 = "Blueprints#PAGINATION_NEXT_LINK");
 
 		Pagination.viewResults(results = "Showing 11 to 11 of 11 entries.");
 
@@ -2088,7 +2089,7 @@ definition {
 			locator1 = "Blueprints#BLUEPRINTS_PREVIEW_SEARCH_RESULT_SPECIFIC_RANKING",
 			resultRanking = "2");
 
-		Click(locator1 = "Pagination#PREVIOUS_LINK");
+		Click(locator1 = "Blueprints#PAGINATION_PREVIOUS_LINK");
 
 		Pagination.viewResults(results = "Showing 1 to 10 of 11 entries.");
 
@@ -2132,7 +2133,7 @@ definition {
 			index = "5",
 			locator1 = "Blueprints#BLUEPRINTS_ADMIN_NTH_ENTRY");
 
-		Click(locator1 = "Pagination#NEXT_LINK");
+		Click(locator1 = "Blueprints#PAGINATION_NEXT_LINK");
 
 		Pagination.viewResults(results = "Showing 5 to 8 of ${totalElements}");
 
@@ -2144,7 +2145,7 @@ definition {
 			index = "5",
 			locator1 = "Blueprints#BLUEPRINTS_ADMIN_NTH_ENTRY");
 
-		Click(locator1 = "Pagination#PREVIOUS_LINK");
+		Click(locator1 = "Blueprints#PAGINATION_PREVIOUS_LINK");
 
 		Pagination.viewResults(results = "Showing 1 to 4 of ${totalElements}");
 
@@ -3359,18 +3360,14 @@ definition {
 
 		Blueprints.addElement(element = "Boost Proximity");
 
-		Click(
-			ariaLabel = "Collapse",
-			locator1 = "Button#ANY_WITH_ARIA_LABEL");
+		Click(locator1 = "Blueprints#BLUEPRINTS_ADDED_ELEMENT_COLLAPSE_BUTTON");
 
 		AssertElementNotPresent(
 			elementName = "Boost Proximity",
 			fieldName = "Field",
 			locator1 = "Blueprints#BLUEPRINTS_ADDED_ELEMENT_FIELD_LABEL");
 
-		Click(
-			ariaLabel = "Expand",
-			locator1 = "Button#ANY_WITH_ARIA_LABEL");
+		Click(locator1 = "Blueprints#BLUEPRINTS_ADDED_ELEMENT_EXPAND_BUTTON");
 
 		AssertElementPresent(
 			elementName = "Boost Proximity",
@@ -3390,9 +3387,7 @@ definition {
 			fieldName = "Boost",
 			locator1 = "Blueprints#BLUEPRINTS_ADDED_ELEMENT_FIELD_LABEL");
 
-		AssertElementNotPresent(
-			ariaLabel = "Collapse",
-			locator1 = "Button#ANY_WITH_ARIA_LABEL");
+		AssertElementNotPresent(locator1 = "Blueprints#BLUEPRINTS_ADDED_ELEMENT_COLLAPSE_BUTTON");
 
 		Click(
 			key_text = "Expand All",
@@ -3403,9 +3398,7 @@ definition {
 			fieldName = "Boost",
 			locator1 = "Blueprints#BLUEPRINTS_ADDED_ELEMENT_FIELD_LABEL");
 
-		AssertElementNotPresent(
-			ariaLabel = "Expand",
-			locator1 = "Button#ANY_WITH_ARIA_LABEL");
+		AssertElementNotPresent(locator1 = "Blueprints#BLUEPRINTS_ADDED_ELEMENT_EXPAND_BUTTON");
 	}
 
 	test ViewCopiedBlueprintContent {
@@ -4295,11 +4288,9 @@ definition {
 			locator1 = "Blueprints#BLUEPRINTS_ADDED_ELEMENT_INPUT_FIELD",
 			value1 = "Test Category");
 
-		KeyPress(
-			elementName = "Boost Contents in a Category",
-			fieldLabel = "Asset Category IDs",
-			locator1 = "Blueprints#BLUEPRINTS_ADDED_ELEMENT_INPUT_FIELD",
-			value1 = "\RETURN");
+		Click(
+			assetCategory = "Test Category (ID: ${categoryId})",
+			locator1 = "Blueprints#BLUEPRINTS_ASSET_CATEGORY_FIELD_AUTOCOMPLETE_DROPDOWN_ITEM");
 
 		AssertTextEquals.assertPartialText(
 			element = "Boost Contents in a Category",

@@ -196,31 +196,6 @@ public class ClusterSchedulerEngine
 
 	@Clusterable(acceptor = SchedulerClusterInvokeAcceptor.class)
 	@Override
-	public void pause(String groupName, StorageType storageType)
-		throws SchedulerException {
-
-		boolean memoryClusteredSlaveJob = _isMemoryClusteredSlaveJob(
-			storageType);
-
-		_readLock.lock();
-
-		try {
-			if (memoryClusteredSlaveJob) {
-				_updateMemoryClusteredJobs(groupName, TriggerState.PAUSED);
-			}
-			else {
-				_schedulerEngine.pause(groupName, storageType);
-			}
-		}
-		finally {
-			_readLock.unlock();
-		}
-
-		setClusterableThreadLocal(storageType);
-	}
-
-	@Clusterable(acceptor = SchedulerClusterInvokeAcceptor.class)
-	@Override
 	public void pause(String jobName, String groupName, StorageType storageType)
 		throws SchedulerException {
 
@@ -236,31 +211,6 @@ public class ClusterSchedulerEngine
 			}
 			else {
 				_schedulerEngine.pause(jobName, groupName, storageType);
-			}
-		}
-		finally {
-			_readLock.unlock();
-		}
-
-		setClusterableThreadLocal(storageType);
-	}
-
-	@Clusterable(acceptor = SchedulerClusterInvokeAcceptor.class)
-	@Override
-	public void resume(String groupName, StorageType storageType)
-		throws SchedulerException {
-
-		boolean memoryClusteredSlaveJob = _isMemoryClusteredSlaveJob(
-			storageType);
-
-		_readLock.lock();
-
-		try {
-			if (memoryClusteredSlaveJob) {
-				_updateMemoryClusteredJobs(groupName, TriggerState.NORMAL);
-			}
-			else {
-				_schedulerEngine.resume(groupName, storageType);
 			}
 		}
 		finally {
@@ -295,6 +245,13 @@ public class ClusterSchedulerEngine
 		}
 
 		setClusterableThreadLocal(storageType);
+	}
+
+	@Override
+	public void run(String jobName, String groupName, StorageType storageType)
+		throws SchedulerException {
+
+		_schedulerEngine.run(jobName, groupName, storageType);
 	}
 
 	@Clusterable(acceptor = SchedulerClusterInvokeAcceptor.class)
@@ -426,31 +383,6 @@ public class ClusterSchedulerEngine
 
 	@Clusterable(acceptor = SchedulerClusterInvokeAcceptor.class)
 	@Override
-	public void unschedule(String groupName, StorageType storageType)
-		throws SchedulerException {
-
-		boolean memoryClusteredSlaveJob = _isMemoryClusteredSlaveJob(
-			storageType);
-
-		_readLock.lock();
-
-		try {
-			if (memoryClusteredSlaveJob) {
-				_removeMemoryClusteredJobs(groupName);
-			}
-			else {
-				_schedulerEngine.unschedule(groupName, storageType);
-			}
-		}
-		finally {
-			_readLock.unlock();
-		}
-
-		setClusterableThreadLocal(storageType);
-	}
-
-	@Clusterable(acceptor = SchedulerClusterInvokeAcceptor.class)
-	@Override
 	public void unschedule(
 			String jobName, String groupName, StorageType storageType)
 		throws SchedulerException {
@@ -466,56 +398,6 @@ public class ClusterSchedulerEngine
 			}
 			else {
 				_schedulerEngine.unschedule(jobName, groupName, storageType);
-			}
-		}
-		finally {
-			_readLock.unlock();
-		}
-
-		setClusterableThreadLocal(storageType);
-	}
-
-	@Clusterable(acceptor = SchedulerClusterInvokeAcceptor.class)
-	@Override
-	public void update(Trigger trigger, StorageType storageType)
-		throws SchedulerException {
-
-		String jobName = trigger.getJobName();
-		String groupName = trigger.getGroupName();
-
-		boolean memoryClusteredSlaveJob = _isMemoryClusteredSlaveJob(
-			storageType);
-
-		_readLock.lock();
-
-		try {
-			if (memoryClusteredSlaveJob) {
-				boolean updated = false;
-
-				for (ObjectValuePair<SchedulerResponse, TriggerState>
-						memoryClusteredJob : _memoryClusteredJobs.values()) {
-
-					SchedulerResponse schedulerResponse =
-						memoryClusteredJob.getKey();
-
-					if (jobName.equals(schedulerResponse.getJobName()) &&
-						groupName.equals(schedulerResponse.getGroupName())) {
-
-						schedulerResponse.setTrigger(trigger);
-
-						updated = true;
-
-						break;
-					}
-				}
-
-				if (!updated) {
-					throw new SchedulerException(
-						"Unable to update trigger for memory clustered job");
-				}
-			}
-			else {
-				_schedulerEngine.update(trigger, storageType);
 			}
 		}
 		finally {
@@ -794,20 +676,6 @@ public class ClusterSchedulerEngine
 
 		if (memoryClusteredJob != null) {
 			memoryClusteredJob.setValue(triggerState);
-		}
-	}
-
-	private void _updateMemoryClusteredJobs(
-		String groupName, TriggerState triggerState) {
-
-		for (ObjectValuePair<SchedulerResponse, TriggerState>
-				memoryClusteredJob : _memoryClusteredJobs.values()) {
-
-			SchedulerResponse schedulerResponse = memoryClusteredJob.getKey();
-
-			if (groupName.equals(schedulerResponse.getGroupName())) {
-				memoryClusteredJob.setValue(triggerState);
-			}
 		}
 	}
 

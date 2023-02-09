@@ -45,7 +45,7 @@ public class TestrayBuild implements Comparable<TestrayBuild> {
 		_testrayServer = _testrayRoutine.getTestrayServer();
 
 		_testrayProductVersion = _testrayProject.getTestrayProductVersionByID(
-			_jsonObject.getInt("testrayProductVersionId"));
+			_jsonObject.getLong("testrayProductVersionId"));
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class TestrayBuild implements Comparable<TestrayBuild> {
 			throw new NullPointerException("Testray build is null");
 		}
 
-		Integer id = testrayBuild.getID();
+		Long id = testrayBuild.getID();
 
 		return id.compareTo(getID());
 	}
@@ -63,8 +63,8 @@ public class TestrayBuild implements Comparable<TestrayBuild> {
 		return _jsonObject.getString("description");
 	}
 
-	public int getID() {
-		return _jsonObject.getInt("testrayBuildId");
+	public long getID() {
+		return _jsonObject.getLong("testrayBuildId");
 	}
 
 	public String getName() {
@@ -337,7 +337,7 @@ public class TestrayBuild implements Comparable<TestrayBuild> {
 
 			_testrayProductVersion =
 				_testrayProject.getTestrayProductVersionByID(
-					_jsonObject.getInt("testrayProductVersionId"));
+					_jsonObject.getLong("testrayProductVersionId"));
 		}
 		catch (IOException ioException) {
 			throw new RuntimeException(ioException);

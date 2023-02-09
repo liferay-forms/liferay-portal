@@ -25,9 +25,9 @@ import {VIEWPORT_SIZES} from '../../app/config/constants/viewportSizes';
 import {useSelector} from '../../app/contexts/StoreContext';
 import {getResetLabelByViewport} from '../../app/utils/getResetLabelByViewport';
 import isValidStyleValue from '../../app/utils/isValidStyleValue';
-import useControlledState from '../../core/hooks/useControlledState';
-import {useId} from '../../core/hooks/useId';
-import {ConfigurationFieldPropTypes} from '../../prop-types/index';
+import {ConfigurationFieldPropTypes} from '../../prop_types/index';
+import useControlledState from '../hooks/useControlledState';
+import {useId} from '../hooks/useId';
 
 import './LengthField.scss';
 
@@ -50,7 +50,7 @@ const getInitialValue = (value) => {
 		return {unit: UNITS[0], value: ''};
 	}
 
-	const match = value.toLowerCase().match(REGEX);
+	const match = value.toString().toLowerCase().match(REGEX);
 
 	if (match) {
 		const [, number, unit] = match;
@@ -236,7 +236,7 @@ export function LengthInput({
 			return;
 		}
 
-		const [, , unit] = value.toLowerCase().match(REGEX) || [];
+		const [, , unit] = value.toString().toLowerCase().match(REGEX) || [];
 
 		setNextUnit(unit || CUSTOM);
 	}, [value]);

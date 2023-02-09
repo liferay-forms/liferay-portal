@@ -25,13 +25,16 @@ import com.liferay.list.type.service.ListTypeDefinitionService;
 import com.liferay.list.type.service.ListTypeEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.odata.entity.EntityModel;
+import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.vulcan.aggregation.Aggregation;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
@@ -79,6 +82,17 @@ public class ListTypeDefinitionResourceImpl
 	}
 
 	@Override
+	public ListTypeDefinition getListTypeDefinitionByExternalReferenceCode(
+			String externalReferenceCode)
+		throws PortalException {
+
+		return _toListTypeDefinition(
+			_listTypeDefinitionService.
+				getListTypeDefinitionByExternalReferenceCode(
+					externalReferenceCode, contextCompany.getCompanyId()));
+	}
+
+	@Override
 	public Page<ListTypeDefinition> getListTypeDefinitionsPage(
 			String search, Aggregation aggregation, Filter filter,
 			Pagination pagination, Sort[] sorts)
@@ -120,11 +134,21 @@ public class ListTypeDefinitionResourceImpl
 			ListTypeDefinition listTypeDefinition)
 		throws Exception {
 
+		if (!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-167536")) &&
+			ArrayUtil.isNotEmpty(listTypeDefinition.getListTypeEntries())) {
+
+			throw new UnsupportedOperationException();
+		}
+
 		return _toListTypeDefinition(
 			_listTypeDefinitionService.addListTypeDefinition(
 				listTypeDefinition.getExternalReferenceCode(),
 				LocalizedMapUtil.getLocalizedMap(
-					listTypeDefinition.getName_i18n())));
+					listTypeDefinition.getName_i18n()),
+				transformToList(
+					listTypeDefinition.getListTypeEntries(),
+					listTypeEntry -> ListTypeEntryUtil.toListTypeEntry(
+						listTypeEntry, _listTypeEntryLocalService))));
 	}
 
 	@Override
@@ -132,12 +156,44 @@ public class ListTypeDefinitionResourceImpl
 			Long listTypeDefinitionId, ListTypeDefinition listTypeDefinition)
 		throws Exception {
 
+		if (!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-167536")) &&
+			ArrayUtil.isNotEmpty(listTypeDefinition.getListTypeEntries())) {
+
+			throw new UnsupportedOperationException();
+		}
+
 		return _toListTypeDefinition(
 			_listTypeDefinitionService.updateListTypeDefinition(
 				listTypeDefinition.getExternalReferenceCode(),
 				listTypeDefinitionId,
 				LocalizedMapUtil.getLocalizedMap(
-					listTypeDefinition.getName_i18n())));
+					listTypeDefinition.getName_i18n()),
+				transformToList(
+					listTypeDefinition.getListTypeEntries(),
+					listTypeEntry -> ListTypeEntryUtil.toListTypeEntry(
+						listTypeEntry, _listTypeEntryLocalService))));
+	}
+
+	@Override
+	public ListTypeDefinition putListTypeDefinitionByExternalReferenceCode(
+			String externalReferenceCode, ListTypeDefinition listTypeDefinition)
+		throws Exception {
+
+		listTypeDefinition.setExternalReferenceCode(externalReferenceCode);
+
+		com.liferay.list.type.model.ListTypeDefinition
+			serviceBuilderListTypeDefinition =
+				_listTypeDefinitionService.
+					fetchListTypeDefinitionByExternalReferenceCode(
+						externalReferenceCode, contextCompany.getCompanyId());
+
+		if (serviceBuilderListTypeDefinition != null) {
+			return putListTypeDefinition(
+				serviceBuilderListTypeDefinition.getListTypeDefinitionId(),
+				listTypeDefinition);
+		}
+
+		return postListTypeDefinition(listTypeDefinition);
 	}
 
 	private Locale _getLocale() {

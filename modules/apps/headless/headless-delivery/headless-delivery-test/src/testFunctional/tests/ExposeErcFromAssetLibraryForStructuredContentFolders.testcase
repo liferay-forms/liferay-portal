@@ -1,9 +1,9 @@
-@component-name = "portal-headless"
+@component-name = "portal-wcm"
 definition {
 
 	property portal.release = "true";
 	property portal.upstream = "true";
-	property testray.main.component.name = "Headless";
+	property testray.main.component.name = "Echo Headless";
 
 	setUp {
 		TestCase.setUpPortalInstance();
@@ -479,7 +479,6 @@ definition {
 	@description = "Structured content folder is not able to delete by nonexistent erc in an asset library"
 	@priority = "3"
 	test StructruedContentFolderDeletionImpossibleByNonexistentErc {
-		property portal.acceptance = "true";
 		property portal.acceptance = "true";
 
 		task ("Given a structured content folder with a custom erc is created with a POST request") {

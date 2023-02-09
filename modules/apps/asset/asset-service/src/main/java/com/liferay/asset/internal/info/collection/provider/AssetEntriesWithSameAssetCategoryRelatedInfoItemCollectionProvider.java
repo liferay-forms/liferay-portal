@@ -66,7 +66,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -86,10 +85,7 @@ public class AssetEntriesWithSameAssetCategoryRelatedInfoItemCollectionProvider
 	public InfoPage<AssetEntry> getCollectionInfoPage(
 		CollectionQuery collectionQuery) {
 
-		Optional<Object> relatedItemOptional =
-			collectionQuery.getRelatedItemObjectOptional();
-
-		Object relatedItem = relatedItemOptional.orElse(null);
+		Object relatedItem = collectionQuery.getRelatedItem();
 
 		if (!(relatedItem instanceof AssetEntry)) {
 			return InfoPage.of(
@@ -210,11 +206,8 @@ public class AssetEntriesWithSameAssetCategoryRelatedInfoItemCollectionProvider
 	}
 
 	private long[] _getClassNameIds(CollectionQuery collectionQuery) {
-		Optional<Map<String, String[]>> configurationOptional =
-			collectionQuery.getConfigurationOptional();
-
-		Map<String, String[]> configuration = configurationOptional.orElse(
-			null);
+		Map<String, String[]> configuration =
+			collectionQuery.getConfiguration();
 
 		if (MapUtil.isNotEmpty(configuration) &&
 			ArrayUtil.isNotEmpty(configuration.get("item_types"))) {
@@ -237,19 +230,8 @@ public class AssetEntriesWithSameAssetCategoryRelatedInfoItemCollectionProvider
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.getServiceContext();
 
-		return ArrayUtil.filter(
-			AssetRendererFactoryRegistryUtil.getClassNameIds(
-				serviceContext.getCompanyId(), true),
-			classNameId -> {
-				Indexer<?> indexer = IndexerRegistryUtil.getIndexer(
-					_portal.getClassName(classNameId));
-
-				if (indexer == null) {
-					return false;
-				}
-
-				return true;
-			});
+		return AssetRendererFactoryRegistryUtil.getIndexableClassNameIds(
+			serviceContext.getCompanyId(), true);
 	}
 
 	private InfoField _getItemTypesInfoField() {

@@ -20,11 +20,10 @@ import {TableProps} from '../../../components/Table';
 import {ListViewContextProviderProps} from '../../../context/ListViewContext';
 import {FormModal} from '../../../hooks/useFormModal';
 import i18n from '../../../i18n';
-import {filters} from '../../../schema/filter';
 import {testrayCaseRest} from '../../../services/rest';
 import {Action} from '../../../types';
 import dayjs from '../../../util/date';
-import {searchUtil} from '../../../util/search';
+import {SearchBuilder} from '../../../util/search';
 import useCaseActions from './useCaseActions';
 
 type CaseListViewProps = {
@@ -54,7 +53,7 @@ const CaseListView: React.FC<CaseListViewProps> = ({
 			forceRefetch={formModal?.forceRefetch}
 			managementToolbarProps={{
 				addButton: () => navigate('create', {state: {back: pathname}}),
-				filterFields: filters.case as any,
+				filterSchema: 'cases',
 				title: i18n.translate('cases'),
 			}}
 			resource={testrayCaseRest.resource}
@@ -135,7 +134,7 @@ const Cases = () => {
 					},
 				}}
 				variables={{
-					filter: searchUtil.eq('projectId', projectId as string),
+					filter: SearchBuilder.eq('projectId', projectId as string),
 				}}
 			/>
 		</Container>

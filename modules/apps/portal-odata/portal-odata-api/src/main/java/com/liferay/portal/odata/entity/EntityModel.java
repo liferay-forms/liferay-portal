@@ -17,6 +17,7 @@ package com.liferay.portal.odata.entity;
 import com.liferay.petra.string.CharPool;
 import com.liferay.portal.kernel.util.StringUtil;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,6 +49,10 @@ public interface EntityModel {
 	 */
 	public Map<String, EntityField> getEntityFieldsMap();
 
+	public default Map<String, EntityRelationship> getEntityRelationshipsMap() {
+		return Collections.emptyMap();
+	}
+
 	/**
 	 * Returns the name of the single entity type used to create the EDM.
 	 *
@@ -59,6 +64,40 @@ public interface EntityModel {
 
 		return StringUtil.replace(
 			clazz.getName(), CharPool.PERIOD, CharPool.UNDERLINE);
+	}
+
+	public static class EntityRelationship {
+
+		public EntityRelationship(
+			EntityModel entityModel, String name, Type type) {
+
+			_entityModel = entityModel;
+			_name = name;
+			_type = type;
+		}
+
+		public EntityModel getEntityModel() {
+			return _entityModel;
+		}
+
+		public String getName() {
+			return _name;
+		}
+
+		public Type getType() {
+			return _type;
+		}
+
+		public enum Type {
+
+			COLLECTION, SINGLETON
+
+		}
+
+		private final EntityModel _entityModel;
+		private final String _name;
+		private final Type _type;
+
 	}
 
 }

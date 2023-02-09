@@ -57,7 +57,7 @@
 </tr>
 <tr>
 	<td>CONFLICTING_CHANGES_DETAILS_IFRAME_TITLE</td>
-	<td>//div[contains(@class,'modal-header')]/div[@class='modal-title' and contains(.,'${key_iframeTitle}')]</td>
+	<td>//div[contains(@class,'modal-header')]//div[@class='modal-title' and contains(.,'${key_iframeTitle}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -76,8 +76,13 @@
 	<td></td>
 </tr>
 <tr>
+	<td>INVITE_USERS_ICON</td>
+	<td>//span[contains(@title,'Invite Users')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>MESSAGE_NO_CHANGES</td>
-	<td>//div[contains(@class, 'taglib-empty-result-message')]/div[contains(.,'No changes were found.')]</td>
+	<td>//div[contains(@class, 'c-empty-state-text') and contains(.,'No changes were found.')]</td>
 	<td></td>
 </tr>
 <tr>

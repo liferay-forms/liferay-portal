@@ -18,6 +18,7 @@ import com.liferay.info.field.InfoField;
 import com.liferay.info.field.InfoFieldValue;
 import com.liferay.info.item.InfoItemFieldValues;
 import com.liferay.info.item.InfoItemReference;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.xml.Document;
@@ -35,8 +36,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -113,29 +112,26 @@ public class XLIFF12InfoFormTranslationExporter
 			sourceElement.addAttribute(
 				"xml:lang", fileElement.attributeValue("source-language"));
 
-			List<InfoFieldValue<Object>> infoFieldValuesList = entry.getValue();
+			List<InfoFieldValue<Object>> infoFieldValues = entry.getValue();
 
-			Stream<InfoFieldValue<Object>> stream =
-				infoFieldValuesList.stream();
+			StringBundler sb = new StringBundler(infoFieldValues.size() * 2);
 
-			sourceElement.addCDATA(
-				_getStringValue(
-					stream.map(
-						infoFieldValue -> (String)infoFieldValue.getValue(
-							sourceLocale)
-					).collect(
-						Collectors.joining(StringPool.COMMA_AND_SPACE)
-					)));
+			for (InfoFieldValue<Object> infoFieldValue : infoFieldValues) {
+				sb.append(infoFieldValue.getValue(sourceLocale));
+				sb.append(StringPool.COMMA_AND_SPACE);
+			}
 
-			if (infoFieldValuesList.size() > 1) {
+			sb.setIndex(sb.index() - 1);
+
+			sourceElement.addCDATA(_getStringValue(sb));
+
+			if (infoFieldValues.size() > 1) {
 				Element segSourceElement = transUnitElement.addElement(
 					"seg-source");
 
 				int mid = 0;
 
-				for (InfoFieldValue<Object> infoFieldValue :
-						infoFieldValuesList) {
-
+				for (InfoFieldValue<Object> infoFieldValue : infoFieldValues) {
 					Element mrkElement = segSourceElement.addElement("mrk");
 
 					mrkElement.addAttribute("mid", String.valueOf(mid));
@@ -152,12 +148,10 @@ public class XLIFF12InfoFormTranslationExporter
 			targetElement.addAttribute(
 				"xml:lang", fileElement.attributeValue("target-language"));
 
-			if (infoFieldValuesList.size() > 1) {
+			if (infoFieldValues.size() > 1) {
 				int mid = 0;
 
-				for (InfoFieldValue<Object> infoFieldValue :
-						infoFieldValuesList) {
-
+				for (InfoFieldValue<Object> infoFieldValue : infoFieldValues) {
 					Element mrkElement = targetElement.addElement("mrk");
 
 					mrkElement.addAttribute("mid", String.valueOf(mid));
@@ -169,8 +163,7 @@ public class XLIFF12InfoFormTranslationExporter
 				}
 			}
 			else {
-				InfoFieldValue<Object> infoFieldValue = infoFieldValuesList.get(
-					0);
+				InfoFieldValue<Object> infoFieldValue = infoFieldValues.get(0);
 
 				targetElement.addCDATA(
 					_getStringValue(infoFieldValue.getValue(targetLocale)));

@@ -262,13 +262,13 @@ public class SamlPeerBindingLocalServiceWrapper
 	@Override
 	public com.liferay.saml.persistence.model.SamlPeerBinding
 		fetchSamlPeerBinding(
-			long companyId, String samlNameIdFormat,
+			long companyId, boolean deleted, String samlNameIdFormat,
 			String samlNameIdNameQualifier, String samlNameIdValue,
-			String samlSpEntityId) {
+			String samlPeerEntityId) {
 
 		return _samlPeerBindingLocalService.fetchSamlPeerBinding(
-			companyId, samlNameIdFormat, samlNameIdNameQualifier,
-			samlNameIdValue, samlSpEntityId);
+			companyId, deleted, samlNameIdFormat, samlNameIdNameQualifier,
+			samlNameIdValue, samlPeerEntityId);
 	}
 
 	@Override
@@ -341,6 +341,18 @@ public class SamlPeerBindingLocalServiceWrapper
 		return _samlPeerBindingLocalService.getSamlPeerBindings(start, end);
 	}
 
+	@Override
+	public java.util.List<com.liferay.saml.persistence.model.SamlPeerBinding>
+		getSamlPeerBindings(
+			long companyId, boolean deleted, String samlNameIdFormat,
+			String samlNameIdNameQualifier, String samlNameIdValue,
+			String samlPeerEntityId) {
+
+		return _samlPeerBindingLocalService.getSamlPeerBindings(
+			companyId, deleted, samlNameIdFormat, samlNameIdNameQualifier,
+			samlNameIdValue, samlPeerEntityId);
+	}
+
 	/**
 	 * Returns the number of saml peer bindings.
 	 *
@@ -349,6 +361,18 @@ public class SamlPeerBindingLocalServiceWrapper
 	@Override
 	public int getSamlPeerBindingsCount() {
 		return _samlPeerBindingLocalService.getSamlPeerBindingsCount();
+	}
+
+	@Override
+	public java.util.List<com.liferay.saml.persistence.model.SamlPeerBinding>
+			getUserSamlPeerBindings(
+				long userId, boolean deleted, String samlNameIdFormat,
+				String samlNameIdNameQualifier, String samlPeerEntityId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _samlPeerBindingLocalService.getUserSamlPeerBindings(
+			userId, deleted, samlNameIdFormat, samlNameIdNameQualifier,
+			samlPeerEntityId);
 	}
 
 	/**

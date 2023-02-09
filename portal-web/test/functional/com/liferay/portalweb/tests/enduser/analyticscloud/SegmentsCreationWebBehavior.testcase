@@ -1377,11 +1377,23 @@ definition {
 		task ("Create a blog page and view page") {
 			ACUtils.createBlogsAndAddToPage();
 
-			ACDXPSettings.connectDXPtoAnalyticsCloud();
+			ACDXPSettings.connectDXPtoAnalyticsCloud(siteName = "Site Name");
 
 			var dataSourceName = StringUtil.extractFirst("${assignedPropertyName}", "Combined");
 
 			var dataSourceName = StringUtil.trim("${dataSourceName}");
+
+			JSONUser.addUser(
+				userEmailAddress = "ac@liferay.com",
+				userFirstName = "ac",
+				userLastName = "ac",
+				userScreenName = "ac");
+
+			ACDXPSettings.syncNewContactData();
+
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "ac@liferay.com",
+				userLoginFullName = "ac ac");
 
 			ACUtils.navigateToSitePage(
 				actionType = "View Blog",
@@ -1406,11 +1418,6 @@ definition {
 			ACUtils.setItemName(itemName = "Dynamic Segment Test");
 
 			ACSegments.addSegmentField(segmentField = "Viewed Page");
-
-			ACSegments.editWebBehaviorCriterion(
-				indexField = "1",
-				occurenceNumber = "4",
-				searchTerm = "Blogs AC Title - Site Name - Liferay DXP");
 		}
 
 		task ("Check for data source origin") {
@@ -1418,11 +1425,9 @@ definition {
 
 			Click(locator1 = "ACSegments#SELECT_BUTTON");
 
-			ACSegments.searchSegment(findSegment = "${documentTitle}");
+			ACSegments.searchSegment(findSegment = "Blogs AC Title - Site Name - ${dataSourceName}");
 
 			ACUtils.viewGenericText(textValueList = "${dataSourceName}");
-
-			Click(locator1 = "ACSegments#MODAL_CANCEL_BUTTON");
 		}
 	}
 

@@ -28,7 +28,6 @@ import com.liferay.portal.kernel.util.Portal;
 
 import java.io.IOException;
 
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import org.osgi.service.component.annotations.Component;
@@ -59,24 +58,21 @@ public class OAuth2Manager {
 		}
 	}
 
-	public Optional<AccessToken> getAccessTokenOptional(
-			long companyId, long userId)
+	public AccessToken getAccessToken(long companyId, long userId)
 		throws PortalException {
 
-		Optional<AccessToken> accessTokenOptional =
-			AccessTokenStoreUtil.getAccessTokenOptional(companyId, userId);
+		AccessToken accessToken = AccessTokenStoreUtil.getAccessToken(
+			companyId, userId);
 
-		if (!accessTokenOptional.isPresent()) {
-			return Optional.empty();
+		if (accessToken == null) {
+			return null;
 		}
-
-		AccessToken accessToken = accessTokenOptional.get();
 
 		if (!accessToken.isValid()) {
 			return _refreshOAuth2AccessToken(companyId, userId, accessToken);
 		}
 
-		return Optional.of(accessToken);
+		return accessToken;
 	}
 
 	public String getAuthorizationURL(
@@ -96,17 +92,20 @@ public class OAuth2Manager {
 	public boolean hasAccessToken(long companyId, long userId)
 		throws PortalException {
 
-		Optional<AccessToken> accessTokenOptional = getAccessTokenOptional(
-			companyId, userId);
+		AccessToken accessToken = getAccessToken(companyId, userId);
 
-		return accessTokenOptional.isPresent();
+		if (accessToken == null) {
+			return false;
+		}
+
+		return true;
 	}
 
 	public void revokeOAuth2AccessToken(long companyId, long userId) {
-		Optional<AccessToken> accessTokenOptional =
-			AccessTokenStoreUtil.getAccessTokenOptional(companyId, userId);
+		AccessToken accessToken = AccessTokenStoreUtil.getAccessToken(
+			companyId, userId);
 
-		if (!accessTokenOptional.isPresent()) {
+		if (accessToken == null) {
 			return;
 		}
 
@@ -158,12 +157,12 @@ public class OAuth2Manager {
 			"/document_library/onedrive/oauth2");
 	}
 
-	private Optional<AccessToken> _refreshOAuth2AccessToken(
+	private AccessToken _refreshOAuth2AccessToken(
 			long companyId, long userId, AccessToken accessToken)
 		throws PortalException {
 
 		if (accessToken.getRefreshToken() == null) {
-			return Optional.empty();
+			return null;
 		}
 
 		try (OAuth20Service oAuth20Service = _createOAuth20Service(
@@ -175,7 +174,7 @@ public class OAuth2Manager {
 
 			AccessTokenStoreUtil.add(companyId, userId, newAccessToken);
 
-			return Optional.of(newAccessToken);
+			return newAccessToken;
 		}
 		catch (ExecutionException | InterruptedException | IOException
 					exception) {

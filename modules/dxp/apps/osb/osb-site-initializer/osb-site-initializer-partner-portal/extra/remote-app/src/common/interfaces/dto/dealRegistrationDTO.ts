@@ -33,7 +33,9 @@ export default interface DealRegistrationDTO
 	amount?: number;
 	closeDate?: string;
 	leadExternalReferenceCode?: string;
+	leadQualificationExternalReferenceCode?: string;
 	leadStatus?: string;
+	leadStatusDetail?: string;
 	mdfActivityExternalReferenceCodeSF?: string;
 	opportunityOwner?: string;
 	ownerName?: string;
@@ -42,10 +44,10 @@ export default interface DealRegistrationDTO
 	partnerFirstName?: string;
 	partnerLastName?: string;
 	primaryProspectBusinessUnit?: string;
-	primaryProspectDepartment?: LiferayPicklist;
+	primaryProspectDepartment?: string;
 	primaryProspectEmailAddress?: string;
 	primaryProspectFirstName?: string;
-	primaryProspectJobRole?: LiferayPicklist;
+	primaryProspectJobRole?: string;
 	primaryProspectLastName?: string;
 	primaryProspectPhone?: string;
 	projectCategories?: string;
@@ -58,13 +60,13 @@ export default interface DealRegistrationDTO
 	prospectCity?: string;
 	prospectCountry?: LiferayPicklist;
 	prospectCountryCode?: string;
-	prospectIndustry?: LiferayPicklist;
+	prospectIndustry?: string;
 	prospectPostalCode?: string;
 	prospectState?: LiferayPicklist;
 	prospectStateCode?: string;
-	r_accountToDealRegistrations_accountEntry?: AccountEntry;
-	r_accountToDealRegistrations_accountEntryId?: number;
-	r_activityToDealRegistrations_c_activity?: MDFRequestActivity;
-	r_activityToDealRegistrations_c_activityId?: number;
+	r_accToDealRegs_accountEntry?: AccountEntry;
+	r_accToDealRegs_accountEntryId?: number;
+	r_actToDealRegs_c_activity?: MDFRequestActivity;
+	r_actToDealRegs_c_activityId?: number;
 	stage?: string;
 }

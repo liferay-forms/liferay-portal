@@ -109,10 +109,17 @@ interface ObjectFieldView extends ObjectField {
 }
 
 interface ObjectDefinition {
+	accountEntryRestricted: boolean;
+	accountEntryRestrictedObjectFieldId: string;
+	accountEntryRestrictedObjectFieldName: string;
 	active: boolean;
 	dateCreated: string;
 	dateModified: string;
+	dbTableName?: string;
+	defaultLanguageId: Locale;
 	enableCategorization: boolean;
+	enableComments: boolean;
+	enableObjectEntryHistory: boolean;
 	externalReferenceCode: string;
 	id: number;
 	label: LocalizedValue<string>;
@@ -120,6 +127,7 @@ interface ObjectDefinition {
 	objectActions: [];
 	objectFields: ObjectField[];
 	objectLayouts: [];
+	objectRelationships: [];
 	objectViews: [];
 	panelCategoryKey: string;
 	parameterRequired?: boolean;
@@ -134,6 +142,7 @@ interface ObjectDefinition {
 	};
 	storageType?: string;
 	system: boolean;
+	titleObjectFieldId: number | string;
 	titleObjectFieldName: string;
 }
 

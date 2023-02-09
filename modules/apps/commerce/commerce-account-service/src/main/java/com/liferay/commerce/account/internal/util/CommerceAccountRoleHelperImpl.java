@@ -120,6 +120,14 @@ public class CommerceAccountRoleHelperImpl
 				new String[] {ActionKeys.VIEW});
 
 			groupResourceActionIds.put(
+				AccountEntry.class.getName(),
+				new String[] {
+					AccountActionKeys.MANAGE_ADDRESSES,
+					AccountActionKeys.ASSIGN_USERS, ActionKeys.UPDATE,
+					ActionKeys.VIEW, AccountActionKeys.VIEW_ADDRESSES,
+					AccountActionKeys.VIEW_USERS
+				});
+			groupResourceActionIds.put(
 				"com.liferay.commerce.account.model.CommerceAccount",
 				new String[] {
 					CommerceAccountActionKeys.MANAGE_ADDRESSES,

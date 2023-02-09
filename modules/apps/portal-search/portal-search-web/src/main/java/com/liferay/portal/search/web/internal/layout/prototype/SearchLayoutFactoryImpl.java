@@ -70,14 +70,12 @@ public class SearchLayoutFactoryImpl implements SearchLayoutFactory {
 	}
 
 	@Override
-	public void createSearchLayoutPrototype(Company company) {
+	public Layout createSearchLayoutPrototype(Company company) {
 		long companyId = company.getCompanyId();
 
 		try {
-			createSearchLayoutPrototype(
-				companyId, userLocalService.getDefaultUserId(companyId),
-				_getSearchTitleLocalizationMap(),
-				_getSearchDescriptionLocalizationMap());
+			return createSearchLayoutPrototype(
+				companyId, userLocalService.getDefaultUserId(companyId));
 		}
 		catch (RuntimeException runtimeException) {
 			throw runtimeException;
@@ -139,30 +137,48 @@ public class SearchLayoutFactoryImpl implements SearchLayoutFactory {
 		}
 	}
 
-	protected void createSearchLayoutPrototype(
-			long companyId, long defaultUserId, Map<Locale, String> nameMap,
-			Map<Locale, String> descriptionMap)
+	protected Layout createSearchLayoutPrototype(
+			long companyId, long defaultUserId)
 		throws Exception {
 
-		String layoutTemplateId = getLayoutTemplateId();
+		for (LayoutPrototype layoutPrototype :
+				layoutPrototypeLocalService.search(
+					companyId, null, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+					null)) {
 
-		List<LayoutPrototype> layoutPrototypes =
-			layoutPrototypeLocalService.search(
-				companyId, null, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+			Locale defaultLocale = LocaleUtil.fromLanguageId(
+				_localization.getDefaultLanguageId(layoutPrototype.getName()));
 
-		Layout layout = _addLayoutPrototype(
-			companyId, defaultUserId, nameMap, descriptionMap, layoutTemplateId,
-			layoutPrototypes);
+			String name = LanguageResources.getMessage(
+				defaultLocale, "layout-prototype-search-title");
 
-		if (layout == null) {
-			return;
+			if ((name == null) ||
+				name.equals(layoutPrototype.getName(defaultLocale))) {
+
+				return null;
+			}
 		}
+
+		LayoutPrototype layoutPrototype =
+			layoutPrototypeLocalService.addLayoutPrototype(
+				defaultUserId, companyId, _getSearchTitleLocalizationMap(),
+				_getSearchDescriptionLocalizationMap(), true,
+				new ServiceContext());
+
+		Layout layout = layoutPrototype.getLayout();
+
+		LayoutTypePortlet layoutTypePortlet =
+			(LayoutTypePortlet)layout.getLayoutType();
+
+		layoutTypePortlet.setLayoutTemplateId(0, getLayoutTemplateId(), false);
 
 		customize(layout);
 
 		if (_log.isInfoEnabled()) {
 			_log.info("Search Page Template created");
 		}
+
+		return layout;
 	}
 
 	protected void customize(Layout layout) throws Exception {
@@ -201,40 +217,6 @@ public class SearchLayoutFactoryImpl implements SearchLayoutFactory {
 
 	@Reference
 	protected UserLocalService userLocalService;
-
-	private Layout _addLayoutPrototype(
-			long companyId, long defaultUserId, Map<Locale, String> nameMap,
-			Map<Locale, String> descriptionMap, String layoutTemplateId,
-			List<LayoutPrototype> layoutPrototypes)
-		throws Exception {
-
-		for (LayoutPrototype layoutPrototype : layoutPrototypes) {
-			Locale defaultLocale = LocaleUtil.fromLanguageId(
-				_localization.getDefaultLanguageId(layoutPrototype.getName()));
-
-			String name = nameMap.get(defaultLocale);
-
-			if ((name == null) ||
-				name.equals(layoutPrototype.getName(defaultLocale))) {
-
-				return null;
-			}
-		}
-
-		LayoutPrototype layoutPrototype =
-			layoutPrototypeLocalService.addLayoutPrototype(
-				defaultUserId, companyId, nameMap, descriptionMap, true,
-				new ServiceContext());
-
-		Layout layout = layoutPrototype.getLayout();
-
-		LayoutTypePortlet layoutTypePortlet =
-			(LayoutTypePortlet)layout.getLayoutType();
-
-		layoutTypePortlet.setLayoutTemplateId(0, layoutTemplateId, false);
-
-		return layout;
-	}
 
 	private Optional<LayoutPrototype> _findSearchLayoutPrototype(
 		long companyId) {

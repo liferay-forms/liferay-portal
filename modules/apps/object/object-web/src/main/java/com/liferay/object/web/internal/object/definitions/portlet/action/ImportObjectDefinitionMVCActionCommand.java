@@ -101,7 +101,7 @@ public class ImportObjectDefinitionMVCActionCommand
 					"title",
 					_language.get(
 						_portal.getHttpServletRequest(actionRequest),
-						"the-structure-was-not-successfully-imported"));
+						"the-structure-failed-to-import"));
 			}
 
 			JSONPortletResponseUtil.writeJSON(

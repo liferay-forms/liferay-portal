@@ -44,15 +44,15 @@ public class CardinalityAssetEntryValidator implements AssetEntryValidator {
 			long[] categoryIds, String[] tagNames)
 		throws PortalException {
 
-		long classNameId = _classNameLocalService.getClassNameId(className);
-
-		if (!_isCategorizable(groupId, classNameId, classPK)) {
+		if (!_isCategorizable(groupId, className, classPK)) {
 			return;
 		}
 
 		if (className.equals(Group.class.getName())) {
 			groupId = classPK;
 		}
+
+		long classNameId = _classNameLocalService.getClassNameId(className);
 
 		for (AssetVocabulary assetVocabulary :
 				_assetVocabularyLocalService.getGroupsVocabularies(
@@ -89,11 +89,11 @@ public class CardinalityAssetEntryValidator implements AssetEntryValidator {
 	}
 
 	private boolean _isCategorizable(
-		long groupId, long classNameId, long classPK) {
+		long groupId, String className, long classPK) {
 
 		AssetRendererFactory<?> assetRendererFactory =
 			AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(
-				_portal.getClassName(classNameId));
+				className);
 
 		if ((assetRendererFactory == null) ||
 			!assetRendererFactory.isCategorizable()) {
@@ -114,8 +114,8 @@ public class CardinalityAssetEntryValidator implements AssetEntryValidator {
 				if (_log.isWarnEnabled()) {
 					_log.warn(
 						StringBundler.concat(
-							"Entity with ClassPK: ", classPK,
-							" and ClassNameId: ", classNameId,
+							"Asset entry with class PK ", classPK,
+							" and class name ", className,
 							" is not categorizable"),
 						portalException);
 				}

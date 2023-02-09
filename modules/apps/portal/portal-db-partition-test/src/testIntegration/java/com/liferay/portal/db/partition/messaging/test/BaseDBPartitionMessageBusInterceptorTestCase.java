@@ -14,7 +14,9 @@
 
 package com.liferay.portal.db.partition.messaging.test;
 
-import com.liferay.portal.db.partition.test.BaseDBPartitionTestCase;
+import com.liferay.petra.lang.SafeCloseable;
+import com.liferay.portal.db.partition.DBPartitionUtil;
+import com.liferay.portal.db.partition.test.util.BaseDBPartitionTestCase;
 import com.liferay.portal.kernel.messaging.BaseMessageListener;
 import com.liferay.portal.kernel.messaging.Destination;
 import com.liferay.portal.kernel.messaging.DestinationConfiguration;
@@ -29,7 +31,9 @@ import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.util.CompanyTestUtil;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.test.rule.Inject;
+import com.liferay.portal.util.PortalInstances;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -214,6 +218,32 @@ public abstract class BaseDBPartitionMessageBusInterceptorTestCase
 
 		_testDBPartitionMessageListener.assertCollected(
 			_company.getCompanyId());
+	}
+
+	@Test
+	public void testSendMessageWithCompanyInDeletionProcess()
+		throws InterruptedException {
+
+		boolean databasePartitionEnabled =
+			ReflectionTestUtil.getAndSetFieldValue(
+				DBPartitionUtil.class, "_DATABASE_PARTITION_ENABLED", true);
+
+		try (SafeCloseable safeCloseable =
+				PortalInstances.setCompanyInDeletionProcess(
+					_activeCompanyIds[0])) {
+
+			_countDownLatch = new CountDownLatch(_activeCompanyIds.length);
+
+			_messageBus.sendMessage(_DESTINATION_NAME, new Message());
+
+			_testDBPartitionMessageListener.assertCollected(
+				ArrayUtil.remove(_activeCompanyIds, _activeCompanyIds[0]));
+		}
+		finally {
+			ReflectionTestUtil.setFieldValue(
+				DBPartitionUtil.class, "_DATABASE_PARTITION_ENABLED",
+				databasePartitionEnabled);
+		}
 	}
 
 	protected static void setUpClass(String destinationType) throws Exception {

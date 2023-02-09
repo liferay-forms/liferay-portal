@@ -22,7 +22,6 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
-import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermissionFactory;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 
@@ -30,6 +29,8 @@ import java.util.Locale;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 /**
  * @author Brian Wing Shun Chan
@@ -157,10 +158,13 @@ public class AccountEntryUserRelServiceImpl
 			accountEntryId, userId);
 	}
 
-	private static volatile ModelResourcePermission<AccountEntry>
-		_modelResourcePermission = ModelResourcePermissionFactory.getInstance(
-			AccountEntryUserRelServiceImpl.class, "_modelResourcePermission",
-			AccountEntry.class);
+	@Reference(
+		policy = ReferencePolicy.DYNAMIC,
+		policyOption = ReferencePolicyOption.GREEDY,
+		target = "(model.class.name=com.liferay.account.model.AccountEntry)"
+	)
+	private volatile ModelResourcePermission<AccountEntry>
+		_modelResourcePermission;
 
 	@Reference
 	private UserLocalService _userLocalService;

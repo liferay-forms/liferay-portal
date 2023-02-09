@@ -17,10 +17,13 @@ package com.liferay.source.formatter.check;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.tools.ToolsUtil;
 import com.liferay.source.formatter.parser.JavaTerm;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -40,32 +43,42 @@ public class JavaElseStatementCheck extends BaseJavaTermCheck {
 
 		Matcher matcher1 = _elseStatementPattern.matcher(javaTermContent);
 
+		outerLoop:
 		while (matcher1.find()) {
-			String ifStatementCodeBlock = _getIfStatementCodeBlock(
+			List<String> ifStatementCodeBlocks = _getIfStatementCodeBlock(
 				javaTermContent, matcher1.start());
 
-			if (ifStatementCodeBlock == null) {
+			if (ListUtil.isEmpty(ifStatementCodeBlocks)) {
 				continue;
 			}
 
 			String exitStatementType = null;
 
-			Matcher matcher2 = _exitStatementPattern.matcher(
-				ifStatementCodeBlock);
+			for (String ifStatementCodeBlock : ifStatementCodeBlocks) {
+				exitStatementType = null;
 
-			while (matcher2.find()) {
-				if (ToolsUtil.isInsideQuotes(
-						ifStatementCodeBlock, matcher2.start())) {
+				Matcher matcher2 = _exitStatementPattern.matcher(
+					ifStatementCodeBlock);
 
-					continue;
+				while (matcher2.find()) {
+					if (ToolsUtil.isInsideQuotes(
+							ifStatementCodeBlock, matcher2.start())) {
+
+						continue;
+					}
+
+					String s = ifStatementCodeBlock.substring(
+						0, matcher2.start());
+
+					if (getLevel(s, "{", "}") == 1) {
+						exitStatementType = matcher2.group(1);
+
+						break;
+					}
 				}
 
-				String s = ifStatementCodeBlock.substring(0, matcher2.start());
-
-				if (getLevel(s, "{", "}") == 1) {
-					exitStatementType = matcher2.group(1);
-
-					break;
+				if (exitStatementType == null) {
+					continue outerLoop;
 				}
 			}
 
@@ -152,12 +165,59 @@ public class JavaElseStatementCheck extends BaseJavaTermCheck {
 		}
 	}
 
-	private String _getIfStatementCodeBlock(String content, int x) {
+	private List<String> _getElseIfStatementCodeBlock(
+		String content, int closeCurlyBracePos, int x) {
+
+		int openCurlyBracePos = content.indexOf(
+			StringPool.OPEN_CURLY_BRACE, closeCurlyBracePos + 1);
+
+		if (openCurlyBracePos == -1) {
+			return Collections.emptyList();
+		}
+
+		String statement = StringUtil.trim(
+			content.substring(closeCurlyBracePos + 1, openCurlyBracePos));
+
+		if (!statement.startsWith("else if")) {
+			return Collections.emptyList();
+		}
+
+		closeCurlyBracePos = _getCloseCurlyBracePos(content, openCurlyBracePos);
+
+		if (closeCurlyBracePos == -1) {
+			return Collections.emptyList();
+		}
+
+		List<String> elseIfStatementCodeBlocks = new ArrayList<>();
+
+		elseIfStatementCodeBlocks.add(
+			content.substring(openCurlyBracePos, closeCurlyBracePos + 1));
+
+		if (closeCurlyBracePos == x) {
+			return elseIfStatementCodeBlocks;
+		}
+
+		List<String> nestedElseIfStatementCodeBlocks =
+			_getElseIfStatementCodeBlock(content, closeCurlyBracePos, x);
+
+		if (nestedElseIfStatementCodeBlocks.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		elseIfStatementCodeBlocks.addAll(nestedElseIfStatementCodeBlocks);
+
+		return elseIfStatementCodeBlocks;
+	}
+
+	private List<String> _getIfStatementCodeBlock(String content, int x) {
 		Matcher matcher = _ifStatementPattern.matcher(content);
 
 		while (matcher.find()) {
+			int closeCurlyBracePos = _getCloseCurlyBracePos(
+				content, matcher.start());
+
 			if (ToolsUtil.isInsideQuotes(content, matcher.start()) ||
-				(_getCloseCurlyBracePos(content, matcher.start()) != x)) {
+				(closeCurlyBracePos > x)) {
 
 				continue;
 			}
@@ -165,10 +225,27 @@ public class JavaElseStatementCheck extends BaseJavaTermCheck {
 			String s = StringUtil.trim(content.substring(0, matcher.start()));
 
 			if (s.endsWith("else")) {
-				return null;
+				continue;
 			}
 
-			return content.substring(matcher.start(), x + 1);
+			List<String> ifStatementCodeBlocks = new ArrayList<>();
+
+			ifStatementCodeBlocks.add(
+				content.substring(matcher.start(), closeCurlyBracePos + 1));
+
+			if (closeCurlyBracePos != x) {
+				List<String> elseIfStatementCodeBlocks =
+					_getElseIfStatementCodeBlock(
+						content, closeCurlyBracePos, x);
+
+				if (elseIfStatementCodeBlocks.isEmpty()) {
+					continue;
+				}
+
+				ifStatementCodeBlocks.addAll(elseIfStatementCodeBlocks);
+			}
+
+			return ifStatementCodeBlocks;
 		}
 
 		return null;

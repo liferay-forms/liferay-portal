@@ -21,7 +21,6 @@ import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.journal.constants.JournalContentPortletKeys;
 import com.liferay.journal.model.JournalArticle;
-import com.liferay.journal.service.JournalContentSearchLocalService;
 import com.liferay.layout.model.LayoutClassedModelUsage;
 import com.liferay.layout.service.LayoutClassedModelUsageLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -48,7 +47,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Eudaldo Alonso
  */
 @Component(
-	immediate = true,
 	property = "model.class.name=com.liferay.journal.model.JournalArticle",
 	service = AddPortletProvider.class
 )
@@ -95,13 +93,8 @@ public class JournalContentAddPortletProvider
 		portletPreferences.setValue(
 			"assetEntryId", String.valueOf(assetEntry.getEntryId()));
 
-		Layout layout = themeDisplay.getLayout();
-
-		_addLayoutClassedModelUsage(layout, portletId, article);
-
-		_journalContentSearchLocalService.updateContentSearch(
-			layout.getGroupId(), layout.isPrivateLayout(), layout.getLayoutId(),
-			portletId, article.getArticleId(), true);
+		_addLayoutClassedModelUsage(
+			themeDisplay.getLayout(), portletId, article);
 	}
 
 	private void _addLayoutClassedModelUsage(
@@ -126,9 +119,6 @@ public class JournalContentAddPortletProvider
 
 	@Reference
 	private AssetEntryLocalService _assetEntryLocalService;
-
-	@Reference
-	private JournalContentSearchLocalService _journalContentSearchLocalService;
 
 	@Reference
 	private LayoutClassedModelUsageLocalService

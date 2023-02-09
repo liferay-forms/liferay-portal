@@ -245,6 +245,58 @@ definition {
 		AssertElementPresent(locator1 = "PublicationsChanges#MESSAGE_NO_CHANGES");
 	}
 
+	@description = "Assert that is possible to add a Wiki Page within a publication and then publish it"
+	@priority = "3"
+	test CanAddWikiPageWithinPublications {
+		JSONPublications.addPublication(publicationName = "Publication Name");
+
+		JSONPublications.selectPublication(publicationName = "Publication Name");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Wiki");
+
+		WikiNode.addCP(wikiNodeName = "Wiki Node Name");
+
+		WikiPage.addCP(
+			contentImageName = "Document_2.jpg",
+			groupName = "Guest",
+			imageSourceURL = "http://localhost:8080/webdav/guest/document_library/Document_2.jpg",
+			siteURLKey = "guest",
+			wikiAdmin = "true",
+			wikiNodeName = "Wiki Node Name",
+			wikiPageContent = "Wiki Page Content",
+			wikiPageTitle = "Wiki Page Title");
+
+		PublicationsNavigator.gotoReviewChanges(
+			gotoPublicationsAdmin = "true",
+			publicationName = "Publication Name");
+
+		PublicationsChanges.viewChanges(
+			changeCategory = "Wiki Node",
+			changeOrder = "1",
+			changeSite = "Guest",
+			changeTitle = "Wiki Node Name",
+			changeType = "Added",
+			changeUser = "Test Test");
+
+		PublicationsChanges.viewChanges(
+			changeCategory = "Wiki Page",
+			changeOrder = "2",
+			changeSite = "Guest",
+			changeTitle = "Wiki Page Title",
+			changeType = "Added",
+			changeUser = "Test Test");
+
+		Button.clickPublish();
+
+		AssertTextEquals.assertPartialText(
+			locator1 = "Message#SUCCESS",
+			value1 = "No unresolved conflicts, ready to publish.");
+
+		Publications.publishPublication(publicationName = "Publication Name");
+	}
+
 	@description = "This is the use case for LPS-158789. Allow you to change publication via URL parameter"
 	@priority = "4"
 	test CanChangePublicationViaURLParameter {
@@ -662,6 +714,7 @@ definition {
 		PublicationsNavigator.openPublicationsAdmin();
 
 		Publications.inviteUsers(
+			gotoReviewChanges = "true",
 			publicationName = "Publication Name",
 			publicationRole = "Editor",
 			userInvite = "userea@liferay.com",
@@ -689,6 +742,44 @@ definition {
 			value1 = "Publication Name");
 	}
 
+	@description = "This is use case for LPS-170779. File upload causes publication to become unusable"
+	@priority = "4"
+	test CanReviewChangesWithManyDocuments {
+		property test.assert.warning.exceptions = "true";
+		property test.name.skip.portal.instance = "Publications#CanReviewChangesWithManyDocuments";
+
+		ApplicationsMenu.gotoPortlet(
+			category = "System",
+			panel = "Control Panel",
+			portlet = "Server Administration");
+
+		var script = TestCase.getFileContent(fileName = "AddManyDocuments.groovy");
+
+		ServerAdministration.executeScript(
+			language = "Groovy",
+			script = "${script}");
+
+		JSONPublications.addPublication(publicationName = "Publication Name");
+
+		JSONPublications.selectPublication(publicationName = "Publication Name");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "Guest");
+
+		DMDocument.addCP(
+			dmDocumentDescription = "Document Description",
+			dmDocumentFile = "Document_1.jpg",
+			dmDocumentTitle = "DM Document Title");
+
+		PublicationsNavigator.gotoReviewChanges();
+
+		PublicationsChanges.viewChanges(
+			changeCategory = "Document",
+			changeSite = "Guest",
+			changeTitle = "DM Document Title",
+			changeType = "Added",
+			changeUser = "Test Test");
+	}
+
 	@description = "This is use case for LPS-157264.Changing permissions on a publication shouldn't go into the publication"
 	@priority = "3"
 	test ChangePermissionsOnAPublicationShouldGoIntoProduction {
@@ -698,7 +789,7 @@ definition {
 
 		PublicationsNavigator.openPublicationsAdmin();
 
-		PublicationsNavigator._gotoPublicationEllipsisItem(
+		PublicationsNavigator.gotoPublicationEllipsisItem(
 			menuItem = "Permissions",
 			publicationName = "Publication Name");
 
@@ -714,7 +805,7 @@ definition {
 
 		Publications.workOnProduction();
 
-		PublicationsNavigator._gotoPublicationEllipsisItem(
+		PublicationsNavigator.gotoPublicationEllipsisItem(
 			menuItem = "Permissions",
 			publicationName = "Publication Name");
 
@@ -903,7 +994,7 @@ definition {
 
 		User.editUserInformation(userScreenNameEdit = "testscreen");
 
-		User.viewUserInfomation(
+		User.viewUserInformation(
 			userEmailAddress = "test@liferay.com",
 			userFirstName = "Test",
 			userLastName = "Test",
@@ -913,7 +1004,7 @@ definition {
 
 		Navigator.gotoAccountSettings();
 
-		User.viewUserInfomation(
+		User.viewUserInformation(
 			userEmailAddress = "test@liferay.com",
 			userFirstName = "Test",
 			userLastName = "Test",
@@ -980,6 +1071,7 @@ definition {
 	@priority = "5"
 	test PublishParallelPublications {
 		property environment.acceptance = "true";
+		property operating.system.types = "alpine,amazonlinux,centos,debian,fedora,orcllinux,osx,redhat,solaris,suse,ubuntu,windows";
 		property portal.acceptance = "true";
 
 		JSONWebcontent.addFolder(
@@ -1125,6 +1217,40 @@ definition {
 			value1 = "No web content was found.");
 	}
 
+	@description = "Assert that we can schedule a asset inside a publication and publish it."
+	@priority = "3"
+	test ScheduledAssetsCanBePublished {
+		JSONPublications.addPublication(publicationName = "Publication Name");
+
+		JSONPublications.selectPublication(publicationName = "Publication Name");
+
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "Guest");
+
+		WebContentNavigator.gotoAddCP();
+
+		WebContent.addCP(
+			webContentContent = "Web Content Content",
+			webContentTitle = "Web Content Title");
+
+		WebContent.editDisplayDate(
+			displayDate = "01/01/2050",
+			displayTime = "12:30 AM");
+
+		PortletEntry.publish();
+
+		PublicationsNavigator.gotoReviewChanges(
+			gotoPublicationsAdmin = "true",
+			publicationName = "Publication Name");
+
+		Button.clickPublish();
+
+		AssertTextEquals.assertPartialText(
+			locator1 = "Message#SUCCESS",
+			value1 = "No unresolved conflicts, ready to publish.");
+
+		Publications.publishPublication(publicationName = "Publication Name");
+	}
+
 	@priority = "5"
 	test SchedulePublication {
 		JSONPublications.addPublication(publicationName = "Publication Name 1");
@@ -1200,80 +1326,6 @@ definition {
 		for (var publicationName : list "Apple,Banana,Cherry") {
 			Publications.search(publicationName = "${publicationName}");
 		}
-	}
-
-	@description = "This is the use case for LPS-162683."
-	@priority = "4"
-	test UnrelatedChangesShouldnotDisplayUnderDiscardPage {
-		JSONLayout.addPublicLayout(
-			groupName = "Guest",
-			layoutName = "Child Page",
-			parentLayoutName = "Search");
-
-		JSONGroup.addGroup(groupName = "Test Site Name");
-
-		JSONLayout.addPublicLayout(
-			groupName = "Test Site Name",
-			layoutName = "Test Page");
-
-		JSONPublications.addPublication(publicationName = "Publication Name");
-
-		JSONPublications.selectPublication(publicationName = "Publication Name");
-
-		JSONLayout.addWidgetToPublicLayout(
-			groupName = "Guest",
-			layoutName = "Child Page",
-			widgetName = "Web Content Display");
-
-		PublicationsNavigator.openPublicationsAdmin();
-
-		Publications.workOnProduction();
-
-		JSONLayout.addWidgetToPublicLayout(
-			groupName = "Guest",
-			layoutName = "Child Page",
-			widgetName = "Asset Publisher");
-
-		Publications.selectPublication(publicationName = "Publication Name");
-
-		JSONLayout.addWidgetToPublicLayout(
-			groupName = "Test Site Name",
-			layoutName = "Test Page",
-			widgetName = "Web Content Display");
-
-		Publications.workOnProduction();
-
-		JSONLayout.addWidgetToPublicLayout(
-			groupName = "Test Site Name",
-			layoutName = "Test Page",
-			widgetName = "Asset Publisher");
-
-		PublicationsNavigator.gotoPublish(
-			gotoPublicationsAdmin = "true",
-			publicationName = "Publication Name");
-
-		Publications.viewNeedsManualResolution(
-			entryTitle = "Child Page",
-			warningMessage = "Modification Conflict: The conflict cannot be automatically resolved.");
-
-		Publications.viewNeedsManualResolution(
-			entryTitle = "Test Page",
-			warningMessage = "Modification Conflict: The conflict cannot be automatically resolved.");
-
-		Click(
-			key_changeCategory = "Page",
-			key_changeTitle = "Test Page",
-			locator1 = "PublicationsChanges#PUBLICATIONS_CHANGE_DROPDOWN");
-
-		MenuItem.click(menuItem = "Discard Change");
-
-		AssertElementPresent(
-			key_changeTitle = "Test Page",
-			locator1 = "PublicationsChanges#CONTEXT_CHANGE_TITLE");
-
-		AssertElementNotPresent(
-			key_changeTitle = "Child Page",
-			locator1 = "PublicationsChanges#CONTEXT_CHANGE_TITLE");
 	}
 
 	@description = "This is the use case for LPS-158789."

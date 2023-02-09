@@ -19,6 +19,7 @@ import {useSetFormValidations} from '../contexts/FormValidationContext';
 import {useGlobalContext} from '../contexts/GlobalContext';
 import {useSelectorRef} from '../contexts/StoreContext';
 import FormService from '../services/FormService';
+import {formIsRestricted} from '../utils/formIsRestricted';
 import {CACHE_KEYS, getCacheItem, getCacheKey} from './cache';
 import {getDescendantIds} from './getDescendantIds';
 import {FORM_ERROR_TYPES} from './getFormErrorDescription';
@@ -145,6 +146,10 @@ export default function useCheckFormsValidity() {
 }
 
 function addError(validations, formItem, type) {
+	if (Liferay.FeatureFlags['LPS-169923'] && formIsRestricted(formItem)) {
+		return;
+	}
+
 	const formValidation = validations.get(formItem.itemId);
 	const errors = formValidation ? formValidation.errors : [];
 	const nextFormErrors = [...errors, type];
@@ -204,9 +209,11 @@ async function checkUnmappedInputChild(
 			}
 		);
 
-		const isCaptcha = allowedFieldTypes.includes('captcha');
+		const isSpecialFieldType =
+			allowedFieldTypes.includes('captcha') ||
+			allowedFieldTypes.includes('categorization');
 
-		if (isCaptcha) {
+		if (isSpecialFieldType) {
 			continue;
 		}
 

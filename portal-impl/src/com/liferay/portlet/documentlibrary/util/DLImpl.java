@@ -14,6 +14,7 @@
 
 package com.liferay.portlet.documentlibrary.util;
 
+import com.liferay.document.library.kernel.exception.InvalidFolderException;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFileEntryConstants;
 import com.liferay.document.library.kernel.model.DLFileEntryType;
@@ -63,6 +64,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
@@ -136,19 +138,34 @@ public class DLImpl implements DL {
 	}
 
 	@Override
-	public String getAbsolutePath(PortletRequest portletRequest, long folderId)
+	public String getAbsolutePath(
+			PortletRequest portletRequest, long rootFolderId, long folderId)
 		throws PortalException {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		if (folderId == DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
+		if ((folderId == DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) ||
+			(rootFolderId == folderId)) {
+
 			return themeDisplay.translate("home");
 		}
 
 		Folder folder = DLAppLocalServiceUtil.getFolder(folderId);
 
 		List<Folder> folders = folder.getAncestors();
+
+		if (rootFolderId != DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
+			Folder rootFolder = DLAppLocalServiceUtil.getFolder(rootFolderId);
+
+			if (!folders.contains(rootFolder)) {
+				throw new InvalidFolderException(
+					InvalidFolderException.INVALID_ROOT_FOLDER,
+					rootFolderId);
+			}
+
+			folders = ListUtil.subList(folders, 0, folders.indexOf(rootFolder));
+		}
 
 		Collections.reverse(folders);
 

@@ -27,7 +27,7 @@
 </tr>
 <tr>
 	<td>PROCESS_DETAILS</td>
-	<td>//dt[contains(text(), '${key_titleValue}')]/following::dd[contains(text(), 'PM') or contains(text(), 'AM')][1]</td>
+	<td>//label[contains(@class,'text-secondary') and contains(.,'${key_titleValue}')]/../span[contains(text(), 'PM') or contains(text(), 'AM')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -37,7 +37,7 @@
 </tr>
 <tr>
 	<td>PROCESS_DETAILS_REVISION_BY_ROW</td>
-	<td>//*[contains(@class, 'list-group-item list-group-item-flex')][${key_rowNumber}]//div[contains(text(),'AM') or contains(text(),'PM')]</td>
+	<td>//div[@class='info-group']//label[contains(text() ,'Current Version') and contains(.,'${key_rowNumber}')]</td>
 	<td></td>
 </tr>
 <tr>

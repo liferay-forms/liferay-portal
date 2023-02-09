@@ -31,6 +31,8 @@
 				onClick="<%= onClick %>"
 			</c:if>
 
+			role="button"
+
 			<%= AUIUtil.buildData(data) %>
 			<%= InlineUtil.buildDynamicAttributes(dynamicAttributes) %>
 		>

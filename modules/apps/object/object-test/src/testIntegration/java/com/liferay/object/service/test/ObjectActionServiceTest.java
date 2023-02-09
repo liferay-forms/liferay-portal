@@ -23,7 +23,6 @@ import com.liferay.object.service.ObjectActionLocalService;
 import com.liferay.object.service.ObjectActionService;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.test.util.ObjectDefinitionTestUtil;
-import com.liferay.object.util.LocalizedMapUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
@@ -40,6 +39,7 @@ import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -155,8 +155,9 @@ public class ObjectActionServiceTest {
 
 	private ObjectAction _addObjectAction(User user) throws Exception {
 		return _objectActionLocalService.addObjectAction(
-			user.getUserId(), _objectDefinition.getObjectDefinitionId(), true,
-			StringPool.BLANK, RandomTestUtil.randomString(),
+			RandomTestUtil.randomString(), user.getUserId(),
+			_objectDefinition.getObjectDefinitionId(), true, StringPool.BLANK,
+			RandomTestUtil.randomString(),
 			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 			RandomTestUtil.randomString(),
@@ -181,6 +182,7 @@ public class ObjectActionServiceTest {
 			_setUser(user);
 
 			objectAction = _objectActionService.addObjectAction(
+				RandomTestUtil.randomString(),
 				_objectDefinition.getObjectDefinitionId(), true,
 				StringPool.BLANK, RandomTestUtil.randomString(),
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
@@ -245,8 +247,8 @@ public class ObjectActionServiceTest {
 			objectAction = _addObjectAction(user);
 
 			objectAction = _objectActionService.updateObjectAction(
-				objectAction.getObjectActionId(), true, StringPool.BLANK,
-				RandomTestUtil.randomString(),
+				RandomTestUtil.randomString(), objectAction.getObjectActionId(),
+				true, StringPool.BLANK, RandomTestUtil.randomString(),
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				RandomTestUtil.randomString(),

@@ -189,12 +189,16 @@ definition {
 			locator1 = "CommerceEntry#PAYMENT_METHODS_SIDE_PANEL_NAV_ITEMS",
 			navItem = "Configuration");
 
-		for (var labels : list "URL,Key,Password,Account Number,Meter Number") {
+		for (var labels : list "URL,Key,Account Number,Meter Number") {
 			Type(
 				key_fieldLabel = "${labels}",
 				locator1 = "TextInput#GENERIC_TEXT_INPUT",
 				value1 = "Test");
 		}
+
+		Type(
+			locator1 = "TextInput#PASSWORD_TYPE",
+			value1 = "Test");
 
 		for (var key_value : list "FedEx Europe First International Priority,FedEx 1Day Freight,FedEx 2Day,FedEx 2Day AM,FedEx 2Day Freight,FedEx 3Day Freight,FedEx Distance Deferred,FedEx Express Saver,FedEx First Freight,FedEx Freight Economy,FedEx Freight Priority,FedEx Ground,FedEx Next Day Afternoon,FedEx Next Day Early Morning,FedEx Next Day End of Day,FedEx Next Day Freight,FedEx Next Day Mid-Morning,FedEx First Overnight,FedEx Ground Home Delivery,FedEx International Economy,FedEx International Economy Freight,FedEx International First,FedEx International Priority,FedEx International Priority Express,FedEx International Priority Freight,FedEx Priority Overnight,FedEx Same Day,FedEx Same Day City,FedEx SmartPost,FedEx Standard Overnight") {
 			Check.checkToggleSwitch(
@@ -736,7 +740,7 @@ definition {
 							locator1 = "LexiconTable#TABLE_ENTRY");
 					}
 
-					Click(locator1 = "Pagination#NEXT_LINK");
+					Click(locator1 = "ACUtils#NEXT_PAGES");
 
 					CommerceEntry.viewPaginationResults(results = "Showing 5 to 8 of 247");
 
@@ -750,7 +754,7 @@ definition {
 							locator1 = "LexiconTable#TABLE_ENTRY");
 					}
 
-					Click(locator1 = "Pagination#PREVIOUS_LINK");
+					Click(locator1 = "ACUtils#PREVIOUS_PAGES");
 
 					AssertElementNotPresent(
 						key_rowNumber = "5",
@@ -839,6 +843,90 @@ definition {
 				key_entryName = "",
 				key_table = "Delivery Terms",
 				locator1 = "CommerceEntry#TABLE_ELIGIBILITY_ENTRY");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-10602. Verify that the user can see the channel entries only if the 'Channels > Commerce Channel: View' is present"
+	@priority = "3"
+	test CanUserWithChannelViewPermissionSeeChannelEntries {
+		property custom.properties = "jsonws.web.service.paths.excludes=${line.separator}company.security.strangers.verify=false";
+
+		task ("Given the User role has all the required permissions to see the product and channel") {
+			CommercePermissions.defineChannelPermissionsViaJSONAPI(
+				roleTitle = "User",
+				view = "true");
+
+			CommercePermissions.defineProductPermissionsViaJSONAPI(
+				roleTitle = "User",
+				view = "true");
+		}
+
+		task ("Given a buyer user is created") {
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("When the buyer reach the Channels section") {
+			User.logoutPG();
+
+			User.firstLoginPG(userEmailAddress = "buyer@liferay.com");
+
+			CommerceChannels.openChannelsAdmin();
+		}
+
+		task ("Then the buyer will see 'Minium Portal' entry") {
+			AssertElementPresent(
+				key_productName = "Minium Portal",
+				locator1 = "CommerceOrders#ORDER_DETAILS_PRODUCT_NAME");
+		}
+
+		task ("And when the buyer reach the visibility tab for a product inside the Products section") {
+			CommerceProducts.openProductsAdmin();
+
+			AppBuilderAdmin.searchByItem(itemName = "ABS Sensor");
+
+			CommerceNavigator.gotoEntry(entryName = "ABS Sensor");
+
+			CommerceEntry.gotoMenuTab(menuTab = "Visibility");
+		}
+
+		task ("Then the buyer will see 'Minium Portal' entry") {
+			AssertElementPresent(
+				key_productName = "Minium Portal",
+				locator1 = "CommerceOrders#ORDER_DETAILS_PRODUCT_NAME");
+		}
+
+		task ("But when the VIEW Channel permission is removed") {
+			Permissions.removePermissionViaAPI(
+				resourceAction = "VIEW",
+				resourceName = "com.liferay.commerce.product.model.CommerceChannel",
+				roleTitle = "User");
+		}
+
+		task ("Then for both Channels and Product Visibility the entry 'Minium Portal' is not present anymore") {
+			CommerceEntry.gotoMenuTab(menuTab = "Details");
+
+			CommerceEntry.gotoMenuTab(menuTab = "Visibility");
+
+			AssertElementNotPresent(
+				key_productName = "Minium Portal",
+				locator1 = "CommerceOrders#ORDER_DETAILS_PRODUCT_NAME");
+
+			CommerceChannels.openChannelsAdmin();
+
+			AssertElementNotPresent(
+				key_productName = "Minium Portal",
+				locator1 = "CommerceOrders#ORDER_DETAILS_PRODUCT_NAME");
 		}
 	}
 

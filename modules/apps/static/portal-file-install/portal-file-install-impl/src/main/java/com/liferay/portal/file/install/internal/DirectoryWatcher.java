@@ -30,6 +30,7 @@ import com.liferay.portal.util.PropsValues;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.InputStream;
 
 import java.net.URI;
@@ -87,7 +88,10 @@ public class DirectoryWatcher extends Thread implements BundleListener {
 			Constants.SYSTEM_BUNDLE_LOCATION);
 
 		for (String dir : PropsValues.MODULE_FRAMEWORK_AUTO_DEPLOY_DIRS) {
-			_watchedDirs.add(new File(dir));
+			String filePath = Util.getFilePath(dir);
+
+			_watchedDirPaths.add(filePath);
+			_watchedDirs.add(new File(filePath));
 		}
 
 		_fileInstallers = ServiceTrackerListFactory.open(
@@ -129,8 +133,29 @@ public class DirectoryWatcher extends Thread implements BundleListener {
 
 			});
 
+		if (!Validator.isBlank(
+				PropsValues.MODULE_FRAMEWORK_FILE_INSTALL_FILTER)) {
+
+			_filenameFilter = new FilenameFilter() {
+
+				@Override
+				public boolean accept(File dir, String name) {
+					Matcher matcher = _pattern.matcher(name);
+
+					return matcher.matches();
+				}
+
+				private final Pattern _pattern = Pattern.compile(
+					PropsValues.MODULE_FRAMEWORK_FILE_INSTALL_FILTER);
+
+			};
+		}
+		else {
+			_filenameFilter = (dir, name) -> true;
+		}
+
 		_scanner = new Scanner(
-			_watchedDirs, PropsValues.MODULE_FRAMEWORK_FILE_INSTALL_FILTER,
+			_watchedDirs, _filenameFilter,
 			PropsValues.MODULE_FRAMEWORK_FILE_INSTALL_SUBDIR_MODE);
 
 		_bundleContext.addBundleListener(this);
@@ -515,35 +540,10 @@ public class DirectoryWatcher extends Thread implements BundleListener {
 		return fragmentHost;
 	}
 
-	private List<String> _getWatchedDirPaths() {
-		List<String> watchedDirPaths = new ArrayList<>();
-
-		for (File watchedDir : _watchedDirs) {
-			URI uri = watchedDir.toURI();
-
-			uri = uri.normalize();
-
-			watchedDirPaths.add(uri.getPath());
-		}
-
-		return watchedDirPaths;
-	}
-
 	private void _initializeCurrentManagedBundles() {
 		Bundle[] bundles = _bundleContext.getBundles();
 
 		Map<File, Long> checksums = new HashMap<>();
-
-		Pattern filePattern = null;
-
-		if (!Validator.isBlank(
-				PropsValues.MODULE_FRAMEWORK_FILE_INSTALL_FILTER)) {
-
-			filePattern = Pattern.compile(
-				PropsValues.MODULE_FRAMEWORK_FILE_INSTALL_FILTER);
-		}
-
-		List<String> watchedDirPaths = _getWatchedDirPaths();
 
 		for (Bundle bundle : bundles) {
 			String location = bundle.getLocation();
@@ -575,7 +575,7 @@ public class DirectoryWatcher extends Thread implements BundleListener {
 			String path = null;
 
 			if ((location != null) &&
-				_contains(locationPath, watchedDirPaths)) {
+				_contains(locationPath, _watchedDirPaths)) {
 
 				String schemeSpecificPart = uri.getSchemeSpecificPart();
 
@@ -613,15 +613,12 @@ public class DirectoryWatcher extends Thread implements BundleListener {
 
 			int index = path.lastIndexOf(CharPool.SLASH);
 
-			if ((index != -1) && _startWith(path, watchedDirPaths)) {
-				String fileName = path.substring(index + 1);
+			if ((index != -1) && _startWith(path, _watchedDirPaths)) {
+				if (!_filenameFilter.accept(
+						new File(path.substring(0, index)),
+						path.substring(index + 1))) {
 
-				if (filePattern != null) {
-					Matcher matcher = filePattern.matcher(fileName);
-
-					if (!matcher.matches()) {
-						continue;
-					}
+					continue;
 				}
 
 				Artifact artifact = new Artifact();
@@ -1367,12 +1364,14 @@ public class DirectoryWatcher extends Thread implements BundleListener {
 		new HashMap<>();
 	private final Set<Bundle> _delayedStart = new HashSet<>();
 	private final ServiceTrackerList<FileInstaller> _fileInstallers;
+	private final FilenameFilter _filenameFilter;
 	private int _frameworkStartLevel;
 	private final Map<File, Artifact> _installationFailures = new HashMap<>();
 	private final Set<File> _processingFailures = new HashSet<>();
 	private final Scanner _scanner;
 	private final AtomicBoolean _stateChanged = new AtomicBoolean();
 	private final Bundle _systemBundle;
+	private final List<String> _watchedDirPaths = new ArrayList<>();
 	private final List<File> _watchedDirs = new ArrayList<>();
 
 }

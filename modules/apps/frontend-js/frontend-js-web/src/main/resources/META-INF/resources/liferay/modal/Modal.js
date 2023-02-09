@@ -44,6 +44,7 @@ const Modal = ({
 	iframeProps = {},
 	onClose,
 	onOpen,
+	role = 'dialog',
 	size,
 	status,
 	title,
@@ -78,6 +79,21 @@ const Modal = ({
 	});
 
 	const onButtonClick = ({formId, onClick, type}) => {
+		const submitForm = (form) => {
+			if (form.requestSubmit) {
+				form.requestSubmit();
+			}
+			else {
+				const accepted = form.dispatchEvent(
+					new Event('submit', {cancelable: true})
+				);
+
+				if (accepted) {
+					form.submit();
+				}
+			}
+		};
+
 		if (type === 'cancel') {
 			processClose();
 		}
@@ -100,11 +116,11 @@ const Modal = ({
 					const form = iframeDocument.getElementById(formId);
 
 					if (form) {
-						form.submit();
+						submitForm(form);
 					}
 				}
 				else if (forms.length >= 1) {
-					forms[0].submit();
+					submitForm(forms[0]);
 				}
 			}
 		}
@@ -135,7 +151,7 @@ const Modal = ({
 
 		return (
 			<div className="liferay-modal-body" ref={bodyRef}>
-				{BodyComponent && <BodyComponent />}
+				{BodyComponent && <BodyComponent closeModal={processClose} />}
 			</div>
 		);
 	};
@@ -191,7 +207,7 @@ const Modal = ({
 					disableAutoClose={disableAutoClose}
 					id={id}
 					observer={observer}
-					role="dialog"
+					role={role}
 					size={url && !size ? 'full-screen' : size}
 					status={status}
 					zIndex={zIndex}
@@ -599,8 +615,10 @@ class Iframe extends React.Component {
 	}
 
 	componentWillUnmount() {
-		if (this.beforeScreenFlipHandler) {
-			Liferay.detach(this.beforeScreenFlipHandler);
+		if (this.spaNavigationHandlers) {
+			this.spaNavigationHandlers.forEach((handler) => {
+				Liferay.detach(handler);
+			});
 		}
 
 		if (this.delegateHandlers.length) {
@@ -629,14 +647,24 @@ class Iframe extends React.Component {
 		iframeWindow.document.body.classList.add(CSS_CLASS_IFRAME_BODY);
 
 		if (iframeWindow.Liferay.SPA) {
-			this.beforeScreenFlipHandler = iframeWindow.Liferay.on(
-				'beforeScreenFlip',
-				() => {
+			this.spaNavigationHandlers = [
+				iframeWindow.Liferay.on('beforeScreenFlip', () => {
 					iframeWindow.document.body.classList.add(
 						CSS_CLASS_IFRAME_BODY
 					);
-				}
-			);
+				}),
+			];
+
+			if (this.props.onOpen) {
+				this.spaNavigationHandlers.push(
+					iframeWindow.Liferay.on('screenFlip', () => {
+						this.props.onOpen({
+							iframeWindow,
+							processClose: this.props.processClose,
+						});
+					})
+				);
+			}
 		}
 
 		this.props.updateLoading(false);
@@ -673,6 +701,7 @@ Modal.propTypes = {
 	buttons: PropTypes.arrayOf(
 		PropTypes.shape({
 			displayType: PropTypes.oneOf([
+				'danger',
 				'link',
 				'primary',
 				'secondary',
@@ -700,7 +729,9 @@ Modal.propTypes = {
 	iframeProps: PropTypes.object,
 	onClose: PropTypes.func,
 	onOpen: PropTypes.func,
+	role: PropTypes.string,
 	size: PropTypes.oneOf(['full-screen', 'lg', 'md', 'sm']),
+	status: PropTypes.string,
 	title: PropTypes.string,
 	url: PropTypes.string,
 };

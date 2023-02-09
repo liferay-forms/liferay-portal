@@ -17,7 +17,6 @@ import {LiferayAPIs} from '../../common/enums/apis';
 import LiferayItems from '../../common/interfaces/liferayItems';
 import liferayFetcher from '../../common/utils/fetcher';
 import {ResourceName} from '../enum/resourceName';
-
 export default function useGetDealRegistration(
 	apiOption: ResourceName,
 	page: number,
@@ -28,7 +27,7 @@ export default function useGetDealRegistration(
 	return useSWR(
 		[
 			`/o/${LiferayAPIs.OBJECT}/${apiOption}?${filtersTerm}&page=${page}&pageSize=${pageSize}&sort=${sort}
-			`,
+			 `,
 			Liferay.authToken,
 		],
 		(url, token) =>

@@ -12,19 +12,50 @@
  * details.
  */
 
+import ClayAlert from '@clayui/alert';
 import ClayButton from '@clayui/button';
 import {openToast} from 'frontend-js-web';
-import React from 'react';
+import React, {useState} from 'react';
+
+function ToastAlert10Secs({
+	autoClose,
+	buttonText,
+	displayType,
+	message,
+	onButtonClick,
+	onClose,
+	title,
+}) {
+	return (
+		<ClayAlert.ToastContainer id="ToastAlertContainer">
+			<ClayAlert
+				autoClose={autoClose}
+				displayType={displayType}
+				onClose={() => onClose()}
+				title={title}
+			>
+				<a href={themeDisplay.getURLHome()}>{message}</a>
+
+				<ClayAlert.Footer>
+					<ClayButton.Group>
+						<ClayButton alert onClick={() => onButtonClick()}>
+							{buttonText}
+						</ClayButton>
+					</ClayButton.Group>
+				</ClayAlert.Footer>
+			</ClayAlert>
+		</ClayAlert.ToastContainer>
+	);
+}
 
 export default function ClaySampleToastAlert() {
-	const onClickSuccess = () => {
+	const [showAlert, setShowAlert] = useState(false);
+	const onClick5Seconds = () => {
 		openToast({
-			autoClose: false,
 			message: Liferay.Language.get(
 				'your-request-completed-successfully'
 			),
-			title: Liferay.Language.get('success'),
-			type: 'success',
+			type: 'info',
 		});
 	};
 
@@ -37,9 +68,34 @@ export default function ClaySampleToastAlert() {
 		});
 	};
 
+	const onClickSuccess = () => {
+		openToast({
+			autoClose: false,
+			message: Liferay.Language.get(
+				'your-request-completed-successfully'
+			),
+			title: Liferay.Language.get('success'),
+			type: 'success',
+		});
+	};
+
 	return (
 		<div data-qa-id="claySampleToastAlert">
 			<h3>TOAST ALERT MESSAGE</h3>
+
+			{showAlert && (
+				<ToastAlert10Secs
+					autoClose={10000}
+					buttonText="Button"
+					displayType="info"
+					message="This toast alert with action button should disappear after 10 seconds"
+					onButtonClick={() => {
+						Liferay.Util.navigate(themeDisplay.getURLHome());
+					}}
+					onClose={() => setShowAlert(false)}
+					title="Info:"
+				/>
+			)}
 
 			<div className="sheet-footer">
 				<ClayButton.Group spaced>
@@ -53,6 +109,17 @@ export default function ClaySampleToastAlert() {
 						type="submit"
 					>
 						{Liferay.Language.get('fail-submit')}
+					</ClayButton>
+
+					<ClayButton onClick={onClick5Seconds} type="submit">
+						{Liferay.Language.get('disappear-after-5-secs')}
+					</ClayButton>
+
+					<ClayButton
+						onClick={() => setShowAlert(true)}
+						type="submit"
+					>
+						{Liferay.Language.get('disappear-after-10-secs')}
 					</ClayButton>
 				</ClayButton.Group>
 			</div>

@@ -14,6 +14,8 @@
 
 package com.liferay.segments.experiment.web.internal.portlet.action;
 
+import com.liferay.analytics.settings.configuration.AnalyticsConfiguration;
+import com.liferay.analytics.settings.rest.manager.AnalyticsSettingsManager;
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortletKeys;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
@@ -27,6 +29,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
+import com.liferay.portal.kernel.portlet.PortletURLFactory;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCResourceCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
@@ -59,7 +62,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -67,7 +69,6 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	configurationPid = "com.liferay.segments.experiment.web.internal.configuration.SegmentsExperimentConfiguration",
-	configurationPolicy = ConfigurationPolicy.OPTIONAL,
 	property = {
 		"javax.portlet.name=" + SegmentsPortletKeys.SEGMENTS_EXPERIMENT,
 		"mvc.command.name=/segments_experiment/get_data"
@@ -106,13 +107,12 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 				JSONUtil.put(
 					"context",
 					_getContextJSONObject(
-						backURL, layout,
-						_portal.getHttpServletRequest(resourceRequest),
-						redirect, segmentsExperienceId)
+						backURL, layout, httpServletRequest, redirect,
+						segmentsExperienceId)
 				).put(
 					"props",
 					_getPropsJSONObject(
-						_portal.getHttpServletRequest(resourceRequest), layout,
+						httpServletRequest, layout,
 						_portal.getLocale(httpServletRequest), redirect,
 						segmentsExperienceId)
 				));
@@ -160,12 +160,12 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 			JSONUtil.put(
 				"calculateSegmentsExperimentEstimatedDurationURL",
 				_getSegmentsExperimentActionURL(
-					"/calculate_segments_experiment_estimated_duration", group,
+					"/calculate_segments_experiment_estimated_duration",
 					httpServletRequest)
 			).put(
 				"createSegmentsExperimentURL",
 				_getSegmentsExperimentActionURL(
-					"/segments_experiment/add_segments_experiment", group,
+					"/segments_experiment/add_segments_experiment",
 					httpServletRequest)
 			).put(
 				"createSegmentsVariantURL",
@@ -197,22 +197,22 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 			).put(
 				"deleteSegmentsExperimentURL",
 				_getSegmentsExperimentActionURL(
-					"/segments_experiment/delete_segments_experiment", group,
+					"/segments_experiment/delete_segments_experiment",
 					httpServletRequest)
 			).put(
 				"deleteSegmentsVariantURL",
 				_getSegmentsExperimentActionURL(
 					"/segments_experiment/delete_segments_experiment_rel",
-					group, httpServletRequest)
+					httpServletRequest)
 			).put(
 				"editSegmentsExperimentStatusURL",
 				_getSegmentsExperimentActionURL(
 					"/segments_experiment/edit_segments_experiment_status",
-					group, httpServletRequest)
+					httpServletRequest)
 			).put(
 				"editSegmentsExperimentURL",
 				_getSegmentsExperimentActionURL(
-					"/segments_experiment/edit_segments_experiment", group,
+					"/segments_experiment/edit_segments_experiment",
 					httpServletRequest)
 			).put(
 				"editSegmentsVariantLayoutURL",
@@ -221,12 +221,12 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 			).put(
 				"editSegmentsVariantURL",
 				_getSegmentsExperimentActionURL(
-					"/segments_experiment/edit_segments_experiment_rel", group,
+					"/segments_experiment/edit_segments_experiment_rel",
 					httpServletRequest)
 			).put(
 				"runSegmentsExperimentURL",
 				_getSegmentsExperimentActionURL(
-					"/segments_experiment/run_segments_experiment", group,
+					"/segments_experiment/run_segments_experiment",
 					httpServletRequest)
 			)
 		).put(
@@ -290,6 +290,10 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 
 		Group group = layout.getGroup();
 
+		AnalyticsConfiguration analyticsConfiguration =
+			_analyticsSettingsManager.getAnalyticsConfiguration(
+				group.getCompanyId());
+
 		return JSONUtil.put(
 			"analyticsData",
 			JSONUtil.put(
@@ -297,11 +301,11 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 				SegmentsExperimentUtil.ANALYTICS_CLOUD_TRIAL_URL
 			).put(
 				"isConnected",
-				SegmentsExperimentUtil.isAnalyticsConnected(
+				_analyticsSettingsManager.isAnalyticsEnabled(
 					group.getCompanyId())
 			).put(
 				"isSynced",
-				SegmentsExperimentUtil.isAnalyticsSynced(
+				_analyticsSettingsManager.isSiteIdSynced(
 					group.getCompanyId(), _getLiveGroupId(group.getGroupId()))
 			).put(
 				"url",
@@ -311,9 +315,8 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 		).put(
 			"hideSegmentsExperimentPanelURL",
 			PortletURLBuilder.create(
-				_portal.getControlPanelPortletURL(
-					httpServletRequest, group,
-					SegmentsPortletKeys.SEGMENTS_EXPERIMENT, 0, 0,
+				_portletURLFactory.create(
+					httpServletRequest, SegmentsPortletKeys.SEGMENTS_EXPERIMENT,
 					PortletRequest.ACTION_PHASE)
 			).setActionName(
 				"/segments_experiment/hide_segments_experiment_panel"
@@ -333,7 +336,7 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 					new SegmentsExperimentModifiedDateComparator()),
 				segmentsExperiment ->
 					SegmentsExperimentUtil.toSegmentsExperimentJSONObject(
-						locale, segmentsExperiment))
+						analyticsConfiguration, locale, segmentsExperiment))
 		).put(
 			"initialSegmentsVariants",
 			() -> {
@@ -371,7 +374,7 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 				).put(
 					"segmentsExperiment",
 					SegmentsExperimentUtil.toSegmentsExperimentJSONObject(
-						locale,
+						analyticsConfiguration, locale,
 						_fetchSegmentsExperiment(
 							layout,
 							segmentsExperience.getSegmentsExperienceId()))
@@ -379,7 +382,8 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 		).put(
 			"segmentsExperiment",
 			SegmentsExperimentUtil.toSegmentsExperimentJSONObject(
-				locale, _fetchSegmentsExperiment(layout, segmentsExperienceId))
+				analyticsConfiguration, locale,
+				_fetchSegmentsExperiment(layout, segmentsExperienceId))
 		).put(
 			"segmentsExperimentGoals",
 			JSONUtil.toJSONArray(
@@ -423,12 +427,11 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 	}
 
 	private String _getSegmentsExperimentActionURL(
-		String action, Group group, HttpServletRequest httpServletRequest) {
+		String action, HttpServletRequest httpServletRequest) {
 
 		return PortletURLBuilder.create(
-			_portal.getControlPanelPortletURL(
-				httpServletRequest, group,
-				SegmentsPortletKeys.SEGMENTS_EXPERIMENT, 0, 0,
+			_portletURLFactory.create(
+				httpServletRequest, SegmentsPortletKeys.SEGMENTS_EXPERIMENT,
 				PortletRequest.ACTION_PHASE)
 		).setActionName(
 			action
@@ -441,6 +444,9 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 		GetDataMVCResourceCommand.class);
 
 	@Reference
+	private AnalyticsSettingsManager _analyticsSettingsManager;
+
+	@Reference
 	private JSONFactory _jsonFactory;
 
 	@Reference
@@ -451,6 +457,9 @@ public class GetDataMVCResourceCommand extends BaseMVCResourceCommand {
 
 	@Reference
 	private Portal _portal;
+
+	@Reference
+	private PortletURLFactory _portletURLFactory;
 
 	@Reference
 	private SegmentsExperienceService _segmentsExperienceService;

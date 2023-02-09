@@ -42,12 +42,7 @@ type SubtaskCardProps = {
 };
 
 const TaskBadge: React.FC<TaskBadgeProps> = ({className, count}) => (
-	<span
-		className={classNames(
-			'align-items-center d-flex justify-content-center quantity-task-badge',
-			className
-		)}
-	>
+	<span className={classNames('quantity-task-badge', className)}>
 		{count}
 	</span>
 );
@@ -57,13 +52,17 @@ const SubtaskCard: React.FC<SubtaskCardProps> = ({subtask, taskId}) => (
 		className="align-items-center d-flex justify-content-between subtask-sidebar text-nowrap"
 		to={`testflow/${taskId}/subtasks/${subtask?.id}`}
 	>
-		<span className="" style={{float: 'left'}}>
-			{subtask.name}
-		</span>
+		<div className="col-4">
+			<span>{subtask.name}</span>
+		</div>
 
-		<span className="d-flex">{i18n.translate('score')}</span>
+		<div className="col-8 d-flex justify-content-end overflow-hidden">
+			<span className="ellipsis-text mr-2">
+				{i18n.translate('score')}
+			</span>
 
-		<span>{subtask.score}</span>
+			<span className="ellipsis-text">{subtask.score}</span>
+		</div>
 	</Link>
 );
 
@@ -88,32 +87,36 @@ const TaskSidebar: React.FC<TaskSidebarProps> = ({expanded}) => {
 			<div
 				className={classNames('d-flex sticky-top task-sidebar-title', {
 					'task-sidebar-title-expanded': expanded,
-					'task-sidebar-title-hidden ': !expanded,
+					'task-sidebar-title-hidden': !expanded,
 				})}
 			>
-				<div
-					className={classNames(
-						'd-flex flex-row justify-content-between',
-						sidebarVisibility
-					)}
-				>
-					<span>{i18n.translate('tasks')}</span>
+				<Tooltip position="right" title={i18n.translate('tasks')}>
+					<div
+						className={classNames(
+							'd-flex flex-row justify-content-between',
+							sidebarVisibility
+						)}
+					>
+						<span>{i18n.translate('tasks')}</span>
 
-					<TaskBadge count={tasks.length} />
-				</div>
+						<TaskBadge className="mr-4 p-3" count={tasks.length} />
+					</div>
 
-				<div
-					className={classNames('mt-3 notification', {
-						'notification-hide': expanded,
-						'notification-show': !expanded,
-					})}
-				>
-					<ClayIcon symbol="blogs" />
+					<div
+						className={classNames('notification', {
+							'notification-hide': expanded,
+							'notification-show': !expanded,
+						})}
+					>
+						<ClayIcon fontSize={20} symbol="blogs" />
 
-					<span className="task-sidebar-notification">
-						{tasks.length}
-					</span>
-				</div>
+						{!!tasks.length && (
+							<span className="task-sidebar-notification">
+								{tasks.length}
+							</span>
+						)}
+					</div>
+				</Tooltip>
 			</div>
 
 			<ul className="list-unstyled">
@@ -125,27 +128,29 @@ const TaskSidebar: React.FC<TaskSidebarProps> = ({expanded}) => {
 						<Tooltip position="right" title={task?.name}>
 							<Link
 								className={classNames(
-									'sidebar-link d-flex mb-2',
+									'sidebar-link mb-4 ',
 									sidebarVisibility
 								)}
 								to={`testflow/${task?.id}`}
 							>
-								<TaskBadge
-									className={classNames({
-										'mr-2': expanded,
-									})}
-									count={task?.subTasks?.length as number}
-								/>
+								<p className="ellipsis-text">
+									<TaskBadge
+										count={task?.subTasks?.length as number}
+									/>
 
-								{task?.name}
+									<span className="ml-2">{task?.name}</span>
+								</p>
 							</Link>
 						</Tooltip>
 
 						<Tooltip position="right" title={task?.build?.name}>
 							<Link
+								className="mt-3"
 								to={`/project/${task?.build?.project?.id}/routines/${task?.build?.routine?.id}/build/${task?.build?.id}`}
 							>
-								{task?.build?.name}
+								<p className="ellipsis-text">
+									{task?.build?.name}
+								</p>
 							</Link>
 						</Tooltip>
 
@@ -166,7 +171,8 @@ const TaskSidebar: React.FC<TaskSidebarProps> = ({expanded}) => {
 									[
 										StatusesProgressScore.INCOMPLETE,
 										Number(
-											task?.subtaskScoreIncomplete ?? 0
+											task?.subtaskScoreSelfIncomplete ??
+												0
 										),
 									],
 								]}

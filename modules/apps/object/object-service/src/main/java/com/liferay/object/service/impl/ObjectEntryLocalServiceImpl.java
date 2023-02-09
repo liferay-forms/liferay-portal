@@ -131,6 +131,7 @@ import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.security.permission.InlineSQLHelper;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
@@ -256,12 +257,12 @@ public class ObjectEntryLocalServiceImpl
 		objectEntry.setStatusByUserId(user.getUserId());
 		objectEntry.setStatusDate(serviceContext.getModifiedDate(null));
 
-		objectEntry = objectEntryPersistence.update(objectEntry);
-
 		_resourceLocalService.addResources(
 			objectEntry.getCompanyId(), objectEntry.getGroupId(),
 			objectEntry.getUserId(), objectDefinition.getClassName(),
 			objectEntry.getPrimaryKey(), false, false, false);
+
+		objectEntry = objectEntryPersistence.update(objectEntry);
 
 		updateAsset(
 			serviceContext.getUserId(), objectEntry,
@@ -966,9 +967,6 @@ public class ObjectEntryLocalServiceImpl
 						return ObjectEntryTable.INSTANCE.groupId.eq(groupId);
 					}
 				).and(
-					_fillAccountEntriesPredicate(
-						companyId, userId, objectDefinitionId)
-				).and(
 					_fillPredicate(objectDefinitionId, predicate, search)
 				).and(
 					_getPermissionWherePredicate(
@@ -1027,9 +1025,6 @@ public class ObjectEntryLocalServiceImpl
 
 					return ObjectEntryTable.INSTANCE.groupId.eq(groupId);
 				}
-			).and(
-				_fillAccountEntriesPredicate(
-					companyId, userId, objectDefinitionId)
 			).and(
 				_fillPredicate(objectDefinitionId, predicate, search)
 			).and(
@@ -1532,111 +1527,6 @@ public class ObjectEntryLocalServiceImpl
 		FinderCacheUtil.clearDSLQueryCache(dbTableName);
 	}
 
-	private Predicate _fillAccountEntriesPredicate(
-			long companyId, long userId, long objectDefinitionId)
-		throws PortalException {
-
-		ObjectDefinition objectDefinition =
-			_objectDefinitionPersistence.findByPrimaryKey(objectDefinitionId);
-
-		if (!objectDefinition.isAccountEntryRestricted()) {
-			return null;
-		}
-
-		ObjectField objectField = _objectFieldLocalService.getObjectField(
-			objectDefinition.getAccountEntryRestrictedObjectFieldId());
-
-		Table<?> table = _objectFieldLocalService.getTable(
-			objectDefinition.getObjectDefinitionId(), objectField.getName());
-
-		Column<?, Long> column = (Column<?, Long>)table.getColumn(
-			objectField.getDBColumnName());
-
-		JoinStep joinStep = DSLQueryFactoryUtil.select(
-			AccountEntryTable.INSTANCE.accountEntryId
-		).from(
-			AccountEntryTable.INSTANCE
-		);
-
-		if (_roleLocalService.hasUserRole(
-				userId, companyId, RoleConstants.ADMINISTRATOR, true)) {
-
-			return column.in(
-				joinStep.where(
-					AccountEntryTable.INSTANCE.companyId.eq(
-						companyId
-					).and(
-						AccountEntryTable.INSTANCE.status.eq(
-							WorkflowConstants.STATUS_APPROVED)
-					)));
-		}
-
-		Table<OrganizationTable> tempOrganizationTable =
-			DSLQueryFactoryUtil.select(
-				OrganizationTable.INSTANCE.companyId,
-				OrganizationTable.INSTANCE.treePath
-			).from(
-				OrganizationTable.INSTANCE
-			).innerJoinON(
-				Users_OrgsTable.INSTANCE,
-				Users_OrgsTable.INSTANCE.organizationId.eq(
-					OrganizationTable.INSTANCE.organizationId)
-			).where(
-				Users_OrgsTable.INSTANCE.userId.eq(userId)
-			).as(
-				"tempOrganizationTable", OrganizationTable.INSTANCE
-			);
-
-		return column.in(
-			joinStep.innerJoinON(
-				AccountEntryOrganizationRelTable.INSTANCE,
-				AccountEntryOrganizationRelTable.INSTANCE.accountEntryId.eq(
-					AccountEntryTable.INSTANCE.accountEntryId)
-			).where(
-				AccountEntryOrganizationRelTable.INSTANCE.organizationId.in(
-					DSLQueryFactoryUtil.selectDistinct(
-						OrganizationTable.INSTANCE.organizationId
-					).from(
-						OrganizationTable.INSTANCE
-					).innerJoinON(
-						tempOrganizationTable,
-						OrganizationTable.INSTANCE.companyId.eq(
-							tempOrganizationTable.getColumn(
-								"companyId", Long.class)
-						).and(
-							OrganizationTable.INSTANCE.treePath.like(
-								DSLFunctionFactoryUtil.concat(
-									DSLFunctionFactoryUtil.castText(
-										tempOrganizationTable.getColumn(
-											"treePath", String.class)),
-									new Scalar<>(StringPool.PERCENT)))
-						)
-					)
-				).and(
-					_getAccountEntryWherePredicate()
-				)
-			).union(
-				joinStep.where(
-					AccountEntryTable.INSTANCE.userId.eq(
-						userId
-					).and(
-						_getAccountEntryWherePredicate()
-					))
-			).union(
-				joinStep.innerJoinON(
-					AccountEntryUserRelTable.INSTANCE,
-					AccountEntryUserRelTable.INSTANCE.accountEntryId.eq(
-						AccountEntryTable.INSTANCE.accountEntryId)
-				).where(
-					AccountEntryUserRelTable.INSTANCE.accountUserId.eq(
-						userId
-					).and(
-						_getAccountEntryWherePredicate()
-					)
-				)
-			));
-	}
-
 	private void _fillBusinessTypePicklistDefaultValue(
 		List<ObjectField> objectFields, Map<String, Serializable> values) {
 
@@ -1656,8 +1546,6 @@ public class ObjectEntryLocalServiceImpl
 	private Predicate _fillObjectFieldPredicate(
 		Column<?, Object> column, String dbType, String search) {
 
-		Predicate objectFieldPredicate = null;
-
 		if (StringUtil.equals(
 				dbType, ObjectFieldConstants.DB_TYPE_BIG_DECIMAL) ||
 			dbType.equals(ObjectFieldConstants.DB_TYPE_DOUBLE)) {
@@ -1666,14 +1554,14 @@ public class ObjectEntryLocalServiceImpl
 				GetterUtil.getDouble(search));
 
 			if (searchBigDecimal.compareTo(BigDecimal.ZERO) != 0) {
-				objectFieldPredicate = column.eq(searchBigDecimal);
+				return column.eq(searchBigDecimal);
 			}
 		}
 		else if (StringUtil.equals(dbType, ObjectFieldConstants.DB_TYPE_CLOB) ||
 				 StringUtil.equals(
 					 dbType, ObjectFieldConstants.DB_TYPE_STRING)) {
 
-			objectFieldPredicate = column.like("%" + search + "%");
+			return column.like("%" + search + "%");
 		}
 		else if (StringUtil.equals(
 					dbType, ObjectFieldConstants.DB_TYPE_INTEGER) ||
@@ -1682,11 +1570,11 @@ public class ObjectEntryLocalServiceImpl
 			long searchLong = GetterUtil.getLong(search);
 
 			if (searchLong != 0L) {
-				objectFieldPredicate = column.eq(searchLong);
+				return column.eq(searchLong);
 			}
 		}
 
-		return objectFieldPredicate;
+		return null;
 	}
 
 	private Predicate _fillPredicate(
@@ -1740,6 +1628,91 @@ public class ObjectEntryLocalServiceImpl
 		}
 
 		return predicate.and(searchPredicate.withParentheses());
+	}
+
+	private DSLQuery _getAccountEntriesDSLQuery(long companyId, long userId)
+		throws PortalException {
+
+		JoinStep joinStep = DSLQueryFactoryUtil.select(
+			AccountEntryTable.INSTANCE.accountEntryId
+		).from(
+			AccountEntryTable.INSTANCE
+		);
+
+		if (_roleLocalService.hasUserRole(
+				userId, companyId, RoleConstants.ADMINISTRATOR, true)) {
+
+			return joinStep.where(
+				AccountEntryTable.INSTANCE.companyId.eq(
+					companyId
+				).and(
+					AccountEntryTable.INSTANCE.status.eq(
+						WorkflowConstants.STATUS_APPROVED)
+				));
+		}
+
+		Table<OrganizationTable> tempOrganizationTable =
+			DSLQueryFactoryUtil.select(
+				OrganizationTable.INSTANCE.companyId,
+				OrganizationTable.INSTANCE.treePath
+			).from(
+				OrganizationTable.INSTANCE
+			).innerJoinON(
+				Users_OrgsTable.INSTANCE,
+				Users_OrgsTable.INSTANCE.organizationId.eq(
+					OrganizationTable.INSTANCE.organizationId)
+			).where(
+				Users_OrgsTable.INSTANCE.userId.eq(userId)
+			).as(
+				"tempOrganizationTable", OrganizationTable.INSTANCE
+			);
+
+		return joinStep.innerJoinON(
+			AccountEntryOrganizationRelTable.INSTANCE,
+			AccountEntryOrganizationRelTable.INSTANCE.accountEntryId.eq(
+				AccountEntryTable.INSTANCE.accountEntryId)
+		).where(
+			AccountEntryOrganizationRelTable.INSTANCE.organizationId.in(
+				DSLQueryFactoryUtil.selectDistinct(
+					OrganizationTable.INSTANCE.organizationId
+				).from(
+					OrganizationTable.INSTANCE
+				).innerJoinON(
+					tempOrganizationTable,
+					OrganizationTable.INSTANCE.companyId.eq(
+						tempOrganizationTable.getColumn("companyId", Long.class)
+					).and(
+						OrganizationTable.INSTANCE.treePath.like(
+							DSLFunctionFactoryUtil.concat(
+								DSLFunctionFactoryUtil.castText(
+									tempOrganizationTable.getColumn(
+										"treePath", String.class)),
+								new Scalar<>(StringPool.PERCENT)))
+					)
+				)
+			).and(
+				_getAccountEntryWherePredicate()
+			)
+		).union(
+			joinStep.where(
+				AccountEntryTable.INSTANCE.userId.eq(
+					userId
+				).and(
+					_getAccountEntryWherePredicate()
+				))
+		).union(
+			joinStep.innerJoinON(
+				AccountEntryUserRelTable.INSTANCE,
+				AccountEntryUserRelTable.INSTANCE.accountEntryId.eq(
+					AccountEntryTable.INSTANCE.accountEntryId)
+			).where(
+				AccountEntryUserRelTable.INSTANCE.accountUserId.eq(
+					userId
+				).and(
+					_getAccountEntryWherePredicate()
+				)
+			)
+		);
 	}
 
 	private Predicate _getAccountEntryWherePredicate() {
@@ -2152,22 +2125,52 @@ public class ObjectEntryLocalServiceImpl
 	}
 
 	private Predicate _getPermissionWherePredicate(
-		DynamicObjectDefinitionTable dynamicObjectDefinitionTable,
-		long groupId) {
+			DynamicObjectDefinitionTable dynamicObjectDefinitionTable,
+			long groupId)
+		throws PortalException {
 
 		ObjectDefinition objectDefinition =
 			dynamicObjectDefinitionTable.getObjectDefinition();
 
-		if ((PermissionThreadLocal.getPermissionChecker() == null) ||
+		PermissionChecker permissionChecker =
+			PermissionThreadLocal.getPermissionChecker();
+
+		if ((permissionChecker == null) ||
 			!_inlineSQLHelper.isEnabled(
 				objectDefinition.getCompanyId(), groupId)) {
 
 			return null;
 		}
 
-		return _inlineSQLHelper.getPermissionWherePredicate(
-			objectDefinition.getClassName(),
-			dynamicObjectDefinitionTable.getPrimaryKeyColumn(), groupId);
+		Predicate individualScopePredicate =
+			_inlineSQLHelper.getPermissionWherePredicate(
+				objectDefinition.getClassName(),
+				dynamicObjectDefinitionTable.getPrimaryKeyColumn(), groupId);
+
+		if (individualScopePredicate == null) {
+			return null;
+		}
+
+		if (!objectDefinition.isAccountEntryRestricted()) {
+			return individualScopePredicate;
+		}
+
+		ObjectField objectField = _objectFieldLocalService.getObjectField(
+			objectDefinition.getAccountEntryRestrictedObjectFieldId());
+
+		Table<?> table = _objectFieldLocalService.getTable(
+			objectDefinition.getObjectDefinitionId(), objectField.getName());
+
+		Column<?, Long> column = (Column<?, Long>)table.getColumn(
+			objectField.getDBColumnName());
+
+		return individualScopePredicate.or(
+			column.in(
+				_getAccountEntriesDSLQuery(
+					objectDefinition.getCompanyId(),
+					permissionChecker.getUserId())
+			).withParentheses()
+		).withParentheses();
 	}
 
 	private Object _getResult(
@@ -2461,17 +2464,16 @@ public class ObjectEntryLocalServiceImpl
 		else if (sqlType == Types.VARCHAR) {
 			return object;
 		}
-		else {
-			throw new IllegalArgumentException(
-				"Unable to get value with SQL type " + sqlType);
-		}
+
+		throw new IllegalArgumentException(
+			"Unable to get value with SQL type " + sqlType);
 	}
 
 	private String _getValue(String valueString) {
 		try {
 			JSONArray jsonArray = _jsonFactory.createJSONArray(valueString);
 
-			return GetterUtil.getString(jsonArray.get(0));
+			return GetterUtil.getString(jsonArray.getString(0));
 		}
 		catch (JSONException jsonException) {
 			if (_log.isDebugEnabled()) {
@@ -3198,6 +3200,17 @@ public class ObjectEntryLocalServiceImpl
 			_listTypeEntryLocalService.getListTypeEntry(
 				listTypeDefinitionId, String.valueOf(entry.getValue()));
 
+		ObjectState targetObjectState =
+			_objectStateLocalService.getObjectStateFlowObjectState(
+				listTypeEntry.getListTypeEntryId(),
+				objectStateFlow.getObjectStateFlowId());
+
+		if (sourceObjectState.getObjectStateId() ==
+				targetObjectState.getObjectStateId()) {
+
+			return;
+		}
+
 		boolean invalidObjectStateTransition = true;
 
 		for (ObjectState nextObjectState :
@@ -3205,25 +3218,15 @@ public class ObjectEntryLocalServiceImpl
 					sourceObjectState.getObjectStateId())) {
 
 			if (nextObjectState.getListTypeEntryId() ==
-					listTypeEntry.getListTypeEntryId()) {
+					targetObjectState.getListTypeEntryId()) {
 
 				invalidObjectStateTransition = false;
 			}
 		}
 
 		if (invalidObjectStateTransition) {
-			ObjectState targetObjectState =
-				_objectStateLocalService.getObjectStateFlowObjectState(
-					listTypeEntry.getListTypeEntryId(),
-					objectStateFlow.getObjectStateFlowId());
-
-			if (sourceObjectState.getObjectStateId() !=
-					targetObjectState.getObjectStateId()) {
-
-				throw new ObjectEntryValuesException.
-					InvalidObjectStateTransition(
-						sourceObjectState, targetObjectState);
-			}
+			throw new ObjectEntryValuesException.InvalidObjectStateTransition(
+				sourceObjectState, targetObjectState);
 		}
 	}
 

@@ -12,21 +12,15 @@ definition {
 
 		var curl = '''
 			${portalURL}/o/object-admin/v1.0/${api} \
-			-H accept: application/json \
-			-H Content-Type: application/json \
-			-u test@liferay.com:test \
+				-H accept: application/json \
+				-H Content-Type: application/json \
+				-u test@liferay.com:test \
 		''';
 
 		return "${curl}";
 	}
 
-	macro deleteObjectField {
-		var curl = ObjectFieldAPI._curlObjectField(objectFieldId = "${staticObjectFieldId}");
-
-		JSONCurlUtil.delete("${curl}");
-	}
-
-	macro getIdOfCreatedObjectField {
+	macro createObjectFieldByObjectDefinitionId {
 		Variables.assertDefined(parameterList = "${objectDefinitionId},${dbType},${name}");
 
 		var curl = ObjectFieldAPI._curlObjectField(objectDefinitionId = "${objectDefinitionId}");
@@ -49,7 +43,24 @@ definition {
 
 		var curl = StringUtil.add("${curl}", "${body}", " ");
 
-		var objectFieldId = JSONCurlUtil.post("${curl}", "$.id");
+		var response = JSONCurlUtil.post("${curl}");
+
+		return "${response}";
+	}
+
+	macro deleteObjectField {
+		var curl = ObjectFieldAPI._curlObjectField(objectFieldId = "${staticObjectFieldId}");
+
+		JSONCurlUtil.delete("${curl}");
+	}
+
+	macro getIdOfCreatedObjectField {
+		var response = ObjectFieldAPI.createObjectFieldByObjectDefinitionId(
+			dbType = "${dbType}",
+			name = "${name}",
+			objectDefinitionId = "${objectDefinitionId}");
+
+		var objectFieldId = JSONUtil.getWithJSONPath("${response}", "$.id");
 
 		return "${objectFieldId}";
 	}

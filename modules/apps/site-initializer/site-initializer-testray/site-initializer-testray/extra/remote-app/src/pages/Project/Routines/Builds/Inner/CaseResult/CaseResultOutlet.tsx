@@ -32,7 +32,7 @@ import {
 	testrayCaseResultImpl,
 } from '../../../../../../services/rest';
 import {testrayCaseResultsIssuesImpl} from '../../../../../../services/rest/TestrayCaseresultsIssues';
-import {searchUtil} from '../../../../../../util/search';
+import {SearchBuilder} from '../../../../../../util/search';
 import useCaseResultActions from './useCaseResultActions';
 
 type OutletContext = {
@@ -53,9 +53,10 @@ const CaseResultOutlet = () => {
 
 	const {data: testrayCaseResult, mutate: mutateCaseResult} = useFetch<
 		TestrayCaseResult
-	>(testrayCaseResultImpl.getResource(caseResultId as string), (response) =>
-		testrayCaseResultImpl.transformData(response)
-	);
+	>(testrayCaseResultImpl.getResource(caseResultId as string), {
+		transformData: (response) =>
+			testrayCaseResultImpl.transformData(response),
+	});
 
 	const {data: mbMessage} = useFetch(
 		testrayCaseResult?.mbMessageId
@@ -66,12 +67,17 @@ const CaseResultOutlet = () => {
 	);
 
 	const {data, mutate: mutateCaseResultIssues} = useFetch(
-		`${testrayCaseResultsIssuesImpl.resource}&filter=${searchUtil.eq(
-			'caseResultId',
-			caseResultId as string
-		)}`,
-		(response) =>
-			testrayCaseResultsIssuesImpl.transformDataFromList(response)
+		testrayCaseResultsIssuesImpl.resource,
+		{
+			params: {
+				filter: SearchBuilder.eq(
+					'caseResultId',
+					caseResultId as string
+				),
+			},
+			transformData: (response) =>
+				testrayCaseResultsIssuesImpl.transformDataFromList(response),
+		}
 	);
 
 	const caseResultsIssues = data?.items || [];

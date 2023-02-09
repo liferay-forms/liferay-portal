@@ -25,7 +25,6 @@ import com.liferay.analytics.settings.rest.manager.AnalyticsSettingsManager;
 import com.liferay.analytics.settings.rest.resource.v1_0.ContactAccountGroupResource;
 import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.search.Sort;
-import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
@@ -61,10 +60,7 @@ public class ContactAccountGroupResourceImpl
 
 		BaseModelSearchResult<AccountGroup> accountGroupBaseModelSearchResult =
 			_accountGroupLocalService.searchAccountGroups(
-				contextCompany.getCompanyId(), keywords,
-				LinkedHashMapBuilder.<String, Object>put(
-					"active", Boolean.TRUE
-				).build(),
+				contextCompany.getCompanyId(), keywords, null,
 				pagination.getStartPosition(), pagination.getEndPosition(),
 				OrderByComparatorFactoryUtil.create(
 					AccountGroupTable.INSTANCE.getTableName(),

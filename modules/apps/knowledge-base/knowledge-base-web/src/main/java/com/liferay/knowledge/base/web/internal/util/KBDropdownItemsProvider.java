@@ -298,6 +298,52 @@ public class KBDropdownItemsProvider {
 		).build();
 	}
 
+	public List<DropdownItem> getKBTemplateMoreActionsDropdownItems(
+		KBTemplate kbTemplate) {
+
+		return DropdownItemListBuilder.addGroup(
+			dropdownGroupItem -> dropdownGroupItem.setDropdownItems(
+				DropdownItemListBuilder.add(
+					() -> _hasUpdatePermission(kbTemplate),
+					_getEditActionUnsafeConsumer(kbTemplate)
+				).add(
+					dropdownItem -> {
+						dropdownItem.putData("action", "print");
+						dropdownItem.putData(
+							"printURL",
+							PortletURLBuilder.createRenderURL(
+								_liferayPortletResponse
+							).setMVCPath(
+								"/admin/print_kb_template.jsp"
+							).setParameter(
+								"kbTemplateId", kbTemplate.getKbTemplateId()
+							).setParameter(
+								"viewMode", Constants.PRINT
+							).setWindowState(
+								LiferayWindowState.POP_UP
+							).buildString());
+						dropdownItem.setIcon("print");
+						dropdownItem.setLabel(
+							LanguageUtil.get(
+								_liferayPortletRequest.getHttpServletRequest(),
+								"print"));
+					}
+				).build())
+		).addGroup(
+			dropdownGroupItem -> {
+				dropdownGroupItem.setDropdownItems(
+					DropdownItemListBuilder.add(
+						() -> _hasPermissionsPermission(kbTemplate),
+						_getPermissionsActionUnsafeConsumer(kbTemplate)
+					).add(
+						() -> _hasDeletePermission(kbTemplate),
+						_getDeleteActionUnsafeConsumer(kbTemplate)
+					).build());
+				dropdownGroupItem.setSeparator(true);
+			}
+		).build();
+	}
+
 	private String _createKBArticleRenderURL(KBArticle kbArticle) {
 		return PortletURLBuilder.createRenderURL(
 			_liferayPortletResponse
@@ -338,8 +384,8 @@ public class KBDropdownItemsProvider {
 	private String _createKbTemplatesAdminHomeRenderURL() {
 		return PortletURLBuilder.createRenderURL(
 			_liferayPortletResponse
-		).setMVCPath(
-			"/admin/view_kb_templates.jsp"
+		).setMVCRenderCommandName(
+			"/knowledge_base/view_kb_templates"
 		).buildString();
 	}
 

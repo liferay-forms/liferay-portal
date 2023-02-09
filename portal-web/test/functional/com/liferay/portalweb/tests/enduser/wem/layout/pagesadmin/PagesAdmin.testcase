@@ -279,6 +279,35 @@ definition {
 		}
 	}
 
+	@description = "This is for LPS-150849."
+	@priority = "5"
+	test ChooseColumnTypeAndViewSelectedIcon {
+		property portal.acceptance = "true";
+
+		ProductMenu.gotoPortlet(
+			category = "Site Builder",
+			portlet = "Pages");
+
+		PagesAdmin.addPage(
+			pageName = "Test Page Name",
+			sitePageType = "Widget Page");
+
+		Click(
+			key_card = "1 Column",
+			locator1 = "Card#CARD");
+
+		var backgroundColorStyle = Css.getPseudoElementCssValue(
+			attribute = "background-color",
+			element = "//div[contains(@class,'card') and contains(@class,'card-type-template active')]",
+			pseudo = "::after");
+
+		echo("background color: ${backgroundColorStyle} ");
+
+		if ("${backgroundColorStyle}" != "rgb(11, 95, 255)") {
+			fail("Select icon is not shown");
+		}
+	}
+
 	@description = "This is a test for LPS-145215. View alert message when delete a page."
 	@priority = "5"
 	@uitest
@@ -852,6 +881,8 @@ definition {
 	@description = "This is a test for LPS-152446. When a user with edit permissions clicks a content page in page administration, the page editor is opened with the selected page ready to be edited."
 	@priority = "5"
 	test NavigateToPageEditorWhenClickOnContentPageItem {
+		property portal.acceptance = "true";
+
 		task ("Given a page creator has a content page") {
 			JSONLayout.addPublicLayout(
 				groupName = "Test Site Name",
@@ -890,6 +921,8 @@ definition {
 	@description = "This is a test for LPS-152446. When a user with edit permissions searches for a content page in pages administration, and then clicks on it in the results, the page editor is opened with the selected page ready to be edited."
 	@priority = "5"
 	test NavigateToPageEditorWhenClickOnContentPageTitleFromSearchResults {
+		property portal.acceptance = "true";
+
 		task ("Given a page creator has a content page") {
 			JSONLayout.addPublicLayout(
 				groupName = "Test Site Name",
@@ -1205,6 +1238,8 @@ definition {
 	@description = "This is a test for LPS-152949. View widget type pages' name and navigate to the page in search widget."
 	@priority = "5"
 	test SearchWidgetTypePages {
+		property portal.acceptance = "true";
+
 		task ("Given a page creator has a widget page") {
 			JSONLayout.addPublicLayout(
 				groupName = "Test Site Name",

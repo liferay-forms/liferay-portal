@@ -34,6 +34,7 @@ definition {
 		property database.bare.enabled = "true";
 		property database.types = "db2,hypersonic,mariadb,mysql,oracle,postgresql,sqlserver,sybase";
 		property environment.acceptance = "true";
+		property operating.system.types = "alpine,amazonlinux,centos,debian,fedora,orcllinux,osx,redhat,solaris,suse,ubuntu,windows";
 		property portal.acceptance = "false";
 		property testray.component.names = "Training";
 
@@ -158,6 +159,19 @@ definition {
 		AssertConsoleTextPresent(value1 = "Returning write data source");
 
 		AssertConsoleTextPresent(value1 = "Returning read data source");
+	}
+
+	@priority = "5"
+	test SmokeWithRewriteBatchedStatements {
+		property database.types = "mariadb,mysql,postgresql,sqlserver";
+		property portal.smoke = "false";
+		property rewrite.batch.statements = "true";
+
+		SignIn.signInTestSetup();
+
+		Smoke.viewWelcomeContentPage();
+
+		Smoke.runSmoke();
 	}
 
 	@priority = "5"

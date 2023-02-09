@@ -38,7 +38,7 @@ const initialFormValues: MDFRequest = {
 	company: {},
 	country: {},
 	liferayBusinessSalesGoals: [],
-	mdfRequestStatus: Status.PENDING,
+	mdfRequestStatus: Status.DRAFT,
 	overallCampaignDescription: '',
 	overallCampaignName: '',
 	targetAudienceRoles: [],
@@ -101,6 +101,7 @@ const MDFRequestForm = () => {
 		[StepType.ACTIVITIES]: (
 			<PRMFormik.Array
 				component={Activities}
+				isEdit={mdfRequestId !== undefined}
 				name="activities"
 				onCancel={onCancel}
 				onContinue={onContinue}
@@ -138,14 +139,11 @@ const MDFRequestForm = () => {
 		<PRMFormik
 			initialValues={
 				mdfRequestId
-					? getMDFRequestFromDTO(
-							data as MDFRequestDTO,
-							Status.PENDING
-					  )
+					? getMDFRequestFromDTO(data as MDFRequestDTO)
 					: initialFormValues
 			}
 			onSubmit={(values, formikHelpers) =>
-				submitForm(values, formikHelpers, siteURL)
+				submitForm(values, formikHelpers, siteURL, Status.PENDING)
 			}
 		>
 			{StepFormComponent[step]}

@@ -59,7 +59,10 @@ const FactorOptionsFormModal: React.FC<FactorOptionsProps> = ({
 
 	const {data} = useFetch<APIResponse<TestrayFactorCategory>>(
 		'/factorcategories',
-		(response) => testrayFactorCategoryRest.transformDataFromList(response)
+		{
+			transformData: (response) =>
+				testrayFactorCategoryRest.transformDataFromList(response),
+		}
 	);
 
 	const factorCategories = data?.items || [];
@@ -107,6 +110,7 @@ const FactorOptionsFormModal: React.FC<FactorOptionsProps> = ({
 
 			<Form.Select
 				{...inputProps}
+				forceSelectOption
 				label={i18n.translate('type')}
 				name="factorCategoryId"
 				options={factorCategories.map(({id: value, name: label}) => ({

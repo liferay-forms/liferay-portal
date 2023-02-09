@@ -42,6 +42,7 @@ import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.portlet.url.builder.ResourceURLBuilder;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.LayoutService;
 import com.liferay.portal.kernel.service.PortletLocalServiceUtil;
 import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
@@ -87,8 +88,9 @@ public class LayoutsTreeDisplayContext {
 
 	public LayoutsTreeDisplayContext(
 		HttpServletRequest httpServletRequest, Language language,
-		LayoutService layoutService, LayoutsTree layoutsTree,
-		RenderRequest renderRequest, RenderResponse renderResponse,
+		LayoutLocalService layoutLocalService, LayoutService layoutService,
+		LayoutsTree layoutsTree, RenderRequest renderRequest,
+		RenderResponse renderResponse,
 		SiteNavigationMenuItemLocalService siteNavigationMenuItemLocalService,
 		SiteNavigationMenuItemTypeRegistry siteNavigationMenuItemTypeRegistry,
 		SiteNavigationMenuLocalService siteNavigationMenuLocalService) {
@@ -98,6 +100,7 @@ public class LayoutsTreeDisplayContext {
 
 		_httpServletRequest = httpServletRequest;
 		_language = language;
+		_layoutLocalService = layoutLocalService;
 		_layoutService = layoutService;
 		_layoutsTree = layoutsTree;
 		_renderRequest = renderRequest;
@@ -387,28 +390,17 @@ public class LayoutsTreeDisplayContext {
 	}
 
 	private JSONArray _getLayoutsJSONArray() throws Exception {
-		JSONArray layoutsJSONArray = null;
-
 		long[] openNodes = StringUtil.split(
 			SessionTreeJSClicks.getOpenNodes(
 				_httpServletRequest, "productMenuPagesTree"),
 			0L);
 
-		_httpServletRequest.setAttribute(
-			ProductNavigationProductMenuWebKeys.RETURN_LAYOUTS_AS_ARRAY,
-			Boolean.TRUE);
+		JSONArray layoutsJSONArray = _layoutsTree.getLayoutsJSONArray(
+			openNodes, _getGroupId(), _httpServletRequest, true, true, false,
+			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, _isPrivateLayout(),
+			"productMenuPagesTree");
 
-		String layoutsJSON = _layoutsTree.getLayoutsJSON(
-			_httpServletRequest, _getGroupId(), true, _isPrivateLayout(),
-			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, openNodes, true,
-			"productMenuPagesTree", null);
-
-		if (layoutsJSON.startsWith(StringPool.OPEN_BRACKET)) {
-			layoutsJSONArray = JSONFactoryUtil.createJSONArray(layoutsJSON);
-		}
-		else {
-			layoutsJSONArray = JSONFactoryUtil.createJSONArray();
-		}
+		int layoutsJSONArrayLength = layoutsJSONArray.length();
 
 		return JSONUtil.putAll(
 			JSONUtil.put(
@@ -426,8 +418,9 @@ public class LayoutsTreeDisplayContext {
 						_groupId, _isPrivateLayout(),
 						LayoutConstants.DEFAULT_PARENT_LAYOUT_ID);
 
-					if (layoutsCount >
-							PropsValues.LAYOUT_MANAGE_PAGES_INITIAL_CHILDREN) {
+					if ((layoutsCount >
+							PropsValues.LAYOUT_MANAGE_PAGES_INITIAL_CHILDREN) &&
+						(layoutsCount > layoutsJSONArrayLength)) {
 
 						return true;
 					}
@@ -443,13 +436,13 @@ public class LayoutsTreeDisplayContext {
 		return JSONUtil.put(
 			"items", itemsJSONArray
 		).put(
-			"name", LanguageUtil.get(_themeDisplay.getLocale(), nameKey)
+			"label", LanguageUtil.get(_themeDisplay.getLocale(), nameKey)
 		);
 	}
 
 	private JSONObject _getOptionJSONObject(String name, String value) {
 		return JSONUtil.put(
-			"name", name
+			"label", name
 		).put(
 			"value", value
 		);
@@ -599,7 +592,9 @@ public class LayoutsTreeDisplayContext {
 
 		selectedLayoutPath.add(LayoutConstants.DEFAULT_PARENT_LAYOUT_ID);
 
-		if (selPlid <= 0) {
+		if ((selPlid <= 0) ||
+			(_layoutLocalService.fetchLayout(selPlid) == null)) {
+
 			return selectedLayoutPath;
 		}
 
@@ -962,6 +957,7 @@ public class LayoutsTreeDisplayContext {
 	private final GroupProvider _groupProvider;
 	private final HttpServletRequest _httpServletRequest;
 	private final Language _language;
+	private final LayoutLocalService _layoutLocalService;
 	private final LayoutService _layoutService;
 	private final LayoutsTree _layoutsTree;
 	private final LiferayPortletRequest _liferayPortletRequest;

@@ -1,0 +1,118 @@
+@component-name = "portal-frontend-infrastructure"
+definition {
+
+	property portal.acceptance = "true";
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.main.component.name = "Client Extensions";
+
+	setUp {
+		TestCase.setUpPortalInstance();
+
+		User.firstLoginPG();
+
+		task ("Given config file for client extension of type custom element created") {
+			ClientExtension.createGlobalVariableClientExtensionType(type = "customElement");
+
+			ClientExtension.checkConfigFileCreatedProperly();
+
+			ClientExtensionGeneral.goToRemoteAppsPortlet();
+		}
+	}
+
+	tearDown {
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+	}
+
+	@description = "LPS-169554 Access the osgi deployed custom element and assert that field information is displayed correctly and not editable"
+	@priority = "4"
+	test FieldsAreNotEditableWhenAccessed {
+		property custom.element.client.extension.created = "true";
+		property test.name.skip.portal.instance = "ClientExtensionOSGI#FieldsAreNotEditableWhenAccessed";
+
+		task ("When access the osgi deployed custom element") {
+			Click(
+				key_tableEntryName = "Vanilla Counter",
+				locator1 = "ClientExtension#TABLE_ENTRY_NAME_REMOTE_TABLE");
+		}
+
+		task ("Then field information is displayed correctly") {
+			ClientExtensionGeneral.assertMultipleFields(
+				entry_URLs = "https://liferay.github.io/liferay-frontend-projects/vanilla-counter/index.js",
+				entryCSSURLs = "https://liferay.github.io/liferay-frontend-projects/index.css",
+				entrydescription = "Custom Element Description",
+				entryFriendlyURLMapping = "vanilla",
+				entryHTMLElementName = "vanilla-counter",
+				entryName = "Vanilla Counter",
+				entryPortletCategoryName = "category.client-extensions",
+				entryproperties = "test-data-user=QAuser",
+				entrySourceCodeURL = "",
+				entryType = "Custom Element");
+
+			FormFields.viewCheckboxChecked(fieldName = "Instanceable");
+
+			FormFields.viewCheckboxChecked(fieldName = "Use ES Modules");
+		}
+
+		task ("And Then fields are not editable") {
+			ClientExtensionGeneral.assertFieldDisable(entryFieldList = "Name,Source Code URL,Type,Friendly URL Mapping,HTML Element Name,Portlet Category,Name,description,CSS URLs,_URLs,properties");
+		}
+	}
+
+	@description = "LPS-169551: Verify that view button is visible"
+	@priority = "3"
+	test HasViewAction {
+		property custom.element.client.extension.created = "true";
+		property test.name.skip.portal.instance = "ClientExtensionOSGI#HasViewAction";
+
+		task ("Then View action is an available option") {
+			AssertElementPresent(
+				key_text = "View",
+				locator1 = "Button#ANY");
+		}
+
+		task ("And Then Edit action is not an available option field information is displayed correctly") {
+			MenuItem.viewNotPresent(menuItem = "Edit");
+		}
+	}
+
+	@description = "LPS-169552 Select view action from Remote app and assert that field information is displayed correctly and not editable"
+	@priority = "3"
+	test ViewActionCanDisplayFieldsAsNotEditable {
+		property custom.element.client.extension.created = "true";
+		property test.name.skip.portal.instance = "ClientExtensionOSGI#ViewActionCanDisplayFieldsAsNotEditable";
+
+		task ("When select view action") {
+			Click(
+				key_text = "View",
+				locator1 = "Button#ANY");
+		}
+
+		task ("Then field information is displayed correctly") {
+			ClientExtensionGeneral.assertMultipleFields(
+				entry_URLs = "https://liferay.github.io/liferay-frontend-projects/vanilla-counter/index.js",
+				entryCSSURLs = "https://liferay.github.io/liferay-frontend-projects/index.css",
+				entrydescription = "Custom Element Description",
+				entryFriendlyURLMapping = "vanilla",
+				entryHTMLElementName = "vanilla-counter",
+				entryName = "Vanilla Counter",
+				entryPortletCategoryName = "category.client-extensions",
+				entryproperties = "test-data-user=QAuser",
+				entrySourceCodeURL = "",
+				entryType = "Custom Element");
+
+			FormFields.viewCheckboxChecked(fieldName = "Instanceable");
+
+			FormFields.viewCheckboxChecked(fieldName = "Use ES Modules");
+		}
+
+		task ("And Then fields are not editable") {
+			ClientExtensionGeneral.assertFieldDisable(entryFieldList = "Name,Source Code URL,Type,Friendly URL Mapping,HTML Element Name,Portlet Category,Name,description,CSS URLs,_URLs,properties");
+		}
+	}
+
+}

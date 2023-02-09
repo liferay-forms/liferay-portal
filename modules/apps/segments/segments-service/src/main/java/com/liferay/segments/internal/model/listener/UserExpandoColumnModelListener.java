@@ -16,15 +16,13 @@ package com.liferay.segments.internal.model.listener;
 
 import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.expando.kernel.model.ExpandoColumnConstants;
+import com.liferay.expando.kernel.model.ExpandoColumnTable;
 import com.liferay.expando.kernel.model.ExpandoTable;
 import com.liferay.expando.kernel.model.ExpandoTableConstants;
+import com.liferay.expando.kernel.model.ExpandoTableTable;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalService;
-import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
-import com.liferay.portal.kernel.dao.orm.DynamicQuery;
-import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.Property;
-import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
+import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
 import com.liferay.portal.kernel.exception.ModelListenerException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -51,8 +49,8 @@ import com.liferay.segments.service.SegmentsEntryLocalService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -73,22 +71,27 @@ public class UserExpandoColumnModelListener
 		throws ModelListenerException {
 
 		try {
-			if (!_isUserCustomField(expandoColumn)) {
+			long classNameId = _classNameLocalService.getClassNameId(
+				User.class.getName());
+			ExpandoTable expandoTable = _expandoTableLocalService.getTable(
+				expandoColumn.getTableId());
+
+			if ((classNameId != expandoTable.getClassNameId()) ||
+				!ExpandoTableConstants.DEFAULT_TABLE_NAME.equals(
+					expandoTable.getName())) {
+
 				return;
 			}
 
-			Optional<EntityField> userEntityFieldOptional =
-				_getUserEntityFieldOptional(expandoColumn);
+			EntityField entityField = _getEntityField(expandoColumn);
 
-			userEntityFieldOptional.ifPresent(
-				entityField -> {
-					_userEntityFields.put(
-						expandoColumn.getColumnId(), entityField);
+			if (entityField != null) {
+				_entityFieldsMap.put(expandoColumn.getColumnId(), entityField);
 
-					_serviceRegistration = _updateRegistry(
-						_bundleContext, _serviceRegistration,
-						_userEntityFields);
-				});
+				_serviceRegistration.unregister();
+
+				_serviceRegistration = _register();
+			}
 		}
 		catch (PortalException portalException) {
 			throw new ModelListenerException(portalException);
@@ -103,11 +106,12 @@ public class UserExpandoColumnModelListener
 			return;
 		}
 
-		if (_userEntityFields.containsKey(expandoColumn.getColumnId())) {
-			_userEntityFields.remove(expandoColumn.getColumnId());
+		if (_entityFieldsMap.containsKey(expandoColumn.getColumnId())) {
+			_entityFieldsMap.remove(expandoColumn.getColumnId());
 
-			_serviceRegistration = _updateRegistry(
-				_bundleContext, _serviceRegistration, _userEntityFields);
+			_serviceRegistration.unregister();
+
+			_serviceRegistration = _register();
 		}
 	}
 
@@ -120,7 +124,7 @@ public class UserExpandoColumnModelListener
 			return;
 		}
 
-		_userEntityFields.remove(expandoColumn.getColumnId());
+		_entityFieldsMap.remove(expandoColumn.getColumnId());
 
 		onAfterCreate(expandoColumn);
 	}
@@ -130,9 +134,9 @@ public class UserExpandoColumnModelListener
 		try {
 			_bundleContext = bundleContext;
 
-			_userEntityFields = _getUserEntityFields();
+			_entityFieldsMap = _getEntityFieldsMap();
 
-			_serviceRegistration = _register(_bundleContext, _userEntityFields);
+			_serviceRegistration = _register();
 		}
 		catch (PortalException portalException) {
 			_log.error(portalException);
@@ -141,29 +145,10 @@ public class UserExpandoColumnModelListener
 
 	@Deactivate
 	protected void deactivate() {
-		_unregister(_serviceRegistration);
+		_serviceRegistration.unregister();
 	}
 
-	private DynamicQuery _getTableDynamicQuery(long classNameId, String name) {
-		DynamicQuery dynamicQuery = _expandoTableLocalService.dynamicQuery();
-
-		Property classNameIdProperty = PropertyFactoryUtil.forName(
-			"classNameId");
-
-		dynamicQuery.add(classNameIdProperty.eq(classNameId));
-
-		Property nameProperty = PropertyFactoryUtil.forName("name");
-
-		dynamicQuery.add(nameProperty.eq(name));
-
-		dynamicQuery.setProjection(ProjectionFactoryUtil.property("tableId"));
-
-		return dynamicQuery;
-	}
-
-	private Optional<EntityField> _getUserEntityFieldOptional(
-		ExpandoColumn expandoColumn) {
-
+	private EntityField _getEntityField(ExpandoColumn expandoColumn) {
 		UnicodeProperties unicodeProperties =
 			expandoColumn.getTypeSettingsProperties();
 
@@ -171,17 +156,16 @@ public class UserExpandoColumnModelListener
 			unicodeProperties.get(ExpandoColumnConstants.INDEX_TYPE));
 
 		if (indexType == ExpandoColumnConstants.INDEX_TYPE_NONE) {
-			return Optional.empty();
+			return null;
 		}
+
+		EntityField entityField = null;
 
 		String encodedName =
 			_entityModelFieldMapper.getExpandoColumnEntityFieldName(
 				expandoColumn);
-
 		String encodedIndexedFieldName = _expandoBridgeIndexer.encodeFieldName(
 			expandoColumn);
-
-		EntityField entityField = null;
 
 		if (expandoColumn.getType() == ExpandoColumnConstants.BOOLEAN) {
 			entityField = new BooleanEntityField(
@@ -229,91 +213,57 @@ public class UserExpandoColumnModelListener
 				encodedName, locale -> encodedIndexedFieldName);
 		}
 
-		return Optional.of(entityField);
+		return entityField;
 	}
 
-	private Map<Long, EntityField> _getUserEntityFields()
+	private Map<Long, EntityField> _getEntityFieldsMap()
 		throws PortalException {
 
-		Map<Long, EntityField> userEntityFieldsMap = new HashMap<>();
+		Map<Long, EntityField> entityFieldsMap = new HashMap<>();
 
-		ActionableDynamicQuery columnActionableDynamicQuery =
-			_expandoColumnLocalService.getActionableDynamicQuery();
-
-		columnActionableDynamicQuery.setAddCriteriaMethod(
-			dynamicQuery -> {
-				Property tableProperty = PropertyFactoryUtil.forName("tableId");
-
-				long userClassNameId = _classNameLocalService.getClassNameId(
-					User.class.getName());
-
-				dynamicQuery.add(
-					tableProperty.in(
-						_getTableDynamicQuery(
-							userClassNameId,
-							ExpandoTableConstants.DEFAULT_TABLE_NAME)));
-			});
-		columnActionableDynamicQuery.setPerformActionMethod(
-			(ActionableDynamicQuery.PerformActionMethod<ExpandoColumn>)
-				expandoColumn -> {
-					Optional<EntityField> userEntityFieldOptional =
-						_getUserEntityFieldOptional(expandoColumn);
-
-					userEntityFieldOptional.ifPresent(
-						entityField -> userEntityFieldsMap.put(
-							expandoColumn.getColumnId(), entityField));
-				});
-
-		columnActionableDynamicQuery.performActions();
-
-		return userEntityFieldsMap;
-	}
-
-	private boolean _isUserCustomField(ExpandoColumn expandoColumn)
-		throws PortalException {
-
-		long userClassNameId = _classNameLocalService.getClassNameId(
+		long classNameId = _classNameLocalService.getClassNameId(
 			User.class.getName());
 
-		ExpandoTable expandoTable = _expandoTableLocalService.getTable(
-			expandoColumn.getTableId());
+		List<ExpandoColumn> expandoColumns =
+			_expandoColumnLocalService.dslQuery(
+				DSLQueryFactoryUtil.select(
+					ExpandoColumnTable.INSTANCE
+				).from(
+					ExpandoColumnTable.INSTANCE
+				).where(
+					ExpandoColumnTable.INSTANCE.tableId.in(
+						DSLQueryFactoryUtil.select(
+							ExpandoTableTable.INSTANCE.tableId
+						).from(
+							ExpandoTableTable.INSTANCE
+						).where(
+							ExpandoTableTable.INSTANCE.classNameId.eq(
+								classNameId
+							).and(
+								ExpandoTableTable.INSTANCE.name.eq(
+									ExpandoTableConstants.DEFAULT_TABLE_NAME)
+							)
+						))
+				));
 
-		if ((expandoTable.getClassNameId() != userClassNameId) ||
-			!ExpandoTableConstants.DEFAULT_TABLE_NAME.equals(
-				expandoTable.getName())) {
+		for (ExpandoColumn expandoColumn : expandoColumns) {
+			EntityField entityField = _getEntityField(expandoColumn);
 
-			return false;
+			if (entityField != null) {
+				entityFieldsMap.put(expandoColumn.getColumnId(), entityField);
+			}
 		}
 
-		return true;
+		return entityFieldsMap;
 	}
 
-	private ServiceRegistration<EntityModel> _register(
-		BundleContext bundleContext,
-		Map<Long, EntityField> userEntityFieldsMap) {
-
-		return bundleContext.registerService(
+	private ServiceRegistration<EntityModel> _register() {
+		return _bundleContext.registerService(
 			EntityModel.class,
-			new UserEntityModel(new ArrayList<>(userEntityFieldsMap.values())),
+			new UserEntityModel(new ArrayList<>(_entityFieldsMap.values())),
 			HashMapDictionaryBuilder.<String, Object>put(
 				"entity.model.name", UserEntityModel.NAME
 			).build());
-	}
-
-	private void _unregister(
-		ServiceRegistration<EntityModel> serviceRegistration) {
-
-		serviceRegistration.unregister();
-	}
-
-	private ServiceRegistration<EntityModel> _updateRegistry(
-		BundleContext bundleContext,
-		ServiceRegistration<EntityModel> serviceRegistration,
-		Map<Long, EntityField> entityFieldsMap) {
-
-		_unregister(serviceRegistration);
-
-		return _register(bundleContext, entityFieldsMap);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
@@ -323,6 +273,8 @@ public class UserExpandoColumnModelListener
 
 	@Reference
 	private ClassNameLocalService _classNameLocalService;
+
+	private Map<Long, EntityField> _entityFieldsMap = new HashMap<>();
 
 	@Reference
 	private EntityModelFieldMapper _entityModelFieldMapper;
@@ -340,6 +292,5 @@ public class UserExpandoColumnModelListener
 	private SegmentsEntryLocalService _segmentsEntryLocalService;
 
 	private ServiceRegistration<EntityModel> _serviceRegistration;
-	private Map<Long, EntityField> _userEntityFields = new HashMap<>();
 
 }

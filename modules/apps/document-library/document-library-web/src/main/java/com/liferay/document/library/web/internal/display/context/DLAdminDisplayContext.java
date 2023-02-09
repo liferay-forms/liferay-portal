@@ -40,6 +40,7 @@ import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.criteria.FolderItemSelectorReturnType;
 import com.liferay.item.selector.criteria.folder.criterion.FolderItemSelectorCriterion;
 import com.liferay.petra.lang.SafeCloseable;
+import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
@@ -90,10 +91,12 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.repository.liferayrepository.model.LiferayFileEntry;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.trash.TrashHelper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -708,9 +711,19 @@ public class DLAdminDisplayContext {
 								assetEntry.getClassName(),
 								DLFileEntryConstants.getClassName())) {
 
-							results.add(
+							FileEntry fileEntry =
 								DLAppLocalServiceUtil.getFileEntry(
-									assetEntry.getClassPK()));
+									assetEntry.getClassPK());
+
+							if (_isAncestorFolder(folderId, fileEntry) ||
+								((folderId ==
+									DLFolderConstants.
+										DEFAULT_PARENT_FOLDER_ID) &&
+								 (fileEntry.getRepositoryId() ==
+									 getRepositoryId()))) {
+
+								results.add(fileEntry);
+							}
 						}
 						else {
 							results.add(
@@ -911,6 +924,18 @@ public class DLAdminDisplayContext {
 			() -> _getSearchResults(hits), hits.getLength());
 
 		return searchContainer;
+	}
+
+	private boolean _isAncestorFolder(long folderId, FileEntry fileEntry) {
+		LiferayFileEntry liferayFileEntry = (LiferayFileEntry)fileEntry;
+
+		DLFileEntry dlFileEntry = liferayFileEntry.getDLFileEntry();
+
+		List<String> treePaths = Arrays.asList(
+			StringUtil.split(
+				dlFileEntry.getTreePath(), CharPool.FORWARD_SLASH));
+
+		return treePaths.contains(String.valueOf(folderId));
 	}
 
 	private void _setPortletPreference(String name, String value) {

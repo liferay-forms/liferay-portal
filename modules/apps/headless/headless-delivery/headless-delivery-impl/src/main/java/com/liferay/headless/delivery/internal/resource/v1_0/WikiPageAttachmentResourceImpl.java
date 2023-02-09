@@ -131,15 +131,16 @@ public class WikiPageAttachmentResourceImpl
 			throw new BadRequestException("No file found in body");
 		}
 
-		Optional<WikiPageAttachment> wikiPageAttachmentOptional =
-			multipartBody.getValueAsInstanceOptional(
+		String externalReferenceCode = null;
+
+		WikiPageAttachment wikiPageAttachment =
+			multipartBody.getValueAsNullableInstance(
 				"wikiPageAttachment", WikiPageAttachment.class);
 
-		String externalReferenceCode = wikiPageAttachmentOptional.map(
-			WikiPageAttachment::getExternalReferenceCode
-		).orElse(
-			null
-		);
+		if (wikiPageAttachment != null) {
+			externalReferenceCode =
+				wikiPageAttachment.getExternalReferenceCode();
+		}
 
 		Folder folder = wikiPage.addAttachmentsFolder();
 

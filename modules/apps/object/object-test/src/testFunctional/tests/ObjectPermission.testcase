@@ -753,7 +753,7 @@ definition {
 			fieldLabelName = "Custom Object 148934",
 			pluralLabelName = "Custom Objects 148934");
 
-		ObjectAdmin.saveCustomObject();
+		CreateObject.saveObject();
 
 		Refresh();
 
@@ -1110,7 +1110,7 @@ definition {
 			fieldLabelName = "Custom Object 148937",
 			pluralLabelName = "Custom Objects 148937");
 
-		ObjectAdmin.saveCustomObject();
+		CreateObject.saveObject();
 
 		Refresh();
 
@@ -1190,7 +1190,7 @@ definition {
 			fieldLabelName = "Custom Object 148935",
 			pluralLabelName = "Custom Objects 148935");
 
-		ObjectAdmin.saveCustomObject();
+		CreateObject.saveObject();
 
 		Refresh();
 
@@ -1208,7 +1208,7 @@ definition {
 
 		CreateObject.assertDisabledAllFields();
 
-		CreateObject.assertDisabledPublishObjectButton();
+		AssertElementPresent(locator1 = "CreateObject#DISABLED_PUBLISH_OBJECT_BUTTON");
 	}
 
 	@description = "LPS-146759 - Verify it is not possible to update a single Picklist created by the user if the Update Owner permission is removed"
@@ -1438,7 +1438,7 @@ definition {
 			fieldLabelName = "Custom Object 148936",
 			pluralLabelName = "Custom Objects 148936");
 
-		ObjectAdmin.saveCustomObject();
+		CreateObject.saveObject();
 
 		Refresh();
 
@@ -2250,7 +2250,7 @@ definition {
 		Picklist.assertPicklist(picklistName = "Custom Picklist 148940");
 	}
 
-	@description = "LPS-146756 - Verify that a guest user with the resource permission action of "Add Object Entry" activated can add new object entries and view its own entries"
+	@description = "LPS-146756 - Verify that a guest user with the resource permission action of 'Add Object Entry' activated can add new object entries and view its own entries"
 	@priority = "5"
 	test GuestCanAddObjectEntriesWithAddPermission {
 		property portal.acceptance = "true";
@@ -2316,13 +2316,13 @@ definition {
 		Permissions.definePermissionViaJSONAPI(
 			resourceAction = "ADD_OBJECT_ENTRY",
 			resourceName = "com.liferay.object#${objectId}",
-			roleTitle = "Regular Role",
+			roleTitle = "Guest",
 			roleType = "regular");
 
 		Permissions.definePermissionViaJSONAPI(
 			resourceAction = "VIEW",
 			resourceName = "com.liferay.object.model.ObjectDefinition#${objectId}",
-			roleTitle = "Regular Role",
+			roleTitle = "Guest",
 			roleType = "regular");
 
 		Navigator.openURL();

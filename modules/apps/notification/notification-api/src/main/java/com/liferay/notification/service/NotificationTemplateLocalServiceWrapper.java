@@ -68,6 +68,16 @@ public class NotificationTemplateLocalServiceWrapper
 			notificationTemplate);
 	}
 
+	@Override
+	public com.liferay.notification.model.NotificationTemplate
+			addNotificationTemplate(
+				String externalReferenceCode, long userId, String type)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _notificationTemplateLocalService.addNotificationTemplate(
+			externalReferenceCode, userId, type);
+	}
+
 	/**
 	 * Creates a new notification template with the primary key. Does not add the notification template to the database.
 	 *

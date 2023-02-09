@@ -100,6 +100,7 @@ const MDFClaimList = () => {
 			label: '',
 			render: (_: string | undefined, row: MDFClaimListItem) => (
 				<Dropdown
+					closeOnClick={true}
 					onClick={() =>
 						Liferay.Util.navigate(
 							`${siteURL}/l/${row[MDFClaimColumnKey.REQUEST_ID]}`
@@ -145,12 +146,7 @@ const MDFClaimList = () => {
 
 			return (
 				<div className="mt-3">
-					<Table<MDFClaimListItem>
-						borderless
-						columns={columns}
-						responsive
-						rows={items}
-					/>
+					<Table<MDFClaimListItem> columns={columns} rows={items} />
 
 					<ClayPaginationBarWithBasicItems
 						{...pagination}

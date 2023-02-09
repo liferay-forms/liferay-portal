@@ -10,7 +10,6 @@
  */
 
 import ClayButton from '@clayui/button';
-import ClayLoadingIndicator from '@clayui/loading-indicator';
 import React, {useEffect, useState} from 'react';
 
 import Container from '../../common/components/container';
@@ -29,6 +28,8 @@ const colors = {
 export default function () {
 	const [columnsMDFChart, setColumnsMDFChart] = useState([]);
 	const [titleChart, setTitleChart] = useState('');
+	const [valueChart, setValueChart] = useState('');
+
 	const [loading, setLoading] = useState(false);
 
 	const siteURL = Liferay.ThemeDisplay.getLayoutRelativeURL()
@@ -40,7 +41,7 @@ export default function () {
 		setLoading(true);
 		// eslint-disable-next-line @liferay/portal/no-global-fetch
 		const response = await fetch(
-			`/o/c/mdfrequests?nestedFields=accountEntry,mdfRequestToActivities,activityToBudgets,mdfRequestToMdfClaims&nestedFieldsDepth=2&pageSize=9999`,
+			`/o/c/mdfrequests?nestedFields=accountEntry,mdfReqToActs,actToBgts,mdfReqToMDFClms&nestedFieldsDepth=2&pageSize=9999&filter=mdfRequestStatus ne 'draft'`,
 			{
 				headers: {
 					'accept': 'application/json',
@@ -52,7 +53,12 @@ export default function () {
 		if (response.ok) {
 			const mdfRequests = await response.json();
 
-			getChartColumns(mdfRequests, setColumnsMDFChart, setTitleChart);
+			getChartColumns(
+				mdfRequests,
+				setColumnsMDFChart,
+				setTitleChart,
+				setValueChart
+			);
 			setLoading(false);
 
 			return;
@@ -76,22 +82,10 @@ export default function () {
 
 	return (
 		<Container
-			className="mdf-request-chart-card-height"
 			footer={
 				<>
 					<ClayButton
-						className="mr-4 mt-2"
-						displayType="primary"
-						onClick={() =>
-							Liferay.Util.navigate(
-								`${siteURL}/marketing/mdf-requests/new`
-							)
-						}
-					>
-						New MDF Request
-					</ClayButton>
-					<ClayButton
-						className="border-brand-primary-darken-1 mt-2 text-brand-primary-darken-1"
+						className="border-brand-primary-darken-1 mr-4 text-brand-primary-darken-1"
 						displayType="secondary"
 						onClick={() =>
 							Liferay.Util.navigate(
@@ -101,13 +95,27 @@ export default function () {
 					>
 						View all
 					</ClayButton>
+
+					<ClayButton
+						displayType="primary"
+						onClick={() =>
+							Liferay.Util.navigate(
+								`${siteURL}/marketing/mdf-requests/new`
+							)
+						}
+					>
+						New MDF Request
+					</ClayButton>
 				</>
 			}
 			title="Market Development Funds"
 		>
-			{loading && <ClayLoadingIndicator className="mt-10" size="md" />}
-
-			<DonutChart chartData={chartData} titleChart={titleChart} />
+			<DonutChart
+				chartData={chartData}
+				isLoading={loading}
+				titleChart={titleChart}
+				valueChart={valueChart}
+			/>
 		</Container>
 	);
 }

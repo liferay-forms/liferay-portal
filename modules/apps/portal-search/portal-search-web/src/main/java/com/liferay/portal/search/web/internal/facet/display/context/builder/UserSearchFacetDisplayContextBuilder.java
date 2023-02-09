@@ -75,9 +75,9 @@ public class UserSearchFacetDisplayContextBuilder {
 		userSearchFacetDisplayContext.setNothingSelected(nothingSelected);
 		userSearchFacetDisplayContext.setPaginationStartParameterName(
 			_paginationStartParameterName);
-		userSearchFacetDisplayContext.setParamName(_paramName);
-		userSearchFacetDisplayContext.setParamValue(_getFirstParamValue());
-		userSearchFacetDisplayContext.setParamValues(_paramValues);
+		userSearchFacetDisplayContext.setParameterName(_paramName);
+		userSearchFacetDisplayContext.setParameterValue(_getFirstParamValue());
+		userSearchFacetDisplayContext.setParameterValues(_paramValues);
 		userSearchFacetDisplayContext.setRenderNothing(renderNothing);
 		userSearchFacetDisplayContext.setUserFacetPortletInstanceConfiguration(
 			_userFacetPortletInstanceConfiguration);
@@ -137,6 +137,7 @@ public class UserSearchFacetDisplayContextBuilder {
 		String term = GetterUtil.getString(termCollector.getTerm());
 
 		bucketDisplayContext.setBucketText(term);
+		bucketDisplayContext.setFilterValue(term);
 
 		bucketDisplayContext.setFrequency(termCollector.getFrequency());
 		bucketDisplayContext.setFrequencyVisible(_frequenciesVisible);
@@ -196,6 +197,7 @@ public class UserSearchFacetDisplayContextBuilder {
 		BucketDisplayContext bucketDisplayContext = new BucketDisplayContext();
 
 		bucketDisplayContext.setBucketText(_paramValues.get(0));
+		bucketDisplayContext.setFilterValue(_paramValues.get(0));
 		bucketDisplayContext.setFrequency(0);
 		bucketDisplayContext.setFrequencyVisible(_frequenciesVisible);
 		bucketDisplayContext.setSelected(true);

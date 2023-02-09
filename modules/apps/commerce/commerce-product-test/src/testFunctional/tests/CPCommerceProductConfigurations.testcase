@@ -17,7 +17,1354 @@ definition {
 		CommerceConfiguration.commerceTearDown();
 	}
 
-	@description = "This is a test for COMMERCE-10491. The product can be added to cart until there's stock quantity"
+	@description = "This is a test for COMMERCE-10560. Allowed quantities can be added to the cart when order quantity is higher than the stock quantity and back order is enabled"
+	@priority = "3"
+	test CanAddToCartAllowedQuantitiesWhenOrderItemQuantityIsHigherThanStockQuantityAndBackOrderIsEnabled {
+		property portal.acceptance = "false";
+
+		task ("Given an account with a buyer user is created") {
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And the warehouse quantity for the product is set to 1") {
+			var warehouseList = "1:Italy,0:United States - Southwest,0:United States - Northeast";
+
+			for (var warehouse : list "${warehouseList}") {
+				var warehouseName = StringUtil.extractLast("${warehouse}", ":");
+				var warehouseQuantity = StringUtil.extractFirst("${warehouse}", ":");
+
+				CommerceJSONWarehousesAndInventoriesAPI._patchWarehouseItem(
+					productSku = "MIN55861",
+					quantity = "${warehouseQuantity}",
+					warehouseName = "${warehouseName}");
+			}
+		}
+
+		task ("And Allowed Quantities field is set to 2,3,6 and Allow Back Order is enabled") {
+			CommerceJSONProductsAPI._patchCommerceProductConfiguration(
+				allowBackOrder = "true",
+				allowedOrderQuantities = "2,3,6",
+				productName = "U-Joint");
+		}
+
+		task ("And buyer user logs in") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+		}
+
+		task ("When buyer user adds allowed quantities to the cart") {
+			FrontStore.addInitializerProductToCart(
+				allowedQuantities = "2",
+				productName = "U-Joint");
+
+			CommerceNavigator.gotoMiniCart();
+
+			FrontStore.assertMiniCartItemAllowedQuantities(
+				allowedQuantities = "2,3,6",
+				cartItemSku = "MIN55861");
+
+			FrontStore.viewMiniCart(
+				cartSummaryQuantity = "2",
+				cartSummarySubtotal = "48.00",
+				cartSummaryTotal = "48.00");
+
+			for (var quantity : list "3,6") {
+				Select(
+					key_cartItemSku = "MIN55861",
+					locator1 = "CommerceAccelerators#MINI_CART_ITEM_QUANTITY_SELECTOR_SELECT_FIELD",
+					value1 = "${quantity}");
+
+				var subtotal = 24 * ${quantity};
+
+				FrontStore.viewMiniCart(
+					cartSummaryQuantity = "${quantity}",
+					cartSummarySubtotal = "${subtotal}.00",
+					cartSummaryTotal = "${subtotal}.00");
+			}
+
+			CommerceCheckout.gotoCheckoutViaMiniCart();
+		}
+
+		task ("Then buyer user can do the checkout with the quantity higher than the stock quantity") {
+			CommerceCheckout.initializersCheckout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				productName = "U-Joint",
+				productQuantity = "6",
+				productUnitPrice = "24",
+				shippingMethod = "Standard");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-10560. Allowed quantities can be added to the cart when order quantity is lower than the stock quantity and back order is enabled"
+	@priority = "3"
+	test CanAddToCartAllowedQuantitiesWhenOrderItemQuantityIsLowerThanStockQuantityAndBackOrderIsEnabled {
+		property portal.acceptance = "false";
+
+		task ("Given an account with a buyer user is created") {
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And the warehouse quantity for the product is set to 7") {
+			var warehouseList = "1:Italy,3:United States - Southwest,3:United States - Northeast";
+
+			for (var warehouse : list "${warehouseList}") {
+				var warehouseName = StringUtil.extractLast("${warehouse}", ":");
+				var warehouseQuantity = StringUtil.extractFirst("${warehouse}", ":");
+
+				CommerceJSONWarehousesAndInventoriesAPI._patchWarehouseItem(
+					productSku = "MIN55861",
+					quantity = "${warehouseQuantity}",
+					warehouseName = "${warehouseName}");
+			}
+		}
+
+		task ("And Allowed Quantities field is set to 2,3,6 and Allow Back Order is enabled") {
+			CommerceJSONProductsAPI._patchCommerceProductConfiguration(
+				allowBackOrder = "true",
+				allowedOrderQuantities = "2,3,6",
+				productName = "U-Joint");
+		}
+
+		task ("And buyer user logs in") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+		}
+
+		task ("When buyer user adds allowed quantities to the cart") {
+			FrontStore.addInitializerProductToCart(
+				allowedQuantities = "3",
+				productName = "U-Joint");
+
+			CommerceNavigator.gotoMiniCart();
+
+			FrontStore.assertMiniCartItemAllowedQuantities(
+				allowedQuantities = "2,3,6",
+				cartItemSku = "MIN55861");
+
+			FrontStore.viewMiniCart(
+				cartSummaryQuantity = "3",
+				cartSummarySubtotal = "72.00",
+				cartSummaryTotal = "72.00");
+
+			for (var quantity : list "6,2") {
+				Select(
+					key_cartItemSku = "MIN55861",
+					locator1 = "CommerceAccelerators#MINI_CART_ITEM_QUANTITY_SELECTOR_SELECT_FIELD",
+					value1 = "${quantity}");
+
+				var subtotal = 24 * ${quantity};
+
+				FrontStore.viewMiniCart(
+					cartSummaryQuantity = "${quantity}",
+					cartSummarySubtotal = "${subtotal}.00",
+					cartSummaryTotal = "${subtotal}.00");
+			}
+
+			CommerceCheckout.gotoCheckoutViaMiniCart();
+		}
+
+		task ("And buyer user can do the checkout with the quantity lower than the stock quantity") {
+			CommerceCheckout.initializersCheckout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				productName = "U-Joint",
+				productQuantity = "2",
+				productUnitPrice = "24",
+				shippingMethod = "Standard");
+		}
+
+		task ("Then the product can still be added to the cart and buyer user can place a second order") {
+			CommerceNavigator.gotoMiniumSidebarItem(menuItem = "Catalog");
+
+			FrontStore.addInitializerProductToCart(
+				allowedQuantities = "6",
+				productName = "U-Joint");
+
+			CommerceCheckout.gotoCheckoutViaMiniCart();
+
+			CommerceCheckout.initializersCheckout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				productName = "U-Joint",
+				productQuantity = "6",
+				productUnitPrice = "24",
+				shippingMethod = "Standard");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-10542. Maximum quantity can be added to the cart when order quantity is higher than the stock quantity and when back order is enabled"
+	@priority = "3"
+	test CanAddToCartMaximumProductQuantityWhenOrderItemQuantityIsHigherThanStockQuantityAndBackOrderIsEnabled {
+		property portal.acceptance = "false";
+
+		task ("Given an account with a buyer user is created") {
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And the warehouse quantity for the product is set to 6") {
+			for (var warehouseName : list "Italy,United States - Northeast,United States - Southwest") {
+				CommerceJSONWarehousesAndInventoriesAPI._patchWarehouseItem(
+					productSku = "MIN55861",
+					quantity = "2",
+					warehouseName = "${warehouseName}");
+			}
+		}
+
+		task ("And maximum quantity is set to 8 and Allow Back Order is enabled") {
+			CommerceJSONProductsAPI._patchCommerceProductConfiguration(
+				maxOrderQuantity = "8",
+				productName = "U-Joint");
+
+			CommerceJSONProductsAPI._patchCommerceProductConfiguration(
+				allowBackOrder = "true",
+				productName = "U-Joint");
+		}
+
+		task ("And buyer user logs in") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+		}
+
+		task ("When buyer user adds maximum quantity to the cart") {
+			FrontStore.addInitializerProductToCart(
+				productName = "U-Joint",
+				productQuantity = "8");
+
+			CommerceCheckout.gotoCheckoutViaMiniCart();
+		}
+
+		task ("Then buyer user can do the checkout with the quantity higher than the stock quantity") {
+			CommerceCheckout.initializersCheckout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				productName = "U-Joint",
+				productQuantity = "8",
+				productUnitPrice = "24",
+				shippingMethod = "Standard");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-10542. Maximum quantity can be added to the cart when order quantity is lower than stock quantity and back order is enabled"
+	@priority = "3"
+	test CanAddToCartMaximumProductQuantityWhenOrderItemQuantityIsLowerThanStockQuantityAndBackOrderIsEnabled {
+		property portal.acceptance = "false";
+
+		task ("Given an account with a buyer user is created") {
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And the warehouse quantity for the product is set to 6") {
+			for (var warehouseName : list "Italy,United States - Northeast,United States - Southwest") {
+				CommerceJSONWarehousesAndInventoriesAPI._patchWarehouseItem(
+					productSku = "MIN55861",
+					quantity = "2",
+					warehouseName = "${warehouseName}");
+			}
+		}
+
+		task ("And maximum quantity is set to 4 and Allow Back Order is enabled") {
+			CommerceJSONProductsAPI._patchCommerceProductConfiguration(
+				maxOrderQuantity = "4",
+				productName = "U-Joint");
+
+			CommerceJSONProductsAPI._patchCommerceProductConfiguration(
+				allowBackOrder = "true",
+				productName = "U-Joint");
+		}
+
+		task ("And buyer user logs in") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+		}
+
+		task ("When buyer user adds maximum quantity to the cart") {
+			FrontStore.addInitializerProductToCart(
+				productName = "U-Joint",
+				productQuantity = "4");
+
+			CommerceCheckout.gotoCheckoutViaMiniCart();
+		}
+
+		task ("And buyer user can do the checkout with the quantity lower than the stock quantity") {
+			CommerceCheckout.initializersCheckout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				productName = "U-Joint",
+				productQuantity = "4",
+				productUnitPrice = "24",
+				shippingMethod = "Standard");
+		}
+
+		task ("Then the product can still be added to the cart and buyer user can place a second order") {
+			CommerceNavigator.gotoMiniumSidebarItem(menuItem = "Catalog");
+
+			FrontStore.addInitializerProductToCart(
+				productName = "U-Joint",
+				productQuantity = "4");
+
+			CommerceCheckout.gotoCheckoutViaMiniCart();
+
+			CommerceCheckout.initializersCheckout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				productName = "U-Joint",
+				productQuantity = "4",
+				productUnitPrice = "24",
+				shippingMethod = "Standard");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-10503. Minimum quantity can be added to the cart when order quantity is higher then the stock quantity and back order is enabled"
+	@priority = "3"
+	test CanAddToCartMinimumProductQuantityWhenOrderItemQuantityIsHigherThanStockQuantityAndBackOrderIsEnabled {
+		property portal.acceptance = "false";
+
+		task ("Given an account with a buyer user is created") {
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And the warehouse quantity for the product is set to 6") {
+			for (var warehouseName : list "Italy,United States - Northeast,United States - Southwest") {
+				CommerceJSONWarehousesAndInventoriesAPI._patchWarehouseItem(
+					productSku = "MIN55861",
+					quantity = "2",
+					warehouseName = "${warehouseName}");
+			}
+		}
+
+		task ("And minimum quantity is set to 8 and Allow Back Order is enabled") {
+			CommerceProducts.openProductsAdmin();
+
+			CommerceNavigator.searchEntry(entryName = "U-Joint");
+
+			CommerceNavigator.gotoEntry(entryName = "U-Joint");
+
+			CommerceEntry.gotoMenuTab(menuTab = "Configuration");
+
+			CommerceProducts.updateProductInventoryConfiguration(
+				allowBackOrders = "true",
+				displayAvailability = "true",
+				displayStockQuantity = "true",
+				minOrderQuantity = "8",
+				publish = "true");
+		}
+
+		task ("And buyer user logs in") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+		}
+
+		task ("When buyer user adds minimum quantity to the cart") {
+			FrontStore.addInitializerProductToCart(
+				productName = "U-Joint",
+				productQuantity = "8");
+
+			CommerceCheckout.gotoCheckoutViaMiniCart();
+		}
+
+		task ("Then buyer user can do the checkout with the quantity higher then the stock quantity") {
+			CommerceCheckout.initializersCheckout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				productName = "U-Joint",
+				productQuantity = "8",
+				productUnitPrice = "24",
+				shippingMethod = "Standard");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-10503. Minimum quantity can be added to the cart when order quantity is lower than the stock quantity and back order is enabled"
+	@priority = "3"
+	test CanAddToCartMinimumProductQuantityWhenOrderItemQuantityIsLowerThanStockQuantityAndBackOrderIsEnabled {
+		property portal.acceptance = "false";
+
+		task ("Given an account with a buyer user is created") {
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And the warehouse quantity for the product is set to 6") {
+			for (var warehouseName : list "Italy,United States - Northeast,United States - Southwest") {
+				CommerceJSONWarehousesAndInventoriesAPI._patchWarehouseItem(
+					productSku = "MIN55861",
+					quantity = "2",
+					warehouseName = "${warehouseName}");
+			}
+		}
+
+		task ("And minimum quantity is set to 4 and Allow Back Order is enabled") {
+			CommerceProducts.openProductsAdmin();
+
+			CommerceNavigator.searchEntry(entryName = "U-Joint");
+
+			CommerceNavigator.gotoEntry(entryName = "U-Joint");
+
+			CommerceEntry.gotoMenuTab(menuTab = "Configuration");
+
+			CommerceProducts.updateProductInventoryConfiguration(
+				allowBackOrders = "true",
+				displayAvailability = "true",
+				displayStockQuantity = "true",
+				minOrderQuantity = "4",
+				publish = "true");
+		}
+
+		task ("And buyer user logs in") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+		}
+
+		task ("When buyer user adds minimum quantity to the cart") {
+			FrontStore.addInitializerProductToCart(
+				productName = "U-Joint",
+				productQuantity = "4");
+
+			CommerceCheckout.gotoCheckoutViaMiniCart();
+		}
+
+		task ("And buyer user does the checkout with the quantity higher then the stock quantity") {
+			CommerceCheckout.initializersCheckout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				productName = "U-Joint",
+				productQuantity = "4",
+				productUnitPrice = "24",
+				shippingMethod = "Standard");
+		}
+
+		task ("Then the product can still be added to the cart and buyer user can place a second order") {
+			CommerceNavigator.gotoMiniumSidebarItem(menuItem = "Catalog");
+
+			FrontStore.addInitializerProductToCart(
+				productName = "U-Joint",
+				productQuantity = "4");
+
+			CommerceCheckout.gotoCheckoutViaMiniCart();
+
+			CommerceCheckout.initializersCheckout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				productName = "U-Joint",
+				productQuantity = "4",
+				productUnitPrice = "24",
+				shippingMethod = "Standard");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-10559. Multiple quantities can be added to the cart when order quantity is higher than the stock quantity and back order is enabled"
+	@priority = "3"
+	test CanAddToCartMultipleProductQuantityWhenOrderItemQuantityIsHigherThanStockQuantityAndBackOrderIsEnabled {
+		property portal.acceptance = "false";
+
+		task ("Given an account with a buyer user is created") {
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And the warehouse quantity for the product is set to 6") {
+			for (var warehouseName : list "Italy,United States - Northeast,United States - Southwest") {
+				CommerceJSONWarehousesAndInventoriesAPI._patchWarehouseItem(
+					productSku = "MIN55861",
+					quantity = "2",
+					warehouseName = "${warehouseName}");
+			}
+		}
+
+		task ("And multiple quantity is set to 8 and Allow Back Order is enabled") {
+			CommerceJSONProductsAPI._patchCommerceProductConfiguration(
+				multipleOrderQuantity = "8",
+				productName = "U-Joint");
+
+			CommerceJSONProductsAPI._patchCommerceProductConfiguration(
+				allowBackOrder = "true",
+				productName = "U-Joint");
+		}
+
+		task ("And buyer user logs in") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+		}
+
+		task ("When buyer user adds multiple quantity to the cart") {
+			FrontStore.addInitializerProductToCart(
+				productName = "U-Joint",
+				productQuantity = "8");
+
+			CommerceCheckout.gotoCheckoutViaMiniCart();
+		}
+
+		task ("Then buyer user can do the checkout with the quantity higher than the stock quantity") {
+			CommerceCheckout.initializersCheckout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				productName = "U-Joint",
+				productQuantity = "8",
+				productUnitPrice = "24",
+				shippingMethod = "Standard");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-10559. Multiple quantities can be added to the cart when order quantity is lower than the stock quantity and back order is enabled"
+	@priority = "3"
+	test CanAddToCartMultipleProductQuantityWhenOrderItemQuantityIsLowerThanStockQuantityAndBackOrderIsEnabled {
+		property portal.acceptance = "false";
+
+		task ("Given an account with a buyer user is created") {
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And the warehouse quantity for the product is set to 6") {
+			for (var warehouseName : list "Italy,United States - Northeast,United States - Southwest") {
+				CommerceJSONWarehousesAndInventoriesAPI._patchWarehouseItem(
+					productSku = "MIN55861",
+					quantity = "2",
+					warehouseName = "${warehouseName}");
+			}
+		}
+
+		task ("And multiple quantity is set to 4 and Allow Back Order is enabled") {
+			CommerceJSONProductsAPI._patchCommerceProductConfiguration(
+				multipleOrderQuantity = "4",
+				productName = "U-Joint");
+
+			CommerceJSONProductsAPI._patchCommerceProductConfiguration(
+				allowBackOrder = "true",
+				productName = "U-Joint");
+		}
+
+		task ("And buyer user logs in") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+		}
+
+		task ("When buyer user adds multiple quantity to the cart") {
+			FrontStore.addInitializerProductToCart(
+				productName = "U-Joint",
+				productQuantity = "4");
+
+			CommerceCheckout.gotoCheckoutViaMiniCart();
+		}
+
+		task ("And buyer user can do the checkout with the quantity lower than the stock quantity") {
+			CommerceCheckout.initializersCheckout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				productName = "U-Joint",
+				productQuantity = "4",
+				productUnitPrice = "24",
+				shippingMethod = "Standard");
+		}
+
+		task ("Then the product can still be added to the cart and buyer user can place a second order") {
+			CommerceNavigator.gotoMiniumSidebarItem(menuItem = "Catalog");
+
+			FrontStore.addInitializerProductToCart(
+				productName = "U-Joint",
+				productQuantity = "4");
+
+			CommerceCheckout.gotoCheckoutViaMiniCart();
+
+			CommerceCheckout.initializersCheckout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				productName = "U-Joint",
+				productQuantity = "4",
+				productUnitPrice = "24",
+				shippingMethod = "Standard");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-10560. Allowed quantities cannot be added to the cart when order quantity is higher than the stock quantity and back order is disabled"
+	@priority = "3"
+	test CannotAddToCartAllowedQuantitiesWhenOrderItemQuantityIsHigherThanStockQuantityAndBackOrderIsDisabled {
+		property portal.acceptance = "false";
+
+		task ("Given an account with a buyer user is created") {
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And the warehouse quantity for the product is set to 5") {
+			var warehouseList = "1:Italy,2:United States - Southwest,2:United States - Northeast";
+
+			for (var warehouse : list "${warehouseList}") {
+				var warehouseName = StringUtil.extractLast("${warehouse}", ":");
+				var warehouseQuantity = StringUtil.extractFirst("${warehouse}", ":");
+
+				CommerceJSONWarehousesAndInventoriesAPI._patchWarehouseItem(
+					productSku = "MIN55861",
+					quantity = "${warehouseQuantity}",
+					warehouseName = "${warehouseName}");
+			}
+		}
+
+		task ("And Allowed Quantities field is set to 6,8,10 and Allow Back Order is disabled") {
+			CommerceJSONProductsAPI._patchCommerceProductConfiguration(
+				allowBackOrder = "false",
+				allowedOrderQuantities = "6,8,10",
+				productName = "U-Joint");
+		}
+
+		task ("And buyer user logs in") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+		}
+
+		task ("When user tries to add the order in the MiniCart") {
+			Select(
+				key_productName = "U-Joint",
+				locator1 = "CommerceAccelerators#PRODUCT_CARD_QUANTITY_SELECTOR_SELECT_FIELD",
+				value1 = "8");
+
+			Click(
+				key_productName = "U-Joint",
+				locator1 = "CommerceAccelerators#ADD_TO_CART_BUTTON");
+		}
+
+		task ("Then it's not possible to add the order item to the cart") {
+			Alert.viewErrorMessage(errorMessage = "Danger:The specified quantity is unavailable.");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-10560. Allowed quantities can be added to the cart until there's stock quantity and back order is disabled"
+	@priority = "3"
+	test CannotAddToCartAllowedQuantitiesWhenStockQuantityIsLessAndBackOrderIsDisabled {
+		property portal.acceptance = "false";
+
+		task ("Given an account with a buyer user is created") {
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And the warehouse quantity for the product is set to 7") {
+			var warehouseList = "1:Italy,3:United States - Southwest,3:United States - Northeast";
+
+			for (var warehouse : list "${warehouseList}") {
+				var warehouseName = StringUtil.extractLast("${warehouse}", ":");
+				var warehouseQuantity = StringUtil.extractFirst("${warehouse}", ":");
+
+				CommerceJSONWarehousesAndInventoriesAPI._patchWarehouseItem(
+					productSku = "MIN55861",
+					quantity = "${warehouseQuantity}",
+					warehouseName = "${warehouseName}");
+			}
+		}
+
+		task ("And Allowed Quantities field is set to 2,3,6 and Allow Back Order is disabled") {
+			CommerceJSONProductsAPI._patchCommerceProductConfiguration(
+				allowBackOrder = "false",
+				allowedOrderQuantities = "2,3,6",
+				productName = "U-Joint");
+		}
+
+		task ("And buyer user logs in") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+		}
+
+		task ("When buyer user adds allowed quantities to the cart") {
+			FrontStore.addInitializerProductToCart(
+				allowedQuantities = "2",
+				productName = "U-Joint");
+
+			CommerceNavigator.gotoMiniCart();
+
+			FrontStore.assertMiniCartItemAllowedQuantities(
+				allowedQuantities = "2,3,6",
+				cartItemSku = "MIN55861");
+
+			FrontStore.viewMiniCart(
+				cartSummaryQuantity = "2",
+				cartSummarySubtotal = "48.00",
+				cartSummaryTotal = "48.00");
+
+			for (var quantity : list "3,6") {
+				Select(
+					key_cartItemSku = "MIN55861",
+					locator1 = "CommerceAccelerators#MINI_CART_ITEM_QUANTITY_SELECTOR_SELECT_FIELD",
+					value1 = "${quantity}");
+
+				var subtotal = 24 * ${quantity};
+
+				FrontStore.viewMiniCart(
+					cartSummaryQuantity = "${quantity}",
+					cartSummarySubtotal = "${subtotal}.00",
+					cartSummaryTotal = "${subtotal}.00");
+			}
+
+			CommerceCheckout.gotoCheckoutViaMiniCart();
+		}
+
+		task ("And buyer user can do the checkout with the quantity lower than the stock quantity") {
+			CommerceCheckout.initializersCheckout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				productName = "U-Joint",
+				productQuantity = "6",
+				productUnitPrice = "24",
+				shippingMethod = "Standard");
+		}
+
+		task ("When user tries to add a new order in the MiniCart") {
+			CommerceNavigator.gotoMiniumSidebarItem(menuItem = "Catalog");
+
+			Select(
+				key_productName = "U-Joint",
+				locator1 = "CommerceAccelerators#PRODUCT_CARD_QUANTITY_SELECTOR_SELECT_FIELD",
+				value1 = "2");
+
+			Click(
+				key_productName = "U-Joint",
+				locator1 = "CommerceAccelerators#ADD_TO_CART_BUTTON");
+		}
+
+		task ("Then the order item will not be added to the cart") {
+			Alert.viewErrorMessage(errorMessage = "Danger:The specified quantity is unavailable.");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-10542. Maximum quantity cannot be added to the cart when order quantity is higher than the stock quantity and back order is disabled"
+	@priority = "3"
+	test CannotAddToCartMaximumProductQuantityWhenOrderItemQuantityIsHigherThanStockQuantityAndBackOrderIsDisabled {
+		property portal.acceptance = "false";
+
+		task ("Given an account with a buyer user is created") {
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And the warehouse quantity for the product is set to 6") {
+			for (var warehouseName : list "Italy,United States - Northeast,United States - Southwest") {
+				CommerceJSONWarehousesAndInventoriesAPI._patchWarehouseItem(
+					productSku = "MIN55861",
+					quantity = "2",
+					warehouseName = "${warehouseName}");
+			}
+		}
+
+		task ("And maximum quantity is set to 8 and Allow Back Order is disabled") {
+			CommerceJSONProductsAPI._patchCommerceProductConfiguration(
+				maxOrderQuantity = "8",
+				productName = "U-Joint");
+
+			CommerceJSONProductsAPI._patchCommerceProductConfiguration(
+				allowBackOrder = "false",
+				productName = "U-Joint");
+		}
+
+		task ("And buyer user logs in") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+		}
+
+		task ("When user tries to add the order in the MiniCart") {
+			Type(
+				key_productName = "U-Joint",
+				locator1 = "CommerceAccelerators#PRODUCT_CARD_QUANTITY_SELECTOR_INPUT_FIELD",
+				value1 = "8");
+
+			Click(
+				key_productName = "U-Joint",
+				locator1 = "CommerceAccelerators#ADD_TO_CART_BUTTON");
+		}
+
+		task ("Then it's not possible to add the order item to the cart") {
+			Alert.viewErrorMessage(errorMessage = "Danger:The specified quantity is unavailable.");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-10542. Maximum quantity can be added to the cart until there's stock quantity and back order is disabled"
+	@priority = "3"
+	test CannotAddToCartMaximumProductQuantityWhenStockQuantityIsLessAndBackOrderIsDisabled {
+		property portal.acceptance = "false";
+
+		task ("Given an account with a buyer user is created") {
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And the warehouse quantity for the product is set to 6") {
+			for (var warehouseName : list "Italy,United States - Northeast,United States - Southwest") {
+				CommerceJSONWarehousesAndInventoriesAPI._patchWarehouseItem(
+					productSku = "MIN55861",
+					quantity = "2",
+					warehouseName = "${warehouseName}");
+			}
+		}
+
+		task ("And maximum quantity is set to 4 and Allow Back Order is disabled") {
+			CommerceJSONProductsAPI._patchCommerceProductConfiguration(
+				maxOrderQuantity = "4",
+				productName = "U-Joint");
+
+			CommerceJSONProductsAPI._patchCommerceProductConfiguration(
+				allowBackOrder = "false",
+				productName = "U-Joint");
+		}
+
+		task ("And buyer user logs in") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+		}
+
+		task ("And buyer user adds maximum quantity to the cart") {
+			FrontStore.addInitializerProductToCart(
+				productName = "U-Joint",
+				productQuantity = "4");
+
+			CommerceCheckout.gotoCheckoutViaMiniCart();
+		}
+
+		task ("And buyer user can do the checkout with the quantity lower than the stock quantity") {
+			CommerceCheckout.initializersCheckout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				productName = "U-Joint",
+				productQuantity = "4",
+				productUnitPrice = "24",
+				shippingMethod = "Standard");
+		}
+
+		task ("When user tries to add a new order in the MiniCart") {
+			CommerceNavigator.gotoMiniumSidebarItem(menuItem = "Catalog");
+
+			Type(
+				key_productName = "U-Joint",
+				locator1 = "CommerceAccelerators#PRODUCT_CARD_QUANTITY_SELECTOR_INPUT_FIELD",
+				value1 = "4");
+
+			Click(
+				key_productName = "U-Joint",
+				locator1 = "CommerceAccelerators#ADD_TO_CART_BUTTON");
+		}
+
+		task ("Then the order item will not be added to the cart") {
+			Alert.viewErrorMessage(errorMessage = "Danger:The specified quantity is unavailable.");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-10503. Minimum quantity cannot be added to the cart when order quantity is higher then the stock quantity and back order is disabled"
+	@priority = "3"
+	test CannotAddToCartMinimumProductQuantityWhenOrderItemQuantityIsHigherThanStockQuantityAndBackOrderIsDisabled {
+		property portal.acceptance = "false";
+
+		task ("Given an account with a buyer user is created") {
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And the warehouse quantity for the product is set to 6") {
+			for (var warehouseName : list "Italy,United States - Northeast,United States - Southwest") {
+				CommerceJSONWarehousesAndInventoriesAPI._patchWarehouseItem(
+					productSku = "MIN55861",
+					quantity = "2",
+					warehouseName = "${warehouseName}");
+			}
+		}
+
+		task ("And minimum quantity is set to 8 and Allow Back Order is disabled") {
+			CommerceProducts.openProductsAdmin();
+
+			CommerceNavigator.searchEntry(entryName = "U-Joint");
+
+			CommerceNavigator.gotoEntry(entryName = "U-Joint");
+
+			CommerceEntry.gotoMenuTab(menuTab = "Configuration");
+
+			CommerceProducts.updateProductInventoryConfiguration(
+				allowBackOrders = "false",
+				displayAvailability = "true",
+				displayStockQuantity = "true",
+				minOrderQuantity = "8",
+				publish = "true");
+		}
+
+		task ("And buyer user logs in") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+		}
+
+		task ("When user tries to add the order in the MiniCart") {
+			Click(
+				key_productName = "U-Joint",
+				locator1 = "CommerceAccelerators#ADD_TO_CART_BUTTON");
+		}
+
+		task ("Then it's not possible to add the order item to the cart") {
+			Alert.viewErrorMessage(errorMessage = "Danger:The specified quantity is unavailable.");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-10503. Minimum quantity can be added to the cart until there's stock quantity and back order is disabled"
+	@priority = "3"
+	test CannotAddToCartMinimumProductQuantityWhenStockQuantityIsLessAndBackOrderIsDisabled {
+		property portal.acceptance = "false";
+
+		task ("Given an account with a buyer user is created") {
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And the warehouse quantity for the product is set to 6") {
+			for (var warehouseName : list "Italy,United States - Northeast,United States - Southwest") {
+				CommerceJSONWarehousesAndInventoriesAPI._patchWarehouseItem(
+					productSku = "MIN55861",
+					quantity = "2",
+					warehouseName = "${warehouseName}");
+			}
+		}
+
+		task ("And minimum quantity is set to 4 and Allow Back Order is disabled") {
+			CommerceProducts.openProductsAdmin();
+
+			CommerceNavigator.searchEntry(entryName = "U-Joint");
+
+			CommerceNavigator.gotoEntry(entryName = "U-Joint");
+
+			CommerceEntry.gotoMenuTab(menuTab = "Configuration");
+
+			CommerceProducts.updateProductInventoryConfiguration(
+				allowBackOrders = "false",
+				displayAvailability = "true",
+				displayStockQuantity = "true",
+				minOrderQuantity = "4",
+				publish = "true");
+		}
+
+		task ("And buyer user logs in") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+		}
+
+		task ("And buyer user can do the checkout with a quantity that is less than the stock quantity one") {
+			FrontStore.addInitializerProductToCart(
+				productName = "U-Joint",
+				productQuantity = "4");
+
+			CommerceCheckout.gotoCheckoutViaMiniCart();
+
+			CommerceCheckout.initializersCheckout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				productName = "U-Joint",
+				productQuantity = "4",
+				productUnitPrice = "24",
+				shippingMethod = "Standard");
+		}
+
+		task ("When user tries to add a new order in the MiniCart") {
+			CommerceNavigator.gotoMiniumSidebarItem(menuItem = "Catalog");
+
+			Click(
+				key_productName = "U-Joint",
+				locator1 = "CommerceAccelerators#ADD_TO_CART_BUTTON");
+		}
+
+		task ("Then the order item will not be added to the cart") {
+			Alert.viewErrorMessage(errorMessage = "Danger:The specified quantity is unavailable.");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-10559. Multiple quantities cannot be added to the cart when order quantity is higher than the stock quantity and back order is disabled"
+	@priority = "3"
+	test CannotAddToCartMultipleQuantityWhenOrderItemQuantityIsHigherThanStockQuantityAndBackOrderIsDisabled {
+		property portal.acceptance = "false";
+
+		task ("Given an account with a buyer user is created") {
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And the warehouse quantity for the product is set to 6") {
+			for (var warehouseName : list "Italy,United States - Northeast,United States - Southwest") {
+				CommerceJSONWarehousesAndInventoriesAPI._patchWarehouseItem(
+					productSku = "MIN55861",
+					quantity = "2",
+					warehouseName = "${warehouseName}");
+			}
+		}
+
+		task ("And multiple quantity is set to 8 and Allow Back Order is disabled") {
+			CommerceJSONProductsAPI._patchCommerceProductConfiguration(
+				multipleOrderQuantity = "8",
+				productName = "U-Joint");
+
+			CommerceJSONProductsAPI._patchCommerceProductConfiguration(
+				allowBackOrder = "false",
+				productName = "U-Joint");
+		}
+
+		task ("And buyer user logs in") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+		}
+
+		task ("When user tries to add the order in the MiniCart") {
+			Type(
+				key_productName = "U-Joint",
+				locator1 = "CommerceAccelerators#PRODUCT_CARD_QUANTITY_SELECTOR_INPUT_FIELD",
+				value1 = "8");
+
+			Click(
+				key_productName = "U-Joint",
+				locator1 = "CommerceAccelerators#ADD_TO_CART_BUTTON");
+		}
+
+		task ("Then it's not possible to add the order item to the cart") {
+			Alert.viewErrorMessage(errorMessage = "Danger:The specified quantity is unavailable.");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-10559. Multiple quantities can be added to the cart until there's stock quantity and back order is disabled"
+	@priority = "3"
+	test CannotAddToCartMultipleQuantityWhenStockQuantityIsLessAndBackOrderIsDisabled {
+		property portal.acceptance = "false";
+
+		task ("Given an account with a buyer user is created") {
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And the warehouse quantity for the product is set to 6") {
+			for (var warehouseName : list "Italy,United States - Northeast,United States - Southwest") {
+				CommerceJSONWarehousesAndInventoriesAPI._patchWarehouseItem(
+					productSku = "MIN55861",
+					quantity = "2",
+					warehouseName = "${warehouseName}");
+			}
+		}
+
+		task ("And multiple quantity is set to 4 and Allow Back Order is disabled") {
+			CommerceJSONProductsAPI._patchCommerceProductConfiguration(
+				multipleOrderQuantity = "4",
+				productName = "U-Joint");
+
+			CommerceJSONProductsAPI._patchCommerceProductConfiguration(
+				allowBackOrder = "false",
+				productName = "U-Joint");
+		}
+
+		task ("And buyer user logs in") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+		}
+
+		task ("And buyer user adds multiple quantity to the cart") {
+			FrontStore.addInitializerProductToCart(
+				productName = "U-Joint",
+				productQuantity = "4");
+
+			CommerceCheckout.gotoCheckoutViaMiniCart();
+		}
+
+		task ("And buyer user can do the checkout with the quantity lower than the stock quantity") {
+			CommerceCheckout.initializersCheckout(
+				newAddressAddress = "Test Address",
+				newAddressCity = "Test City",
+				newAddressCountry = "United States",
+				newAddressName = "Address Name",
+				newAddressZipCode = "Test Zip Code",
+				productName = "U-Joint",
+				productQuantity = "4",
+				productUnitPrice = "24",
+				shippingMethod = "Standard");
+		}
+
+		task ("When user tries to add a new order in the MiniCart") {
+			CommerceNavigator.gotoMiniumSidebarItem(menuItem = "Catalog");
+
+			Type(
+				key_productName = "U-Joint",
+				locator1 = "CommerceAccelerators#PRODUCT_CARD_QUANTITY_SELECTOR_INPUT_FIELD",
+				value1 = "4");
+
+			Click(
+				key_productName = "U-Joint",
+				locator1 = "CommerceAccelerators#ADD_TO_CART_BUTTON");
+		}
+
+		task ("Then the order item will not be added to the cart") {
+			Alert.viewErrorMessage(errorMessage = "Danger:The specified quantity is unavailable.");
+		}
+	}
+
+	@description = "This is a test for COMMERCE-10491. The product can be added to the cart until there's stock quantity and back order is disabled"
 	@priority = "3"
 	test CanOnlyPlaceOrderWhenStockIsAvailable {
 		property portal.acceptance = "false";

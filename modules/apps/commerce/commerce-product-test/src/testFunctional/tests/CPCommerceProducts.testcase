@@ -147,7 +147,7 @@ definition {
 
 		AssertElementPresent(
 			key_tableEntryURL = "Grouped",
-			locator1 = "RemoteApps#TABLE_ENTRY_URL_REMOTE_TABLE");
+			locator1 = "ClientExtension#TABLE_ENTRY_URL_REMOTE_TABLE");
 	}
 
 	@description = "This is a test for COMMERCE-6301. AddVirtualProduct"
@@ -1285,26 +1285,26 @@ definition {
 			var catalogId = CommerceJSONCatalogsAPI._getCommerceCatalogIdByName(catalogName = "Master");
 
 			var curl = '''
-			${baseURL}/o/headless-commerce-admin-catalog/v1.0/products \
-			-u test@liferay.com:test \
-			-H 'accept: application/json' \
-  			-H 'Content-Type: application/json' \
-  			-d '{
-      			    "name": {
-           		      "en_US": "Simple Product"
-        		    },
-        			"catalogId": ${catalogId},
-        			"active": true,
-        			"productType": "simple",
-        			"images": [   
-           			 		      {
-                				    "src": "${baseURL}/documents/d/guest/tree-png",
-                				    "title": {
-                    	 		      "en_US": "icon"
-                				    }
-            					  }  
-       			 			  ]
-   				}'
+				${baseURL}/o/headless-commerce-admin-catalog/v1.0/products \
+					-u test@liferay.com:test \
+					-H 'accept: application/json' \
+					-H 'Content-Type: application/json' \
+					-d '{
+						"name": {
+							"en_US": "Simple Product"
+						},
+						"catalogId": ${catalogId},
+						"active": true,
+						"productType": "simple",
+						"images": [
+							{
+								"src": "${baseURL}/documents/d/guest/tree-png",
+								"title": {
+									"en_US": "icon"
+								}
+							}
+						]
+					}'
 			''';
 
 			var responseBody = JSONCurlUtil.post("${curl}");
@@ -2017,6 +2017,7 @@ definition {
 
 	test ProductPublishing {
 		property environment.acceptance = "true";
+		property operating.system.types = "alpine,amazonlinux,centos,debian,fedora,orcllinux,osx,redhat,solaris,suse,ubuntu,windows";
 		property portal.acceptance = "false";
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
@@ -2321,7 +2322,7 @@ definition {
 			category = "Product Management",
 			portlet = "Products");
 
-		Click(locator1 = "Pagination#NEXT_LINK");
+		Click(locator1 = "ACUtils#NEXT_PAGES");
 
 		AssertTextEquals(
 			locator1 = "Pagination#PAGINATION_ITEMS_PER_PAGE",
@@ -2351,7 +2352,7 @@ definition {
 
 		CommerceEntry.gotoMenuTab(menuTab = "SKUs");
 
-		Click(locator1 = "Pagination#NEXT_LINK");
+		Click(locator1 = "ACUtils#NEXT_PAGES");
 
 		CommerceEntry.viewPaginationResults(results = "Showing 11 to 20 of 54");
 

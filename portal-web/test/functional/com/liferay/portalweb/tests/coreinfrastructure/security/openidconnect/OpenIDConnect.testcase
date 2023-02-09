@@ -119,6 +119,29 @@ definition {
 			OSGiConfig.copyOSGiConfigFile(
 				osgiConfigFileBaseDir = "test/functional/com/liferay/portalweb/tests/coreinfrastructure/security/openidconnect/dependencies",
 				osgiConfigFileName = "com.liferay.portal.security.sso.openid.connect.internal.configuration.OpenIdConnectProviderConfiguration~Okta.config");
+
+			ApplicationsMenu.gotoPortlet(
+				category = "Configuration",
+				panel = "Control Panel",
+				portlet = "System Settings");
+
+			SystemSettings.gotoConfiguration(
+				configurationCategory = "SSO",
+				configurationName = "OpenID Connect Provider Connection",
+				configurationScope = "Virtual Instance Scope");
+
+			while (IsElementNotPresent(key_rowEntry = "Okta", locator1 = "ContentRow#ENTRY_CONTENT_ENTRY_NAME")) {
+
+				// Pausing due to LRQA-78807, waiting for the config file deploy.
+
+				Pause(locator1 = "1000");
+
+				Refresh();
+
+				echo("Refreshed Page");
+			}
+
+			LexiconEntry.viewEntryName(rowEntry = "Okta");
 		}
 
 		task ("When: Logout and login with OpenID Connect") {
@@ -132,7 +155,7 @@ definition {
 		task ("Then: Verify that administrator role is assigned to OIDC user") {
 			MyAccount.openMyAccountAdmin();
 
-			User.viewUserInfomationRolesCP(roleTitle = "Administrator");
+			User.viewUserInformationRolesCP(roleTitle = "Administrator");
 		}
 	}
 
@@ -188,7 +211,7 @@ definition {
 				userEmailAddress = "user1",
 				userPassword = "test");
 
-			// This pause is required to allow the test to wait for the  access token to expire.
+			// This pause is required to allow the test to wait for the access token to expire.
 
 			Pause(locator1 = "60000");
 
@@ -353,6 +376,129 @@ definition {
 		}
 	}
 
+	@description = "This is a use case for LPS-162080 TC-4: Existing OIDC connection can be edited."
+	@priority = "5"
+	test ExistedUserMapperCanBeEdited {
+		property osgi.module.configuration.file.names = "com.liferay.portal.security.sso.openid.connect.configuration.OpenIdConnectConfiguration.config";
+		property osgi.module.configurations = "enabled=\"true\"";
+		property test.name.skip.portal.instance = "OpenIDConnect#ExistedUserMapperCanBeEdited";
+
+		var jsonFileName = "keycloak.json";
+		var jsonFileBaseDir = "test/functional/com/liferay/portalweb/tests/coreinfrastructure/security/openidconnect/dependencies";
+
+		var clientInfo = FileUtil.read("${jsonFileBaseDir}/${jsonFileName}");
+		var userMapperInfo = FileUtil.read("${jsonFileBaseDir}/OAuth2_User_mapping.json");
+
+		task ("Given: User starts Keycloak for test and set debug level") {
+			AntCommand(
+				locator1 = "build-test-keycloak.xml",
+				value1 = "prepare-selenium-keycloak-server");
+
+			OpenIDConnect.enableOpenIDConnectDebugLogs();
+
+			OpenIDConnect.enableOpenIDConnectCustomParametersDebugLogs();
+		}
+
+		task ("And: Add Auth Server Local Metadata") {
+			OAuthClient.openOAuthClientAdmin(navbar = "Auth Server Local Metadata");
+
+			OAuthClient.addAuthServer(jsonFileName = "keycloak-local-metadata.json");
+
+			var wellknownURI = OAuthClient.getWellKnownURI();
+		}
+
+		task ("When: User add OAuth Client with custom attributes") {
+			OAuthClient.openOAuthClientAdmin(navbar = "Clients");
+
+			OAuthClient.addClient(
+				jsonFileName = "keycloak.json",
+				userMapperJSON = "OAuth2_User_mapping.json",
+				wellknownURI = "${wellknownURI}");
+		}
+
+		task ("And: Logs in through OIDC to verify user informations") {
+			User.logoutPG();
+
+			User.loginUserWithOpenIDConnectEnabledPG(
+				userEmailAddress = "tester1@liferay.com",
+				userPassword = "test");
+
+			MyAccount.openMyAccountAdmin();
+
+			User.viewUserInformation(
+				userEmailAddress = "tester1@liferay.com",
+				userFirstName = "First1",
+				userLastName = "Last1",
+				userScreenName = "user1");
+
+			User.logoutPG();
+		}
+
+		task ("And: Edit the OIDC connection") {
+			User.firstLoginPG();
+
+			OAuthClient.openOAuthClientAdmin(navbar = "Clients");
+
+			LexiconEntry.gotoEllipsisMenuItem(menuItem = "Edit");
+
+			var editedUserMapperInfo = StringUtil.replace("${userMapperInfo}", "family_name", "changed");
+
+			FormFields.editTextMultiline(
+				fieldName = "OIDCUserInfo",
+				fieldValue = "${editedUserMapperInfo}");
+
+			var editedUserMapperInfo = StringUtil.replace("${editedUserMapperInfo}", "given_name", "family_name");
+
+			FormFields.editTextMultiline(
+				fieldName = "OIDCUserInfo",
+				fieldValue = "${editedUserMapperInfo}");
+
+			var editedUserMapperInfo = StringUtil.replace("${editedUserMapperInfo}", "changed", "given_name");
+
+			FormFields.editTextMultiline(
+				fieldName = "OIDCUserInfo",
+				fieldValue = "${editedUserMapperInfo}");
+
+			Click(
+				key_text = "Save",
+				locator1 = "Button#ANY");
+		}
+
+		task ("And: Delete the OIDC user") {
+			User.openUsersAdmin();
+
+			User.deactivateCP(userFirstName = "user1");
+
+			User.deleteCP(
+				deactivateType = "Actions",
+				userFirstName = "user1");
+
+			User.logoutPG();
+		}
+
+		task ("Then: OIDC user informations will be imported accordingly to the edited connection") {
+			Navigator.openURL();
+
+			AssertClick(
+				locator1 = "UserBar#USER_SIGN_IN",
+				value1 = "Sign In");
+
+			Click(locator1 = "Icon#OPENID_CONNECT");
+
+			Click(locator1 = "Button#SIGN_IN");
+
+			GoogleLogin.acceptConditions();
+
+			MyAccount.openMyAccountAdmin();
+
+			User.viewUserInformation(
+				userEmailAddress = "tester1@liferay.com",
+				userFirstName = "Last1",
+				userLastName = "First1",
+				userScreenName = "user1");
+		}
+	}
+
 	@description = "This is a use case for LPS-154744. TC4-1: The OIDC user is assigned the regular role which contains multiple spaces given through the property."
 	@priority = "4"
 	test MultipleSpacesRoleNameCanBeAssignedToOIDCUser {
@@ -368,6 +514,29 @@ definition {
 			OSGiConfig.copyOSGiConfigFile(
 				osgiConfigFileBaseDir = "test/functional/com/liferay/portalweb/tests/coreinfrastructure/security/openidconnect/dependencies",
 				osgiConfigFileName = "com.liferay.portal.security.sso.openid.connect.internal.configuration.OpenIdConnectProviderConfiguration~Okta.config");
+
+			ApplicationsMenu.gotoPortlet(
+				category = "Configuration",
+				panel = "Control Panel",
+				portlet = "System Settings");
+
+			SystemSettings.gotoConfiguration(
+				configurationCategory = "SSO",
+				configurationName = "OpenID Connect Provider Connection",
+				configurationScope = "Virtual Instance Scope");
+
+			while (IsElementNotPresent(key_rowEntry = "Okta", locator1 = "ContentRow#ENTRY_CONTENT_ENTRY_NAME")) {
+
+				// Pausing due to LRQA-78807, waiting for the config file deploy.
+
+				Pause(locator1 = "1000");
+
+				Refresh();
+
+				echo("Refreshed Page");
+			}
+
+			LexiconEntry.viewEntryName(rowEntry = "Okta");
 		}
 
 		task ("And: Add a regular role which contains multiple spaces") {
@@ -387,7 +556,7 @@ definition {
 		task ("Then: Multiple spaces role name can be assigned to OKTA user") {
 			MyAccount.openMyAccountAdmin();
 
-			User.viewUserInfomationRolesCP(roleTitle = "My Custom Regular Role");
+			User.viewUserInformationRolesCP(roleTitle = "My Custom Regular Role");
 		}
 	}
 
@@ -512,6 +681,29 @@ definition {
 			OSGiConfig.copyOSGiConfigFile(
 				osgiConfigFileBaseDir = "test/functional/com/liferay/portalweb/tests/coreinfrastructure/security/openidconnect/dependencies",
 				osgiConfigFileName = "com.liferay.portal.security.sso.openid.connect.internal.configuration.OpenIdConnectProviderConfiguration~Auth0.config");
+
+			ApplicationsMenu.gotoPortlet(
+				category = "Configuration",
+				panel = "Control Panel",
+				portlet = "System Settings");
+
+			SystemSettings.gotoConfiguration(
+				configurationCategory = "SSO",
+				configurationName = "OpenID Connect Provider Connection",
+				configurationScope = "Virtual Instance Scope");
+
+			while (IsElementNotPresent(key_rowEntry = "Auth0", locator1 = "ContentRow#ENTRY_CONTENT_ENTRY_NAME")) {
+
+				// Pausing due to LRQA-78807, waiting for the config file deploy.
+
+				Pause(locator1 = "1000");
+
+				Refresh();
+
+				echo("Refreshed Page");
+			}
+
+			LexiconEntry.viewEntryName(rowEntry = "Auth0");
 		}
 
 		task ("Logout and login with OpenID Connect") {
@@ -542,6 +734,29 @@ definition {
 			OSGiConfig.copyOSGiConfigFile(
 				osgiConfigFileBaseDir = "test/functional/com/liferay/portalweb/tests/coreinfrastructure/security/openidconnect/dependencies",
 				osgiConfigFileName = "com.liferay.portal.security.sso.openid.connect.internal.configuration.OpenIdConnectProviderConfiguration~Azure.config");
+
+			ApplicationsMenu.gotoPortlet(
+				category = "Configuration",
+				panel = "Control Panel",
+				portlet = "System Settings");
+
+			SystemSettings.gotoConfiguration(
+				configurationCategory = "SSO",
+				configurationName = "OpenID Connect Provider Connection",
+				configurationScope = "Virtual Instance Scope");
+
+			while (IsElementNotPresent(key_rowEntry = "Azure", locator1 = "ContentRow#ENTRY_CONTENT_ENTRY_NAME")) {
+
+				// Pausing due to LRQA-78807, waiting for the config file deploy.
+
+				Pause(locator1 = "1000");
+
+				Refresh();
+
+				echo("Refreshed Page");
+			}
+
+			LexiconEntry.viewEntryName(rowEntry = "Azure");
 		}
 
 		task ("Logout and login with OpenID Connect") {
@@ -589,12 +804,15 @@ definition {
 		}
 	}
 
-	@description = "This is a use case for LRQA-72792. Users could login and logout using PingOne as OpenID Connect provider."
+	@description = "This is a use case for LRQA-72792. Users could login and logout using PingOne as OpenID Connect provider. Blocked by ISIT-28728."
+	@ignore = "true"
 	@priority = "5"
 	test OpenIDConnectSmokeWithPingOne {
 		property osgi.module.configuration.file.names = "com.liferay.portal.security.sso.openid.connect.configuration.OpenIdConnectConfiguration.config";
 		property osgi.module.configurations = "enabled=\"true\"${line.separator}tokenRefreshOffset=\"120\"";
-		property portal.acceptance = "true";
+		property portal.acceptance = "quarantine";
+		property portal.release = "quarantine";
+		property portal.upstream = "quarantine";
 		property test.name.skip.portal.instance = "OpenIDConnect#OpenIDConnectSmokeWithPingOne";
 
 		var userName = PropsUtil.get("openid.provider.pingone.test.account.username");
@@ -604,6 +822,29 @@ definition {
 			OSGiConfig.copyOSGiConfigFile(
 				osgiConfigFileBaseDir = "test/functional/com/liferay/portalweb/tests/coreinfrastructure/security/openidconnect/dependencies",
 				osgiConfigFileName = "com.liferay.portal.security.sso.openid.connect.internal.configuration.OpenIdConnectProviderConfiguration~PingOne.config");
+
+			ApplicationsMenu.gotoPortlet(
+				category = "Configuration",
+				panel = "Control Panel",
+				portlet = "System Settings");
+
+			SystemSettings.gotoConfiguration(
+				configurationCategory = "SSO",
+				configurationName = "OpenID Connect Provider Connection",
+				configurationScope = "Virtual Instance Scope");
+
+			while (IsElementNotPresent(key_rowEntry = "PingOne", locator1 = "ContentRow#ENTRY_CONTENT_ENTRY_NAME")) {
+
+				// Pausing due to LRQA-78807, waiting for the config file deploy.
+
+				Pause(locator1 = "1000");
+
+				Refresh();
+
+				echo("Refreshed Page");
+			}
+
+			LexiconEntry.viewEntryName(rowEntry = "PingOne");
 		}
 
 		task ("Logout and login with OpenID Connect") {
@@ -698,6 +939,311 @@ definition {
 		}
 	}
 
+	@description = "This is a use case for LPS-162080 TC-2/2: User attributes can be mapped in OpenID Connection."
+	@priority = "5"
+	test UserAttributesCanBeMappedInOIDCOnInstanceLevel {
+		property osgi.module.configuration.file.names = "com.liferay.portal.security.sso.openid.connect.configuration.OpenIdConnectConfiguration.config";
+		property osgi.module.configurations = "enabled=\"true\"";
+		property test.name.skip.portal.instance = "OpenIDConnect#UserAttributesCanBeMappedInOIDCOnInstanceLevel";
+
+		task ("Given: User starts Keycloak for test and set debug level") {
+			AntCommand(
+				locator1 = "build-test-keycloak.xml",
+				value1 = "prepare-selenium-keycloak-server");
+
+			OpenIDConnect.enableOpenIDConnectDebugLogs();
+
+			OpenIDConnect.enableOpenIDConnectCustomParametersDebugLogs();
+		}
+
+		task ("And: Add virtual instance") {
+			HeadlessPortalInstanceAPI.addPortalInstance(
+				domain = "www.able.com",
+				portalInstanceId = "www.able.com",
+				virtualHost = "www.able.com");
+		}
+
+		task ("When: User adds OIDC connection on able.com") {
+			User.firstLoginUI(
+				password = "test",
+				specificURL = "http://www.able.com:8080",
+				userEmailAddress = "test@www.able.com");
+
+			OAuthClient.openOAuthClientAdmin(
+				baseURL = "http://www.able.com:8080",
+				navbar = "Auth Server Local Metadata");
+
+			OAuthClient.addAuthServer(jsonFileName = "keycloak-local-metadata.json");
+
+			var wellknownURI = OAuthClient.getWellKnownURI();
+
+			OAuthClient.openOAuthClientAdmin(
+				baseURL = "http://www.able.com:8080",
+				navbar = "Clients");
+
+			OAuthClient.addClient(
+				jsonFileName = "keycloak.json",
+				userMapperJSON = "OAuth2_User_mapping.json",
+				wellknownURI = "${wellknownURI}");
+
+			User.logoutPG(specificURL = "http://www.able.com:8080");
+		}
+
+		task ("Then: User information is synced from user database on OIDC login") {
+			User.loginUserWithOpenIDConnectEnabledPG(
+				specificURL = "http://www.able.com:8080",
+				userEmailAddress = "tester1@liferay.com",
+				userPassword = "test");
+
+			MyAccount.openMyAccountAdmin(baseURL = "http://www.able.com:8080");
+
+			User.viewUserInformation(
+				userBirthday = "12/12/1990",
+				userEmailAddress = "tester1@liferay.com",
+				userFirstName = "First1",
+				userLastName = "Last1",
+				userMiddleName = "Middle Name",
+				userScreenName = "user1");
+		}
+	}
+
+	@description = "This is a use case for LPS-162080 TC-2/1: User attributes can be mapped in OpenID Connection."
+	@priority = "5"
+	test UserAttributesCanBeMappedInOIDCOnSystemLevel {
+		property osgi.module.configuration.file.names = "com.liferay.portal.security.sso.openid.connect.configuration.OpenIdConnectConfiguration.config";
+		property osgi.module.configurations = "enabled=\"true\"";
+		property test.name.skip.portal.instance = "OpenIDConnect#UserAttributesCanBeMappedInOIDCOnSystemLevel";
+
+		task ("Given: User starts Keycloak for test and set debug level") {
+			AntCommand(
+				locator1 = "build-test-keycloak.xml",
+				value1 = "prepare-selenium-keycloak-server");
+
+			OpenIDConnect.enableOpenIDConnectDebugLogs();
+
+			OpenIDConnect.enableOpenIDConnectCustomParametersDebugLogs();
+		}
+
+		task ("And: Add Auth Server Local Metadata") {
+			OAuthClient.openOAuthClientAdmin(navbar = "Auth Server Local Metadata");
+
+			OAuthClient.addAuthServer(jsonFileName = "keycloak-local-metadata.json");
+
+			var wellknownURI = OAuthClient.getWellKnownURI();
+		}
+
+		task ("When: User add OAuth Client with custom attributes") {
+			OAuthClient.openOAuthClientAdmin(navbar = "Clients");
+
+			OAuthClient.addClient(
+				jsonFileName = "keycloak.json",
+				userMapperJSON = "OAuth2_User_mapping.json",
+				wellknownURI = "${wellknownURI}");
+
+			User.logoutPG();
+		}
+
+		task ("Then: User information is synced from user database on OIDC login") {
+			User.loginUserWithOpenIDConnectEnabledPG(
+				userEmailAddress = "tester1@liferay.com",
+				userPassword = "test");
+
+			MyAccount.openMyAccountAdmin();
+
+			User.viewUserInformation(
+				userBirthday = "12/12/1990",
+				userEmailAddress = "tester1@liferay.com",
+				userFirstName = "First1",
+				userLastName = "Last1",
+				userMiddleName = "Middle Name",
+				userScreenName = "user1");
+
+			User.viewUserInformationRolesCP(roleTitle = "Power User");
+
+			User.logoutPG();
+		}
+	}
+
+	@description = "This is a use case for LPS-162080 TC-3: User information should be synced towards Keycloak too. Verify that User role can be imported to an existing User on Keycloak from Portal."
+	@priority = "5"
+	test UserRoleCanBeSyncedToKeycloak {
+		property custom.properties = "open.id.connect.user.info.processor.impl.issuer=http://127.0.0.1:18080/auth/realms/master${line.separator}open.id.connect.user.info.processor.impl.regular.role=Power User";
+		property osgi.module.configuration.file.names = "com.liferay.portal.security.sso.openid.connect.configuration.OpenIdConnectConfiguration.config";
+		property osgi.module.configurations = "enabled=\"true\"";
+		property test.name.skip.portal.instance = "OpenIDConnect#UserRoleCanBeSyncedToKeycloak";
+
+		task ("Given: User starts Keycloak for test and set debug level and custom properties are set accordingly") {
+			AntCommand(
+				locator1 = "build-test-keycloak.xml",
+				value1 = "prepare-selenium-keycloak-server");
+
+			OpenIDConnect.enableOpenIDConnectDebugLogs();
+
+			OpenIDConnect.enableOpenIDConnectCustomParametersDebugLogs();
+		}
+
+		task ("And: Add Auth Server Local Metadata") {
+			OAuthClient.openOAuthClientAdmin(navbar = "Auth Server Local Metadata");
+
+			OAuthClient.addAuthServer(jsonFileName = "keycloak-local-metadata.json");
+
+			var wellknownURI = OAuthClient.getWellKnownURI();
+		}
+
+		task ("And: Add OAuth Client") {
+			OAuthClient.openOAuthClientAdmin(navbar = "Clients");
+
+			OAuthClient.addClient(
+				jsonFileName = "keycloak.json",
+				wellknownURI = "${wellknownURI}");
+		}
+
+		task ("When: User login as keycloak user") {
+			User.logoutPG();
+
+			User.loginUserWithOpenIDConnectEnabledPG(
+				userEmailAddress = "tester2@liferay.com",
+				userPassword = "test");
+		}
+
+		task ("Then: User has power user role") {
+			MyAccount.openMyAccountAdmin();
+
+			User.viewUserInformationRolesCP(roleTitle = "Power User");
+		}
+	}
+
+	@description = "This is a use case for LPS-162080 TC-1: OpenID configuration mandatory fields should work with unique error messages. Blocked by LPS-164921."
+	@ignore = "true"
+	@priority = "5"
+	test VerifyOIDCMandatoryFields {
+		property test.name.skip.portal.instance = "OpenIDConnect#VerifyOIDCMandatoryFields";
+
+		var jsonFileName = "keycloak.json";
+		var jsonFileBaseDir = "test/functional/com/liferay/portalweb/tests/coreinfrastructure/security/openidconnect/dependencies";
+
+		var clientInfo = FileUtil.read("${jsonFileBaseDir}/${jsonFileName}");
+		var userMapperInfo = FileUtil.read("${jsonFileBaseDir}/OAuth2_User_mapping.json");
+
+		task ("Given: User add Auth Server Local Metadata") {
+			OAuthClient.openOAuthClientAdmin(navbar = "Auth Server Local Metadata");
+
+			OAuthClient.addAuthServer(jsonFileName = "keycloak-local-metadata.json");
+
+			var wellknownURI = OAuthClient.getWellKnownURI();
+		}
+
+		task ("And: Add OAuth Client") {
+			OAuthClient.openOAuthClientAdmin(navbar = "Clients");
+
+			OAuthClient.addClient(
+				jsonFileName = "${jsonFileName}",
+				wellknownURI = "${wellknownURI}");
+		}
+
+		task ("When: User save without Well-known URL") {
+			LexiconEntry.gotoEllipsisMenuItem(menuItem = "Edit");
+
+			FormFields.editText(
+				fieldName = "authServerWellKnownURI",
+				fieldValue = " ");
+
+			Click(
+				key_text = "Save",
+				locator1 = "Button#ANY");
+		}
+
+		task ("Then: Corresponding error message will block the user from saving without Well-known URL") {
+			Alert.viewErrorMessage(errorMessage = "Invalid Authorization Server Well-known URI");
+		}
+
+		task ("When: User save without client ID") {
+			FormFields.editText(
+				fieldName = "authServerWellKnownURI",
+				fieldValue = "${wellknownURI}");
+
+			var editedClientInfo = StringUtil.replace("${clientInfo}", "liferay-system-level", " ");
+
+			FormFields.editTextMultiline(
+				fieldName = "infoJSON",
+				fieldValue = "${editedClientInfo}");
+
+			Click(
+				key_text = "Save",
+				locator1 = "Button#ANY");
+		}
+
+		task ("Then: Corresponding error message will block the user from saving without defining the client ID") {
+			Alert.viewErrorMessage(errorMessage = "Invalid Client Information");
+		}
+
+		task ("When: User save without mapping User first name") {
+			FormFields.editTextMultiline(
+				fieldName = "infoJSON",
+				fieldValue = "${clientInfo}");
+
+			var editedUserMapperInfo = StringUtil.replace("${userMapperInfo}", "given_name", " ");
+
+			FormFields.editTextMultiline(
+				fieldName = "OIDCUserInfo",
+				fieldValue = "${editedUserMapperInfo}");
+
+			Click(
+				key_text = "Save",
+				locator1 = "Button#ANY");
+		}
+
+		task ("Then: Corresponding error message will block the user from saving without mapping the user first name") {
+			Alert.viewErrorMessage(errorMessage = "firstName is required");
+		}
+
+		task ("When: User save without mapping User last name") {
+			var editedUserMapperInfo = StringUtil.replace("${userMapperInfo}", "family_name", " ");
+
+			FormFields.editTextMultiline(
+				fieldName = "OIDCUserInfo",
+				fieldValue = "${editedUserMapperInfo}");
+
+			Click(
+				key_text = "Save",
+				locator1 = "Button#ANY");
+		}
+
+		task ("Then: Corresponding error message will block the user from saving without defining the last name") {
+			Alert.viewErrorMessage(errorMessage = "lastName is required ");
+		}
+
+		task ("When: User try to save without mapping User email address") {
+			var editedUserMapperInfo = StringUtil.replace("${userMapperInfo}", "email", " ");
+
+			FormFields.editTextMultiline(
+				fieldName = "OIDCUserInfo",
+				fieldValue = "${editedUserMapperInfo}");
+
+			Click(
+				key_text = "Save",
+				locator1 = "Button#ANY");
+		}
+
+		task ("Then: Corresponding error message will block the user from saving without defining the user email address") {
+			Alert.viewErrorMessage(errorMessage = "emailAddress is required");
+		}
+
+		task ("When: User save with correct data") {
+			FormFields.editTextMultiline(
+				fieldName = "OIDCUserInfo",
+				fieldValue = "${userMapperInfo}");
+
+			Click(
+				key_text = "Save",
+				locator1 = "Button#ANY");
+		}
+
+		task ("Then: Edit will be successfully saved") {
+			Alert.viewSuccessMessageText(successMessage = "Success");
+		}
+	}
+
 	@description = "This is a use case for LPS-124898 TC-5: Verify Token Refresh Offset cannot be saved with a value under 30 second. Blocked by LPS-138193."
 	@priority = "4"
 	test VerifyTokenRefreshOffsetMinimum {
@@ -735,13 +1281,36 @@ definition {
 			OSGiConfig.copyOSGiConfigFile(
 				osgiConfigFileBaseDir = "test/functional/com/liferay/portalweb/tests/coreinfrastructure/security/openidconnect/dependencies",
 				osgiConfigFileName = "com.liferay.portal.security.sso.openid.connect.internal.configuration.OpenIdConnectProviderConfiguration~KeycloakPKCE.config");
+
+			ApplicationsMenu.gotoPortlet(
+				category = "Configuration",
+				panel = "Control Panel",
+				portlet = "System Settings");
+
+			SystemSettings.gotoConfiguration(
+				configurationCategory = "SSO",
+				configurationName = "OpenID Connect Provider Connection",
+				configurationScope = "Virtual Instance Scope");
+
+			while (IsElementNotPresent(key_rowEntry = "liferay-pkce", locator1 = "ContentRow#ENTRY_CONTENT_ENTRY_NAME")) {
+
+				// Pausing due to LRQA-78807, waiting for the config file deploy.
+
+				Pause(locator1 = "1000");
+
+				Refresh();
+
+				echo("Refreshed Page");
+			}
+
+			LexiconEntry.viewEntryName(rowEntry = "liferay-pkce");
 		}
 
 		User.logoutPG();
 
 		task ("Verify that the User stay logged in after a new access token is generated") {
 			User.loginUserWithOpenIDConnectEnabledPG(
-				userEmailAddress = "user1",
+				userEmailAddress = "tester1@liferay.com",
 				userPassword = "test");
 
 			User.viewLoggedInPG();
@@ -751,6 +1320,7 @@ definition {
 	@description = "This is a use case for LPS-124900 TC-2: User is still logged in after the first access token's lifetime is over and they receive a new access token in the background."
 	@priority = "5"
 	test VerifyUserIsStillLoggedInAfterAccessTokenExpiresAndRenew {
+		property minimum.slave.ram = "24";
 		property osgi.module.configuration.file.names = "com.liferay.portal.security.sso.openid.connect.configuration.OpenIdConnectConfiguration.config";
 		property osgi.module.configurations = "enabled=\"true\"";
 		property portal.acceptance = "true";
@@ -766,6 +1336,29 @@ definition {
 			OSGiConfig.copyOSGiConfigFile(
 				osgiConfigFileBaseDir = "test/functional/com/liferay/portalweb/tests/coreinfrastructure/security/openidconnect/dependencies",
 				osgiConfigFileName = "com.liferay.portal.security.sso.openid.connect.internal.configuration.OpenIdConnectProviderConfiguration~default.config");
+
+			ApplicationsMenu.gotoPortlet(
+				category = "Configuration",
+				panel = "Control Panel",
+				portlet = "System Settings");
+
+			SystemSettings.gotoConfiguration(
+				configurationCategory = "SSO",
+				configurationName = "OpenID Connect Provider Connection",
+				configurationScope = "Virtual Instance Scope");
+
+			while (IsElementNotPresent(key_rowEntry = "liferay-system-level", locator1 = "ContentRow#ENTRY_CONTENT_ENTRY_NAME")) {
+
+				// Pausing due to LRQA-78807, waiting for the config file deploy.
+
+				Pause(locator1 = "1000");
+
+				Refresh();
+
+				echo("Refreshed Page");
+			}
+
+			LexiconEntry.viewEntryName(rowEntry = "liferay-system-level");
 		}
 
 		User.logoutPG();

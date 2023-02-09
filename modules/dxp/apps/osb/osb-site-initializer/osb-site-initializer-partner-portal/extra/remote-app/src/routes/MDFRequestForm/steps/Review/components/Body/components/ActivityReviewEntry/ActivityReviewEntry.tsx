@@ -30,7 +30,6 @@ interface Item {
 type TypeOfActivityComponent = {
 	[key in TypeActivityKey]: Item[];
 };
-
 const ActivityReviewEntry = ({mdfRequestActivity}: IProps) => {
 	const fieldsByTypeActivity: TypeOfActivityComponent = {
 		[TypeActivityKey.DIGITAL_MARKETING]: getDigitalMarketFields(
@@ -45,10 +44,11 @@ const ActivityReviewEntry = ({mdfRequestActivity}: IProps) => {
 		),
 	};
 
+	const options = {timeZone: 'UTC'};
+
 	return (
 		<>
 			<Table<Item>
-				borderless
 				className="bg-brand-primary-lighten-6 border-top table-striped"
 				columns={[
 					{
@@ -83,7 +83,8 @@ const ActivityReviewEntry = ({mdfRequestActivity}: IProps) => {
 							new Date(
 								mdfRequestActivity.startDate
 							).toLocaleDateString(
-								Liferay.ThemeDisplay.getBCP47LanguageId()
+								Liferay.ThemeDisplay.getBCP47LanguageId(),
+								options
 							),
 					},
 					{
@@ -93,11 +94,11 @@ const ActivityReviewEntry = ({mdfRequestActivity}: IProps) => {
 							new Date(
 								mdfRequestActivity.endDate
 							).toLocaleDateString(
-								Liferay.ThemeDisplay.getBCP47LanguageId()
+								Liferay.ThemeDisplay.getBCP47LanguageId(),
+								options
 							),
 					},
 				]}
-				truncate
 			/>
 
 			<ActivityContent mdfRequestActivity={mdfRequestActivity} />

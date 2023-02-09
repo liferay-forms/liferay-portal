@@ -6,6 +6,10 @@
 	<namespace>Object</namespace>
 	<entity local-service="true" name="ObjectAction" remote-service="true" uuid="true">
 
+		<!-- External reference code -->
+
+		<column name="externalReferenceCode" type="String" />
+
 		<!-- PK fields -->
 
 		<column name="objectActionId" primary="true" type="long" />
@@ -40,6 +44,11 @@
 		<finder name="ODI_N" return-type="ObjectAction">
 			<finder-column name="objectDefinitionId" />
 			<finder-column name="name" />
+		</finder>
+		<finder name="ERC_C_ODI" return-type="ObjectEntry" unique="true">
+			<finder-column name="externalReferenceCode" />
+			<finder-column name="companyId" />
+			<finder-column name="objectDefinitionId" />
 		</finder>
 		<finder name="O_A_OATK" return-type="Collection">
 			<finder-column name="objectDefinitionId" />

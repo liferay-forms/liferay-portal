@@ -60,6 +60,8 @@ definition {
 	@description = "This is a test for LPS-152873. Verify if when Testray is created, Remote Apps will be created for it as well"
 	@priority = "5"
 	test RemoteAppsAreCreatedForTestray {
+		property solutions.acceptance = "true";
+
 		task ("Create Testray") {
 			Testray.addTestraySite();
 
@@ -67,7 +69,7 @@ definition {
 		}
 
 		task ("Go to Remote Apps Portlet") {
-			RemoteApps.goToRemoteAppsPortlet();
+			ClientExtensionGeneral.goToRemoteAppsPortlet();
 		}
 
 		task ("Assert if Remote Apps is Present") {
@@ -80,6 +82,8 @@ definition {
 	@description = "This is a test for LPS-152970. Verify if when Testray is created, Style Books will be created for it as well"
 	@priority = "5"
 	test StyleBooksAreCreatedForTestray {
+		property solutions.acceptance = "true";
+
 		task ("Create and Go to Testray") {
 			Testray.addTestraySite();
 

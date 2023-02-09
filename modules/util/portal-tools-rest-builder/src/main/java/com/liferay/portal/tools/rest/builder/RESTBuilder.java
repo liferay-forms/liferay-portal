@@ -73,10 +73,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.stream.Stream;
 
 /**
  * @author Peter Shin
@@ -391,12 +389,12 @@ public class RESTBuilder {
 	private String _addClientVersionDescription(String yamlString) {
 		String clientMavenGroupId = _getClientMavenGroupId(
 			_configYAML.getApiPackagePath());
-		Optional<String> clientVersionOptional = _getClientVersionOptional();
+		String clientVersion = _getClientVersion();
 
 		int licenseIndex = yamlString.indexOf("    license:");
 
-		if ((clientMavenGroupId == null) ||
-			!clientVersionOptional.isPresent() || (licenseIndex == -1)) {
+		if ((clientMavenGroupId == null) || (clientVersion == null) ||
+			(licenseIndex == -1)) {
 
 			return yamlString;
 		}
@@ -410,8 +408,6 @@ public class RESTBuilder {
 		if (description == null) {
 			return yamlString;
 		}
-
-		String clientVersion = clientVersionOptional.get();
 
 		String clientMessage = StringBundler.concat(
 			"A Java client JAR is available for use with the group ID '",
@@ -1658,26 +1654,31 @@ public class RESTBuilder {
 		return _configYAML.getClientMavenGroupId();
 	}
 
-	private Optional<String> _getClientVersionOptional() {
+	private String _getClientVersion() {
 		try {
 			String directory = StringUtil.removeSubstring(
 				_configYAML.getClientDir(), "src/main/java");
 
-			Stream<String> stream = Files.lines(
-				Paths.get(directory + "/bnd.bnd"), StandardCharsets.UTF_8);
+			for (String line :
+					Files.readAllLines(
+						Paths.get(directory + "/bnd.bnd"),
+						StandardCharsets.UTF_8)) {
 
-			return stream.filter(
-				line -> line.startsWith("Bundle-Version: ")
-			).map(
-				line -> StringUtil.removeSubstring(line, "Bundle-Version: ")
-			).findFirst();
+				if (!line.startsWith("Bundle-Version: ")) {
+					continue;
+				}
+
+				return StringUtil.removeSubstring(line, "Bundle-Version: ");
+			}
+
+			return null;
 		}
 		catch (Exception exception) {
 			if (_log.isDebugEnabled()) {
 				_log.debug(exception);
 			}
 
-			return Optional.empty();
+			return null;
 		}
 	}
 

@@ -16,8 +16,7 @@ import React from 'react';
 import {useParams} from 'react-router-dom';
 
 import i18n from '../../../../i18n';
-import {filters} from '../../../../schema/filter';
-import {searchUtil} from '../../../../util/search';
+import {SearchBuilder} from '../../../../util/search';
 import {CaseListView} from '../../Cases';
 
 type SelectCaseParametersProps = {
@@ -39,7 +38,7 @@ const SelectCaseParameters: React.FC<SelectCaseParametersProps> = ({
 				initialContext: {selectedRows: selectedCaseIds},
 				managementToolbarProps: {
 					addButton: undefined,
-					filterFields: filters.case as any,
+					filterSchema: 'cases',
 					title: displayTitle ? i18n.translate('cases') : '',
 				},
 
@@ -59,7 +58,7 @@ const SelectCaseParameters: React.FC<SelectCaseParametersProps> = ({
 			}}
 			variables={{
 				filter: projectId
-					? searchUtil.eq('projectId', projectId)
+					? SearchBuilder.eq('projectId', projectId)
 					: null,
 			}}
 		/>

@@ -44,7 +44,7 @@ definition {
 	@priority = "4"
 	test CanViewSideBarExpand {
 		task ("Go to Raylife AP Site") {
-			ApplicationsMenu.gotoSite(site = "${testSiteName}");
+			RaylifeAP.goToRaylifeAPSiteWithRefresh();
 		}
 
 		task ("Can view Sidebar Expanded") {
@@ -60,7 +60,7 @@ definition {
 	@priority = "4"
 	test SectionApplicationsInTheSidebar {
 		task ("Go to Raylife AP Site") {
-			ApplicationsMenu.gotoSite(site = "${testSiteName}");
+			RaylifeAP.goToRaylifeAPSiteWithRefresh();
 		}
 
 		task ("Can view Sidebar Expanded") {

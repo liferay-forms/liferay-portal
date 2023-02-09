@@ -62,6 +62,14 @@ public class ObjectEntryServiceUtil {
 			serviceContext);
 	}
 
+	public static void checkModelResourcePermission(
+			long objectDefinitionId, long objectEntryId, String actionId)
+		throws PortalException {
+
+		getService().checkModelResourcePermission(
+			objectDefinitionId, objectEntryId, actionId);
+	}
+
 	public static ObjectEntry deleteObjectEntry(long objectEntryId)
 		throws PortalException {
 
@@ -99,6 +107,14 @@ public class ObjectEntryServiceUtil {
 
 		return getService().getManyToManyObjectEntriesCount(
 			groupId, objectRelationshipId, primaryKey, related, reverse);
+	}
+
+	public static com.liferay.portal.kernel.security.permission.resource.
+		ModelResourcePermission<ObjectEntry> getModelResourcePermission(
+				ObjectEntry objectEntry)
+			throws PortalException {
+
+		return getService().getModelResourcePermission(objectEntry);
 	}
 
 	public static ObjectEntry getObjectEntry(long objectEntryId)
@@ -155,6 +171,15 @@ public class ObjectEntryServiceUtil {
 		throws PortalException {
 
 		return getService().hasModelResourcePermission(objectEntry, actionId);
+	}
+
+	public static boolean hasModelResourcePermission(
+			com.liferay.portal.kernel.model.User user, long objectEntryId,
+			String actionId)
+		throws PortalException {
+
+		return getService().hasModelResourcePermission(
+			user, objectEntryId, actionId);
 	}
 
 	public static boolean hasPortletResourcePermission(

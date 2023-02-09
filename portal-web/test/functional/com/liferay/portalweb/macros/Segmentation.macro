@@ -100,6 +100,16 @@ definition {
 		Click(locator1 = "Icon#CLOSE_ALERT");
 	}
 
+	macro configureScope {
+		Click(locator1 = "Button#SELECT");
+
+		SelectFrame(locator1 = "IFrame#MODAL_BODY");
+
+		Navigator.gotoNavItem(navItem = "All Sites");
+
+		SiteSelector.selectSite(site = "${site}");
+	}
+
 	macro createExperienceWithSegment {
 		Click(locator1 = "PageEditor#EXPERIENCE_DEFAULT_BUTTON_NAME");
 
@@ -342,11 +352,11 @@ definition {
 
 		var curl = '''
 			${portalURL}/api/jsonws/country/get-company-countries \
-			-u test@liferay.com:test \
-			-d companyId=${companyId} \
-			-d start=0 \
-			-d end=1 \
-			-d -orderByComparator=
+				-u test@liferay.com:test \
+				-d companyId=${companyId} \
+				-d start=0 \
+				-d end=1 \
+				-d -orderByComparator=
 		''';
 
 		var languageId = JSONCurlUtil.post("${curl}", "$..defaultLanguageId");

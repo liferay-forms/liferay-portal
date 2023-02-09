@@ -13,12 +13,15 @@ import Button from '@clayui/button';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import classNames from 'classnames';
 import {ArrayHelpers, useFormikContext} from 'formik';
-import {useCallback, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 
 import PRMForm from '../../../../common/components/PRMForm';
 import PRMFormikPageProps from '../../../../common/components/PRMFormik/interfaces/prmFormikPageProps';
 import MDFRequest from '../../../../common/interfaces/mdfRequest';
+import deleteMDFRequestActivities from '../../../../common/services/liferay/object/activity/deleteMDFRequestActivities';
+import {ResourceName} from '../../../../common/services/liferay/object/enum/resourceName';
 import {Status} from '../../../../common/utils/constants/status';
+import handleError from '../../../../common/utils/handleError';
 import isObjectEmpty from '../../../../common/utils/isObjectEmpty';
 import {StepType} from '../../enums/stepType';
 import MDFRequestStepProps from '../../interfaces/mdfRequestStepProps';
@@ -27,10 +30,12 @@ import Listing from './components/Listing';
 
 interface IProps {
 	arrayHelpers: ArrayHelpers;
+	isEdit: boolean;
 }
 
 const Activities = ({
 	arrayHelpers,
+	isEdit,
 	onCancel,
 	onContinue,
 	onPrevious,
@@ -52,8 +57,25 @@ const Activities = ({
 		number
 	>();
 
+	const [isDraft, setIsDraft] = useState(false);
+
 	const activityErrors =
-		currentActivityIndex && errors.activities?.[currentActivityIndex];
+		currentActivityIndex !== undefined &&
+		errors.activities?.[currentActivityIndex];
+
+	const updateEditableActivity = () => {
+		if (
+			currentActivityIndexEdit !== undefined &&
+			currentActivityIndex !== undefined
+		) {
+			arrayHelpers.swap(currentActivityIndex, currentActivityIndexEdit);
+
+			arrayHelpers.remove(currentActivityIndex);
+		}
+
+		setCurrentActivityIndexEdit(undefined);
+		setCurrentActivityIndex(undefined);
+	};
 
 	const onAdd = () => setCurrentActivityIndex(values.activities.length);
 
@@ -81,15 +103,42 @@ const Activities = ({
 			return;
 		}
 
-		if (currentActivityIndexEdit !== undefined) {
-			arrayHelpers.swap(currentActivityIndex, currentActivityIndexEdit);
+		updateEditableActivity();
+	};
 
-			arrayHelpers.remove(currentActivityIndex);
+	const onRemove = async (index: number) => {
+		if (isEdit) {
+			try {
+				await deleteMDFRequestActivities(
+					ResourceName.ACTIVITY_DXP,
+					values.activities[index].id as number
+				);
+			}
+			catch (error: any) {
+				handleError(error.message);
+
+				return;
+			}
 		}
 
-		setCurrentActivityIndexEdit(undefined);
-		setCurrentActivityIndex(undefined);
+		arrayHelpers.remove(index);
 	};
+
+	const hasActivityErrorsByIndex = (index: number): boolean =>
+		Boolean(errors.activities?.[index]);
+
+	const onSaveAsDraftForm = () => {
+		updateEditableActivity();
+		setIsDraft(true);
+	};
+
+	useEffect(() => {
+		if (isDraft) {
+			onSaveAsDraft?.(values, formikHelpers);
+			setIsDraft(false);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isDraft]);
 
 	return (
 		<PRMForm
@@ -111,8 +160,10 @@ const Activities = ({
 				<Listing
 					{...arrayHelpers}
 					activities={values.activities}
+					hasActivityErrorsByIndex={hasActivityErrorsByIndex}
 					onAdd={onAdd}
 					onEdit={onEdit}
+					onRemove={onRemove}
 					overallCampaignName={values.overallCampaignName}
 				/>
 			)}
@@ -134,7 +185,7 @@ const Activities = ({
 						className="inline-item inline-item-after"
 						disabled={isSubmitting}
 						displayType={null}
-						onClick={() => onSaveAsDraft?.(values, formikHelpers)}
+						onClick={onSaveAsDraftForm}
 					>
 						Save as Draft
 						{isSubmitting &&

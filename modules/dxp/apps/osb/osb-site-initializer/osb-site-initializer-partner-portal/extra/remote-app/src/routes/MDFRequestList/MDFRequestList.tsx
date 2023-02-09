@@ -42,7 +42,11 @@ type MDFRequestItem = {
 };
 
 const MDFRequestList = () => {
-	const {companiesEntries, fieldEntries} = useDynamicFieldEntries();
+	const {
+		companiesEntries,
+		fieldEntries,
+		userAccountRoles,
+	} = useDynamicFieldEntries();
 
 	const {filters, filtersTerm, onFilter, setFilters} = useFilters();
 
@@ -54,7 +58,11 @@ const MDFRequestList = () => {
 	);
 
 	const siteURL = useLiferayNavigate();
-	const columns = getMDFListColumns(data.listColumns, siteURL);
+	const columns = getMDFListColumns(
+		data.listColumns,
+		siteURL,
+		userAccountRoles
+	);
 
 	const getTable = (
 		totalCount: number,
@@ -78,13 +86,7 @@ const MDFRequestList = () => {
 
 			return (
 				<div className="mt-3">
-					<Table<MDFRequestListItem>
-						borderless
-						columns={columns}
-						noWrap
-						responsive
-						rows={items}
-					/>
+					<Table<MDFRequestListItem> columns={columns} rows={items} />
 
 					<ClayPaginationBarWithBasicItems
 						{...pagination}

@@ -22,10 +22,10 @@ import com.liferay.object.constants.ObjectValidationRuleConstants;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
-import com.liferay.object.util.LocalizedMapUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.test.rule.Inject;
+import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
 import java.util.Collections;
 
@@ -123,6 +123,26 @@ public class ObjectValidationRuleResourceTest
 	}
 
 	@Override
+	protected ObjectValidationRule
+			testGetObjectDefinitionByExternalReferenceCodeObjectValidationRulesPage_addObjectValidationRule(
+				String objectDefinitionExternalReferenceCode,
+				ObjectValidationRule objectValidationRule)
+		throws Exception {
+
+		return objectValidationRuleResource.
+			postObjectDefinitionByExternalReferenceCodeObjectValidationRule(
+				objectDefinitionExternalReferenceCode, objectValidationRule);
+	}
+
+	@Override
+	protected String
+			testGetObjectDefinitionByExternalReferenceCodeObjectValidationRulesPage_getExternalReferenceCode()
+		throws Exception {
+
+		return _objectDefinition.getExternalReferenceCode();
+	}
+
+	@Override
 	protected Long
 		testGetObjectDefinitionObjectValidationRulesPage_getObjectDefinitionId() {
 
@@ -160,6 +180,18 @@ public class ObjectValidationRuleResourceTest
 			postObjectDefinitionObjectValidationRule(
 				_objectDefinition.getObjectDefinitionId(),
 				randomObjectValidationRule());
+	}
+
+	@Override
+	protected ObjectValidationRule
+			testPostObjectDefinitionByExternalReferenceCodeObjectValidationRule_addObjectValidationRule(
+				ObjectValidationRule objectValidationRule)
+		throws Exception {
+
+		return objectValidationRuleResource.
+			postObjectDefinitionByExternalReferenceCodeObjectValidationRule(
+				_objectDefinition.getExternalReferenceCode(),
+				objectValidationRule);
 	}
 
 	@Override

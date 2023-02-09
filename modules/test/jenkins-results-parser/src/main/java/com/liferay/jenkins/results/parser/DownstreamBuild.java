@@ -32,6 +32,7 @@ import com.liferay.jenkins.results.parser.failure.message.generator.StartupFailu
 import com.liferay.jenkins.results.parser.test.clazz.FunctionalTestClass;
 import com.liferay.jenkins.results.parser.test.clazz.JUnitTestClass;
 import com.liferay.jenkins.results.parser.test.clazz.TestClass;
+import com.liferay.jenkins.results.parser.test.clazz.TestClassMethod;
 import com.liferay.jenkins.results.parser.test.clazz.group.AxisTestClassGroup;
 
 import java.io.IOException;
@@ -41,7 +42,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.zip.GZIPInputStream;
 
@@ -50,6 +54,8 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
+
+import org.json.JSONObject;
 
 /**
  * @author Michael Hashimoto
@@ -182,6 +188,14 @@ public class DownstreamBuild extends BaseBuild {
 		if (result.equals("ABORTED")) {
 			messageElement.add(
 				Dom4JUtil.toCodeSnippetElement("Build was aborted"));
+
+			List<Element> untestedElements = getTestResultGitHubElements(
+				getUniqueFailureTestResults(), true);
+
+			if (!untestedElements.isEmpty()) {
+				Dom4JUtil.getOrderedListElement(
+					untestedElements, messageElement, 3);
+			}
 		}
 
 		if (result.equals("FAILURE")) {
@@ -189,6 +203,14 @@ public class DownstreamBuild extends BaseBuild {
 
 			if (failureMessageElement != null) {
 				messageElement.add(failureMessageElement);
+			}
+
+			List<Element> untestedElements = getTestResultGitHubElements(
+				getUniqueFailureTestResults(), true);
+
+			if (!untestedElements.isEmpty()) {
+				Dom4JUtil.getOrderedListElement(
+					untestedElements, messageElement, 3);
 			}
 		}
 
@@ -223,6 +245,51 @@ public class DownstreamBuild extends BaseBuild {
 		return messageElement;
 	}
 
+	public Map<String, List<String>> getTestClassMethodsMap() {
+		String batchName = getBatchName();
+
+		if (!batchName.contains("integration") && !batchName.contains("unit")) {
+			return Collections.emptyMap();
+		}
+
+		Map<String, List<String>> testClassMethodsMap = new HashMap<>();
+
+		AxisTestClassGroup axisTestClassGroup = getAxisTestClassGroup();
+
+		if ((axisTestClassGroup == null) ||
+			!axisTestClassGroup.hasTestClasses()) {
+
+			return testClassMethodsMap;
+		}
+
+		List<TestClass> testClasses = axisTestClassGroup.getTestClasses();
+
+		for (TestClass testClass : testClasses) {
+			if (!(testClass instanceof JUnitTestClass)) {
+				continue;
+			}
+
+			JUnitTestClass jUnitTestClass = (JUnitTestClass)testClass;
+
+			List<String> methodNames = new ArrayList<>();
+
+			for (TestClassMethod testClassMethod :
+					testClass.getTestClassMethods()) {
+
+				String testMethodName = testClassMethod.getName();
+
+				if (!methodNames.contains(testMethodName)) {
+					methodNames.add(testClassMethod.getName());
+				}
+			}
+
+			testClassMethodsMap.put(
+				jUnitTestClass.getTestClassName(), methodNames);
+		}
+
+		return testClassMethodsMap;
+	}
+
 	@Override
 	public List<TestResult> getTestResults(String testStatus) {
 		if (JenkinsResultsParserUtil.isNullOrEmpty(testStatus)) {
@@ -254,7 +321,85 @@ public class DownstreamBuild extends BaseBuild {
 			}
 		}
 
+		for (TestResult untestedTestResult : getUntestedTestResults()) {
+			if (untestedTestResult.isUniqueFailure()) {
+				uniqueFailureTestResults.add(untestedTestResult);
+			}
+		}
+
 		return uniqueFailureTestResults;
+	}
+
+	public Map<String, List<String>> getUntestedTestClassMethodsMap() {
+		Map<String, List<String>> untestedTestClassMethodsMap =
+			getTestClassMethodsMap();
+
+		if (untestedTestClassMethodsMap.isEmpty()) {
+			return Collections.emptyMap();
+		}
+
+		List<TestResult> testResults = getTestResults();
+
+		if (testResults.isEmpty()) {
+			return Collections.emptyMap();
+		}
+
+		for (TestResult testResult : testResults) {
+			String testResultClassName = testResult.getClassName();
+
+			if (untestedTestClassMethodsMap.containsKey(testResultClassName)) {
+				List<String> testClassMethods = untestedTestClassMethodsMap.get(
+					testResultClassName);
+
+				testClassMethods.remove(testResult.getTestName());
+
+				untestedTestClassMethodsMap.put(
+					testResultClassName, testClassMethods);
+			}
+		}
+
+		return untestedTestClassMethodsMap;
+	}
+
+	public List<TestResult> getUntestedTestResults() {
+		Map<String, List<String>> untestedTestsMap =
+			getUntestedTestClassMethodsMap();
+
+		if (untestedTestsMap.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		List<TestResult> untestedTestResults = new ArrayList<>();
+
+		for (Map.Entry<String, List<String>> entry :
+				untestedTestsMap.entrySet()) {
+
+			List<String> testClassMethods = entry.getValue();
+
+			if (testClassMethods.isEmpty()) {
+				continue;
+			}
+
+			for (String methodName : testClassMethods) {
+				JSONObject caseJSONObject = new JSONObject();
+
+				String testClassName = entry.getKey();
+
+				caseJSONObject.put("className", testClassName);
+
+				caseJSONObject.put("duration", 0);
+				caseJSONObject.put("errorDetails", "This test was untested.");
+				caseJSONObject.put("errorStackTrace", "");
+				caseJSONObject.put("name", methodName);
+				caseJSONObject.put("status", "UNTESTED");
+				caseJSONObject.put("testName", methodName);
+
+				untestedTestResults.add(
+					TestResultFactory.newTestResult(this, caseJSONObject));
+			}
+		}
+
+		return untestedTestResults;
 	}
 
 	@Override
@@ -268,6 +413,12 @@ public class DownstreamBuild extends BaseBuild {
 
 			if (!testResult.isUniqueFailure()) {
 				upstreamFailureTestResults.add(testResult);
+			}
+		}
+
+		for (TestResult untestedTestResult : getUntestedTestResults()) {
+			if (!untestedTestResult.isUniqueFailure()) {
+				upstreamFailureTestResults.add(untestedTestResult);
 			}
 		}
 
@@ -535,7 +686,7 @@ public class DownstreamBuild extends BaseBuild {
 			!batchName.startsWith("modules-unit") &&
 			!batchName.startsWith("unit")) {
 
-			return new ArrayList<>();
+			return Collections.emptyList();
 		}
 
 		String urlSuffix = "testDurationsElements";

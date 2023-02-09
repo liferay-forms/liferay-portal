@@ -42,8 +42,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.portlet.PortletPreferences;
 import javax.portlet.RenderRequest;
@@ -135,7 +133,7 @@ public class CPOptionsSearchFacetDisplayContextBuilder implements Serializable {
 		buildTermDisplayContexts() {
 
 		if (ListUtil.isEmpty(_tuples)) {
-			return getEmptyTermDisplayContexts();
+			return Collections.emptyList();
 		}
 
 		List<CPOptionsSearchFacetTermDisplayContext>
@@ -209,22 +207,6 @@ public class CPOptionsSearchFacetDisplayContextBuilder implements Serializable {
 		return cpOptionsSearchFacetTermDisplayContexts;
 	}
 
-	protected List<CPOptionsSearchFacetTermDisplayContext>
-		getEmptyTermDisplayContexts() {
-
-		Stream<Long> categoryIdsStream = _selectedCategoryIds.stream();
-
-		return categoryIdsStream.map(
-			this::_getEmptyTermDisplayContext
-		).filter(
-			Optional::isPresent
-		).map(
-			Optional::get
-		).collect(
-			Collectors.toList()
-		);
-	}
-
 	protected double getPopularity(
 		int frequency, int maxCount, int minCount, double multiplier) {
 
@@ -260,16 +242,6 @@ public class CPOptionsSearchFacetDisplayContextBuilder implements Serializable {
 		catch (ConfigurationException configurationException) {
 			throw new RuntimeException(configurationException);
 		}
-	}
-
-	private Optional<CPOptionsSearchFacetTermDisplayContext>
-		_getEmptyTermDisplayContext(long cpOptionId) {
-
-		return Optional.ofNullable(
-			_cpOptionLocalService.fetchCPOption(cpOptionId)
-		).map(
-			cpOption -> buildTermDisplayContext(0, 1, true, StringPool.BLANK)
-		);
 	}
 
 	private List<Facet> _getFacets() {
@@ -341,7 +313,6 @@ public class CPOptionsSearchFacetDisplayContextBuilder implements Serializable {
 	private Portal _portal;
 	private PortletSharedSearchRequest _portletSharedSearchRequest;
 	private final RenderRequest _renderRequest;
-	private final List<Long> _selectedCategoryIds = Collections.emptyList();
 	private List<Tuple> _tuples;
 
 }

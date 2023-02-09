@@ -36,7 +36,6 @@ import com.liferay.object.service.ObjectFieldSettingLocalService;
 import com.liferay.object.service.ObjectStateFlowLocalService;
 import com.liferay.object.service.ObjectStateLocalService;
 import com.liferay.object.service.ObjectStateTransitionLocalService;
-import com.liferay.object.util.LocalizedMapUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
@@ -46,6 +45,7 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,12 +75,13 @@ public class ObjectStateFlowLocalServiceTest {
 		_listTypeDefinition =
 			_listTypeDefinitionLocalService.addListTypeDefinition(
 				null, TestPropsValues.getUserId(),
-				LocalizedMapUtil.getLocalizedMap(
-					RandomTestUtil.randomString()));
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
+				Collections.emptyList());
 
 		_step1ListTypeEntry = _addListTypeEntry("step1");
 		_step2ListTypeEntry = _addListTypeEntry("step2");
 		_step3ListTypeEntry = _addListTypeEntry("step3");
+		_step4ListTypeEntry = _addListTypeEntry("step4");
 
 		_objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
@@ -281,16 +282,16 @@ public class ObjectStateFlowLocalServiceTest {
 		ListTypeDefinition listTypeDefinition =
 			_listTypeDefinitionLocalService.addListTypeDefinition(
 				null, TestPropsValues.getUserId(),
-				LocalizedMapUtil.getLocalizedMap(
-					RandomTestUtil.randomString()));
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
+				Collections.emptyList());
 
 		_listTypeEntryLocalService.addListTypeEntry(
-			TestPropsValues.getUserId(),
+			null, TestPropsValues.getUserId(),
 			listTypeDefinition.getListTypeDefinitionId(),
 			RandomTestUtil.randomString(),
 			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()));
 		_listTypeEntryLocalService.addListTypeEntry(
-			TestPropsValues.getUserId(),
+			null, TestPropsValues.getUserId(),
 			listTypeDefinition.getListTypeDefinitionId(),
 			RandomTestUtil.randomString(),
 			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()));
@@ -343,11 +344,18 @@ public class ObjectStateFlowLocalServiceTest {
 					getObjectStateObjectStateTransitions(
 						objectState.getObjectStateId());
 
+			if (objectStateTransitions.isEmpty()) {
+				continue;
+			}
+
 			objectState.setObjectStateTransitions(
-				Collections.singletonList(objectStateTransitions.get(0)));
-
-			// TODO Besides removing, add a new one too
-
+				Arrays.asList(
+					objectStateTransitions.get(0),
+					_objectStateTransitionLocalService.addObjectStateTransition(
+						TestPropsValues.getUserId(),
+						_objectStateFlow.getObjectStateFlowId(),
+						objectState.getObjectStateId(),
+						_step4ListTypeEntry.getListTypeEntryId())));
 		}
 
 		newObjectStateFlow.setObjectStates(newObjectStates);
@@ -363,7 +371,7 @@ public class ObjectStateFlowLocalServiceTest {
 
 	private ListTypeEntry _addListTypeEntry(String key) throws Exception {
 		return _listTypeEntryLocalService.addListTypeEntry(
-			TestPropsValues.getUserId(),
+			null, TestPropsValues.getUserId(),
 			_listTypeDefinition.getListTypeDefinitionId(), key,
 			LocalizedMapUtil.getLocalizedMap(key));
 	}
@@ -475,5 +483,6 @@ public class ObjectStateFlowLocalServiceTest {
 	private ListTypeEntry _step1ListTypeEntry;
 	private ListTypeEntry _step2ListTypeEntry;
 	private ListTypeEntry _step3ListTypeEntry;
+	private ListTypeEntry _step4ListTypeEntry;
 
 }

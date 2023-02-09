@@ -33,6 +33,7 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -181,7 +182,8 @@ public class PasswordPoliciesAdminPortlet extends MVCPortlet {
 				resetFailureCount, resetTicketMaxAge, serviceContext);
 		}
 
-		String redirect = ParamUtil.getString(actionRequest, "redirect");
+		String redirect = _portal.escapeRedirect(
+			ParamUtil.getString(actionRequest, "redirect"));
 
 		if (Validator.isNotNull(redirect)) {
 			redirect = HttpComponentsUtil.setParameter(
@@ -287,6 +289,9 @@ public class PasswordPoliciesAdminPortlet extends MVCPortlet {
 
 	@Reference
 	private PasswordPolicyService _passwordPolicyService;
+
+	@Reference
+	private Portal _portal;
 
 	@Reference
 	private UserService _userService;

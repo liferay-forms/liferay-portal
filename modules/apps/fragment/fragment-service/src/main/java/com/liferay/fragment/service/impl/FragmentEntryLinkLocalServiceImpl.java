@@ -28,8 +28,10 @@ import com.liferay.fragment.processor.FragmentEntryProcessorRegistry;
 import com.liferay.fragment.service.base.FragmentEntryLinkLocalServiceBaseImpl;
 import com.liferay.fragment.service.persistence.FragmentCollectionPersistence;
 import com.liferay.fragment.service.persistence.FragmentEntryPersistence;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
+import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -53,6 +55,8 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+
+import java.sql.PreparedStatement;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -451,6 +455,22 @@ public class FragmentEntryLinkLocalServiceImpl
 	}
 
 	@Override
+	public String getProcessedEditableValues(
+			FragmentEntryLink fragmentEntryLink)
+		throws PortalException {
+
+		String defaultEditableValues = String.valueOf(
+			_fragmentEntryProcessorRegistry.getDefaultEditableValuesJSONObject(
+				_getProcessedHTML(
+					fragmentEntryLink,
+					ServiceContextThreadLocal.getServiceContext()),
+				fragmentEntryLink.getConfiguration()));
+
+		return _mergeEditableValues(
+			defaultEditableValues, fragmentEntryLink.getEditableValues());
+	}
+
+	@Override
 	public void updateClassedModel(long plid) {
 		try {
 			_layoutLocalService.updateStatus(
@@ -560,6 +580,50 @@ public class FragmentEntryLinkLocalServiceImpl
 		}
 
 		return fragmentEntryLinkPersistence.update(fragmentEntryLink);
+	}
+
+	@Override
+	public void updateFragmentEntryLinksByRendererKey(
+		String rendererKey, String configuration, String css, String html,
+		String js, int type) {
+
+		if (Validator.isNull(rendererKey)) {
+			throw new IllegalArgumentException("Renderer key is null");
+		}
+
+		Session session = fragmentEntryLinkPersistence.getCurrentSession();
+
+		session.apply(
+			connection -> {
+				StringBundler sb = new StringBundler(5);
+
+				sb.append("update FragmentEntryLink set configuration = ?, ");
+				sb.append("css = ?, html = ?, js = ?, type_ = ?, ");
+				sb.append("lastPropagationDate = ? where rendererKey = ? and ");
+				sb.append("(configuration != ? or css != ? or html != ? or ");
+				sb.append("js != ? or type_ != ?)");
+
+				try (PreparedStatement preparedStatement =
+						connection.prepareStatement(sb.toString())) {
+
+					preparedStatement.setString(1, configuration);
+					preparedStatement.setString(2, css);
+					preparedStatement.setString(3, html);
+					preparedStatement.setString(4, js);
+					preparedStatement.setInt(5, type);
+					preparedStatement.setDate(6, null);
+					preparedStatement.setString(7, rendererKey);
+					preparedStatement.setString(8, configuration);
+					preparedStatement.setString(9, css);
+					preparedStatement.setString(10, html);
+					preparedStatement.setString(11, js);
+					preparedStatement.setInt(12, type);
+
+					if (preparedStatement.executeUpdate() > 0) {
+						fragmentEntryLinkPersistence.clearCache();
+					}
+				}
+			});
 	}
 
 	@Override

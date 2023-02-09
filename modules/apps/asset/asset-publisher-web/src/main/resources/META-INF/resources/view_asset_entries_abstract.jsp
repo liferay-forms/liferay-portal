@@ -30,7 +30,7 @@ AssetEntryResult assetEntryResult = (AssetEntryResult)request.getAttribute("view
 
 <%
 for (AssetEntry assetEntry : assetEntryResult.getAssetEntries()) {
-	AssetRendererFactory<?> assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassNameId(assetEntry.getClassNameId());
+	AssetRendererFactory<?> assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(assetEntry.getClassName());
 
 	if (assetRendererFactory == null) {
 		continue;
@@ -281,10 +281,11 @@ for (AssetEntry assetEntry : assetEntryResult.getAssetEntries()) {
 
 							<clay:button
 								aria-label="<%= label %>"
-								cssClass="btn btn-outline-borderless btn-outline-secondary btn-sm lfr-portal-tooltip"
+								borderless="<%= true %>"
 								displayType="secondary"
 								icon="print"
 								onClick='<%= "javascript:" + liferayPortletResponse.getNamespace() + "printPage_" + id + "();" %>'
+								small="<%= true %>"
 								title="<%= label %>"
 								type="button"
 							/>

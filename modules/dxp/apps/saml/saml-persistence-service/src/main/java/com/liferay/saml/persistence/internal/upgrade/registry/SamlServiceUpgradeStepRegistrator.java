@@ -21,6 +21,7 @@ import com.liferay.portal.upgrade.registry.UpgradeStepRegistrator;
 import com.liferay.portal.upgrade.release.ReleaseRenamingUpgradeStep;
 import com.liferay.saml.persistence.internal.upgrade.v2_4_0.util.SamlPeerBindingTable;
 import com.liferay.saml.persistence.internal.upgrade.v3_0_1.SamlSpIdpConnectionDataUpgradeProcess;
+import com.liferay.saml.persistence.internal.upgrade.v3_0_2.SamlPeerBindingUpgradeProcess;
 
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.Component;
@@ -134,6 +135,15 @@ public class SamlServiceUpgradeStepRegistrator
 
 		registry.register(
 			"3.0.0", "3.0.1", new SamlSpIdpConnectionDataUpgradeProcess());
+
+		registry.register(
+			"3.0.1", "3.0.2", new SamlPeerBindingUpgradeProcess(),
+			UpgradeProcessFactory.alterColumnType(
+				"SamlPeerBinding", "samlPeerEntityId", "VARCHAR(1024) null"),
+			UpgradeProcessFactory.alterColumnType(
+				"SamlPeerBinding", "samlNameIdFormat", "VARCHAR(128) null"),
+			UpgradeProcessFactory.alterColumnType(
+				"SamlPeerBinding", "samlNameIdValue", "VARCHAR(1024) null"));
 	}
 
 	@Reference

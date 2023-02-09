@@ -24,6 +24,7 @@ import com.liferay.info.form.InfoForm;
 import com.liferay.info.item.InfoItemFieldValues;
 import com.liferay.info.localized.InfoLocalizedValue;
 import com.liferay.petra.function.UnsafeSupplier;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.CharPool;
 import com.liferay.portal.kernel.bean.BeanParamUtil;
 import com.liferay.portal.kernel.editor.configuration.EditorConfiguration;
@@ -57,16 +58,12 @@ import com.liferay.translation.service.TranslationEntryLocalServiceUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.portlet.PortletURL;
 
@@ -124,10 +121,7 @@ public class TranslateDisplayContext {
 		InfoField<TextInfoFieldType> infoField,
 		InfoFieldType.Attribute<TextInfoFieldType, Boolean> attribute) {
 
-		Optional<Boolean> attributeOptional = infoField.getAttributeOptional(
-			attribute);
-
-		return attributeOptional.orElse(false);
+		return GetterUtil.getBoolean(infoField.getAttribute(attribute));
 	}
 
 	public String getInfoFieldLabel(InfoField infoField) {
@@ -177,64 +171,54 @@ public class TranslateDisplayContext {
 			infoFieldSetEntries.add(
 				HashMapBuilder.<String, Object>put(
 					"fields",
-					() -> {
-						Stream<InfoField> stream = infoFields.stream();
+					() -> TransformUtil.transform(
+						infoFields,
+						infoField -> {
+							String infoFieldId =
+								"infoField--" + infoField.getUniqueId() + "--";
 
-						return stream.map(
-							infoField -> {
-								String infoFieldId =
-									"infoField--" + infoField.getUniqueId() +
-										"--";
+							Map<String, Object> editorConfiguration = null;
 
-								Map<String, Object> editorConfiguration = null;
+							if (getBooleanValue(
+									infoField, TextInfoFieldType.HTML)) {
 
-								if (getBooleanValue(
-										infoField, TextInfoFieldType.HTML)) {
-
-									editorConfiguration =
-										_getInfoFieldEditorConfig(infoFieldId);
-								}
-
-								return HashMapBuilder.<String, Object>put(
-									"editorConfiguration", editorConfiguration
-								).put(
-									"html",
-									getBooleanValue(
-										infoField, TextInfoFieldType.HTML)
-								).put(
-									"id", infoFieldId
-								).put(
-									"label",
-									infoField.getLabel(
-										_themeDisplay.getLocale())
-								).put(
-									"multiline",
-									getBooleanValue(
-										infoField, TextInfoFieldType.MULTILINE)
-								).put(
-									"sourceContent",
-									getSourceStringValues(
-										infoField, getSourceLocale())
-								).put(
-									"sourceContentDir",
-									LanguageUtil.get(
-										getSourceLocale(), "lang.dir")
-								).put(
-									"targetContent",
-									getTargetStringValues(
-										infoField, getTargetLocale())
-								).put(
-									"targetContentDir",
-									LanguageUtil.get(
-										getTargetLocale(), "lang.dir")
-								).put(
-									"targetLanguageId", getTargetLanguageId()
-								).build();
+								editorConfiguration = _getInfoFieldEditorConfig(
+									infoFieldId);
 							}
-						).collect(
-							Collectors.toList()
-						);
-					}
+
+							return HashMapBuilder.<String, Object>put(
+								"editorConfiguration", editorConfiguration
+							).put(
+								"html",
+								getBooleanValue(
+									infoField, TextInfoFieldType.HTML)
+							).put(
+								"id", infoFieldId
+							).put(
+								"label",
+								infoField.getLabel(_themeDisplay.getLocale())
+							).put(
+								"multiline",
+								getBooleanValue(
+									infoField, TextInfoFieldType.MULTILINE)
+							).put(
+								"sourceContent",
+								getSourceStringValues(
+									infoField, getSourceLocale())
+							).put(
+								"sourceContentDir",
+								LanguageUtil.get(getSourceLocale(), "lang.dir")
+							).put(
+								"targetContent",
+								getTargetStringValues(
+									infoField, getTargetLocale())
+							).put(
+								"targetContentDir",
+								LanguageUtil.get(getTargetLocale(), "lang.dir")
+							).put(
+								"targetLanguageId", getTargetLanguageId()
+							).build();
+						})
 				).put(
 					"legend",
 					getInfoFieldSetLabel(
@@ -352,18 +336,11 @@ public class TranslateDisplayContext {
 	public List<String> getSourceStringValues(
 		InfoField infoField, Locale locale) {
 
-		Collection<InfoFieldValue<Object>> infoFieldValues =
+		return TransformUtil.transform(
 			_sourceInfoItemFieldValues.getInfoFieldValues(
-				infoField.getUniqueId());
-
-		Stream<InfoFieldValue<Object>> stream = infoFieldValues.stream();
-
-		return stream.map(
+				infoField.getUniqueId()),
 			infoFieldValue -> GetterUtil.getString(
-				infoFieldValue.getValue(locale))
-		).collect(
-			Collectors.toList()
-		);
+				infoFieldValue.getValue(locale)));
 	}
 
 	public String getTargetLanguageId() {
@@ -377,18 +354,11 @@ public class TranslateDisplayContext {
 	public List<String> getTargetStringValues(
 		InfoField infoField, Locale locale) {
 
-		Collection<InfoFieldValue<Object>> infoFieldValues =
+		return TransformUtil.transform(
 			_targetInfoItemFieldValues.getInfoFieldValues(
-				infoField.getUniqueId());
-
-		Stream<InfoFieldValue<Object>> stream = infoFieldValues.stream();
-
-		return stream.map(
+				infoField.getUniqueId()),
 			infoFieldValue -> GetterUtil.getString(
-				infoFieldValue.getValue(locale))
-		).collect(
-			Collectors.toList()
-		);
+				infoFieldValue.getValue(locale)));
 	}
 
 	public String getTitle() {

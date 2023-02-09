@@ -275,8 +275,8 @@ public class FacetPermissionCharacteristicTest {
 			).build());
 
 		DocumentsAssert.assertValuesIgnoreRelevance(
-			searchResponse.getRequestString(),
-			searchResponse.getDocumentsStream(), "title_en_US", expected);
+			searchResponse.getRequestString(), searchResponse.getDocuments(),
+			"title_en_US", expected);
 	}
 
 	private String _getName(Object object) {
@@ -286,9 +286,8 @@ public class FacetPermissionCharacteristicTest {
 		else if (object instanceof JournalArticle) {
 			return JournalArticle.class.getName();
 		}
-		else {
-			return null;
-		}
+
+		return null;
 	}
 
 	private String _getPrimKey(Object object) {
@@ -302,9 +301,8 @@ public class FacetPermissionCharacteristicTest {
 
 			return String.valueOf(journalFolder.getFolderId());
 		}
-		else {
-			return null;
-		}
+
+		return null;
 	}
 
 	private void _setUp(Map<Role, Object[]> map) throws Exception {

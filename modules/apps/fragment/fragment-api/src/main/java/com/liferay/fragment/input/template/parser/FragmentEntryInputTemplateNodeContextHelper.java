@@ -15,6 +15,7 @@
 package com.liferay.fragment.input.template.parser;
 
 import com.liferay.document.library.kernel.service.DLAppLocalService;
+import com.liferay.fragment.constants.FragmentConfigurationFieldDataType;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.util.configuration.FragmentConfigurationField;
 import com.liferay.fragment.util.configuration.FragmentEntryConfigurationParser;
@@ -25,13 +26,16 @@ import com.liferay.info.field.type.InfoFieldType;
 import com.liferay.info.field.type.NumberInfoFieldType;
 import com.liferay.info.field.type.RelationshipInfoFieldType;
 import com.liferay.info.field.type.SelectInfoFieldType;
+import com.liferay.info.field.type.TextInfoFieldType;
 import com.liferay.info.form.InfoForm;
+import com.liferay.info.localized.InfoLocalizedValue;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.criteria.FileEntryItemSelectorReturnType;
 import com.liferay.item.selector.criteria.file.criterion.FileItemSelectorCriterion;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -41,6 +45,7 @@ import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -52,7 +57,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -121,12 +126,9 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 			defaultInputLabel = infoField.getLabel(locale);
 		}
 
-		String inputLabel = GetterUtil.getString(
-			_fragmentEntryConfigurationParser.getFieldValue(
-				fragmentEntryLink.getEditableValues(),
-				new FragmentConfigurationField(
-					"inputLabel", "string", defaultInputLabel, true, "text"),
-				locale));
+		String inputLabel = _getInputLabel(
+			defaultInputLabel, fragmentEntryLink.getEditableValues(), infoField,
+			locale);
 
 		String name = "name";
 
@@ -173,12 +175,15 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 		String value = StringPool.BLANK;
 
 		if (infoFieldType instanceof SelectInfoFieldType) {
-			Optional<List<SelectInfoFieldType.Option>> optionsOptional =
-				infoField.getAttributeOptional(SelectInfoFieldType.OPTIONS);
+			List<SelectInfoFieldType.Option> options =
+				(List<SelectInfoFieldType.Option>)infoField.getAttribute(
+					SelectInfoFieldType.OPTIONS);
 
-			for (SelectInfoFieldType.Option option :
-					optionsOptional.orElse(Collections.emptyList())) {
+			if (options == null) {
+				options = Collections.emptyList();
+			}
 
+			for (SelectInfoFieldType.Option option : options) {
 				if (option.isActive()) {
 					label = option.getLabel(locale);
 					value = option.getValue();
@@ -202,12 +207,12 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 			inputShowHelpText, inputShowLabel, infoFieldType.getName(), value);
 
 		if (infoFieldType instanceof FileInfoFieldType) {
-			Optional<String> acceptedFileExtensionsOptional =
-				infoField.getAttributeOptional(
-					FileInfoFieldType.ALLOWED_FILE_EXTENSIONS);
+			String allowedFileExtensions = (String)infoField.getAttribute(
+				FileInfoFieldType.ALLOWED_FILE_EXTENSIONS);
 
-			String allowedFileExtensions =
-				acceptedFileExtensionsOptional.orElse(StringPool.BLANK);
+			if (allowedFileExtensions == null) {
+				allowedFileExtensions = StringPool.BLANK;
+			}
 
 			if (Validator.isNotNull(allowedFileExtensions)) {
 				StringBundler sb = new StringBundler();
@@ -228,17 +233,18 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 			inputTemplateNode.addAttribute(
 				"allowedFileExtensions", allowedFileExtensions);
 
-			Optional<Long> maximumFileSizeOptional =
-				infoField.getAttributeOptional(FileInfoFieldType.MAX_FILE_SIZE);
+			Long maximumFileSize = (Long)infoField.getAttribute(
+				FileInfoFieldType.MAX_FILE_SIZE);
 
-			inputTemplateNode.addAttribute(
-				"maxFileSize", maximumFileSizeOptional.orElse(0L));
+			if (maximumFileSize == null) {
+				maximumFileSize = 0L;
+			}
 
-			Optional<FileInfoFieldType.FileSourceType> fileSourceTypeOptional =
-				infoField.getAttributeOptional(FileInfoFieldType.FILE_SOURCE);
+			inputTemplateNode.addAttribute("maxFileSize", maximumFileSize);
 
 			FileInfoFieldType.FileSourceType fileSourceType =
-				fileSourceTypeOptional.orElse(null);
+				(FileInfoFieldType.FileSourceType)infoField.getAttribute(
+					FileInfoFieldType.FILE_SOURCE);
 
 			if (fileSourceType != null) {
 				String fileName = null;
@@ -300,59 +306,52 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 		else if (infoField.getInfoFieldType() instanceof NumberInfoFieldType) {
 			String dataType = "integer";
 
-			Optional<Boolean> decimalOptional = infoField.getAttributeOptional(
-				NumberInfoFieldType.DECIMAL);
+			if (GetterUtil.getBoolean(
+					infoField.getAttribute(NumberInfoFieldType.DECIMAL))) {
 
-			if (decimalOptional.orElse(false)) {
 				dataType = "decimal";
 
-				Optional<Integer> decimalPartMaxLengthOptional =
-					infoField.getAttributeOptional(
-						NumberInfoFieldType.DECIMAL_PART_MAX_LENGTH);
+				Integer decimalPartMaxLength = (Integer)infoField.getAttribute(
+					NumberInfoFieldType.DECIMAL_PART_MAX_LENGTH);
 
-				decimalPartMaxLengthOptional.ifPresent(
-					decimalPartMaxLength -> inputTemplateNode.addAttribute(
-						"step", _getStep(decimalPartMaxLength)));
+				if (decimalPartMaxLength != null) {
+					inputTemplateNode.addAttribute(
+						"step", _getStep(decimalPartMaxLength));
+				}
 			}
 
 			inputTemplateNode.addAttribute("dataType", dataType);
 
-			Optional<BigDecimal> maxValueOptional =
-				infoField.getAttributeOptional(NumberInfoFieldType.MAX_VALUE);
+			BigDecimal maxValue = (BigDecimal)infoField.getAttribute(
+				NumberInfoFieldType.MAX_VALUE);
 
-			maxValueOptional.ifPresent(
-				maxValue -> inputTemplateNode.addAttribute("max", maxValue));
+			if (maxValue != null) {
+				inputTemplateNode.addAttribute("max", maxValue);
+			}
 
-			Optional<BigDecimal> minValueOptional =
-				infoField.getAttributeOptional(NumberInfoFieldType.MIN_VALUE);
+			BigDecimal minValue = (BigDecimal)infoField.getAttribute(
+				NumberInfoFieldType.MIN_VALUE);
 
-			minValueOptional.ifPresent(
-				minValue -> inputTemplateNode.addAttribute("min", minValue));
+			if (minValue != null) {
+				inputTemplateNode.addAttribute("min", minValue);
+			}
 		}
 		else if (infoField.getInfoFieldType() instanceof
 					RelationshipInfoFieldType) {
 
-			Optional<String> optionsLabelFieldNameOptional =
-				infoField.getAttributeOptional(
-					RelationshipInfoFieldType.LABEL_FIELD_NAME);
-
 			inputTemplateNode.addAttribute(
 				"relationshipLabelFieldName",
-				optionsLabelFieldNameOptional.orElse(null));
-
-			Optional<String> optionsURLOptional =
-				infoField.getAttributeOptional(RelationshipInfoFieldType.URL);
+				infoField.getAttribute(
+					RelationshipInfoFieldType.LABEL_FIELD_NAME));
 
 			inputTemplateNode.addAttribute(
-				"relationshipURL", optionsURLOptional.orElse(null));
-
-			Optional<String> optionsValueFieldNameOptional =
-				infoField.getAttributeOptional(
-					RelationshipInfoFieldType.VALUE_FIELD_NAME);
+				"relationshipURL",
+				infoField.getAttribute(RelationshipInfoFieldType.URL));
 
 			inputTemplateNode.addAttribute(
 				"relationshipValueFieldName",
-				optionsValueFieldNameOptional.orElse(null));
+				infoField.getAttribute(
+					RelationshipInfoFieldType.VALUE_FIELD_NAME));
 
 			if (Validator.isNotNull(label)) {
 				inputTemplateNode.addAttribute("selectedOptionLabel", label);
@@ -361,11 +360,16 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 		else if (infoField.getInfoFieldType() instanceof SelectInfoFieldType) {
 			List<InputTemplateNode.Option> options = new ArrayList<>();
 
-			Optional<List<SelectInfoFieldType.Option>> optionsOptional =
-				infoField.getAttributeOptional(SelectInfoFieldType.OPTIONS);
+			List<SelectInfoFieldType.Option> selectInfoFieldTypeOptions =
+				(List<SelectInfoFieldType.Option>)infoField.getAttribute(
+					SelectInfoFieldType.OPTIONS);
+
+			if (selectInfoFieldTypeOptions == null) {
+				selectInfoFieldTypeOptions = Collections.emptyList();
+			}
 
 			for (SelectInfoFieldType.Option option :
-					optionsOptional.orElse(Collections.emptyList())) {
+					selectInfoFieldTypeOptions) {
 
 				options.add(
 					new InputTemplateNode.Option(
@@ -378,6 +382,11 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 			}
 
 			inputTemplateNode.addAttribute("options", options);
+		}
+		else if (infoField.getInfoFieldType() instanceof TextInfoFieldType) {
+			inputTemplateNode.addAttribute(
+				"maxLength",
+				infoField.getAttribute(TextInfoFieldType.MAX_LENGTH));
 		}
 
 		return inputTemplateNode;
@@ -395,6 +404,46 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 
 			return null;
 		}
+	}
+
+	private String _getInputLabel(
+		String defaultInputLabel, String editableValues, InfoField<?> infoField,
+		Locale locale) {
+
+		String inputLabel = null;
+
+		JSONObject inputLabelJSONObject =
+			(JSONObject)
+				_fragmentEntryConfigurationParser.getConfigurationFieldValue(
+					editableValues, "inputLabel",
+					FragmentConfigurationFieldDataType.OBJECT);
+
+		if (inputLabelJSONObject != null) {
+			inputLabel = inputLabelJSONObject.getString(
+				LocaleUtil.toLanguageId(locale));
+		}
+
+		if (Validator.isNull(inputLabel) && (infoField != null)) {
+			InfoLocalizedValue<String> labelInfoLocalizedValue =
+				infoField.getLabelInfoLocalizedValue();
+
+			Set<Locale> availableLocales =
+				labelInfoLocalizedValue.getAvailableLocales();
+
+			if (availableLocales.contains(locale)) {
+				inputLabel = labelInfoLocalizedValue.getValue(locale);
+			}
+			else {
+				inputLabel = inputLabelJSONObject.getString(
+					LanguageUtil.getLanguageId(LocaleUtil.getSiteDefault()));
+			}
+		}
+
+		if (Validator.isNull(inputLabel) && (infoField != null)) {
+			inputLabel = infoField.getLabel(locale);
+		}
+
+		return GetterUtil.getString(inputLabel, defaultInputLabel);
 	}
 
 	private String _getStep(Integer decimalPartMaxLength) {

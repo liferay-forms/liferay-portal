@@ -26,6 +26,8 @@ import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
@@ -77,6 +79,19 @@ public class CETFDSActionProvider implements FDSActionProvider {
 		CETFDSEntry cetFDSEntry, DropdownItem dropdownItem,
 		HttpServletRequest httpServletRequest) {
 
+		dropdownItem.setData(
+			HashMapBuilder.<String, Object>put(
+				"confirmationMessage",
+				_language.format(
+					httpServletRequest,
+					"are-you-sure-you-want-to-delete-x-client-extension",
+					HtmlUtil.escape(cetFDSEntry.getName()))
+			).put(
+				"status", "warning"
+			).put(
+				"title",
+				_language.get(httpServletRequest, "delete-client-extension")
+			).build());
 		dropdownItem.setHref(
 			PortletURLBuilder.create(
 				_getActionURL(httpServletRequest)
@@ -85,8 +100,9 @@ public class CETFDSActionProvider implements FDSActionProvider {
 			).setParameter(
 				"externalReferenceCode", cetFDSEntry.getExternalReferenceCode()
 			).buildString());
-		dropdownItem.setIcon("times-circle");
+		dropdownItem.setIcon("trash");
 		dropdownItem.setLabel(_getMessage(httpServletRequest, "delete"));
+		dropdownItem.setTarget("async");
 	}
 
 	private void _buildEditClientExtensionEntryAction(
@@ -105,6 +121,7 @@ public class CETFDSActionProvider implements FDSActionProvider {
 			).setParameter(
 				"externalReferenceCode", cetFDSEntry.getExternalReferenceCode()
 			).buildPortletURL());
+		dropdownItem.setIcon("pencil");
 		dropdownItem.setLabel(_getMessage(httpServletRequest, "edit"));
 	}
 
@@ -124,6 +141,7 @@ public class CETFDSActionProvider implements FDSActionProvider {
 			).setParameter(
 				"externalReferenceCode", cetFDSEntry.getExternalReferenceCode()
 			).buildPortletURL());
+		dropdownItem.setIcon("view");
 		dropdownItem.setLabel(_getMessage(httpServletRequest, "view"));
 	}
 

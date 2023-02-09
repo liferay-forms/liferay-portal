@@ -27,7 +27,7 @@ definition {
 
 			WebContent.tearDownCP();
 
-			RemoteApps.tearDown();
+			ClientExtensionGeneral.tearDown();
 		}
 	}
 
@@ -258,18 +258,18 @@ definition {
 		property portal.acceptance = "true";
 
 		task ("Go to Remote Apps Portlet") {
-			RemoteApps.goToRemoteAppsPortlet();
+			ClientExtensionGeneral.goToRemoteAppsPortlet();
 		}
 
 		task ("Go to Add and Create a New Remote App") {
-			RemoteApps.addCustomElement(
+			ClientExtensionGeneral.addCustomElement(
 				entryHtmlName = "vanilla-counter",
 				entryName = "Vanilla Counter",
 				entryURL = "http://remote-component-test.wincent.com/packages/vanilla-counter/index.js");
 		}
 
 		task ("On Table Entries, Assert the New Remote App Presence") {
-			RemoteApps.viewTableEntries(
+			ClientExtensionGeneral.viewTableEntries(
 				entryName = "Vanilla Counter",
 				entryType = "Custom Element");
 		}
@@ -281,21 +281,21 @@ definition {
 		property portal.acceptance = "true";
 
 		task ("Create a New Remote App with JSON") {
-			JSONRemoteApp.addIFrameRemoteAppEntry(
+			JSONClientExtension.addIFrameRemoteAppEntry(
 				iFrameURL = "http://www.liferay.com/my_new_remote_app",
 				name = "My New Remote App");
 		}
 
 		task ("Go to Remote Apps Portlet") {
-			RemoteApps.goToRemoteAppsPortlet();
+			ClientExtensionGeneral.goToRemoteAppsPortlet();
 		}
 
 		task ("Delete the Remote App") {
-			RemoteApps.deleteRemoteApp(tableEntry = "My New Remote App");
+			ClientExtensionGeneral.deleteRemoteApp(tableEntry = "My New Remote App");
 		}
 
 		task ("Assert the Remote App is Not Present") {
-			RemoteApps.viewEmptyRemoteTable();
+			ClientExtensionGeneral.viewEmptyRemoteTable();
 		}
 	}
 
@@ -312,9 +312,9 @@ definition {
 		}
 
 		task ("Create Vanilla Counter as a Custom Element") {
-			RemoteApps.goToRemoteAppsPortlet();
+			ClientExtensionGeneral.goToRemoteAppsPortlet();
 
-			RemoteApps.addCustomElement(
+			ClientExtensionGeneral.addCustomElement(
 				entryHtmlName = "vanilla-counter",
 				entryName = "Vanilla Counter",
 				entryURL = "http://remote-component-test.wincent.com/packages/vanilla-counter/index.js");
@@ -333,7 +333,7 @@ definition {
 		task ("Assert Vanilla Counter is displayed") {
 			Navigator.gotoPage(pageName = "Test Page");
 
-			AssertElementPresent(locator1 = "RemoteApps#VANILLA_COUNTER_REMOTE_APP");
+			AssertElementPresent(locator1 = "ClientExtension#VANILLA_COUNTER_REMOTE_APP");
 		}
 	}
 
@@ -510,12 +510,12 @@ definition {
 		property portal.acceptance = "true";
 
 		task ("Go to Remote Apps Portlet") {
-			RemoteApps.goToRemoteAppsPortlet();
+			ClientExtensionGeneral.goToRemoteAppsPortlet();
 		}
 
 		task ("Assert the Remote Apps Header Presence") {
 			AssertElementPresent(
-				key_header = "Remote Apps",
+				key_header = "Client Extensions",
 				locator1 = "WorkflowSubmissions#DETAIL_PAGE_HEADER");
 		}
 	}

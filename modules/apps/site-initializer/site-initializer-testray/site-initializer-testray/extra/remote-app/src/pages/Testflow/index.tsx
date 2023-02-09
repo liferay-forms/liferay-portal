@@ -32,7 +32,7 @@ import useTestflowActions from './useTestflowActions';
 const TestFlow = () => {
 	const {actions, modal} = useTestflowActions();
 
-	useHeader({useIcon: 'merge'});
+	useHeader({icon: 'merge'});
 
 	return (
 		<Container>
@@ -124,7 +124,7 @@ const TestFlow = () => {
 								_,
 								{
 									subtaskScoreCompleted,
-									subtaskScoreIncomplete,
+									subtaskScoreSelfIncomplete,
 								}: TestrayTask
 							) => (
 								<TaskbarProgress
@@ -136,7 +136,7 @@ const TestFlow = () => {
 										],
 										[
 											StatusesProgressScore.INCOMPLETE,
-											Number(subtaskScoreIncomplete),
+											Number(subtaskScoreSelfIncomplete),
 										],
 									]}
 									taskbarClassNames={chartClassNames}

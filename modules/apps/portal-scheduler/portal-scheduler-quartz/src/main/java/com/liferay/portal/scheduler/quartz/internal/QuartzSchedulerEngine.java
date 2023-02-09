@@ -240,31 +240,6 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 	}
 
 	@Override
-	public void pause(String groupName, StorageType storageType)
-		throws SchedulerException {
-
-		try {
-			Scheduler scheduler = _getScheduler(storageType);
-
-			groupName = _fixMaxLength(
-				groupName, _groupNameMaxLength, storageType);
-
-			Set<JobKey> jobKeys = scheduler.getJobKeys(
-				GroupMatcher.jobGroupEquals(groupName));
-
-			scheduler.pauseJobs(GroupMatcher.jobGroupEquals(groupName));
-
-			for (JobKey jobKey : jobKeys) {
-				_updateJobState(scheduler, jobKey, TriggerState.PAUSED);
-			}
-		}
-		catch (Exception exception) {
-			throw new SchedulerException(
-				"Unable to pause jobs in group " + groupName, exception);
-		}
-	}
-
-	@Override
 	public void pause(String jobName, String groupName, StorageType storageType)
 		throws SchedulerException {
 
@@ -287,31 +262,6 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 					"Unable to pause job {jobName=", jobName, ", groupName=",
 					groupName, "}"),
 				exception);
-		}
-	}
-
-	@Override
-	public void resume(String groupName, StorageType storageType)
-		throws SchedulerException {
-
-		try {
-			Scheduler scheduler = _getScheduler(storageType);
-
-			groupName = _fixMaxLength(
-				groupName, _groupNameMaxLength, storageType);
-
-			Set<JobKey> jobKeys = scheduler.getJobKeys(
-				GroupMatcher.jobGroupEquals(groupName));
-
-			scheduler.resumeJobs(GroupMatcher.jobGroupEquals(groupName));
-
-			for (JobKey jobKey : jobKeys) {
-				_updateJobState(scheduler, jobKey, TriggerState.NORMAL);
-			}
-		}
-		catch (Exception exception) {
-			throw new SchedulerException(
-				"Unable to resume jobs in group " + groupName, exception);
 		}
 	}
 
@@ -340,6 +290,24 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 					groupName, "}"),
 				exception);
 		}
+	}
+
+	public void run(String jobName, String groupName, StorageType storageType)
+		throws SchedulerException {
+
+		SchedulerResponse schedulerResponse = getScheduledJob(
+			jobName, groupName, storageType);
+
+		Message message = schedulerResponse.getMessage();
+
+		message.put(
+			SchedulerEngine.DESTINATION_NAME,
+			schedulerResponse.getDestinationName());
+		message.put(SchedulerEngine.GROUP_NAME, groupName);
+		message.put(SchedulerEngine.JOB_NAME, jobName);
+
+		_messageBus.sendMessage(
+			schedulerResponse.getDestinationName(), message);
 	}
 
 	@Override
@@ -433,29 +401,6 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 	}
 
 	@Override
-	public void unschedule(String groupName, StorageType storageType)
-		throws SchedulerException {
-
-		try {
-			Scheduler scheduler = _getScheduler(storageType);
-
-			groupName = _fixMaxLength(
-				groupName, _groupNameMaxLength, storageType);
-
-			Set<JobKey> jobKeys = scheduler.getJobKeys(
-				GroupMatcher.jobGroupEquals(groupName));
-
-			for (JobKey jobKey : jobKeys) {
-				unschedule(scheduler, jobKey);
-			}
-		}
-		catch (Exception exception) {
-			throw new SchedulerException(
-				"Unable to unschedule jobs in group " + groupName, exception);
-		}
-	}
-
-	@Override
 	public void unschedule(
 			String jobName, String groupName, StorageType storageType)
 		throws SchedulerException {
@@ -477,20 +422,6 @@ public class QuartzSchedulerEngine implements SchedulerEngine {
 					"Unable to unschedule job {jobName=", jobName,
 					", groupName=", groupName, "}"),
 				exception);
-		}
-	}
-
-	@Override
-	public void update(
-			com.liferay.portal.kernel.scheduler.Trigger trigger,
-			StorageType storageType)
-		throws SchedulerException {
-
-		try {
-			update(_getScheduler(storageType), trigger, storageType);
-		}
-		catch (Exception exception) {
-			throw new SchedulerException("Unable to update trigger", exception);
 		}
 	}
 

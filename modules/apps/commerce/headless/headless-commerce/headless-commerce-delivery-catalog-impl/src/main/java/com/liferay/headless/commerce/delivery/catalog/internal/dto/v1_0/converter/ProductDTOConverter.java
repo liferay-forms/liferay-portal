@@ -18,6 +18,7 @@ import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.asset.kernel.service.AssetTagLocalService;
 import com.liferay.commerce.model.CPDefinitionInventory;
 import com.liferay.commerce.product.model.CPDefinition;
+import com.liferay.commerce.product.model.CProduct;
 import com.liferay.commerce.product.service.CPDefinitionLocalService;
 import com.liferay.commerce.product.util.CPDefinitionHelper;
 import com.liferay.commerce.service.CPDefinitionInventoryLocalService;
@@ -89,6 +90,12 @@ public class ProductDTOConverter
 					_cpDefinitionLocalService.getUrlTitleMap(
 						cpDefinition.getCPDefinitionId()));
 
+				setExternalReferenceCode(
+					() -> {
+						CProduct cProduct = cpDefinition.getCProduct();
+
+						return cProduct.getExternalReferenceCode();
+					});
 				setUrlImage(
 					() -> {
 						Company company = _companyLocalService.getCompany(

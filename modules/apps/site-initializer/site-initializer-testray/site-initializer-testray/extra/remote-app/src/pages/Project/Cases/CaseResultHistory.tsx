@@ -12,6 +12,9 @@
  * details.
  */
 
+import {useParams} from 'react-router-dom';
+
+import Code from '../../../components/Code';
 import ListView, {ListViewProps} from '../../../components/ListView';
 import StatusBadge from '../../../components/StatusBadge';
 import {StatusBadgeType} from '../../../components/StatusBadge/StatusBadge';
@@ -28,85 +31,88 @@ type CaseResultHistoryProps = {
 const CaseResultHistory: React.FC<CaseResultHistoryProps> = ({
 	listViewProps,
 	tableProps,
-}) => (
-	<ListView
-		initialContext={{
-			columns: {
-				caseType: false,
-				dateCreated: false,
-				dateModified: false,
-				issues: false,
-				team: false,
-			},
-		}}
-		managementToolbarProps={{
-			title: i18n.translate('test-history'),
-			visible: true,
-		}}
-		resource={testrayCaseResultImpl.resource}
-		tableProps={{
-			columns: [
-				{
-					clickable: true,
-					key: 'dateCreated',
-					render: (date) => dayjs(date).format('lll'),
-					size: 'sm',
-					value: i18n.translate('create-date'),
-				},
-				{
-					clickable: true,
-					key: 'build',
-					render: (build) => {
-						return build?.gitHash;
+}) => {
+	const {caseResultId} = useParams();
+
+	return (
+		<ListView
+			managementToolbarProps={{
+				title: i18n.translate('test-history'),
+				visible: true,
+			}}
+			resource={testrayCaseResultImpl.resource}
+			tableProps={{
+				columns: [
+					{
+						clickable: true,
+						key: 'dateCreated',
+						render: (date) => (
+							<p style={{maxWidth: '11ch'}}>
+								{dayjs(date).format('lll')}
+							</p>
+						),
+						value: i18n.translate('create-date'),
 					},
-					value: i18n.translate('git-hash'),
-				},
-				{
-					clickable: true,
-					key: 'product-version',
-					render: (_, {build}) => build?.productVersion?.name,
-					value: i18n.translate('product-version'),
-				},
-				{
-					clickable: true,
-					key: 'run',
-					render: (run) => run?.externalReferencePK,
-					size: 'lg',
-					value: i18n.translate('environment'),
-				},
-				{
-					clickable: true,
-					key: 'routine',
-					render: (_, {build}) => build?.routine?.name,
-					value: i18n.translate('routine'),
-				},
-				{
-					key: 'dueStatus',
-					render: (dueStatus: PickList) => {
-						return (
+					{
+						clickable: true,
+						key: 'build',
+						render: (build) => build?.gitHash,
+						value: i18n.translate('git-hash'),
+					},
+					{
+						clickable: true,
+						key: 'product-version',
+						render: (_, {build}) => build?.productVersion?.name,
+						value: i18n.translate('product-version'),
+					},
+					{
+						clickable: true,
+						key: 'run',
+						render: (run) => run?.externalReferencePK,
+						value: i18n.translate('environment'),
+					},
+					{
+						clickable: true,
+						key: 'routine',
+						render: (_, {build}) => build?.routine?.name,
+						value: i18n.translate('routine'),
+					},
+					{
+						key: 'dueStatus',
+						render: (dueStatus: PickList) => (
 							<StatusBadge
 								type={dueStatus.key as StatusBadgeType}
 							>
 								{dueStatus.name}
 							</StatusBadge>
-						);
+						),
+						value: i18n.translate('status'),
 					},
-					value: i18n.translate('status'),
-				},
-				{
-					key: 'warnings',
-					value: i18n.translate('warnings'),
-				},
-				{key: 'issues', value: i18n.translate('issues')},
-				{key: 'errors', value: i18n.translate('errors')},
-			],
-			...tableProps,
-		}}
-		transformData={(response) =>
-			testrayCaseResultImpl.transformDataFromList(response)
-		}
-		{...listViewProps}
-	/>
-);
+					{
+						key: 'warnings',
+						value: i18n.translate('warnings'),
+					},
+					{key: 'issues', value: i18n.translate('issues')},
+					{
+						key: 'errors',
+						render: (errors: string) =>
+							errors && <Code italicText={false}>{errors}</Code>,
+						size: 'xl',
+						value: i18n.translate('errors'),
+					},
+				],
+				highlight: (caseResult) =>
+					caseResult.id === Number(caseResultId),
+				responsive: true,
+				rowWrap: true,
+				...tableProps,
+			}}
+			transformData={(response) =>
+				testrayCaseResultImpl.transformDataFromList(response)
+			}
+			{...listViewProps}
+		/>
+	);
+};
 
 export default CaseResultHistory;

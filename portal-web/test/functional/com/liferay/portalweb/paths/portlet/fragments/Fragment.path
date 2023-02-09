@@ -143,6 +143,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>DROP_ZONE_NESTED_ELEMENT</td>
+	<td>xpath=(//lfr-drop-zone[${key_position}])//div[@aria-label='${key_elementName}']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>NO_FRAGMENTS_MESSAGE</td>
 	<td>xpath=(//div[@aria-label='${key_fragmentName}']//p[contains(@class,'page-editor__no-fragments-state__message')][normalize-space()='${key_messageInfo}'])[${key_position}]</td>
 	<td></td>
@@ -375,6 +380,14 @@
 <tr>
 	<td>FRAGMENT_HEADER_INSET_STYLE</td>
 	<td>//div[contains(@class,'topper__bar--inset')]//li[contains(@class,'topper__title') and contains(.,'${key_fragmentName}')]</td>
+	<td></td>
+</tr>
+
+<!--FORM_CONTAINER-->
+
+<tr>
+	<td>FORM_CONTAINER</td>
+	<td>//form[contains(@class,'lfr-layout-structure-item-form')]</td>
 	<td></td>
 </tr>
 

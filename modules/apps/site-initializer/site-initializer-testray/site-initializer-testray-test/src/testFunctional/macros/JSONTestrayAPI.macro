@@ -1,0 +1,547 @@
+definition {
+
+	@summary = "create a build via API"
+	macro createBuildAPI {
+		Variables.assertDefined(parameterList = "${buildName},${projectId},${routineId},${productVersionId}");
+
+		var portalURL = JSONCompany.getPortalURL();
+
+		if (!(isSet(description))) {
+			var description = "";
+		}
+
+		if (!(isSet(template))) {
+			var template = "";
+		}
+
+		if (!(isSet(statusTemplate))) {
+			var statusTemplate = "";
+		}
+
+		if (!(isSet(gitHash))) {
+			var gitHash = "";
+		}
+
+		if (!(isSet(buildPromoted))) {
+			var buildPromoted = "";
+		}
+
+		var curl = '''
+			${portalURL}/o/c/builds \
+				-u test@liferay.com:test \
+				-H 'accept: application/json' \
+				-H 'Content-Type: application/json' \
+				-d '{
+					"description": "${description}",
+					"template": "${template}",
+					"active": "${statusTemplate}",
+					"name": "${buildName}",
+					"gitHash": "${gitHash}",
+					"promoted": "${buildPromoted}",
+					"r_projectToBuilds_c_projectId": "${projectId}",
+					"r_routineToBuilds_c_routineId": "${routineId}",
+					"r_productVersionToBuilds_c_productVersionId": "${productVersionId}"
+				}'
+		''';
+
+		var response = JSONCurlUtil.post("${curl}", "$.id");
+
+		echo("${response}");
+
+		return "${response}";
+	}
+
+	@summary = "create a Case Result via API"
+	macro createCaseResultAPI {
+		Variables.assertDefined(parameterList = "${buildId},${casesId},${componentId},${runId}");
+
+		var portalURL = JSONCompany.getPortalURL();
+
+		var curl = '''
+			${portalURL}/o/c/caseresults \
+				-u test@liferay.com:test \
+				-H 'accept: application/json' \
+				-H 'Content-Type: application/json' \
+				-d '{
+					"r_buildToCaseResult_c_buildId": "${buildId}",
+					"r_caseToCaseResult_c_caseId": "${casesId}",
+					"r_componentToCaseResult_c_componentId": "${componentId}",
+					"r_runToCaseResult_c_runId": "${runId}"
+				}'
+		''';
+
+		var response = JSONCurlUtil.post("${curl}", "$.id");
+
+		echo("${response}");
+
+		return "${response}";
+	}
+
+	@summary = "create a Case Results For Subtask via API"
+	macro createCaseResultsForSubtaskAPI {
+		Variables.assertDefined(parameterList = "${name},${caseResultId},${subtaskId}");
+
+		var portalURL = JSONCompany.getPortalURL();
+
+		var curl = '''
+			${portalURL}/o/c/subtaskscasesresultses \
+				-u test@liferay.com:test \
+				-H 'accept: application/json' \
+				-H 'Content-Type: application/json' \
+				-d '{
+					"name": "${name}",
+					"r_caseResultToSubtasksCasesResults_c_caseResultId": "${caseResultId}",
+					"r_subtaskToSubtasksCasesResults_c_subtaskId": "${subtaskId}"
+				}'
+		''';
+
+		var response = JSONCurlUtil.post("${curl}", "$.id");
+
+		echo("${response}");
+
+		return "${response}";
+	}
+
+	@summary = "create a Case via API"
+	macro createCasesAPI {
+		Variables.assertDefined(parameterList = "${caseName},${caseTypeId},${componentId},${projectId}");
+
+		if (!(isSet(description))) {
+			var description = "";
+		}
+
+		if (!(isSet(estimatedDuration))) {
+			var estimatedDuration = "";
+		}
+
+		if (!(isSet(priority))) {
+			var priority = "";
+		}
+
+		if (!(isSet(steps))) {
+			var steps = "";
+		}
+
+		var portalURL = JSONCompany.getPortalURL();
+
+		var curl = '''
+			${portalURL}/o/c/cases \
+				-u test@liferay.com:test \
+				-H 'accept: application/json' \
+				-H 'Content-Type: application/json' \
+				-d '{
+					"name": "${caseName}",
+					"description": "${description}",
+					"estimatedDuration": "${estimatedDuration}",
+					"priority": "${priority}",
+					"steps": "${steps}",
+					"r_caseTypeToCases_c_caseTypeId": "${caseTypeId}",
+					"r_componentToCases_c_componentId": "${componentId}",
+					"r_projectToCases_c_projectId": "${projectId}"
+				}'
+		''';
+
+		var response = JSONCurlUtil.post("${curl}", "$.id");
+
+		echo("${response}");
+
+		return "${response}";
+	}
+
+	@summary = "create a Case Type via API"
+	macro createCaseTypeAPI {
+		Variables.assertDefined(parameterList = "${caseType}");
+
+		var portalURL = JSONCompany.getPortalURL();
+
+		var curl = '''
+			${portalURL}/o/c/casetypes \
+				-u test@liferay.com:test \
+				-H 'accept: application/json' \
+				-H 'Content-Type: application/json' \
+				-d '{
+					"name": "${caseType}"
+				}'
+		''';
+
+		var response = JSONCurlUtil.post("${curl}", "$.id");
+
+		echo("${response}");
+
+		return "${response}";
+	}
+
+	@summary = "create a Component via API"
+	macro createComponentAPI {
+		Variables.assertDefined(parameterList = "${componentName},${projectId},${teamId}");
+
+		var portalURL = JSONCompany.getPortalURL();
+
+		var curl = '''
+			${portalURL}/o/c/components \
+				-u test@liferay.com:test \
+				-H 'accept: application/json' \
+				-H 'Content-Type: application/json' \
+				-d '{
+					"name": "${componentName}",
+					"r_projectToComponents_c_projectId": "${projectId}",
+					"r_teamToComponents_c_teamId": "${teamId}"
+				}'
+		''';
+
+		var response = JSONCurlUtil.post("${curl}", "$.id");
+
+		echo("${response}");
+
+		return "${response}";
+	}
+
+	@summary = "create a Environment Factors via API"
+	macro createEnvironmentFactorsAPI {
+		Variables.assertDefined(parameterList = "${environmentFactorsName},${factorCategoryId},${factorOptionsId}");
+
+		var portalURL = JSONCompany.getPortalURL();
+
+		var curl = '''
+			${portalURL}/o/c/factors \
+				-u test@liferay.com:test \
+				-H 'accept: application/json' \
+				-H 'Content-Type: application/json' \
+				-d '{
+					"name": "${environmentFactorsName}",
+					"r_factorCategoryToFactors_c_factorCategoryId": "${factorCategoryId}",
+					"r_factorOptionToFactors_c_factorOptionId": "${factorOptionsId}"
+				}'
+		''';
+
+		var response = JSONCurlUtil.post("${curl}", "$.id");
+
+		echo("${response}");
+
+		return "${response}";
+	}
+
+	@summary = "create a Factor Categories via API"
+	macro createFactorCategoriesAPI {
+		Variables.assertDefined(parameterList = "${categoryName}");
+
+		var portalURL = JSONCompany.getPortalURL();
+
+		var curl = '''
+			${portalURL}/o/c/factorcategories \
+				-u test@liferay.com:test \
+				-H 'accept: application/json' \
+				-H 'Content-Type: application/json' \
+				-d '{
+					"name": "${categoryName}"
+				}'
+		''';
+
+		var response = JSONCurlUtil.post("${curl}", "$.id");
+
+		echo("${response}");
+
+		return "${response}";
+	}
+
+	@summary = "create a Factor Options via API"
+	macro createFactorOptionsAPI {
+		Variables.assertDefined(parameterList = "${optionsName},${factorCategoryId}");
+
+		var portalURL = JSONCompany.getPortalURL();
+
+		var curl = '''
+			${portalURL}/o/c/factoroptions \
+				-u test@liferay.com:test \
+				-H 'accept: application/json' \
+				-H 'Content-Type: application/json' \
+				-d '{
+					"name": "${optionsName}",
+					"r_factorCategoryToOptions_c_factorCategoryId": "${factorCategoryId}"
+				}'
+		''';
+
+		var response = JSONCurlUtil.post("${curl}", "$.id");
+
+		echo("${response}");
+
+		return "${response}";
+	}
+
+	@summary = "create a product version via API"
+	macro createProductVersionAPI {
+		Variables.assertDefined(parameterList = "${productVersion},${projectId}");
+
+		var portalURL = JSONCompany.getPortalURL();
+
+		var curl = '''
+			${portalURL}/o/c/productversions \
+				-u test@liferay.com:test \
+				-H 'accept: application/json' \
+				-H 'Content-Type: application/json' \
+				-d '{
+					"name": "${productVersion}",
+					"r_projectToProductVersions_c_projectId": "${projectId}"
+				}'
+		''';
+
+		var response = JSONCurlUtil.post("${curl}", "$.id");
+
+		echo("${response}");
+
+		return "${response}";
+	}
+
+	@summary = "create a Project via API"
+	macro createProjectAPI {
+		Variables.assertDefined(parameterList = "${projectName},${projectDescription}");
+
+		var portalURL = JSONCompany.getPortalURL();
+
+		var curl = '''
+			${portalURL}/o/c/projects \
+				-u test@liferay.com:test \
+				-H 'accept: application/json' \
+				-H 'Content-Type: application/json' \
+				-d '{
+					"name": "${projectName}",
+					"description": "${projectDescription}"
+				}'
+		''';
+
+		var response = JSONCurlUtil.post("${curl}", "$.id");
+
+		echo("${response}");
+
+		return "${response}";
+	}
+
+	@summary = "create a Requirements via API"
+	macro createRequirementAPI {
+		Variables.assertDefined(parameterList = "${requirementName},${linkTitle},${componentId},${projectId}");
+
+		var portalURL = JSONCompany.getPortalURL();
+
+		if (!(isSet(description))) {
+			var description = "";
+		}
+
+		if (!(isSet(linkURL))) {
+			var linkURL = "https://www.google.com/";
+		}
+
+		var curl = '''
+			${portalURL}/o/c/requirements \
+				-u test@liferay.com:test \
+				-H 'accept: application/json' \
+				-H 'Content-Type: application/json' \
+				-d '{
+					"summary": "${requirementName}",
+					"description": "${description}",
+					"linkTitle": "${linkTitle}",
+					"linkURL": "${linkURL}",
+					"r_componentToRequirements_c_componentId": "${componentId}",
+					"r_projectToRequirements_c_projectId": "${projectId}"
+				}'
+		''';
+
+		var response = JSONCurlUtil.post("${curl}", "$.id");
+
+		echo("${response}");
+
+		return "${response}";
+	}
+
+	@summary = "create a routine via API"
+	macro createRoutineAPI {
+		Variables.assertDefined(parameterList = "${routineName},${projectId}");
+
+		var portalURL = JSONCompany.getPortalURL();
+
+		var curl = '''
+			${portalURL}/o/c/routines \
+				-u test@liferay.com:test \
+				-H 'accept: application/json' \
+				-H 'Content-Type: application/json' \
+				-d '{
+					"name": "${routineName}",
+					"r_routineToProjects_c_projectId": "${projectId}"
+				}'
+		''';
+
+		var response = JSONCurlUtil.post("${curl}", "$.id");
+
+		echo("${response}");
+
+		return "${response}";
+	}
+
+	@summary = "create a Run via API"
+	macro createRunAPI {
+		Variables.assertDefined(parameterList = "${runName},${buildId}");
+
+		var portalURL = JSONCompany.getPortalURL();
+
+		var curl = '''
+			${portalURL}/o/c/runs \
+				-u test@liferay.com:test \
+				-H 'accept: application/json' \
+				-H 'Content-Type: application/json' \
+				-d '{
+					"name": "${runName}",
+					"r_buildToRuns_c_buildId": "${buildId}"
+				}'
+		''';
+
+		var response = JSONCurlUtil.post("${curl}", "$.id");
+
+		echo("${response}");
+
+		return "${response}";
+	}
+
+	@summary = "create a Subtask via API"
+	macro createSubtaskAPI {
+		Variables.assertDefined(parameterList = "${subtaskName},${taskId}");
+
+		var portalURL = JSONCompany.getPortalURL();
+
+		if (!(isSet(subtaskNumber))) {
+			var subtaskNumber = "";
+		}
+
+		if (!(isSet(score))) {
+			var score = "";
+		}
+
+		var curl = '''
+			${portalURL}/o/c/subtasks \
+				-u test@liferay.com:test \
+				-H 'accept: application/json' \
+				-H 'Content-Type: application/json' \
+				-d '{
+					"name": "${subtaskName}",
+					"number": "${subtaskNumber}",
+					"score": "${score}",
+					"r_taskToSubtasks_c_taskId": "${taskId}"
+				}'
+		''';
+
+		var response = JSONCurlUtil.post("${curl}", "$.id");
+
+		echo("${response}");
+
+		return "${response}";
+	}
+
+	@summary = "create a Suite via API"
+	macro createSuiteAPI {
+		var portalURL = JSONCompany.getPortalURL();
+
+		if (!(isSet(description))) {
+			var description = "";
+		}
+
+		if (!(isSet(typeSuite))) {
+			var typeSuite = "";
+		}
+
+		var curl = '''
+			${portalURL}/o/c/suites \
+				-u test@liferay.com:test \
+				-H 'accept: application/json' \
+				-H 'Content-Type: application/json' \
+				-d '{
+					"caseParameters": "{\"0\":${casesId},\"testrayTeams\":[{\"label\":\"Team 1\",\"value\":\"${teamId}\"}],\"testrayCaseTypes\":[{\"label\":\"Case 1\",\"value\":\"${caseTypeId}\"}],\"testrayComponents\":[{\"label\":\"Component 1\",\"value\":\"${componentId}\"}],\"testrayRequirements\":[{\"label\":\"Requirements Summary\",\"value\":\"${requirementId}\"}]}",
+					"name": "${suiteName}",
+					"description": "${description}",
+					"type": "${typeSuite}",
+					"r_projectToSuites_c_projectId": "${projectId}"
+				}'
+		''';
+
+		var response = JSONCurlUtil.post("${curl}", "$.id");
+
+		echo("${response}");
+
+		return "${response}";
+	}
+
+	@summary = "create a Task via API"
+	macro createTaskAPI {
+		Variables.assertDefined(parameterList = "${taskName},${buildId}");
+
+		var portalURL = JSONCompany.getPortalURL();
+
+		var curl = '''
+			${portalURL}/o/c/tasks \
+				-u test@liferay.com:test \
+				-H 'accept: application/json' \
+				-H 'Content-Type: application/json' \
+				-d '{
+					"name": "${taskName}",
+					"r_buildToTasks_c_buildId": "${buildId}"
+				}'
+		''';
+
+		var response = JSONCurlUtil.post("${curl}", "$.id");
+
+		echo("${response}");
+
+		return "${response}";
+	}
+
+	@summary = "create a Team via API"
+	macro createTeamAPI {
+		Variables.assertDefined(parameterList = "${teamName},${projectId}");
+
+		var portalURL = JSONCompany.getPortalURL();
+
+		var curl = '''
+			${portalURL}/o/c/teams \
+				-u test@liferay.com:test \
+				-H 'accept: application/json' \
+				-H 'Content-Type: application/json' \
+				-d '{
+					"name": "${teamName}",
+					"r_projectToTeams_c_projectId": "${projectId}"
+				}'
+		''';
+
+		var response = JSONCurlUtil.post("${curl}", "$.id");
+
+		echo("${response}");
+
+		return "${response}";
+	}
+
+	@summary = "This calls the JSON WS API to delete an object"
+	macro deleteObjectViaAPI {
+		var portalURL = JSONCompany.getPortalURL();
+		var objectId = JSONTestrayAPI.getObjectId(
+			object = "${object}",
+			objectName = "${objectName}");
+
+		var curl = '''
+			${portalURL}/o/c/${object}/${objectId} \
+				-u test@liferay.com:test
+		''';
+
+		JSONCurlUtil.delete("${curl}");
+	}
+
+	@summary = "This calls the JSON WS API to get object id"
+	macro getObjectId {
+		var portalURL = JSONCompany.getPortalURL();
+
+		var curl = '''
+			${portalURL}/o/c/${object} \
+				-u test@liferay.com:test
+		''';
+
+		var objectId = JSONCurlUtil.get("${curl}", "$.items[?(@.name=='${objectName}')].id");
+
+		return "${objectId}";
+	}
+
+}

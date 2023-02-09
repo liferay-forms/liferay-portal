@@ -151,3 +151,47 @@ app.artifacts-1.0.13=\
 app.change.log-1.0.13=LPS-131550 LPS-147681 LPS-162345 LPS-166099 LPS-168427
 
 app.git.id-1.0.13=f297afdd4871ffdffc154a90ec33156e153d266a
+
+#
+# Liferay App Version 1.0.14
+#
+
+app.artifacts-1.0.14=\
+	
+
+app.change.log-1.0.14=LPS-131550 LPS-147681 LPS-162345 LPS-166099 LPS-168427
+
+app.git.id-1.0.14=9c0d382ddc17fca4f41904b85954c88810efc897
+
+#
+# Liferay App Version 1.0.15
+#
+
+app.artifacts-1.0.15=\
+	
+
+app.change.log-1.0.15=LPS-131550 LPS-147681 LPS-162345 LPS-166099 LPS-168427
+
+app.git.id-1.0.15=6d0a1ae55836f44e542e22b86e0d6ca861952019
+
+#
+# Liferay App Version 1.0.16
+#
+
+app.artifacts-1.0.16=\
+	
+
+app.change.log-1.0.16=LPS-131550 LPS-147681 LPS-162345 LPS-166099 LPS-168427
+
+app.git.id-1.0.16=806df9f6facac8eeddc17d3a12c7bf27d5b882be
+
+#
+# Liferay App Version 1.0.17
+#
+
+app.artifacts-1.0.17=\
+	
+
+app.change.log-1.0.17=LPS-131550 LPS-147681 LPS-162345 LPS-166099 LPS-168427
+
+app.git.id-1.0.17=633cc36844e8e73debcdb13caa7e019532a0b975

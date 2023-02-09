@@ -15,7 +15,7 @@
 package com.liferay.layout.utility.page.layout.internal;
 
 import com.liferay.layout.utility.page.kernel.LayoutUtilityPageEntryViewRenderer;
-import com.liferay.layout.utility.page.kernel.constants.LayoutUtilityPageEntryTypesConstants;
+import com.liferay.layout.utility.page.kernel.constants.LayoutUtilityPageEntryConstants;
 import com.liferay.portal.kernel.language.Language;
 
 import java.io.IOException;
@@ -35,7 +35,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Eudaldo Alonso
  */
 @Component(
-	property = "utility.page.type=" + LayoutUtilityPageEntryTypesConstants.LAYOUT,
+	property = "utility.page.type=" + LayoutUtilityPageEntryConstants.TYPE_SC_NOT_FOUND,
 	service = LayoutUtilityPageEntryViewRenderer.class
 )
 public class LayoutStatusLayoutUtilityPageEntryViewRenderer
@@ -48,7 +48,7 @@ public class LayoutStatusLayoutUtilityPageEntryViewRenderer
 
 	@Override
 	public String getType() {
-		return LayoutUtilityPageEntryTypesConstants.LAYOUT;
+		return LayoutUtilityPageEntryConstants.TYPE_SC_NOT_FOUND;
 	}
 
 	@Override

@@ -64,8 +64,8 @@ public abstract class BaseUserNotificationHandler
 			else {
 				Locale locale = serviceContext.getLocale();
 
-				String portletTitle = PortalUtil.getPortletTitle(
-					getPortletId(), locale);
+				String title = LanguageUtil.get(
+					locale, "notification-no-longer-applies");
 
 				String body = StringUtil.replace(
 					_BODY_TEMPLATE_DEFAULT,
@@ -73,13 +73,13 @@ public abstract class BaseUserNotificationHandler
 					new String[] {
 						LanguageUtil.format(
 							locale, "notification-for-x-was-deleted",
-							portletTitle, false),
-						LanguageUtil.get(
-							locale, "notification-no-longer-applies")
+							PortalUtil.getPortletTitle(getPortletId(), locale),
+							false),
+						title
 					});
 
 				userNotificationFeedEntry = new UserNotificationFeedEntry(
-					false, body, StringPool.BLANK, false);
+					false, body, StringPool.BLANK, false, title);
 			}
 
 			return userNotificationFeedEntry;
@@ -151,7 +151,8 @@ public abstract class BaseUserNotificationHandler
 			userNotificationEvent, serviceContext);
 
 		return new UserNotificationFeedEntry(
-			isActionable(), body, link, applicable);
+			isActionable(), body, link, applicable,
+			getTitle(userNotificationEvent, serviceContext));
 	}
 
 	protected String getBody(
@@ -177,6 +178,14 @@ public abstract class BaseUserNotificationHandler
 	}
 
 	protected String getLink(
+			UserNotificationEvent userNotificationEvent,
+			ServiceContext serviceContext)
+		throws Exception {
+
+		return StringPool.BLANK;
+	}
+
+	protected String getTitle(
 			UserNotificationEvent userNotificationEvent,
 			ServiceContext serviceContext)
 		throws Exception {

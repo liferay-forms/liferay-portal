@@ -1,0 +1,216 @@
+@component-name = "portal-publications"
+definition {
+
+	property custom.properties = "feature.flag.LPS-161313=true${line.separator}jsonws.web.service.paths.excludes=";
+	property database.types = "db2,hypersonic,mariadb,mysql,oracle,postgresql,sqlserver";
+	property osgi.module.configuration.file.names = "com.liferay.change.tracking.configuration.CTSettingsConfiguration.config";
+	property osgi.module.configurations = "enabled=B\"true\"";
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.main.component.name = "Publications";
+
+	setUp {
+		TestCase.setUpPortalInstance();
+
+		User.firstLoginPG();
+	}
+
+	tearDown {
+		var testPortalInstance = PropsUtil.get("test.portal.instance");
+
+		if ("${testPortalInstance}" == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			Publications.disablePublications();
+		}
+	}
+
+	@priority = "5"
+	test AddPublicationWithPublicationTemplate {
+		for (var userNumber : list "1,2") {
+			JSONUser.addUser(
+				userEmailAddress = "userea${userNumber}@liferay.com",
+				userFirstName = "userfn${userNumber}",
+				userLastName = "userln${userNumber}",
+				userScreenName = "usersn${userNumber}");
+
+			JSONUser.setFirstPassword(
+				agreeToTermsAndAnswerReminderQuery = "true",
+				requireReset = "false",
+				userEmailAddress = "userea${userNumber}@liferay.com");
+
+			JSONUser.addUserToSite(
+				groupName = "Guest",
+				userEmailAddress = "userea${userNumber}@liferay.com");
+
+			JSONRole.assignSiteRoleToUser(
+				groupName = "Guest",
+				roleTitle = "Site Administrator",
+				userEmailAddress = "userea${userNumber}@liferay.com");
+		}
+
+		JSONRole.assignRoleToUser(
+			roleTitle = "Publications User",
+			userEmailAddress = "userea1@liferay.com");
+
+		PublicationsTemplate.gotoPublicationTemplate();
+
+		PublicationsTemplate.addPublicationTemplate(
+			publicationDescription = "Publications Description ${CURRENT_USERNAME}",
+			publicationName = "Publication Name ${CURRENT_USERNAME}",
+			publicationRole1 = "Editor",
+			publicationRole2 = "Viewer",
+			templateDescription = "Template Description",
+			templateName = "Template Name",
+			titleRole1 = "Viewers can view. Viewers cannot edit, publish, or invite other users.",
+			titleRole2 = "Editors can view and edit. Editors cannot publish or invite other users.",
+			userInvite = "userea2@liferay.com",
+			userInvite1 = "userea1@liferay.com",
+			userInvite2 = "userea2@liferay.com",
+			userMissingPublicationsRole = "true");
+
+		PublicationsTemplate.viewPublicationTemplate(templateName = "Template Name");
+
+		Publications.createNewPublicationWithTemplate(
+			gotoPublicationsAdmin = "true",
+			publicationDescription = "Publications Description test",
+			publicationName = "Publication Name test",
+			templateName = "Template Name");
+
+		PublicationsNavigator.gotoPublicationEllipsisItem(
+			menuItem = "Invite Users",
+			publicationName = "Publication Name test");
+
+		Publications.viewInvitedUser(
+			publicationRole = "Editor",
+			userInvite = "userea1@liferay.com");
+
+		Publications.viewInvitedUser(
+			publicationRole = "Viewer",
+			userInvite = "userea2@liferay.com");
+	}
+
+	@priority = "3"
+	test CanDeletePublicationTemplate {
+		JSONUser.addUser(
+			userEmailAddress = "userea@liferay.com",
+			userFirstName = "userfn",
+			userLastName = "userln",
+			userScreenName = "usersn");
+
+		PublicationsTemplate.gotoPublicationTemplate();
+
+		PublicationsTemplate.addPublicationTemplate(
+			publicationDescription = "Publications Description ${CURRENT_USERNAME}",
+			publicationName = "Publication Name ${CURRENT_USERNAME}",
+			publicationRole1 = "Editor",
+			publicationRole2 = "Viewer",
+			templateDescription = "Template Description",
+			templateName = "Template Name",
+			titleRole1 = "Viewers can view. Viewers cannot edit, publish, or invite other users.",
+			userInvite = "userea@liferay.com",
+			userInvite1 = "userea@liferay.com",
+			userMissingPublicationsRole = "true");
+
+		PublicationsTemplate.viewPublicationTemplate(templateName = "Template Name");
+
+		PublicationsTemplate.deletePublicationTemplate(templateName = "Template Name");
+
+		PublicationsTemplate.viewPublicationTemplateNotPresent(templateName = "Template Name");
+	}
+
+	@priority = "3"
+	test CanEditPublicationTemplate {
+		task ("Add Publication Template") {
+			PublicationsTemplate.gotoPublicationTemplate();
+
+			PublicationsTemplate.addPublicationTemplate(
+				publicationDescription = "Publications Description ${CURRENT_USERNAME}",
+				publicationName = "Publication Name ${CURRENT_USERNAME}",
+				templateDescription = "Template Description",
+				templateName = "Template Name");
+		}
+
+		task ("Edit Publication Template") {
+			PublicationsTemplate.editPublicationTemplate(
+				publicationDescriptionEdit = "Publications Description ${CURRENT_USERNAME} Edited",
+				publicationNameEdit = "Publication Name ${CURRENT_USERNAME} Edited",
+				templateDescriptionEdit = "Template Description Edited",
+				templateName = "Template Name",
+				templateNameEdit = "Template Name Edited");
+		}
+
+		task ("Assert the publication template is edited") {
+			PublicationsTemplate.viewPublicationTemplate(templateName = "Template Name Edited");
+
+			Click(
+				key_templateName = "Template Name Edited",
+				locator1 = "PublicationsTemplate#TEMPLATE_DROPDOWN_MENU");
+
+			MenuItem.click(menuItem = "Edit");
+
+			AssertElementPresent(
+				locator1 = "PublicationsTemplate#TEMPLATE_DESCRIPTION",
+				value1 = "Template Description Edited");
+
+			PublicationsTemplate.expandPublicationInformation();
+
+			AssertElementPresent(
+				locator1 = "Publications#PUBLICATION_NAME",
+				value1 = "Publication Name ${CURRENT_USERNAME} Edited");
+
+			AssertElementPresent(
+				locator1 = "Publications#PUBLICATION_DESCRIPTION",
+				value1 = "Publications Description ${CURRENT_USERNAME} Edited");
+
+			Button.clickCancel();
+		}
+	}
+
+	@priority = "3"
+	test CannotCreateEmptyPublicationTemplate {
+		task ("Go to Publications Template and click in the new template button") {
+			PublicationsTemplate.gotoPublicationTemplate();
+
+			Click(locator1 = "Button#PLUS");
+		}
+
+		task ("Assert that the template name field is indeed blank and then assert that the create button is disabled") {
+			AssertTextEquals(
+				locator1 = "PublicationsTemplate#TEMPLATE_NAME",
+				value1 = "");
+
+			AssertElementPresent(
+				locator1 = "Button#DISABLED_BUTTON",
+				value1 = "Create");
+		}
+
+		task ("Fill the template name field and assert that the create button is still disabled") {
+			Type(
+				locator1 = "PublicationsTemplate#TEMPLATE_NAME",
+				value1 = "Template Name");
+
+			AssertElementPresent(
+				locator1 = "Button#DISABLED_BUTTON",
+				value1 = "Create");
+		}
+
+		task ("Clean the template field name and fill the Publication name field") {
+			PublicationsTemplate.expandPublicationInformation();
+
+			Type(
+				locator1 = "PublicationsTemplate#TEMPLATE_NAME",
+				value1 = "");
+
+			Type(
+				locator1 = "Publications#PUBLICATION_NAME",
+				value1 = "Publication Name");
+
+			AssertElementPresent(
+				locator1 = "Button#DISABLED_BUTTON",
+				value1 = "Create");
+		}
+	}
+
+}

@@ -73,6 +73,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.test.rule.Inject;
@@ -99,6 +100,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.runtime.ServiceComponentRuntime;
 import org.osgi.service.component.runtime.dto.ComponentDescriptionDTO;
+import org.osgi.util.promise.Promise;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -259,7 +261,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 	}
 
 	@Test
-	public void testUpdateFormItemConfigMVCActionCommandMappingFormFFEnabled()
+	public void testUpdateFormItemConfigMVCActionCommandMappingForm()
 		throws Exception {
 
 		try (ComponentEnablerTemporarySwapper componentEnablerTemporarySwapper =
@@ -566,8 +568,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 							childrenItemIds.get(i));
 
 			_assertFragmentEntry(
-				infoField.getUniqueId(),
-				_getExpectedRendererKey(infoField.getInfoFieldType()),
+				infoField.getUniqueId(), _getExpectedRendererKey(infoField),
 				fragmentStyledLayoutStructureItem.getFragmentEntryLinkId(),
 				assertRendererKey);
 		}
@@ -644,7 +645,9 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 			expectedErrorMessage, jsonObject.getString("errorMessage"));
 	}
 
-	private String _getExpectedRendererKey(InfoFieldType infoFieldType) {
+	private String _getExpectedRendererKey(InfoField infoField) {
+		InfoFieldType infoFieldType = infoField.getInfoFieldType();
+
 		if (infoFieldType instanceof BooleanInfoFieldType) {
 			return "INPUTS-checkbox";
 		}
@@ -668,6 +671,14 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 		}
 
 		if (infoFieldType instanceof TextInfoFieldType) {
+			if (GetterUtil.getBoolean(
+					PropsUtil.get("feature.flag.LPS-161631")) &&
+				GetterUtil.getBoolean(
+					infoField.getAttribute(TextInfoFieldType.MULTILINE))) {
+
+				return "INPUTS-textarea";
+			}
+
 			return "INPUTS-text-input";
 		}
 
@@ -790,8 +801,9 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 	private class ComponentEnablerTemporarySwapper implements AutoCloseable {
 
 		public ComponentEnablerTemporarySwapper(
-			String bundleSymbolicName, String componentClassName,
-			boolean enabled) {
+				String bundleSymbolicName, String componentClassName,
+				boolean enabled)
+			throws Exception {
 
 			BundleContext bundleContext = SystemBundleUtil.getBundleContext();
 
@@ -817,12 +829,16 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 				_componentDescriptionDTO);
 
 			if (enabled) {
-				_serviceComponentRuntime.enableComponent(
+				Promise<?> promise = _serviceComponentRuntime.enableComponent(
 					_componentDescriptionDTO);
+
+				promise.getValue();
 			}
 			else {
-				_serviceComponentRuntime.disableComponent(
+				Promise<?> promise = _serviceComponentRuntime.disableComponent(
 					_componentDescriptionDTO);
+
+				promise.getValue();
 			}
 		}
 
@@ -833,12 +849,16 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 			}
 
 			if (_componentEnabled) {
-				_serviceComponentRuntime.enableComponent(
+				Promise<?> promise = _serviceComponentRuntime.enableComponent(
 					_componentDescriptionDTO);
+
+				promise.getValue();
 			}
 			else {
-				_serviceComponentRuntime.disableComponent(
+				Promise<?> promise = _serviceComponentRuntime.disableComponent(
 					_componentDescriptionDTO);
+
+				promise.getValue();
 			}
 		}
 

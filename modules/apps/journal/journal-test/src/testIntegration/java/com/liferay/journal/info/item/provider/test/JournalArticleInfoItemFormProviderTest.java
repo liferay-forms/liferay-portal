@@ -64,7 +64,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -153,10 +152,8 @@ public class JournalArticleInfoItemFormProviderTest {
 		Assert.assertEquals("description", infoField.getName());
 		Assert.assertTrue(infoField.isLocalizable());
 
-		Optional<Boolean> htmlAttributeOptional =
-			infoField.getAttributeOptional(TextInfoFieldType.HTML);
-
-		Assert.assertTrue(htmlAttributeOptional.get());
+		Assert.assertTrue(
+			(Boolean)infoField.getAttribute(TextInfoFieldType.HTML));
 
 		infoField = iterator.next();
 
@@ -186,15 +183,11 @@ public class JournalArticleInfoItemFormProviderTest {
 		Assert.assertEquals("HTML", infoField.getName());
 		Assert.assertTrue(infoField.isLocalizable());
 
-		htmlAttributeOptional = infoField.getAttributeOptional(
-			TextInfoFieldType.HTML);
+		Assert.assertTrue(
+			(Boolean)infoField.getAttribute(TextInfoFieldType.HTML));
 
-		Assert.assertTrue(htmlAttributeOptional.get());
-
-		Optional<Boolean> multilineAttributeOptional =
-			infoField.getAttributeOptional(TextInfoFieldType.MULTILINE);
-
-		Assert.assertTrue(multilineAttributeOptional.get());
+		Assert.assertTrue(
+			(Boolean)infoField.getAttribute(TextInfoFieldType.MULTILINE));
 
 		infoField = iterator.next();
 
@@ -247,20 +240,13 @@ public class JournalArticleInfoItemFormProviderTest {
 
 		infoField = iterator.next();
 
+		Assert.assertNull(infoField.getAttribute(TextInfoFieldType.HTML));
+		Assert.assertTrue(
+			(Boolean)infoField.getAttribute(TextInfoFieldType.MULTILINE));
 		Assert.assertEquals(
 			TextInfoFieldType.INSTANCE, infoField.getInfoFieldType());
 		Assert.assertEquals("TextBox", infoField.getName());
 		Assert.assertTrue(infoField.isLocalizable());
-
-		htmlAttributeOptional = infoField.getAttributeOptional(
-			TextInfoFieldType.HTML);
-
-		Assert.assertFalse(htmlAttributeOptional.isPresent());
-
-		multilineAttributeOptional = infoField.getAttributeOptional(
-			TextInfoFieldType.MULTILINE);
-
-		Assert.assertTrue(multilineAttributeOptional.get());
 
 		infoField = iterator.next();
 
@@ -372,11 +358,8 @@ public class JournalArticleInfoItemFormProviderTest {
 		WebImage webImage = (WebImage)imageInfoFieldValue.getValue(
 			LocaleUtil.getDefault());
 
-		Optional<InfoLocalizedValue<String>> altInfoLocalizedValueOptional =
-			webImage.getAltInfoLocalizedValueOptional();
-
 		InfoLocalizedValue<String> altInfoLocalizedValue =
-			altInfoLocalizedValueOptional.get();
+			webImage.getAltInfoLocalizedValue();
 
 		Assert.assertEquals(
 			"alt text",

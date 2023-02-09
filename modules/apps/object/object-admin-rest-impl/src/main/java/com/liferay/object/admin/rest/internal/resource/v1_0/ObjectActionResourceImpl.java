@@ -14,26 +14,23 @@
 
 package com.liferay.object.admin.rest.internal.resource.v1_0;
 
+import com.liferay.notification.service.NotificationTemplateLocalService;
 import com.liferay.object.admin.rest.dto.v1_0.ObjectAction;
 import com.liferay.object.admin.rest.dto.v1_0.ObjectDefinition;
 import com.liferay.object.admin.rest.dto.v1_0.util.ObjectActionUtil;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectActionResource;
-import com.liferay.object.constants.ObjectActionTriggerConstants;
 import com.liferay.object.service.ObjectActionService;
 import com.liferay.object.service.ObjectDefinitionLocalService;
-import com.liferay.object.util.LocalizedMapUtil;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.vulcan.fields.NestedField;
 import com.liferay.portal.vulcan.fields.NestedFieldSupport;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
-
-import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -123,6 +120,7 @@ public class ObjectActionResourceImpl
 				Field.ENTRY_CLASS_PK),
 			searchContext -> {
 				searchContext.setAttribute(Field.NAME, search);
+				searchContext.setAttribute("label", search);
 				searchContext.setAttribute(
 					"objectDefinitionId", objectDefinitionId);
 				searchContext.setCompanyId(contextCompany.getCompanyId());
@@ -152,18 +150,10 @@ public class ObjectActionResourceImpl
 			Long objectDefinitionId, ObjectAction objectAction)
 		throws Exception {
 
-		if (!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-166918")) &&
-			Objects.equals(
-				objectAction.getObjectActionTriggerKey(),
-				ObjectActionTriggerConstants.KEY_STANDALONE)) {
-
-			throw new UnsupportedOperationException();
-		}
-
 		return _toObjectAction(
 			_objectActionService.addObjectAction(
-				objectDefinitionId, objectAction.getActive(),
-				objectAction.getConditionExpression(),
+				objectAction.getExternalReferenceCode(), objectDefinitionId,
+				objectAction.getActive(), objectAction.getConditionExpression(),
 				objectAction.getDescription(),
 				LocalizedMapUtil.getLocalizedMap(
 					objectAction.getErrorMessage()),
@@ -180,18 +170,10 @@ public class ObjectActionResourceImpl
 			Long objectActionId, ObjectAction objectAction)
 		throws Exception {
 
-		if (!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-166918")) &&
-			Objects.equals(
-				objectAction.getObjectActionTriggerKey(),
-				ObjectActionTriggerConstants.KEY_STANDALONE)) {
-
-			throw new UnsupportedOperationException();
-		}
-
 		return _toObjectAction(
 			_objectActionService.updateObjectAction(
-				objectActionId, objectAction.getActive(),
-				objectAction.getConditionExpression(),
+				objectAction.getExternalReferenceCode(), objectActionId,
+				objectAction.getActive(), objectAction.getConditionExpression(),
 				objectAction.getDescription(),
 				LocalizedMapUtil.getLocalizedMap(
 					objectAction.getErrorMessage()),
@@ -205,6 +187,10 @@ public class ObjectActionResourceImpl
 
 	private ObjectAction _toObjectAction(
 		com.liferay.object.model.ObjectAction objectAction) {
+
+		if (objectAction == null) {
+			return null;
+		}
 
 		String permissionName =
 			com.liferay.object.model.ObjectDefinition.class.getName();
@@ -227,8 +213,12 @@ public class ObjectActionResourceImpl
 					objectAction.getObjectDefinitionId())
 			).build(),
 			contextAcceptLanguage.getPreferredLocale(),
-			_objectDefinitionLocalService, objectAction);
+			_notificationTemplateLocalService, _objectDefinitionLocalService,
+			objectAction);
 	}
+
+	@Reference
+	private NotificationTemplateLocalService _notificationTemplateLocalService;
 
 	@Reference
 	private ObjectActionService _objectActionService;

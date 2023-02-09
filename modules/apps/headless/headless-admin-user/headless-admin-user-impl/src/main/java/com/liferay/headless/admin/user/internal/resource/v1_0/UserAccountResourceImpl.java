@@ -64,7 +64,6 @@ import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.TermFilter;
 import com.liferay.portal.kernel.security.auth.Authenticator;
-import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.auth.session.AuthenticatedSessionManager;
 import com.liferay.portal.kernel.security.auth.session.AuthenticatedSessionManagerUtil;
 import com.liferay.portal.kernel.security.ldap.LDAPSettingsUtil;
@@ -136,11 +135,11 @@ public class UserAccountResourceImpl
 	public void
 			deleteAccountByExternalReferenceCodeUserAccountByExternalReferenceCode(
 				String accountExternalReferenceCode,
-				String userAccountExternalReferenceCode)
+				String externalReferenceCode)
 		throws Exception {
 
 		User user = _userLocalService.getUserByExternalReferenceCode(
-			userAccountExternalReferenceCode, contextCompany.getCompanyId());
+			externalReferenceCode, contextCompany.getCompanyId());
 
 		_accountEntryUserRelService.deleteAccountEntryUserRelByEmailAddress(
 			_accountResourceDTOConverter.getAccountEntryId(
@@ -356,13 +355,6 @@ public class UserAccountResourceImpl
 			String search, Filter filter, Pagination pagination, Sort[] sorts)
 		throws Exception {
 
-		PermissionChecker permissionChecker =
-			PermissionThreadLocal.getPermissionChecker();
-
-		if (!permissionChecker.isCompanyAdmin(contextCompany.getCompanyId())) {
-			throw new PrincipalException.MustBeCompanyAdmin(permissionChecker);
-		}
-
 		return _getUserAccountsPage(
 			HashMapBuilder.<String, Map<String, String>>putAll(
 				_getCompanyScopeActions(
@@ -392,11 +384,11 @@ public class UserAccountResourceImpl
 	public void
 			postAccountByExternalReferenceCodeUserAccountByExternalReferenceCode(
 				String accountExternalReferenceCode,
-				String userAccountExternalReferenceCode)
+				String externalReferenceCode)
 		throws Exception {
 
 		User user = _userLocalService.getUserByExternalReferenceCode(
-			userAccountExternalReferenceCode, contextCompany.getCompanyId());
+			externalReferenceCode, contextCompany.getCompanyId());
 
 		_accountEntryUserRelService.addAccountEntryUserRelByEmailAddress(
 			_accountResourceDTOConverter.getAccountEntryId(

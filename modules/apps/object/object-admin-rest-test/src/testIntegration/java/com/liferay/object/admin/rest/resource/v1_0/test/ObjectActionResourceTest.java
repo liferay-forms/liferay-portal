@@ -21,12 +21,11 @@ import com.liferay.object.constants.ObjectActionTriggerConstants;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.service.ObjectDefinitionLocalService;
-import com.liferay.object.util.LocalizedMapUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.test.rule.Inject;
-import com.liferay.portal.util.PropsUtil;
+import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
 import java.util.Collections;
 
@@ -57,11 +56,6 @@ public class ObjectActionResourceTest extends BaseObjectActionResourceTestCase {
 				ObjectDefinitionConstants.SCOPE_COMPANY,
 				ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
 				Collections.emptyList());
-
-		PropsUtil.addProperties(
-			UnicodePropertiesBuilder.setProperty(
-				"feature.flag.LPS-166918", "true"
-			).build());
 	}
 
 	@After
@@ -73,11 +67,6 @@ public class ObjectActionResourceTest extends BaseObjectActionResourceTestCase {
 			_objectDefinitionLocalService.deleteObjectDefinition(
 				_objectDefinition.getObjectDefinitionId());
 		}
-
-		PropsUtil.addProperties(
-			UnicodePropertiesBuilder.setProperty(
-				"feature.flag.LPS-166918", "false"
-			).build());
 	}
 
 	@Ignore
@@ -102,6 +91,7 @@ public class ObjectActionResourceTest extends BaseObjectActionResourceTestCase {
 				description = RandomTestUtil.randomString();
 				errorMessage = Collections.singletonMap(
 					"en_US", RandomTestUtil.randomString());
+				externalReferenceCode = RandomTestUtil.randomString();
 				id = RandomTestUtil.randomLong();
 				label = Collections.singletonMap(
 					"en_US", RandomTestUtil.randomString());
@@ -131,6 +121,32 @@ public class ObjectActionResourceTest extends BaseObjectActionResourceTestCase {
 		return _addObjectAction();
 	}
 
+	protected ObjectAction
+			testGetObjectActionByExternalReferenceCode_addObjectAction()
+		throws Exception {
+
+		return _addObjectAction();
+	}
+
+	@Override
+	protected ObjectAction
+			testGetObjectDefinitionByExternalReferenceCodeObjectActionsPage_addObjectAction(
+				String externalReferenceCode, ObjectAction objectAction)
+		throws Exception {
+
+		return objectActionResource.
+			postObjectDefinitionByExternalReferenceCodeObjectAction(
+				externalReferenceCode, objectAction);
+	}
+
+	@Override
+	protected String
+			testGetObjectDefinitionByExternalReferenceCodeObjectActionsPage_getExternalReferenceCode()
+		throws Exception {
+
+		return _objectDefinition.getExternalReferenceCode();
+	}
+
 	@Override
 	protected Long
 			testGetObjectDefinitionObjectActionsPage_getObjectDefinitionId()
@@ -151,6 +167,17 @@ public class ObjectActionResourceTest extends BaseObjectActionResourceTestCase {
 		throws Exception {
 
 		return _addObjectAction();
+	}
+
+	@Override
+	protected ObjectAction
+			testPostObjectDefinitionByExternalReferenceCodeObjectAction_addObjectAction(
+				ObjectAction objectAction)
+		throws Exception {
+
+		return objectActionResource.
+			postObjectDefinitionByExternalReferenceCodeObjectAction(
+				_objectDefinition.getExternalReferenceCode(), objectAction);
 	}
 
 	@Override

@@ -36,7 +36,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
+import java.util.NoSuchElementException;
 
 /**
  * @author Wade Cao
@@ -57,18 +57,21 @@ public class SXPBlueprintSearchResultTestUtil {
 			new ElementInstance[sxpElementNames.length];
 
 		for (int i = 0; i < sxpElementNames.length; i++) {
-			String sxpElementName = sxpElementNames[i];
+			SXPElement sxpElement = null;
 
-			Stream<SXPElement> stream = sxpElements.stream();
+			for (SXPElement sxpE : sxpElements) {
+				if (StringUtil.equalsIgnoreCase(
+						sxpE.getTitle(LocaleUtil.US), sxpElementNames[i])) {
 
-			SXPElement sxpElement = stream.filter(
-				x -> x.getTitle(
-					LocaleUtil.US
-				).equalsIgnoreCase(
-					sxpElementName
-				)
-			).findFirst(
-			).get();
+					sxpElement = sxpE;
+
+					break;
+				}
+			}
+
+			if (sxpElement == null) {
+				throw new NoSuchElementException();
+			}
 
 			ElementDefinition elementDefinition = ElementDefinitionUtil.unpack(
 				ElementDefinition.toDTO(sxpElement.getElementDefinitionJSON()));

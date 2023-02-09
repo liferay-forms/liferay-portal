@@ -17,7 +17,7 @@ create index IX_F2949120 on AnnouncementsEntry (uuid_[$COLUMN_LENGTH:75$], compa
 
 create index IX_EF1F022A on AnnouncementsFlag (companyId);
 create index IX_9C7EB9F on AnnouncementsFlag (entryId);
-create unique index IX_4539A99C on AnnouncementsFlag (userId, entryId, value);
+create index IX_4539A99C on AnnouncementsFlag (userId, entryId, value);
 
 create index IX_AE8DFA7 on AssetCategory (companyId, externalReferenceCode[$COLUMN_LENGTH:75$], ctCollectionId);
 create index IX_1757FA92 on AssetCategory (ctCollectionId);
@@ -91,7 +91,8 @@ create unique index IX_EC00543C on Company (webId[$COLUMN_LENGTH:75$]);
 create unique index IX_85C63FD7 on CompanyInfo (companyId);
 
 create index IX_791914FA on Contact_ (classNameId, classPK);
-create index IX_66D496A3 on Contact_ (companyId);
+create index IX_FD2E9BDD on Contact_ (companyId, userId);
+create index IX_42F94F9F on Contact_ (userId);
 
 create index IX_25D734CD on Country (active_);
 create unique index IX_742FFB11 on Country (companyId, a2[$COLUMN_LENGTH:75$]);

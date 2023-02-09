@@ -33,7 +33,7 @@ import {
 } from '../../../services/rest';
 import {STORAGE_KEYS} from '../../../util/constants';
 import dayjs from '../../../util/date';
-import {searchUtil} from '../../../util/search';
+import {SearchBuilder} from '../../../util/search';
 
 type CaseWithRequirement = {
 	[key: number]: TestrayRequirement[];
@@ -251,25 +251,31 @@ const Export = () => {
 	const [caseIds] = useStorage(`${STORAGE_KEYS.EXPORT_CASE_IDS}-${id}`, []);
 
 	const {data: casesData, loading} = useFetch<APIResponse<TestrayCase>>(
-		`/cases?filter=${searchUtil.in(
-			'id',
-			caseIds
-		)}&nestedFields=caseType,component,project,team&nestedFieldsDepth=3&pageSize=1000`,
-		(response) => testrayCaseRest.transformDataFromList(response)
+		'/cases',
+		{
+			params: {
+				filter: SearchBuilder.in('id', caseIds),
+				nestedFields: 'caseType,component,project,team',
+				nestedFieldsDepth: 3,
+				pageSize: 1000,
+			},
+			transformData: (response) =>
+				testrayCaseRest.transformDataFromList(response),
+		}
 	);
 
 	const {data: requirementCasesData} = useFetch<
 		APIResponse<TestrayRequirementCase>
-	>(
-		loading
-			? null
-			: `/requirementscaseses?filter=${searchUtil.in(
-					'caseId',
-					caseIds
-			  )}&nestedFields=case.component,requirement,team&nestedFieldsDepth=3&pageSize=1000`,
-		(response) =>
-			testrayCaseRequirementsImpl.transformDataFromList(response)
-	);
+	>(loading ? null : '/requirementscaseses', {
+		params: {
+			filter: SearchBuilder.in('caseId', caseIds),
+			nestedFields: 'case.component,requirement,team',
+			nestedFieldsDepth: 3,
+			pageSize: 1000,
+		},
+		transformData: (response) =>
+			testrayCaseRequirementsImpl.transformDataFromList(response),
+	});
 
 	const cases = casesData?.items || [];
 

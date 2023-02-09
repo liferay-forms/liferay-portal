@@ -33,9 +33,11 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.service.permission.LayoutPermissionUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HtmlUtil;
+import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -47,10 +49,10 @@ import com.liferay.segments.service.SegmentsExperienceLocalService;
 import com.liferay.taglib.security.PermissionsURLTag;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.ResourceURL;
+import javax.portlet.WindowState;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -257,8 +259,7 @@ public class LayoutActionsDisplayContext {
 				ContentPageEditorPortletKeys.CONTENT_PAGE_EDITOR_PORTLET, 0, 0,
 				PortletRequest.RESOURCE_PHASE);
 
-		getPreviewLayoutURL.setResourceID(
-			"/layout_content_page_editor/get_page_preview");
+		getPreviewLayoutURL.setParameter("p_l_mode", Constants.PREVIEW);
 
 		Layout draftLayout = layout;
 
@@ -268,12 +269,15 @@ public class LayoutActionsDisplayContext {
 
 		getPreviewLayoutURL.setParameter(
 			"selPlid", String.valueOf(draftLayout.getPlid()));
-
 		getPreviewLayoutURL.setParameter(
 			"segmentsExperienceId",
 			String.valueOf(_getSegmentsExperienceId(draftLayout)));
+		getPreviewLayoutURL.setResourceID(
+			"/layout_content_page_editor/get_page_preview");
 
-		return getPreviewLayoutURL.toString();
+		return HttpComponentsUtil.setParameter(
+			getPreviewLayoutURL.toString(), "p_p_state",
+			WindowState.UNDEFINED.toString());
 	}
 
 	private long _getSegmentsExperienceId(Layout layout) {
@@ -289,14 +293,15 @@ public class LayoutActionsDisplayContext {
 				unicodeProperties.getProperty("segmentsExperienceId"), -1));
 
 		if (segmentsExperienceId != -1) {
-			segmentsExperienceId = Optional.ofNullable(
+			SegmentsExperience segmentsExperience =
 				_segmentsExperienceLocalService.fetchSegmentsExperience(
-					segmentsExperienceId)
-			).map(
-				SegmentsExperience::getSegmentsExperienceId
-			).orElse(
-				-1L
-			);
+					segmentsExperienceId);
+
+			if (segmentsExperience != null) {
+				return segmentsExperience.getSegmentsExperienceId();
+			}
+
+			segmentsExperienceId = -1L;
 		}
 
 		if (segmentsExperienceId == -1) {

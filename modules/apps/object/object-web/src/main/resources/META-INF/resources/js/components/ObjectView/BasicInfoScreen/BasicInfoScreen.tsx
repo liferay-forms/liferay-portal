@@ -16,16 +16,16 @@ import ClayForm, {ClayCheckbox} from '@clayui/form';
 import {
 	Card,
 	Input,
+	REQUIRED_MSG,
+	getLocalizableLabel,
 	invalidateRequired,
 } from '@liferay/object-js-components-web';
 import React from 'react';
 
 import {TYPES, useViewContext} from '../objectViewContext';
 
-const defaultLanguageId = Liferay.ThemeDisplay.getDefaultLanguageId();
-
 export default function BasicInfoScreen() {
-	const [{objectView}, dispatch] = useViewContext();
+	const [{creationLanguageId, objectView}, dispatch] = useViewContext();
 
 	const handleChangeName = (newName: string) => {
 		dispatch({
@@ -43,8 +43,12 @@ export default function BasicInfoScreen() {
 
 	let error: string | undefined;
 
-	if (invalidateRequired(objectView.name[defaultLanguageId])) {
-		error = Liferay.Language.get('required');
+	if (
+		invalidateRequired(
+			getLocalizableLabel(creationLanguageId, objectView.name)
+		)
+	) {
+		error = REQUIRED_MSG;
 	}
 
 	return (
@@ -59,7 +63,10 @@ export default function BasicInfoScreen() {
 						handleChangeName(value);
 					}}
 					required
-					value={objectView.name[defaultLanguageId]}
+					value={getLocalizableLabel(
+						creationLanguageId,
+						objectView.name
+					)}
 				/>
 			</ClayForm.Group>
 

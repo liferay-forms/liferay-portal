@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
  *
@@ -11,30 +10,40 @@
  */
 
 import ClayDatePicker from '@clayui/date-picker';
-import {InputHTMLAttributes} from 'react';
+import {InputHTMLAttributes, useEffect, useState} from 'react';
+import {UseFormRegister} from 'react-hook-form';
 
+import {generateReportsType} from '../../../../routes/reports/generateReport';
 import BaseWrapper from '../Base/BaseWrapper';
 
 type DatePickerTypes = {
+	clearErrors?: any;
 	errors?: any;
 	id?: string;
 	label?: string;
 	name: string;
-	register?: any;
+	register?: UseFormRegister<generateReportsType>;
 	required?: boolean;
+	setValue?: any;
 	type?: string;
 } & InputHTMLAttributes<HTMLInputElement>;
 
 const DatePicker: React.FC<DatePickerTypes> = ({
+	clearErrors = {},
 	errors = {},
 	label,
 	name,
-	register = () => {},
 	id = name,
-	value,
 	required = false,
-	...otherProps
+	setValue = () => {},
 }) => {
+	const [data, setData] = useState('');
+
+	useEffect(() => {
+		clearErrors(name);
+		setValue(name, data);
+	}, [clearErrors, data, name, setValue]);
+
 	return (
 		<BaseWrapper
 			error={errors[name]?.message}
@@ -43,13 +52,13 @@ const DatePicker: React.FC<DatePickerTypes> = ({
 			required={required}
 		>
 			<ClayDatePicker
-				value={value}
+				onChange={setData}
+				placeholder="YYYY-MM-DD"
+				value={data}
 				years={{
 					end: 2024,
 					start: 1997,
 				}}
-				{...otherProps}
-				{...register(name, {required})}
 			/>
 		</BaseWrapper>
 	);

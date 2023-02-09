@@ -16,6 +16,7 @@ package com.liferay.portal.search.internal.searcher;
 
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistry;
@@ -37,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
@@ -144,7 +144,7 @@ public class SearcherImpl implements Searcher {
 		}
 	}
 
-	private Stream<Function<SearchRequest, SearchRequest>> _getContributors(
+	private Collection<Function<SearchRequest, SearchRequest>> _getContributors(
 		SearchRequest searchRequest) {
 
 		List<String> contributors = searchRequest.getIncludeContributors();
@@ -161,9 +161,8 @@ public class SearcherImpl implements Searcher {
 			collection.addAll(_serviceTrackerMap.getService(contributor));
 		}
 
-		Stream<SearchRequestContributor> stream = collection.stream();
-
-		return stream.map(
+		return TransformUtil.transform(
+			collection,
 			searchRequestContributor -> searchRequestContributor::contribute);
 	}
 
@@ -285,15 +284,14 @@ public class SearcherImpl implements Searcher {
 		}
 	}
 
-	private <T> T _transform(T t, Stream<Function<T, T>> stream) {
-		return stream.reduce(
-			(beforeFunction, afterFunction) -> beforeFunction.andThen(
-				afterFunction)
-		).orElse(
-			Function.identity()
-		).apply(
-			t
-		);
+	private <T> T _transform(T t, Collection<Function<T, T>> collection) {
+		Function<T, T> function = Function.identity();
+
+		for (Function<T, T> curFunction : collection) {
+			function = function.andThen(curFunction);
+		}
+
+		return function.apply(t);
 	}
 
 	private SearchRequest _transformSearchRequest(SearchRequest searchRequest) {

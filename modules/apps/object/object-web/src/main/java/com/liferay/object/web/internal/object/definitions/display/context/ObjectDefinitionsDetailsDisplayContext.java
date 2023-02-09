@@ -14,34 +14,30 @@
 
 package com.liferay.object.web.internal.object.definitions.display.context;
 
-import com.liferay.account.model.AccountEntry;
 import com.liferay.application.list.PanelCategory;
 import com.liferay.application.list.PanelCategoryRegistry;
 import com.liferay.application.list.constants.PanelCategoryKeys;
 import com.liferay.object.constants.ObjectActionKeys;
-import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
-import com.liferay.object.model.ObjectRelationship;
 import com.liferay.object.scope.ObjectScopeProvider;
 import com.liferay.object.scope.ObjectScopeProviderRegistry;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.web.internal.constants.ObjectWebKeys;
 import com.liferay.petra.string.StringBundler;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.KeyValuePair;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -68,47 +64,53 @@ public class ObjectDefinitionsDetailsDisplayContext
 		_panelCategoryRegistry = panelCategoryRegistry;
 	}
 
-	public List<ObjectField> getAccountEntryRelationshipObjectFields()
-		throws PortalException {
+	public List<Map<String, Object>> getNonrelationshipObjectFieldsInfo() {
+		List<ObjectField> objectFields = ListUtil.filter(
+			getObjectFields(),
+			objectField -> Validator.isNull(objectField.getRelationshipType()));
 
-		ObjectDefinition accountEntryObjectDefinition =
-			_objectDefinitionLocalService.fetchObjectDefinitionByClassName(
-				objectRequestHelper.getCompanyId(),
-				AccountEntry.class.getName());
+		List<Map<String, Object>> nonrelationshipObjectFieldsInfo =
+			new ArrayList<>();
 
-		Map<Long, ObjectField> objectFieldsMap = Stream.of(
-			getObjectFields()
-		).flatMap(
-			List::stream
-		).collect(
-			Collectors.toMap(
-				ObjectField::getObjectFieldId, objectField -> objectField)
-		);
+		for (ObjectField objectField : objectFields) {
+			nonrelationshipObjectFieldsInfo.add(
+				HashMapBuilder.<String, Object>put(
+					"label",
+					LocalizationUtil.getLocalizationMap(objectField.getLabel())
+				).put(
+					"name", objectField.getName()
+				).build());
+		}
 
-		return Stream.of(
-			_objectRelationshipLocalService.getObjectRelationships(
-				accountEntryObjectDefinition.getObjectDefinitionId(),
-				getObjectDefinitionId(),
-				ObjectRelationshipConstants.TYPE_ONE_TO_MANY)
-		).flatMap(
-			List::stream
-		).map(
-			ObjectRelationship::getObjectFieldId2
-		).map(
-			objectFieldsMap::get
-		).collect(
-			Collectors.toList()
-		);
+		return nonrelationshipObjectFieldsInfo;
 	}
 
-	public List<KeyValuePair> getKeyValuePairs() {
-		List<KeyValuePair> keyValuePairs = new ArrayList<>();
+	public ObjectDefinition getObjectDefinition() {
+		HttpServletRequest httpServletRequest =
+			objectRequestHelper.getRequest();
 
+		return (ObjectDefinition)httpServletRequest.getAttribute(
+			ObjectWebKeys.OBJECT_DEFINITION);
+	}
+
+	public List<ObjectField> getObjectFields() {
+		HttpServletRequest httpServletRequest =
+			objectRequestHelper.getRequest();
+
+		return (List<ObjectField>)httpServletRequest.getAttribute(
+			ObjectWebKeys.OBJECT_FIELDS);
+	}
+
+	public String getScope() {
 		ObjectDefinition objectDefinition = getObjectDefinition();
 
-		String scope = ParamUtil.getString(
+		return ParamUtil.getString(
 			objectRequestHelper.getRequest(), "scope",
 			objectDefinition.getScope());
+	}
+
+	public List<KeyValuePair> getScopeKeyValuePairs(String scope) {
+		List<KeyValuePair> keyValuePairs = new ArrayList<>();
 
 		ObjectScopeProvider objectScopeProvider =
 			_objectScopeProviderRegistry.getObjectScopeProvider(scope);
@@ -141,40 +143,6 @@ public class ObjectDefinitionsDetailsDisplayContext
 		}
 
 		return keyValuePairs;
-	}
-
-	public List<ObjectField> getNonrelationshipObjectFields() {
-		return ListUtil.filter(
-			getObjectFields(),
-			objectField -> Validator.isNull(objectField.getRelationshipType()));
-	}
-
-	public ObjectDefinition getObjectDefinition() {
-		HttpServletRequest httpServletRequest =
-			objectRequestHelper.getRequest();
-
-		return (ObjectDefinition)httpServletRequest.getAttribute(
-			ObjectWebKeys.OBJECT_DEFINITION);
-	}
-
-	public List<ObjectField> getObjectFields() {
-		HttpServletRequest httpServletRequest =
-			objectRequestHelper.getRequest();
-
-		return (List<ObjectField>)httpServletRequest.getAttribute(
-			ObjectWebKeys.OBJECT_FIELDS);
-	}
-
-	public List<ObjectScopeProvider> getObjectScopeProviders() {
-		return _objectScopeProviderRegistry.getObjectScopeProviders();
-	}
-
-	public String getScope() {
-		ObjectDefinition objectDefinition = getObjectDefinition();
-
-		return ParamUtil.getString(
-			objectRequestHelper.getRequest(), "scope",
-			objectDefinition.getScope());
 	}
 
 	public boolean hasPublishObjectPermission() {

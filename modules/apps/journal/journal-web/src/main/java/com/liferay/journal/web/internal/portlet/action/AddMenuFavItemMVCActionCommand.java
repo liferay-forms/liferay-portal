@@ -16,6 +16,7 @@ package com.liferay.journal.web.internal.portlet.action;
 
 import com.liferay.journal.constants.JournalPortletKeys;
 import com.liferay.journal.exception.MaxAddMenuFavItemsException;
+import com.liferay.journal.util.JournalHelper;
 import com.liferay.journal.web.internal.configuration.JournalWebConfiguration;
 import com.liferay.journal.web.internal.util.JournalPortletUtil;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
@@ -34,13 +35,13 @@ import javax.portlet.ActionResponse;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Eudaldo Alonso
  */
 @Component(
 	configurationPid = "com.liferay.journal.web.internal.configuration.JournalWebConfiguration",
-	immediate = true,
 	property = {
 		"javax.portlet.name=" + JournalPortletKeys.JOURNAL,
 		"mvc.command.name=/journal/add_menu_fav_item"
@@ -65,7 +66,7 @@ public class AddMenuFavItemMVCActionCommand extends BaseMVCActionCommand {
 			PortletPreferencesFactoryUtil.getPortalPreferences(actionRequest);
 
 		String key = JournalPortletUtil.getAddMenuFavItemKey(
-			actionRequest, actionResponse);
+			_journalHelper, actionRequest);
 
 		String[] addMenuFavItems = portalPreferences.getValues(
 			JournalPortletKeys.JOURNAL, key, new String[0]);
@@ -85,6 +86,9 @@ public class AddMenuFavItemMVCActionCommand extends BaseMVCActionCommand {
 			JournalPortletKeys.JOURNAL, key,
 			ArrayUtil.append(addMenuFavItems, ddmStructureKey));
 	}
+
+	@Reference
+	private JournalHelper _journalHelper;
 
 	private volatile JournalWebConfiguration _journalWebConfiguration;
 

@@ -23,6 +23,8 @@ import com.liferay.object.action.executor.ObjectActionExecutorRegistry;
 import com.liferay.object.constants.ObjectActionConstants;
 import com.liferay.object.internal.action.util.ObjectActionThreadLocal;
 import com.liferay.object.internal.action.util.ObjectEntryVariablesUtil;
+import com.liferay.object.internal.dynamic.data.mapping.expression.ObjectEntryDDMExpressionParameterAccessor;
+import com.liferay.object.internal.entry.util.ObjectEntryThreadLocal;
 import com.liferay.object.model.ObjectAction;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.service.ObjectActionLocalService;
@@ -37,8 +39,6 @@ import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactory;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalService;
-import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 
@@ -61,10 +61,6 @@ public class ObjectActionEngineImpl implements ObjectActionEngine {
 			long objectDefinitionId, JSONObject payloadJSONObject, long userId)
 		throws Exception {
 
-		if (!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-166918"))) {
-			throw new UnsupportedOperationException();
-		}
-
 		ObjectAction objectAction = _objectActionLocalService.getObjectAction(
 			objectDefinitionId, objectActionName, objectActionTriggerKey);
 
@@ -76,11 +72,18 @@ public class ObjectActionEngineImpl implements ObjectActionEngine {
 			objectDefinition, payloadJSONObject,
 			_userLocalService.getUser(userId));
 
-		_executeObjectAction(
-			objectAction, objectDefinition, payloadJSONObject, userId,
-			ObjectEntryVariablesUtil.getActionVariables(
-				_dtoConverterRegistry, objectDefinition, payloadJSONObject,
-				_systemObjectDefinitionMetadataRegistry));
+		try {
+			ObjectEntryThreadLocal.setSkipObjectEntryResourcePermission(true);
+
+			_executeObjectAction(
+				objectAction, objectDefinition, payloadJSONObject, userId,
+				ObjectEntryVariablesUtil.getActionVariables(
+					_dtoConverterRegistry, objectDefinition, payloadJSONObject,
+					_systemObjectDefinitionMetadataRegistry));
+		}
+		finally {
+			ObjectEntryThreadLocal.setSkipObjectEntryResourcePermission(false);
+		}
 	}
 
 	@Override
@@ -111,6 +114,7 @@ public class ObjectActionEngineImpl implements ObjectActionEngine {
 			PermissionThreadLocal.getPermissionChecker();
 
 		try {
+			ObjectEntryThreadLocal.setSkipObjectEntryResourcePermission(true);
 			PrincipalThreadLocal.setName(userId);
 			PermissionThreadLocal.setPermissionChecker(
 				_permissionCheckerFactory.create(user));
@@ -138,6 +142,7 @@ public class ObjectActionEngineImpl implements ObjectActionEngine {
 			}
 		}
 		finally {
+			ObjectEntryThreadLocal.setSkipObjectEntryResourcePermission(false);
 			PrincipalThreadLocal.setName(name);
 			PermissionThreadLocal.setPermissionChecker(permissionChecker);
 		}
@@ -155,9 +160,14 @@ public class ObjectActionEngineImpl implements ObjectActionEngine {
 			_ddmExpressionFactory.createExpression(
 				CreateExpressionRequest.Builder.newBuilder(
 					conditionExpression
+				).withDDMExpressionParameterAccessor(
+					new ObjectEntryDDMExpressionParameterAccessor(
+						(Map<String, Object>)variables.get(
+							"originalObjectEntry"))
 				).build());
 
-		ddmExpression.setVariables(variables);
+		ddmExpression.setVariables(
+			(Map<String, Object>)variables.get("objectEntry"));
 
 		return ddmExpression.evaluate();
 	}

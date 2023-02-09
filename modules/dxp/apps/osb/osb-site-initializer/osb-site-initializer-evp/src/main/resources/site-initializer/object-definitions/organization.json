@@ -14,6 +14,7 @@
 		}
 	},
 	"active": true,
+	"externalReferenceCode": "OBJECT-EVP-ORGANIZATION",
 	"label": {
 		"en_US": "EVP Organization"
 	},
@@ -176,6 +177,24 @@
 			"state": false,
 			"system": true,
 			"type": "String"
+		},
+		{
+			"DBType": "Integer",
+			"businessType": "Integer",
+			"defaultValue": "",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"indexedLanguageId": "",
+			"label": {
+				"en_US": "ID Number"
+			},
+			"name": "idNumber",
+			"objectFieldSettings": [
+			],
+			"required": false,
+			"state": false,
+			"system": false,
+			"type": "Integer"
 		},
 		{
 			"DBType": "Long",
@@ -393,79 +412,17 @@
 			"indexedAsKeyword": false,
 			"indexedLanguageId": "en_US",
 			"label": {
-				"en_US": "Banking Account"
+				"en_US": "Banking Info"
 			},
-			"name": "bankingAccount",
+			"name": "bankingInfo",
 			"objectFieldSettings": [
 				{
 					"name": "showCounter",
-					"value": "false"
-				}
-			],
-			"required": false,
-			"state": false,
-			"system": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"defaultValue": "",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"indexedLanguageId": "en_US",
-			"label": {
-				"en_US": "Banking agency"
-			},
-			"name": "bankingAgency",
-			"objectFieldSettings": [
+					"value": "true"
+				},
 				{
-					"name": "showCounter",
-					"value": "false"
-				}
-			],
-			"required": false,
-			"state": false,
-			"system": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"defaultValue": "",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"indexedLanguageId": "en_US",
-			"label": {
-				"en_US": "Bank Code/Name"
-			},
-			"name": "bankCodeName",
-			"objectFieldSettings": [
-				{
-					"name": "showCounter",
-					"value": "false"
-				}
-			],
-			"required": false,
-			"state": false,
-			"system": false,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"defaultValue": "",
-			"indexed": true,
-			"indexedAsKeyword": false,
-			"indexedLanguageId": "en_US",
-			"label": {
-				"en_US": "Instant Transfer ID (PIX)"
-			},
-			"name": "instantTransferIDPIX",
-			"objectFieldSettings": [
-				{
-					"name": "showCounter",
-					"value": "false"
+					"name": "maxLength",
+					"value": "200"
 				}
 			],
 			"required": false,

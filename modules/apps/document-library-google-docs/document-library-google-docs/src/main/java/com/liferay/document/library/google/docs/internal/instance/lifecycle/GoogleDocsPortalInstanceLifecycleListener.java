@@ -40,7 +40,7 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Adolfo Pérez
  */
-@Component(immediate = true, service = PortalInstanceLifecycleListener.class)
+@Component(service = PortalInstanceLifecycleListener.class)
 public class GoogleDocsPortalInstanceLifecycleListener
 	extends BasePortalInstanceLifecycleListener {
 
@@ -55,7 +55,7 @@ public class GoogleDocsPortalInstanceLifecycleListener
 					_ddmStructureLocalService, _dlFileEntryTypeLocalService,
 					_userLocalService);
 
-			googleDocsDLFileEntryTypeHelper.addGoogleDocsDLFileEntryType();
+			googleDocsDLFileEntryTypeHelper.addGoogleDocsDLFileEntryType(true);
 		}
 		catch (PortalException portalException) {
 			throw new ModelListenerException(portalException);

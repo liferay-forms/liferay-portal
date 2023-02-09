@@ -15,11 +15,11 @@
 package com.liferay.layout.utility.page.service.impl;
 
 import com.liferay.document.library.kernel.model.DLFileEntry;
-import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.layout.utility.page.exception.LayoutUtilityPageEntryNameException;
 import com.liferay.layout.utility.page.model.LayoutUtilityPageEntry;
 import com.liferay.layout.utility.page.service.base.LayoutUtilityPageEntryLocalServiceBaseImpl;
+import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepository;
-import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.LayoutSetLocalService;
 import com.liferay.portal.kernel.service.ResourceLocalService;
@@ -82,6 +81,15 @@ public class LayoutUtilityPageEntryLocalServiceImpl
 			layoutUtilityPageEntryPersistence.create(
 				counterLocalService.increment());
 
+		if (Validator.isNotNull(externalReferenceCode)) {
+			layoutUtilityPageEntry.setExternalReferenceCode(
+				externalReferenceCode);
+		}
+		else {
+			layoutUtilityPageEntry.setExternalReferenceCode(
+				_getExternalReferenceCode(groupId, name));
+		}
+
 		layoutUtilityPageEntry.setGroupId(groupId);
 
 		User user = _userLocalService.getUser(userId);
@@ -89,8 +97,6 @@ public class LayoutUtilityPageEntryLocalServiceImpl
 		layoutUtilityPageEntry.setCompanyId(user.getCompanyId());
 		layoutUtilityPageEntry.setUserId(user.getUserId());
 		layoutUtilityPageEntry.setUserName(user.getFullName());
-
-		layoutUtilityPageEntry.setExternalReferenceCode(externalReferenceCode);
 
 		if (plid == 0) {
 			Layout layout = _addLayout(
@@ -138,14 +144,23 @@ public class LayoutUtilityPageEntryLocalServiceImpl
 			groupId, sourceLayoutUtilityPageEntry.getName(),
 			sourceLayoutUtilityPageEntry.getType(), serviceContext.getLocale());
 
+		LayoutUtilityPageEntry layoutUtilityPageEntry =
+			addLayoutUtilityPageEntry(
+				null, userId, serviceContext.getScopeGroupId(), 0, 0, false,
+				name, sourceLayoutUtilityPageEntry.getType(), 0);
+
 		long previewFileEntryId = _copyPreviewFileEntryId(
-			userId, sourceLayoutUtilityPageEntry.getPreviewFileEntryId(), name,
+			userId, layoutUtilityPageEntry.getLayoutUtilityPageEntryId(),
+			sourceLayoutUtilityPageEntry.getPreviewFileEntryId(),
 			serviceContext);
 
-		return addLayoutUtilityPageEntry(
-			null, userId, serviceContext.getScopeGroupId(), 0,
-			previewFileEntryId, false, name,
-			sourceLayoutUtilityPageEntry.getType(), 0);
+		if (previewFileEntryId > 0) {
+			layoutUtilityPageEntry = updateLayoutUtilityPageEntry(
+				layoutUtilityPageEntry.getLayoutUtilityPageEntryId(),
+				previewFileEntryId);
+		}
+
+		return layoutUtilityPageEntry;
 	}
 
 	@Override
@@ -181,13 +196,8 @@ public class LayoutUtilityPageEntryLocalServiceImpl
 		// Portlet file entry
 
 		if (layoutUtilityPageEntry.getPreviewFileEntryId() > 0) {
-			DLFileEntry dlFileEntry = _dlFileEntryLocalService.fetchDLFileEntry(
+			_portletFileRepository.deletePortletFileEntry(
 				layoutUtilityPageEntry.getPreviewFileEntryId());
-
-			if (dlFileEntry != null) {
-				_portletFileRepository.deletePortletFolder(
-					dlFileEntry.getFolderId());
-			}
 		}
 
 		return layoutUtilityPageEntry;
@@ -212,6 +222,14 @@ public class LayoutUtilityPageEntryLocalServiceImpl
 
 		return layoutUtilityPageEntryPersistence.fetchByG_D_T_First(
 			groupId, true, type, null);
+	}
+
+	@Override
+	public LayoutUtilityPageEntry fetchLayoutUtilityPageEntry(
+		long groupId, String name, String type) {
+
+		return layoutUtilityPageEntryPersistence.fetchByG_N_T(
+			groupId, name, type);
 	}
 
 	@Override
@@ -372,7 +390,7 @@ public class LayoutUtilityPageEntryLocalServiceImpl
 	}
 
 	private long _copyPreviewFileEntryId(
-			long userId, long previewFileEntryId, String name,
+			long userId, long layoutUtilityPageEntryId, long previewFileEntryId,
 			ServiceContext serviceContext)
 		throws PortalException {
 
@@ -383,13 +401,10 @@ public class LayoutUtilityPageEntryLocalServiceImpl
 		DLFileEntry dlFileEntry = _dlFileEntryLocalService.getFileEntry(
 			previewFileEntryId);
 
-		Folder folder = _portletFileRepository.addPortletFolder(
-			userId, dlFileEntry.getRepositoryId(),
-			DLFolderConstants.DEFAULT_PARENT_FOLDER_ID, name, serviceContext);
-
 		DLFileEntry copyDLFileEntry = _dlFileEntryLocalService.copyFileEntry(
 			userId, dlFileEntry.getGroupId(), dlFileEntry.getRepositoryId(),
-			previewFileEntryId, folder.getFolderId(), serviceContext);
+			previewFileEntryId, dlFileEntry.getFolderId(),
+			layoutUtilityPageEntryId + "_preview", serviceContext);
 
 		return copyDLFileEntry.getFileEntryId();
 	}
@@ -399,6 +414,28 @@ public class LayoutUtilityPageEntryLocalServiceImpl
 			companyId, themeId, StringPool.BLANK);
 
 		return colorScheme.getColorSchemeId();
+	}
+
+	private String _getExternalReferenceCode(long groupId, String name) {
+		String externalReferenceCode = StringUtil.toLowerCase(name.trim());
+
+		externalReferenceCode = StringUtil.replace(
+			externalReferenceCode, CharPool.SPACE, CharPool.DASH);
+
+		int count = 0;
+
+		while (true) {
+			LayoutUtilityPageEntry layoutUtilityPageEntry =
+				layoutUtilityPageEntryPersistence.fetchByERC_G(
+					externalReferenceCode, groupId);
+
+			if (layoutUtilityPageEntry == null) {
+				return externalReferenceCode;
+			}
+
+			externalReferenceCode =
+				externalReferenceCode + CharPool.DASH + count++;
+		}
 	}
 
 	private String _getUniqueCopyName(

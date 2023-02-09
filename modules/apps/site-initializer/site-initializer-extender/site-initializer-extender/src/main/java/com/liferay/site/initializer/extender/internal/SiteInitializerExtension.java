@@ -41,7 +41,9 @@ import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.layout.importer.LayoutsImporter;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
+import com.liferay.layout.page.template.service.LayoutPageTemplateStructureRelLocalService;
 import com.liferay.layout.util.LayoutCopyHelper;
+import com.liferay.layout.utility.page.service.LayoutUtilityPageEntryLocalService;
 import com.liferay.notification.rest.resource.v1_0.NotificationTemplateResource;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectDefinitionResource;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectFieldResource;
@@ -116,8 +118,11 @@ public class SiteInitializerExtension {
 		LayoutPageTemplateEntryLocalService layoutPageTemplateEntryLocalService,
 		LayoutPageTemplateStructureLocalService
 			layoutPageTemplateStructureLocalService,
+		LayoutPageTemplateStructureRelLocalService
+			layoutPageTemplateStructureRelLocalService,
 		LayoutSetLocalService layoutSetLocalService,
 		LayoutsImporter layoutsImporter,
+		LayoutUtilityPageEntryLocalService layoutUtilityPageEntryLocalService,
 		ListTypeDefinitionResource listTypeDefinitionResource,
 		ListTypeDefinitionResource.Factory listTypeDefinitionResourceFactory,
 		ListTypeEntryResource listTypeEntryResource,
@@ -174,7 +179,8 @@ public class SiteInitializerExtension {
 			knowledgeBaseFolderResourceFactory, layoutCopyHelper,
 			layoutLocalService, layoutPageTemplateEntryLocalService,
 			layoutsImporter, layoutPageTemplateStructureLocalService,
-			layoutSetLocalService, listTypeDefinitionResource,
+			layoutPageTemplateStructureRelLocalService, layoutSetLocalService,
+			layoutUtilityPageEntryLocalService, listTypeDefinitionResource,
 			listTypeDefinitionResourceFactory, listTypeEntryResource,
 			listTypeEntryResourceFactory, notificationTemplateResourceFactory,
 			objectActionLocalService, objectDefinitionLocalService,

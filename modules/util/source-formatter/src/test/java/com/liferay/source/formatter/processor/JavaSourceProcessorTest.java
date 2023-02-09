@@ -365,6 +365,11 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
+	public void testMapBuilderGenerics() throws Exception {
+		test("MapBuilderGenerics.testjava");
+	}
+
+	@Test
 	public void testMissingAuthor() throws Exception {
 		test("MissingAuthor.testjava", "Missing author", 20);
 	}
@@ -571,6 +576,11 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
+	public void testSortChainedMethodCalls() throws Exception {
+		test("SortChainedMethodCalls.testjava");
+	}
+
+	@Test
 	public void testSortExceptions() throws Exception {
 		test("SortExceptions.testjava");
 	}
@@ -616,6 +626,15 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 	@Test
 	public void testTruncateLongLines() throws Exception {
 		test("TruncateLongLines.testjava");
+	}
+
+	@Test
+	public void testUnnecessaryConfigurationPolicy() throws Exception {
+		test(
+			"UnnecessaryConfigurationPolicy.testjava",
+			"Remove 'configurationPolicy = ConfigurationPolicy.OPTIONAL' " +
+			"as it is unnecessary",
+			23);
 	}
 
 	@Test

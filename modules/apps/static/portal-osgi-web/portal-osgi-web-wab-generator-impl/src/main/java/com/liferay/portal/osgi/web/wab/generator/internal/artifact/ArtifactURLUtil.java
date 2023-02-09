@@ -14,14 +14,10 @@
 
 package com.liferay.portal.osgi.web.wab.generator.internal.artifact;
 
-import aQute.bnd.osgi.Jar;
-import aQute.bnd.osgi.Resource;
-
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
-import com.liferay.whip.util.ReflectionUtil;
 
-import java.io.IOException;
+import java.io.File;
 import java.io.InputStream;
 
 import java.net.URL;
@@ -29,6 +25,8 @@ import java.net.URL;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.osgi.framework.Constants;
 
@@ -39,9 +37,7 @@ import org.osgi.framework.Constants;
  */
 public class ArtifactURLUtil {
 
-	public static URL transform(URL artifact) throws IOException {
-		String path = artifact.getPath();
-
+	public static String getSymbolicName(String path) {
 		int x = path.lastIndexOf('/');
 		int y = path.lastIndexOf(CharPool.PERIOD);
 
@@ -53,20 +49,22 @@ public class ArtifactURLUtil {
 			symbolicName = matcher.group(1);
 		}
 
+		return symbolicName;
+	}
+
+	public static URL transform(URL artifact) throws Exception {
+		String path = artifact.getPath();
+
+		String symbolicName = getSymbolicName(path);
+
 		String contextName = null;
 
-		String fileExtension = path.substring(y + 1);
+		String fileExtension = path.substring(
+			path.lastIndexOf(CharPool.PERIOD) + 1);
 
 		if (fileExtension.equals("war")) {
-			try (Jar jar = new Jar("WAR", artifact.openStream())) {
-				if (jar.getBsn() != null) {
-					return artifact;
-				}
-
-				contextName = _readServletContextName(jar);
-			}
-			catch (Exception exception) {
-				ReflectionUtil.throwException(exception);
+			try (ZipFile zipFile = new ZipFile(new File(artifact.toURI()))) {
+				contextName = _readServletContextName(zipFile);
 			}
 		}
 
@@ -82,17 +80,19 @@ public class ArtifactURLUtil {
 				"&fileExtension=", fileExtension, "&protocol=file"));
 	}
 
-	private static String _readServletContextName(Jar jar) throws Exception {
-		Resource resource = jar.getResource(
+	private static String _readServletContextName(ZipFile zipFile)
+		throws Exception {
+
+		ZipEntry zipEntry = zipFile.getEntry(
 			"WEB-INF/liferay-plugin-package.properties");
 
-		if (resource == null) {
+		if (zipEntry == null) {
 			return null;
 		}
 
 		Properties properties = new Properties();
 
-		try (InputStream inputStream = resource.openInputStream()) {
+		try (InputStream inputStream = zipFile.getInputStream(zipEntry)) {
 			properties.load(inputStream);
 		}
 

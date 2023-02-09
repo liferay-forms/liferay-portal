@@ -32,7 +32,7 @@ import {
 	testrayFactorRest,
 	testrayRunImpl,
 } from '../../../../../../services/rest';
-import {searchUtil} from '../../../../../../util/search';
+import {SearchBuilder} from '../../../../../../util/search';
 
 type RunForm = Omit<typeof yupSchema.run.__outputType, 'id'>;
 
@@ -68,21 +68,29 @@ const RunFormModal: React.FC<RunFormModalProps> = ({
 	>([[] as any]);
 
 	const filter = selectedRun
-		? searchUtil.eq('runId', selectedRun.id)
-		: searchUtil.eq('routineId', routineId as string);
+		? SearchBuilder.eq('runId', selectedRun.id)
+		: SearchBuilder.eq('routineId', routineId as string);
 
 	const {data: factorsData} = useFetch<APIResponse<TestrayFactor>>(
-		`${testrayFactorRest.resource}&filter=${filter}&pageSize=1000`,
-		(response) => testrayFactorRest.transformDataFromList(response)
+		testrayFactorRest.resource,
+		{
+			params: {
+				filter,
+				pageSize: 1000,
+			},
+			transformData: (response) =>
+				testrayFactorRest.transformDataFromList(response),
+		}
 	);
 
 	const {data: runResponse} = useFetch<APIResponse<RunForm>>(
-		selectedRun
-			? null
-			: `${testrayRunImpl.resource}&filter=${searchUtil.eq(
-					'buildId',
-					buildId as string
-			  )}&pageSize=1000`
+		selectedRun ? null : testrayRunImpl.resource,
+		{
+			params: {
+				filter: SearchBuilder.eq('buildId', buildId as string),
+				pageSize: 1000,
+			},
+		}
 	);
 
 	const getLastRunNumber = () => {

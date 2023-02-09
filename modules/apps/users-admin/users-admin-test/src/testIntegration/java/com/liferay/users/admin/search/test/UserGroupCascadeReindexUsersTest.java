@@ -15,30 +15,23 @@
 package com.liferay.users.admin.search.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.petra.string.StringPool;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery.PerformActionMethod;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.model.Address;
 import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.UserGroup;
-import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Indexer;
-import com.liferay.portal.kernel.search.SearchEngineHelper;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.service.OrganizationLocalService;
-import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.UserGroupLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
-import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
-import com.liferay.portal.search.document.DocumentBuilderFactory;
 import com.liferay.portal.search.query.BooleanQuery;
 import com.liferay.portal.search.query.Queries;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
@@ -58,8 +51,6 @@ import com.liferay.users.admin.test.util.search.UserSearchFixture;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -83,12 +74,12 @@ public class UserGroupCascadeReindexUsersTest {
 	@Before
 	public void setUp() throws Exception {
 		if (_STRESS_MODE_10_MIN_TO_RUN_ALL_TESTS) {
-			_groupCount = 5;
-			_userCount = 100;
+			_groupsCount = 5;
+			_usersCount = 100;
 		}
 		else {
-			_groupCount = 2;
-			_userCount = 3;
+			_groupsCount = 2;
+			_usersCount = 3;
 		}
 
 		groupSearchFixture = new GroupSearchFixture();
@@ -104,26 +95,16 @@ public class UserGroupCascadeReindexUsersTest {
 			userGroupSearchFixture);
 
 		userSearchFixture.setUp();
-
-		_addresses = userSearchFixture.getAddresses();
-
-		_groups = groupSearchFixture.getGroups();
-
-		_organizations = organizationSearchFixture.getOrganizations();
-
-		_users = userSearchFixture.getUsers();
-
-		_userGroups = userGroupSearchFixture.getUserGroups();
 	}
 
 	@Test
 	public void testAddUsersOnly() throws Exception {
-		addUsers(_userCount);
+		addUsers(_usersCount);
 	}
 
 	@Test
 	public void testAddUsersThenRetrieveBulk() throws Exception {
-		List<User> users = addUsers(_userCount);
+		List<User> users = addUsers(_usersCount);
 
 		doTraverseWithActionableDynamicQuery(
 			users,
@@ -133,7 +114,7 @@ public class UserGroupCascadeReindexUsersTest {
 
 	@Test
 	public void testAddUsersThenRetrieveNonbulk() throws Exception {
-		List<User> users = addUsers(_userCount);
+		List<User> users = addUsers(_usersCount);
 
 		doTraverseWithIndividualFetches(
 			users,
@@ -143,14 +124,14 @@ public class UserGroupCascadeReindexUsersTest {
 
 	@Test
 	public void testAddUsersThenTranslateBulk() throws Exception {
-		List<User> users = addUsers(_userCount);
+		List<User> users = addUsers(_usersCount);
 
 		doTraverseWithActionableDynamicQuery(users, this::_translate);
 	}
 
 	@Test
 	public void testAddUsersThenTranslateNonbulk() {
-		List<User> users = addUsers(_userCount);
+		List<User> users = addUsers(_usersCount);
 
 		doTraverseWithIndividualFetches(users, this::_translate);
 	}
@@ -161,18 +142,17 @@ public class UserGroupCascadeReindexUsersTest {
 
 		long userGroupId = userGroup.getUserGroupId();
 
-		List<User> users = addUsers(_userCount);
+		List<User> users = addUsers(_usersCount);
 
 		_userLocalService.addUserGroupUsers(userGroupId, users);
 
 		SearchResponse searchResponse = searchUsersInUserGroup(userGroup);
 
 		DocumentsAssert.assertValues(
-			searchResponse.getRequestString(),
-			searchResponse.getDocumentsStream(), "userGroupIds",
-			_repeat(String.valueOf(userGroupId), users.size()));
+			searchResponse.getRequestString(), searchResponse.getDocuments(),
+			"userGroupIds", _repeat(String.valueOf(userGroupId), users.size()));
 
-		List<Group> groups = addGroups(_groupCount);
+		List<Group> groups = addGroups(_groupsCount);
 
 		for (Group group : groups) {
 			_userGroupLocalService.addGroupUserGroup(
@@ -182,8 +162,8 @@ public class UserGroupCascadeReindexUsersTest {
 		searchResponse = searchUsersInGroup(groups.get(0));
 
 		DocumentsAssert.assertValues(
-			searchResponse.getRequestString(),
-			searchResponse.getDocumentsStream(), Field.GROUP_ID,
+			searchResponse.getRequestString(), searchResponse.getDocuments(),
+			Field.GROUP_ID,
 			_repeat(_getAllGroupIdsString(groups), users.size()));
 	}
 
@@ -191,14 +171,14 @@ public class UserGroupCascadeReindexUsersTest {
 		return groupSearchFixture.addGroup(new GroupBlueprint());
 	}
 
-	protected List<Group> addGroups(int groupCount) {
-		return Stream.generate(
-			this::addGroup
-		).limit(
-			groupCount
-		).collect(
-			Collectors.toList()
-		);
+	protected List<Group> addGroups(int groupsCount) {
+		List<Group> groups = new ArrayList<>(groupsCount);
+
+		for (int i = 0; i < groupsCount; i++) {
+			groups.add(addGroup());
+		}
+
+		return groups;
 	}
 
 	protected User addUser() {
@@ -212,13 +192,13 @@ public class UserGroupCascadeReindexUsersTest {
 	}
 
 	protected List<User> addUsers(int count) {
-		return Stream.generate(
-			this::addUser
-		).limit(
-			count
-		).collect(
-			Collectors.toList()
-		);
+		List<User> users = new ArrayList<>(count);
+
+		for (int i = 0; i < count; i++) {
+			users.add(addUser());
+		}
+
+		return users;
 	}
 
 	protected void doTraverseWithActionableDynamicQuery(
@@ -312,22 +292,29 @@ public class UserGroupCascadeReindexUsersTest {
 	protected UserSearchFixture userSearchFixture;
 
 	private String _getAllGroupIdsString(List<Group> groups) {
-		Stream<Group> stream = groups.stream();
+		List<String> sortedGroupsIds = TransformUtil.transform(
+			groups, group -> String.valueOf(group.getGroupId()));
 
-		return _toSortedListString(stream.map(Group::getGroupId));
+		sortedGroupsIds.sort(String::compareTo);
+
+		return sortedGroupsIds.toString();
 	}
 
 	private long[] _getAllUserIds(List<User> users) {
-		Stream<User> stream = users.stream();
+		long[] userIds = new long[users.size()];
 
-		return stream.mapToLong(
-			User::getUserId
-		).toArray();
+		for (int i = 0; i < users.size(); i++) {
+			User user = users.get(i);
+
+			userIds[i] = user.getUserId();
+		}
+
+		return userIds;
 	}
 
-	private Document _getDocument(Indexer<User> indexer, User user) {
+	private void _getDocument(Indexer<User> indexer, User user) {
 		try {
-			return indexer.getDocument(user);
+			indexer.getDocument(user);
 		}
 		catch (SearchException searchException) {
 			throw new RuntimeException(searchException);
@@ -335,29 +322,13 @@ public class UserGroupCascadeReindexUsersTest {
 	}
 
 	private String _repeat(String s, int times) {
-		return _toListString(
-			Stream.generate(
-				() -> s
-			).limit(
-				times
-			));
-	}
+		List<String> strings = new ArrayList<>(times);
 
-	private String _toListString(Stream<?> stream) {
-		return stream.map(
-			String::valueOf
-		).collect(
-			Collectors.joining(
-				StringPool.COMMA_AND_SPACE, StringPool.OPEN_BRACKET,
-				StringPool.CLOSE_BRACKET)
-		);
-	}
+		for (int i = 0; i < times; i++) {
+			strings.add(s);
+		}
 
-	private String _toSortedListString(Stream<?> stream) {
-		return _toListString(
-			stream.map(
-				String::valueOf
-			).sorted());
+		return strings.toString();
 	}
 
 	private void _translate(User user) {
@@ -368,9 +339,6 @@ public class UserGroupCascadeReindexUsersTest {
 
 	private static final boolean _STRESS_MODE_10_MIN_TO_RUN_ALL_TESTS = false;
 
-	@Inject
-	private static DocumentBuilderFactory _documentBuilderFactory;
-
 	@Inject(filter = "indexer.class.name=com.liferay.portal.kernel.model.User")
 	private static Indexer<User> _indexer;
 
@@ -379,13 +347,6 @@ public class UserGroupCascadeReindexUsersTest {
 
 	@Inject
 	private static Queries _queries;
-
-	@Inject
-	private static ResourcePermissionLocalService
-		_resourcePermissionLocalService;
-
-	@Inject
-	private static SearchEngineHelper _searchEngineHelper;
 
 	@Inject
 	private static Searcher _searcher;
@@ -399,23 +360,7 @@ public class UserGroupCascadeReindexUsersTest {
 	@Inject
 	private static UserLocalService _userLocalService;
 
-	@DeleteAfterTestRun
-	private List<Address> _addresses = new ArrayList<>();
-
-	private int _groupCount;
-
-	@DeleteAfterTestRun
-	private List<Group> _groups;
-
-	@DeleteAfterTestRun
-	private List<Organization> _organizations;
-
-	private int _userCount;
-
-	@DeleteAfterTestRun
-	private List<UserGroup> _userGroups;
-
-	@DeleteAfterTestRun
-	private List<User> _users;
+	private int _groupsCount;
+	private int _usersCount;
 
 }

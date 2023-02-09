@@ -14,19 +14,20 @@
 
 package com.liferay.portal.startup.monitor.internal;
 
+import com.liferay.osgi.util.ServiceTrackerFactory;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.util.ThreadUtil;
 
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 /**
  * @author Matthew Tambara
@@ -34,25 +35,39 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 @Component(service = {})
 public class PortalStartupMonitor {
 
-	@Reference(
-		cardinality = ReferenceCardinality.OPTIONAL,
-		policy = ReferencePolicy.DYNAMIC,
-		target = ModuleServiceLifecycle.PORTAL_INITIALIZED
-	)
-	public void setModuleServiceLifecycle(
-		ModuleServiceLifecycle moduleServiceLifecycle) {
-
-		_componentContext.disableComponent(
-			PortalStartupMonitor.class.getName());
-	}
-
-	public void unsetModuleServiceLifecycle(
-		ModuleServiceLifecycle moduleServiceLifecycle) {
-	}
-
 	@Activate
 	protected void activate(ComponentContext componentContext) {
-		_componentContext = componentContext;
+		_serviceTracker = ServiceTrackerFactory.open(
+			componentContext.getBundleContext(),
+			StringBundler.concat(
+				"(&", ModuleServiceLifecycle.PORTAL_INITIALIZED,
+				"(objectClass=", ModuleServiceLifecycle.class.getName(), "))"),
+			new ServiceTrackerCustomizer
+				<ModuleServiceLifecycle, ModuleServiceLifecycle>() {
+
+				@Override
+				public ModuleServiceLifecycle addingService(
+					ServiceReference<ModuleServiceLifecycle> serviceReference) {
+
+					componentContext.disableComponent(
+						PortalStartupMonitor.class.getName());
+
+					return null;
+				}
+
+				@Override
+				public void modifiedService(
+					ServiceReference<ModuleServiceLifecycle> serviceReference,
+					ModuleServiceLifecycle moduleServiceLifecycle) {
+				}
+
+				@Override
+				public void removedService(
+					ServiceReference<ModuleServiceLifecycle> serviceReference,
+					ModuleServiceLifecycle moduleServiceLifecycle) {
+				}
+
+			});
 
 		_thread = new Thread("Portal Startup Monitoring Thread") {
 
@@ -92,6 +107,8 @@ public class PortalStartupMonitor {
 
 	@Deactivate
 	protected void deactivate() {
+		_serviceTracker.close();
+
 		_thread.interrupt();
 	}
 
@@ -100,7 +117,8 @@ public class PortalStartupMonitor {
 	private static final Log _log = LogFactoryUtil.getLog(
 		PortalStartupMonitor.class);
 
-	private ComponentContext _componentContext;
+	private ServiceTracker<ModuleServiceLifecycle, ModuleServiceLifecycle>
+		_serviceTracker;
 	private Thread _thread;
 
 }

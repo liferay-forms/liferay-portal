@@ -128,6 +128,8 @@ public class ObjectActionPersistenceTest {
 
 		newObjectAction.setUuid(RandomTestUtil.randomString());
 
+		newObjectAction.setExternalReferenceCode(RandomTestUtil.randomString());
+
 		newObjectAction.setCompanyId(RandomTestUtil.nextLong());
 
 		newObjectAction.setUserId(RandomTestUtil.nextLong());
@@ -172,6 +174,9 @@ public class ObjectActionPersistenceTest {
 			newObjectAction.getMvccVersion());
 		Assert.assertEquals(
 			existingObjectAction.getUuid(), newObjectAction.getUuid());
+		Assert.assertEquals(
+			existingObjectAction.getExternalReferenceCode(),
+			newObjectAction.getExternalReferenceCode());
 		Assert.assertEquals(
 			existingObjectAction.getObjectActionId(),
 			newObjectAction.getObjectActionId());
@@ -254,6 +259,16 @@ public class ObjectActionPersistenceTest {
 	}
 
 	@Test
+	public void testCountByERC_C_ODI() throws Exception {
+		_persistence.countByERC_C_ODI(
+			"", RandomTestUtil.nextLong(), RandomTestUtil.nextLong());
+
+		_persistence.countByERC_C_ODI("null", 0L, 0L);
+
+		_persistence.countByERC_C_ODI((String)null, 0L, 0L);
+	}
+
+	@Test
 	public void testCountByO_A_OATK() throws Exception {
 		_persistence.countByO_A_OATK(
 			RandomTestUtil.nextLong(), RandomTestUtil.randomBoolean(), "");
@@ -302,12 +317,13 @@ public class ObjectActionPersistenceTest {
 
 	protected OrderByComparator<ObjectAction> getOrderByComparator() {
 		return OrderByComparatorFactoryUtil.create(
-			"ObjectAction", "mvccVersion", true, "uuid", true, "objectActionId",
-			true, "companyId", true, "userId", true, "userName", true,
-			"createDate", true, "modifiedDate", true, "objectDefinitionId",
-			true, "active", true, "description", true, "errorMessage", true,
-			"label", true, "name", true, "objectActionExecutorKey", true,
-			"objectActionTriggerKey", true, "status", true);
+			"ObjectAction", "mvccVersion", true, "uuid", true,
+			"externalReferenceCode", true, "objectActionId", true, "companyId",
+			true, "userId", true, "userName", true, "createDate", true,
+			"modifiedDate", true, "objectDefinitionId", true, "active", true,
+			"description", true, "errorMessage", true, "label", true, "name",
+			true, "objectActionExecutorKey", true, "objectActionTriggerKey",
+			true, "status", true);
 	}
 
 	@Test
@@ -586,6 +602,22 @@ public class ObjectActionPersistenceTest {
 				new Class<?>[] {String.class}, "name"));
 
 		Assert.assertEquals(
+			objectAction.getExternalReferenceCode(),
+			ReflectionTestUtil.invoke(
+				objectAction, "getColumnOriginalValue",
+				new Class<?>[] {String.class}, "externalReferenceCode"));
+		Assert.assertEquals(
+			Long.valueOf(objectAction.getCompanyId()),
+			ReflectionTestUtil.<Long>invoke(
+				objectAction, "getColumnOriginalValue",
+				new Class<?>[] {String.class}, "companyId"));
+		Assert.assertEquals(
+			Long.valueOf(objectAction.getObjectDefinitionId()),
+			ReflectionTestUtil.<Long>invoke(
+				objectAction, "getColumnOriginalValue",
+				new Class<?>[] {String.class}, "objectDefinitionId"));
+
+		Assert.assertEquals(
 			Long.valueOf(objectAction.getObjectDefinitionId()),
 			ReflectionTestUtil.<Long>invoke(
 				objectAction, "getColumnOriginalValue",
@@ -615,6 +647,8 @@ public class ObjectActionPersistenceTest {
 		objectAction.setMvccVersion(RandomTestUtil.nextLong());
 
 		objectAction.setUuid(RandomTestUtil.randomString());
+
+		objectAction.setExternalReferenceCode(RandomTestUtil.randomString());
 
 		objectAction.setCompanyId(RandomTestUtil.nextLong());
 

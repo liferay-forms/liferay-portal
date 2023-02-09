@@ -14,20 +14,38 @@
 
 package com.liferay.journal.web.internal.portlet.action;
 
+import com.liferay.diff.exception.CompareVersionsException;
 import com.liferay.journal.constants.JournalPortletKeys;
+import com.liferay.journal.model.JournalArticle;
+import com.liferay.journal.service.JournalArticleLocalService;
+import com.liferay.journal.service.JournalArticleService;
+import com.liferay.journal.util.JournalHelper;
+import com.liferay.journal.util.comparator.ArticleVersionComparator;
+import com.liferay.journal.web.internal.portlet.JournalPortlet;
+import com.liferay.portal.kernel.portlet.PortletRequestModel;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.WebKeys;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Eudaldo Alonso
  */
 @Component(
-	immediate = true,
 	property = {
 		"javax.portlet.name=" + JournalPortletKeys.JOURNAL,
 		"mvc.command.name=/journal/compare_versions"
@@ -42,7 +60,7 @@ public class CompareVersionsMVCRenderCommand implements MVCRenderCommand {
 		throws PortletException {
 
 		try {
-			ActionUtil.compareVersions(renderRequest, renderResponse);
+			_compareVersions(renderRequest, renderResponse);
 		}
 		catch (Exception exception) {
 			throw new PortletException(exception);
@@ -50,5 +68,132 @@ public class CompareVersionsMVCRenderCommand implements MVCRenderCommand {
 
 		return "/compare_versions.jsp";
 	}
+
+	private void _compareVersions(
+			RenderRequest renderRequest, RenderResponse renderResponse)
+		throws Exception {
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		long groupId = ParamUtil.getLong(renderRequest, "groupId");
+		String articleId = ParamUtil.getString(renderRequest, "articleId");
+
+		String sourceArticleId = ParamUtil.getString(
+			renderRequest, "sourceVersion");
+
+		int index = sourceArticleId.lastIndexOf(
+			JournalPortlet.VERSION_SEPARATOR);
+
+		if (index != -1) {
+			sourceArticleId = sourceArticleId.substring(
+				index + JournalPortlet.VERSION_SEPARATOR.length());
+		}
+
+		double sourceVersion = GetterUtil.getDouble(sourceArticleId);
+
+		String targetArticleId = ParamUtil.getString(
+			renderRequest, "targetVersion");
+
+		index = targetArticleId.lastIndexOf(JournalPortlet.VERSION_SEPARATOR);
+
+		if (index != -1) {
+			targetArticleId = targetArticleId.substring(
+				index + JournalPortlet.VERSION_SEPARATOR.length());
+		}
+
+		double targetVersion = GetterUtil.getDouble(targetArticleId);
+
+		if ((sourceVersion == 0) && (targetVersion == 0)) {
+			List<JournalArticle> sourceArticles =
+				_journalArticleService.getArticlesByArticleId(
+					groupId, articleId, 0, 1,
+					new ArticleVersionComparator(false));
+
+			JournalArticle sourceArticle = sourceArticles.get(0);
+
+			sourceVersion = sourceArticle.getVersion();
+
+			List<JournalArticle> targetArticles =
+				_journalArticleService.getArticlesByArticleId(
+					groupId, articleId, 0, 1,
+					new ArticleVersionComparator(true));
+
+			JournalArticle targetArticle = targetArticles.get(0);
+
+			targetVersion = targetArticle.getVersion();
+		}
+
+		if (sourceVersion > targetVersion) {
+			double tempVersion = targetVersion;
+
+			targetVersion = sourceVersion;
+			sourceVersion = tempVersion;
+		}
+
+		String languageId = _getLanguageId(
+			renderRequest, groupId, articleId, sourceVersion, targetVersion);
+
+		String diffHtmlResults = null;
+
+		try {
+			diffHtmlResults = _journalHelper.diffHtml(
+				groupId, articleId, sourceVersion, targetVersion, languageId,
+				new PortletRequestModel(renderRequest, renderResponse),
+				themeDisplay);
+		}
+		catch (CompareVersionsException compareVersionsException) {
+			renderRequest.setAttribute(
+				WebKeys.DIFF_VERSION, compareVersionsException.getVersion());
+		}
+
+		renderRequest.setAttribute(WebKeys.DIFF_HTML_RESULTS, diffHtmlResults);
+		renderRequest.setAttribute(WebKeys.SOURCE_VERSION, sourceVersion);
+		renderRequest.setAttribute(WebKeys.TARGET_VERSION, targetVersion);
+	}
+
+	private String _getLanguageId(
+		RenderRequest renderRequest, long groupId, String articleId,
+		double sourceVersion, double targetVersion) {
+
+		JournalArticle sourceArticle = _journalArticleLocalService.fetchArticle(
+			groupId, articleId, sourceVersion);
+
+		JournalArticle targetArticle = _journalArticleLocalService.fetchArticle(
+			groupId, articleId, targetVersion);
+
+		Set<Locale> locales = new HashSet<>();
+
+		for (String locale : sourceArticle.getAvailableLanguageIds()) {
+			locales.add(LocaleUtil.fromLanguageId(locale));
+		}
+
+		for (String locale : targetArticle.getAvailableLanguageIds()) {
+			locales.add(LocaleUtil.fromLanguageId(locale));
+		}
+
+		String languageId = ParamUtil.get(
+			renderRequest, "languageId", targetArticle.getDefaultLanguageId());
+
+		Locale locale = LocaleUtil.fromLanguageId(languageId);
+
+		if (!locales.contains(locale)) {
+			languageId = targetArticle.getDefaultLanguageId();
+		}
+
+		renderRequest.setAttribute(WebKeys.AVAILABLE_LOCALES, locales);
+		renderRequest.setAttribute(WebKeys.LANGUAGE_ID, languageId);
+
+		return languageId;
+	}
+
+	@Reference
+	private JournalArticleLocalService _journalArticleLocalService;
+
+	@Reference
+	private JournalArticleService _journalArticleService;
+
+	@Reference
+	private JournalHelper _journalHelper;
 
 }

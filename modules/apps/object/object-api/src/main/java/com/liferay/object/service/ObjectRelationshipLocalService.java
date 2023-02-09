@@ -244,8 +244,11 @@ public interface ObjectRelationshipLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ObjectRelationship fetchObjectRelationshipByObjectDefinitionId(
-			long objectDefinitionId, String name)
-		throws Exception;
+		long objectDefinitionId, String name);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ObjectRelationship fetchObjectRelationshipByObjectDefinitionId1(
+		long objectDefinitionId1, String name);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ObjectRelationship fetchObjectRelationshipByObjectFieldId2(
@@ -298,7 +301,7 @@ public interface ObjectRelationshipLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ObjectRelationship getObjectRelationshipByObjectDefinitionId(
-			long objectDefinitionId, String objectRelationshipName)
+			long objectDefinitionId, String name)
 		throws Exception;
 
 	/**

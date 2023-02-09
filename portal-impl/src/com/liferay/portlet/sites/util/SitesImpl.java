@@ -1354,6 +1354,12 @@ public class SitesImpl implements Sites {
 	public void mergeLayoutSetPrototypeLayouts(Group group, LayoutSet layoutSet)
 		throws Exception {
 
+		if (MergeLayoutPrototypesThreadLocal.isSkipMerge()) {
+			return;
+		}
+
+		MergeLayoutPrototypesThreadLocal.setSkipMerge(true);
+
 		layoutSet = LayoutSetLocalServiceUtil.fetchLayoutSet(
 			layoutSet.getLayoutSetId());
 
@@ -2326,6 +2332,8 @@ public class SitesImpl implements Sites {
 		LayoutLocalServiceUtil.updatePriorities(groupId, privateLayout);
 
 		// Force propagation from site template to site. See LPS-48206.
+
+		MergeLayoutPrototypesThreadLocal.setSkipMerge(false);
 
 		mergeLayoutSetPrototypeLayouts(
 			GroupLocalServiceUtil.getGroup(groupId),

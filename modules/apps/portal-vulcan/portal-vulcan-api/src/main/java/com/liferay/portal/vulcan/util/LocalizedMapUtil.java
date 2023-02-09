@@ -16,14 +16,13 @@ package com.liferay.portal.vulcan.util;
 
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.ws.rs.BadRequestException;
 
@@ -54,6 +53,18 @@ public class LocalizedMapUtil {
 		Map<Locale, String> localizedMap) {
 
 		return getI18nMap(true, localizedMap);
+	}
+
+	public static Map<String, String> getLanguageIdMap(
+		Map<Locale, String> localizedMap) {
+
+		Map<String, String> languageIdMap = new HashMap<>();
+
+		localizedMap.forEach(
+			(locale, value) -> languageIdMap.put(
+				LocaleUtil.toLanguageId(locale), value));
+
+		return Collections.unmodifiableMap(languageIdMap);
 	}
 
 	/**
@@ -124,7 +135,32 @@ public class LocalizedMapUtil {
 		return localizedMap;
 	}
 
-	public static Map<Locale, String> merge(
+	public static Map<Locale, String> getLocalizedMap(String label) {
+		return Collections.singletonMap(LocaleUtil.getDefault(), label);
+	}
+
+	public static Map<String, String> mergeI18nMap(
+		Map<String, String> i18nMap, String locale, String value) {
+
+		if (Validator.isNull(locale)) {
+			return i18nMap;
+		}
+
+		if (i18nMap == null) {
+			return Collections.singletonMap(locale, value);
+		}
+
+		if (Validator.isNotNull(value)) {
+			i18nMap.put(locale, value);
+		}
+		else {
+			i18nMap.remove(locale);
+		}
+
+		return i18nMap;
+	}
+
+	public static Map<Locale, String> mergeLocalizedMap(
 		Map<Locale, String> localizedMap, Locale locale, String value) {
 
 		if (locale == null) {
@@ -145,17 +181,18 @@ public class LocalizedMapUtil {
 		return localizedMap;
 	}
 
-	public static Map<Locale, String> merge(
+	public static Map<Locale, String> mergeLocalizedMap(
 		Map<Locale, String> localizedMap, Map.Entry<Locale, String> entry) {
 
 		if (entry == null) {
 			return localizedMap;
 		}
 
-		return merge(localizedMap, entry.getKey(), entry.getValue());
+		return mergeLocalizedMap(
+			localizedMap, entry.getKey(), entry.getValue());
 	}
 
-	public static Map<Locale, String> patch(
+	public static Map<Locale, String> patchLocalizedMap(
 		Map<Locale, String> localizedMap, Locale locale, String value) {
 
 		if (value != null) {
@@ -165,7 +202,7 @@ public class LocalizedMapUtil {
 		return localizedMap;
 	}
 
-	public static Map<Locale, String> patch(
+	public static Map<Locale, String> patchLocalizedMap(
 		Map<Locale, String> localizedMap, Locale defaultLocale,
 		String defaultValue, Map<String, String> i18nMap) {
 
@@ -175,7 +212,7 @@ public class LocalizedMapUtil {
 			resultLocalizedMap.putAll(localizedMap);
 		}
 
-		resultLocalizedMap = patch(
+		resultLocalizedMap = patchLocalizedMap(
 			resultLocalizedMap, defaultLocale, defaultValue);
 
 		if (i18nMap == null) {
@@ -186,7 +223,7 @@ public class LocalizedMapUtil {
 			Locale locale = _getLocale(entry.getKey());
 
 			if (locale != null) {
-				resultLocalizedMap = patch(
+				resultLocalizedMap = patchLocalizedMap(
 					resultLocalizedMap, locale, entry.getValue());
 			}
 		}
@@ -209,16 +246,20 @@ public class LocalizedMapUtil {
 		notFoundLocales.removeAll(localizedMap.keySet());
 
 		if (!notFoundLocales.isEmpty()) {
-			Stream<Locale> notFoundLocalesStream = notFoundLocales.stream();
+			StringBundler sb = new StringBundler(
+				(notFoundLocales.size() * 2) + 2);
 
-			throw new BadRequestException(
-				StringBundler.concat(
-					entityName, " title missing in the languages: ",
-					notFoundLocalesStream.map(
-						LocaleUtil::toW3cLanguageId
-					).collect(
-						Collectors.joining(",")
-					)));
+			sb.append(entityName);
+			sb.append(" title missing in the languages: ");
+
+			for (Locale locale : notFoundLocales) {
+				sb.append(LocaleUtil.toW3cLanguageId(locale));
+				sb.append(",");
+			}
+
+			sb.setIndex(sb.index() - 1);
+
+			throw new BadRequestException(sb.toString());
 		}
 	}
 

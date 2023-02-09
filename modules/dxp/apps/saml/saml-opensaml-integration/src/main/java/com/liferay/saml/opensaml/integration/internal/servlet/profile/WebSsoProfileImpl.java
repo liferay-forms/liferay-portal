@@ -84,7 +84,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -159,7 +158,6 @@ import org.opensaml.xmlsec.signature.support.SignatureTrustEngine;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicyOption;
@@ -169,7 +167,6 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
  */
 @Component(
 	configurationPid = "com.liferay.saml.runtime.configuration.SamlConfiguration",
-	configurationPolicy = ConfigurationPolicy.OPTIONAL,
 	service = WebSsoProfile.class
 )
 public class WebSsoProfileImpl extends BaseProfile implements WebSsoProfile {
@@ -199,7 +196,8 @@ public class WebSsoProfileImpl extends BaseProfile implements WebSsoProfile {
 		try {
 			messageContext = _decodeAuthnResponse(
 				httpServletRequest, httpServletResponse,
-				getSamlBinding(SAMLConstants.SAML2_POST_BINDING_URI));
+				samlBindingProvider.getSamlBinding(
+					SAMLConstants.SAML2_POST_BINDING_URI));
 
 			_processResponse(
 				messageContext, httpServletRequest, httpServletResponse);
@@ -216,29 +214,44 @@ public class WebSsoProfileImpl extends BaseProfile implements WebSsoProfile {
 				}
 			}
 
-			if (messageContext != null) {
-				SAMLPeerEntityContext samlPeerEntityContext =
-					messageContext.getSubcontext(SAMLPeerEntityContext.class);
+			if (messageContext == null) {
+				ExceptionHandlerUtil.handleException(exception);
 
-				if (samlPeerEntityContext != null) {
-					String nameIdValue = Optional.ofNullable(
-						messageContext.getSubcontext(
-							SAMLSubjectNameIdentifierContext.class)
-					).map(
-						SAMLSubjectNameIdentifierContext::getSAML2SubjectNameID
-					).map(
-						NameID::getValue
-					).orElse(
-						null
-					);
-
-					throw new EntityInteractionException(
-						samlPeerEntityContext.getEntityId(), nameIdValue,
-						exception);
-				}
+				return;
 			}
 
-			ExceptionHandlerUtil.handleException(exception);
+			SAMLPeerEntityContext samlPeerEntityContext =
+				messageContext.getSubcontext(SAMLPeerEntityContext.class);
+
+			if (samlPeerEntityContext == null) {
+				ExceptionHandlerUtil.handleException(exception);
+
+				return;
+			}
+
+			SAMLSubjectNameIdentifierContext samlSubjectNameIdentifierContext =
+				messageContext.getSubcontext(
+					SAMLSubjectNameIdentifierContext.class);
+
+			if (samlSubjectNameIdentifierContext == null) {
+				ExceptionHandlerUtil.handleException(exception);
+
+				return;
+			}
+
+			NameID saml2SubjectNameID =
+				samlSubjectNameIdentifierContext.getSAML2SubjectNameID();
+
+			if (saml2SubjectNameID == null) {
+				ExceptionHandlerUtil.handleException(exception);
+
+				return;
+			}
+
+			String nameIdValue = saml2SubjectNameID.getValue();
+
+			throw new EntityInteractionException(
+				samlPeerEntityContext.getEntityId(), nameIdValue, exception);
 		}
 	}
 
@@ -369,11 +382,12 @@ public class WebSsoProfileImpl extends BaseProfile implements WebSsoProfile {
 		if (StringUtil.equalsIgnoreCase(
 				httpServletRequest.getMethod(), "GET")) {
 
-			samlBinding = getSamlBinding(
+			samlBinding = samlBindingProvider.getSamlBinding(
 				SAMLConstants.SAML2_REDIRECT_BINDING_URI);
 		}
 		else {
-			samlBinding = getSamlBinding(SAMLConstants.SAML2_POST_BINDING_URI);
+			samlBinding = samlBindingProvider.getSamlBinding(
+				SAMLConstants.SAML2_POST_BINDING_URI);
 		}
 
 		SamlSsoRequestContext samlSsoRequestContext = null;
@@ -674,19 +688,6 @@ public class WebSsoProfileImpl extends BaseProfile implements WebSsoProfile {
 		subjectConfirmationData.setNotOnOrAfter(notOnOrAfterDateTime);
 
 		return subjectConfirmationData;
-	}
-
-	@Reference(
-		cardinality = ReferenceCardinality.AT_LEAST_ONE,
-		policyOption = ReferencePolicyOption.GREEDY
-	)
-	protected void setSamlBinding(SamlBinding samlBinding) {
-		addSamlBinding(samlBinding);
-	}
-
-	@Override
-	protected void unsetSamlBinding(SamlBinding samlBinding) {
-		removeSamlBinding(samlBinding);
 	}
 
 	protected void verifyAssertionSignature(
@@ -1755,7 +1756,7 @@ public class WebSsoProfileImpl extends BaseProfile implements WebSsoProfile {
 		MessageContext<?> messageContext =
 			samlSsoRequestContext.getSAMLMessageContext();
 
-		SamlBinding samlBinding = getSamlBinding(
+		SamlBinding samlBinding = samlBindingProvider.getSamlBinding(
 			SAMLConstants.SAML2_POST_BINDING_URI);
 
 		AssertionConsumerService assertionConsumerService =
@@ -1829,7 +1830,7 @@ public class WebSsoProfileImpl extends BaseProfile implements WebSsoProfile {
 		MessageContext<?> messageContext =
 			samlSsoRequestContext.getSAMLMessageContext();
 
-		SamlBinding samlBinding = getSamlBinding(
+		SamlBinding samlBinding = samlBindingProvider.getSamlBinding(
 			SAMLConstants.SAML2_POST_BINDING_URI);
 
 		AssertionConsumerService assertionConsumerService =

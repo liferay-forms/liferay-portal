@@ -15,6 +15,7 @@
 package com.liferay.saml.opensaml.integration.internal.resolver;
 
 import com.liferay.expando.kernel.model.ExpandoBridge;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.bean.BeanProperties;
@@ -49,7 +50,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.Attribute;
@@ -150,14 +150,12 @@ public class DefaultAttributeResolver implements AttributeResolver {
 
 		if (!namespaceEnabled) {
 			attributePublisher.publish(
-				attributeName, Attribute.UNSPECIFIED,
-				attributePublisher.buildString(value.toString()));
+				attributeName, Attribute.UNSPECIFIED, value.toString());
 		}
 		else {
 			attributePublisher.publish(
 				"urn:liferay:user:expando:" + attributeName,
-				Attribute.URI_REFERENCE,
-				attributePublisher.buildString(value.toString()));
+				Attribute.URI_REFERENCE, value.toString());
 		}
 	}
 
@@ -184,17 +182,10 @@ public class DefaultAttributeResolver implements AttributeResolver {
 				nameFormat = Attribute.UNSPECIFIED;
 			}
 
-			Stream<Group> groupsStream = groups.stream();
-
 			attributePublisher.publish(
 				name, nameFormat,
-				groupsStream.map(
-					Group::getName
-				).map(
-					attributePublisher::buildString
-				).toArray(
-					AttributePublisher.AttributeValue[]::new
-				));
+				TransformUtil.transformToArray(
+					groups, Group::getName, String.class));
 		}
 		catch (Exception exception) {
 			String message = StringBundler.concat(
@@ -228,13 +219,11 @@ public class DefaultAttributeResolver implements AttributeResolver {
 
 		if (namespaceEnabled) {
 			attributePublisher.publish(
-				values[0], Attribute.URI_REFERENCE,
-				attributePublisher.buildString(attributeValue));
+				values[0], Attribute.URI_REFERENCE, attributeValue);
 		}
 		else {
 			attributePublisher.publish(
-				values[0], Attribute.UNSPECIFIED,
-				attributePublisher.buildString(attributeValue));
+				values[0], Attribute.UNSPECIFIED, attributeValue);
 		}
 	}
 
@@ -280,17 +269,10 @@ public class DefaultAttributeResolver implements AttributeResolver {
 
 				Set<Role> roles = entry.getValue();
 
-				Stream<Role> rolesStream = roles.stream();
-
 				attributePublisher.publish(
 					name, nameFormat,
-					rolesStream.map(
-						Role::getName
-					).map(
-						attributePublisher::buildString
-					).toArray(
-						AttributePublisher.AttributeValue[]::new
-					));
+					TransformUtil.transformToArray(
+						roles, Role::getName, String.class));
 			}
 		}
 		catch (Exception exception) {
@@ -329,17 +311,10 @@ public class DefaultAttributeResolver implements AttributeResolver {
 				nameFormat = Attribute.UNSPECIFIED;
 			}
 
-			Stream<Organization> organizationsStream = organizations.stream();
-
 			publisher.publish(
 				name, nameFormat,
-				organizationsStream.map(
-					Organization::getName
-				).map(
-					publisher::buildString
-				).toArray(
-					AttributePublisher.AttributeValue[]::new
-				));
+				TransformUtil.transformToArray(
+					organizations, Organization::getName, String.class));
 		}
 		catch (Exception exception) {
 			String message = StringBundler.concat(
@@ -421,17 +396,10 @@ public class DefaultAttributeResolver implements AttributeResolver {
 				nameFormat = Attribute.UNSPECIFIED;
 			}
 
-			Stream<Role> uniqueRolesStream = uniqueRoles.stream();
-
 			attributePublisher.publish(
 				name, nameFormat,
-				uniqueRolesStream.map(
-					Role::getName
-				).map(
-					attributePublisher::buildString
-				).toArray(
-					AttributePublisher.AttributeValue[]::new
-				));
+				TransformUtil.transformToArray(
+					uniqueRoles, Role::getName, String.class));
 		}
 		catch (Exception exception) {
 			String message = StringBundler.concat(
@@ -457,7 +425,7 @@ public class DefaultAttributeResolver implements AttributeResolver {
 
 		attributePublisher.publish(
 			"logoutURL", Attribute.UNSPECIFIED,
-			attributePublisher.buildString(samlIdpMetadataSalesForceLogoutURL));
+			samlIdpMetadataSalesForceLogoutURL);
 
 		String samlIdpMetadataSalesForceSsoStartPage = GetterUtil.getString(
 			PropsUtil.get(
@@ -473,8 +441,7 @@ public class DefaultAttributeResolver implements AttributeResolver {
 
 		attributePublisher.publish(
 			"ssoStartPage", Attribute.UNSPECIFIED,
-			attributePublisher.buildString(
-				samlIdpMetadataSalesForceSsoStartPage));
+			samlIdpMetadataSalesForceSsoStartPage);
 	}
 
 	private void _addSiteRolesAttribute(
@@ -547,17 +514,10 @@ public class DefaultAttributeResolver implements AttributeResolver {
 
 				Set<Role> roles = entry.getValue();
 
-				Stream<Role> rolesStream = roles.stream();
-
 				attributePublisher.publish(
 					name, nameFormat,
-					rolesStream.map(
-						Role::getName
-					).map(
-						attributePublisher::buildString
-					).toArray(
-						AttributePublisher.AttributeValue[]::new
-					));
+					TransformUtil.transformToArray(
+						roles, Role::getName, String.class));
 			}
 		}
 		catch (Exception exception) {
@@ -604,9 +564,7 @@ public class DefaultAttributeResolver implements AttributeResolver {
 			nameFormat = Attribute.UNSPECIFIED;
 		}
 
-		attributePublisher.publish(
-			attributeName, nameFormat,
-			attributePublisher.buildString(attributeValue));
+		attributePublisher.publish(attributeName, nameFormat, attributeValue);
 	}
 
 	private void _addUserAttribute(
@@ -618,13 +576,12 @@ public class DefaultAttributeResolver implements AttributeResolver {
 
 		if (!namespaceEnabled) {
 			attributePublisher.publish(
-				attributeName, Attribute.UNSPECIFIED,
-				attributePublisher.buildString(value.toString()));
+				attributeName, Attribute.UNSPECIFIED, value.toString());
 		}
 		else {
 			attributePublisher.publish(
 				"urn:liferay:user:" + attributeName, Attribute.URI_REFERENCE,
-				attributePublisher.buildString(value.toString()));
+				value.toString());
 		}
 	}
 
@@ -651,17 +608,10 @@ public class DefaultAttributeResolver implements AttributeResolver {
 				nameFormat = Attribute.UNSPECIFIED;
 			}
 
-			Stream<UserGroup> userGroupsStream = userGroups.stream();
-
 			attributePublisher.publish(
 				name, nameFormat,
-				userGroupsStream.map(
-					UserGroup::getName
-				).map(
-					attributePublisher::buildString
-				).toArray(
-					AttributePublisher.AttributeValue[]::new
-				));
+				TransformUtil.transformToArray(
+					userGroups, UserGroup::getName, String.class));
 		}
 		catch (Exception exception) {
 			String message = StringBundler.concat(

@@ -17,6 +17,7 @@ package com.liferay.portal.workflow.kaleo.runtime.internal.notification;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.messaging.MessageBus;
 import com.liferay.portal.kernel.model.UserNotificationDeliveryConstants;
@@ -35,7 +36,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -45,14 +45,16 @@ import org.osgi.service.component.annotations.Reference;
  * @author Marcellus Tavares
  */
 @Component(
-	property = {
-		"fromName=Liferay Portal Workflow Notifications",
-		"notification.type=push-notification"
-	},
+	property = "fromName=Liferay Portal Workflow Notifications",
 	service = NotificationSender.class
 )
 public class PushNotificationMessageSender
 	extends BaseNotificationSender implements NotificationSender {
+
+	@Override
+	public String getNotificationType() {
+		return "push-notification";
+	}
 
 	@Activate
 	protected void activate(Map<String, Object> properties) {
@@ -95,8 +97,9 @@ public class PushNotificationMessageSender
 	protected NotificationMessageHelper notificationMessageHelper;
 
 	private Message _createMessage(
-		List<NotificationRecipient> notificationRecipients,
-		String notificationMessage, ExecutionContext executionContext) {
+			List<NotificationRecipient> notificationRecipients,
+			String notificationMessage, ExecutionContext executionContext)
+		throws Exception {
 
 		Message message = new Message();
 
@@ -109,8 +112,9 @@ public class PushNotificationMessageSender
 	}
 
 	private JSONObject _createPayloadJSONObject(
-		List<NotificationRecipient> notificationRecipients,
-		String notificationMessage, ExecutionContext executionContext) {
+			List<NotificationRecipient> notificationRecipients,
+			String notificationMessage, ExecutionContext executionContext)
+		throws Exception {
 
 		JSONObject jsonObject =
 			notificationMessageHelper.createMessageJSONObject(
@@ -129,20 +133,20 @@ public class PushNotificationMessageSender
 	}
 
 	private JSONArray _createUserIdsRecipientsJSONArray(
-		List<NotificationRecipient> notificationRecipients) {
+			List<NotificationRecipient> notificationRecipients)
+		throws Exception {
 
-		JSONArray jsonArray = jsonFactory.createJSONArray();
+		return JSONUtil.toJSONArray(
+			notificationRecipients,
+			notificationRecipient -> {
+				long userId = notificationRecipient.getUserId();
 
-		Stream<NotificationRecipient> stream = notificationRecipients.stream();
+				if (userId > 0) {
+					return userId;
+				}
 
-		stream.filter(
-			notificationRecipient -> notificationRecipient.getUserId() > 0
-		).forEach(
-			notificationRecipient -> jsonArray.put(
-				notificationRecipient.getUserId())
-		);
-
-		return jsonArray;
+				return null;
+			});
 	}
 
 	private String _fromName;

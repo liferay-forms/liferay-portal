@@ -53,18 +53,18 @@ public class AddDefaultAccountRolesPortalInstanceLifecycleListener
 
 		_checkResourcePermissions(
 			company.getCompanyId(),
-			AccountRoleConstants.REQUIRED_ROLE_NAME_ACCOUNT_MEMBER,
+			AccountRoleConstants.REQUIRED_ROLE_NAME_ACCOUNT_ADMINISTRATOR,
+			_accountAdministratorResourceActionsMap,
 			_accountMemberResourceActionsMap);
 		_checkResourcePermissions(
 			company.getCompanyId(),
-			AccountRoleConstants.REQUIRED_ROLE_NAME_ACCOUNT_ADMINISTRATOR,
-			_accountMemberResourceActionsMap,
-			_accountAdministratorResourceActionsMap);
+			AccountRoleConstants.REQUIRED_ROLE_NAME_ACCOUNT_MANAGER,
+			_accountManagerResourceActionsMap,
+			_accountMemberResourceActionsMap);
 		_checkResourcePermissions(
 			company.getCompanyId(),
-			AccountRoleConstants.REQUIRED_ROLE_NAME_ACCOUNT_MANAGER,
-			_accountMemberResourceActionsMap,
-			_accountManagerResourceActionsMap);
+			AccountRoleConstants.REQUIRED_ROLE_NAME_ACCOUNT_MEMBER,
+			_accountMemberResourceActionsMap);
 	}
 
 	private void _checkResourcePermissions(

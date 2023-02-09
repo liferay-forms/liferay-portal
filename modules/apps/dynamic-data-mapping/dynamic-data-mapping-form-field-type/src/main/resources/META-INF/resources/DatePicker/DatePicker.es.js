@@ -85,7 +85,8 @@ export default function DatePicker({
 
 		const clayFormat = dateFormat
 			.replace('YYYY', 'yyyy')
-			.replace('DD', 'dd');
+			.replace('DD', 'dd')
+			.replace('D', 'd');
 
 		const placeholder = momentFormat.replace(WORD_CHARACTER_REGEX, '_');
 
@@ -151,8 +152,10 @@ export default function DatePicker({
 	 */
 	useEffect(
 		() =>
-			setDate(({formattedDate, name, predefinedValue}) =>
-				name === date.name && predefinedValue === date.predefinedValue
+			setDate(({formattedDate, name, predefinedValue, rawDate}) =>
+				name === date.name &&
+				predefinedValue === date.predefinedValue &&
+				rawDate === ''
 					? {...date, formattedDate}
 					: date
 			),

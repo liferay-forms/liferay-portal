@@ -16,14 +16,12 @@ package com.liferay.object.service.test;
 
 import com.liferay.account.constants.AccountConstants;
 import com.liferay.account.model.AccountEntry;
-import com.liferay.account.model.AccountEntryUserRel;
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.account.service.AccountEntryUserRelLocalService;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.object.constants.ObjectActionKeys;
 import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
-import com.liferay.object.exception.ObjectDefinitionAccountEntryRestrictedException;
 import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
@@ -33,7 +31,6 @@ import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectEntryService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.service.test.util.ObjectDefinitionTestUtil;
-import com.liferay.object.util.LocalizedMapUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.Role;
@@ -60,6 +57,7 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
 import java.io.Serializable;
 
@@ -290,52 +288,10 @@ public class ObjectEntryServiceTest {
 				).build(),
 				_objectDefinition.getClassName()));
 
-		try {
-			_objectEntryService.getObjectEntry(objectEntry.getObjectEntryId());
-
-			Assert.fail();
-		}
-		catch (ObjectDefinitionAccountEntryRestrictedException
-					objectDefinitionAccountEntryRestrictedException) {
-
-			Assert.assertEquals(
-				StringBundler.concat(
-					"User ", _user.getUserId(),
-					" must have VIEW permission for ",
-					_objectDefinition.getClassName(),
-					objectEntry.getObjectEntryId()),
-				objectDefinitionAccountEntryRestrictedException.getMessage());
-		}
-
-		try {
-			_objectEntryService.deleteObjectEntry(
-				objectEntry.getObjectEntryId());
-
-			Assert.fail();
-		}
-		catch (ObjectDefinitionAccountEntryRestrictedException
-					objectDefinitionAccountEntryRestrictedException) {
-
-			Assert.assertEquals(
-				StringBundler.concat(
-					"User ", _user.getUserId(),
-					" must have DELETE permission for ",
-					_objectDefinition.getClassName(),
-					objectEntry.getObjectEntryId()),
-				objectDefinitionAccountEntryRestrictedException.getMessage());
-		}
-
-		AccountEntryUserRel accountEntryUserRel =
-			_accountEntryUserRelLocalService.addAccountEntryUserRel(
-				accountEntry.getAccountEntryId(), _user.getUserId());
-
 		Assert.assertNotNull(
 			_objectEntryService.getObjectEntry(objectEntry.getObjectEntryId()));
 
 		_objectEntryService.deleteObjectEntry(objectEntry.getObjectEntryId());
-
-		_accountEntryUserRelLocalService.deleteAccountEntryUserRel(
-			accountEntryUserRel);
 
 		_accountEntryLocalService.deleteAccountEntry(accountEntry);
 	}

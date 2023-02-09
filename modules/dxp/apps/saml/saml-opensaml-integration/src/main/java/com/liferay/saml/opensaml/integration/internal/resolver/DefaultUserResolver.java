@@ -352,7 +352,7 @@ public class DefaultUserResolver implements UserResolver {
 
 		SamlPeerBinding samlPeerBinding =
 			_samlPeerBindingLocalService.fetchSamlPeerBinding(
-				companyId, subjectNameFormat, subjectNameQualifier,
+				companyId, false, subjectNameFormat, subjectNameQualifier,
 				subjectNameIdentifier, samlIdpEntityId);
 
 		if (samlPeerBinding != null) {

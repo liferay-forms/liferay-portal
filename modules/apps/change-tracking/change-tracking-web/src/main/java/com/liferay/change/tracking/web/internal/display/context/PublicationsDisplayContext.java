@@ -101,7 +101,7 @@ public class PublicationsDisplayContext extends BasePublicationsDisplayContext {
 	}
 
 	public Map<String, Object> getCollaboratorsReactData(
-			CTCollection ctCollection)
+			long ctCollectionId, boolean publicationTemplate)
 		throws PortalException {
 
 		return HashMapBuilder.<String, Object>put(
@@ -114,7 +114,10 @@ public class PublicationsDisplayContext extends BasePublicationsDisplayContext {
 					"/change_tracking/autocomplete_user");
 				autocompleteUserURL.setParameter(
 					"ctCollectionId",
-					String.valueOf(ctCollection.getCtCollectionId()));
+					String.valueOf(
+						publicationTemplate ?
+							CTConstants.CT_COLLECTION_ID_PRODUCTION :
+								ctCollectionId));
 
 				return autocompleteUserURL.toString();
 			}
@@ -128,7 +131,10 @@ public class PublicationsDisplayContext extends BasePublicationsDisplayContext {
 					"/change_tracking/get_collaborators");
 				getCollaboratorsURL.setParameter(
 					"ctCollectionId",
-					String.valueOf(ctCollection.getCtCollectionId()));
+					String.valueOf(
+						publicationTemplate ?
+							CTConstants.CT_COLLECTION_ID_PRODUCTION :
+								ctCollectionId));
 
 				return getCollaboratorsURL.toString();
 			}
@@ -141,7 +147,10 @@ public class PublicationsDisplayContext extends BasePublicationsDisplayContext {
 				inviteUsersURL.setResourceID("/change_tracking/invite_users");
 				inviteUsersURL.setParameter(
 					"ctCollectionId",
-					String.valueOf(ctCollection.getCtCollectionId()));
+					String.valueOf(
+						publicationTemplate ?
+							CTConstants.CT_COLLECTION_ID_PRODUCTION :
+								ctCollectionId));
 
 				return inviteUsersURL.toString();
 			}
@@ -149,9 +158,18 @@ public class PublicationsDisplayContext extends BasePublicationsDisplayContext {
 			"namespace", _renderResponse.getNamespace()
 		).put(
 			"readOnly",
-			!CTCollectionPermission.contains(
-				_themeDisplay.getPermissionChecker(), ctCollection,
-				ActionKeys.PERMISSIONS)
+			() -> {
+				if ((ctCollectionId ==
+						CTConstants.CT_COLLECTION_ID_PRODUCTION) ||
+					publicationTemplate) {
+
+					return false;
+				}
+
+				return !CTCollectionPermission.contains(
+					_themeDisplay.getPermissionChecker(), ctCollectionId,
+					ActionKeys.PERMISSIONS);
+			}
 		).put(
 			"roles",
 			JSONUtil.putAll(
@@ -253,7 +271,10 @@ public class PublicationsDisplayContext extends BasePublicationsDisplayContext {
 					"/change_tracking/verify_email_address");
 				sharingVerifyEmailAddressURL.setParameter(
 					"ctCollectionId",
-					String.valueOf(ctCollection.getCtCollectionId()));
+					String.valueOf(
+						publicationTemplate ?
+							CTConstants.CT_COLLECTION_ID_PRODUCTION :
+								ctCollectionId));
 
 				return sharingVerifyEmailAddressURL.toString();
 			}
@@ -272,7 +293,8 @@ public class PublicationsDisplayContext extends BasePublicationsDisplayContext {
 			CTCollection ctCollection, PermissionChecker permissionChecker)
 		throws Exception {
 
-		Map<String, Object> data = getCollaboratorsReactData(ctCollection);
+		Map<String, Object> data = getCollaboratorsReactData(
+			ctCollection.getCtCollectionId(), false);
 
 		if ((ctCollection.getStatus() != WorkflowConstants.STATUS_EXPIRED) &&
 			CTCollectionPermission.contains(

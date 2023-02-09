@@ -197,6 +197,7 @@ public class DSEnvelopeManagerImpl implements DSEnvelopeManager {
 					emailAddress = signerJSONObject.getString("email");
 					name = signerJSONObject.getString("name");
 					status = signerJSONObject.getString("status");
+					tabsJSONObject = signerJSONObject.getJSONObject("tabs");
 				}
 			},
 			_log);
@@ -257,6 +258,10 @@ public class DSEnvelopeManagerImpl implements DSEnvelopeManager {
 	}
 
 	private LocalDateTime _toLocalDateTime(String localDateTimeString) {
+		if (Validator.isNull(localDateTimeString)) {
+			return null;
+		}
+
 		try {
 			return LocalDateTime.parse(
 				localDateTimeString,

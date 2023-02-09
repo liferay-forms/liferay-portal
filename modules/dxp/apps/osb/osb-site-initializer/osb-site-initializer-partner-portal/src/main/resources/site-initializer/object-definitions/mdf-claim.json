@@ -125,9 +125,6 @@
 										"key": "approved"
 									},
 									{
-										"key": "claimPaid"
-									},
-									{
 										"key": "inFinanceReview"
 									},
 									{
@@ -135,6 +132,9 @@
 									},
 									{
 										"key": "rejected"
+									},
+									{
+										"key": "inDirectorReview"
 									}
 								]
 							},
@@ -142,48 +142,21 @@
 								"key": "approved",
 								"objectStateTransitions": [
 									{
-										"key": "pendingMarketingReview"
-									},
-									{
-										"key": "claimPaid"
-									},
-									{
 										"key": "inFinanceReview"
 									},
 									{
-										"key": "moreInfoRequested"
-									},
-									{
-										"key": "rejected"
+										"key": "canceled"
 									}
 								]
 							},
 							{
 								"key": "claimPaid",
 								"objectStateTransitions": [
-									{
-										"key": "pendingMarketingReview"
-									},
-									{
-										"key": "approved"
-									},
-									{
-										"key": "inFinanceReview"
-									},
-									{
-										"key": "moreInfoRequested"
-									},
-									{
-										"key": "rejected"
-									}
 								]
 							},
 							{
 								"key": "inFinanceReview",
 								"objectStateTransitions": [
-									{
-										"key": "pendingMarketingReview"
-									},
 									{
 										"key": "approved"
 									},
@@ -195,6 +168,9 @@
 									},
 									{
 										"key": "rejected"
+									},
+									{
+										"key": "inDirectorReview"
 									}
 								]
 							},
@@ -215,6 +191,9 @@
 									},
 									{
 										"key": "rejected"
+									},
+									{
+										"key": "draft"
 									}
 								]
 							},
@@ -223,18 +202,6 @@
 								"objectStateTransitions": [
 									{
 										"key": "pendingMarketingReview"
-									},
-									{
-										"key": "approved"
-									},
-									{
-										"key": "claimPaid"
-									},
-									{
-										"key": "inFinanceReview"
-									},
-									{
-										"key": "moreInfoRequested"
 									}
 								]
 							},
@@ -243,6 +210,34 @@
 								"objectStateTransitions": [
 									{
 										"key": "pendingMarketingReview"
+									},
+									{
+										"key": "canceled"
+									}
+								]
+							},
+							{
+								"key": "inDirectorReview",
+								"objectStateTransitions": [
+									{
+										"key": "approved"
+									},
+									{
+										"key": "inFinanceReview"
+									},
+									{
+										"key": "rejected"
+									},
+									{
+										"key": "moreInfoRequested"
+									}
+								]
+							},
+							{
+								"key": "canceled",
+								"objectStateTransitions": [
+									{
+										"key": "approved"
 									}
 								]
 							}
@@ -256,6 +251,7 @@
 			"type": "String"
 		}
 	],
+	"panelCategoryKey": "control_panel.object",
 	"pluralLabel": {
 		"en_US": "MDF Claims"
 	},

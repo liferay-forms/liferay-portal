@@ -159,8 +159,9 @@ definition {
 
 		for (var categories : list "Company,Product,Engineering") {
 			AssertElementPresent(
-				facetValueName = "${categories}",
-				locator1 = "Search#FACET_CLOUD_LAYOUT");
+				facetName = "Category Facet",
+				facetValue = "${categories}",
+				locator1 = "Search#FACET_CLOUD_LAYOUT_ITEM");
 		}
 
 		SearchFacetPortlet.updateFacetConfiguration(
@@ -171,8 +172,9 @@ definition {
 
 		for (var categories : list "Company,Product,Engineering") {
 			AssertElementPresent(
-				facetValueName = "${categories}",
-				locator1 = "Search#FACET_COMPACT_LAYOUT");
+				facetName = "Category Facet",
+				facetValue = "${categories}",
+				locator1 = "Search#FACET_COMPACT_LAYOUT_ITEM");
 		}
 
 		SearchFacetPortlet.updateFacetConfiguration(
@@ -183,8 +185,9 @@ definition {
 
 		for (var categories : list "Company,Product,Engineering") {
 			AssertElementPresent(
-				facetValueName = "${categories}",
-				locator1 = "Search#FACET_LABEL_LAYOUT");
+				facetName = "Category Facet",
+				facetValue = "${categories}",
+				locator1 = "Search#FACET_LABEL_LAYOUT_ITEM");
 		}
 
 		SearchFacetPortlet.updateFacetConfiguration(
@@ -244,8 +247,9 @@ definition {
 
 		for (var Document : list "dm title 1,dm title 2,dm title 3") {
 			AssertElementPresent(
-				facetValueName = "${Document}",
-				locator1 = "Search#FACET_COMPACT_LAYOUT");
+				facetName = "Custom Facet",
+				facetValue = "${Document}",
+				locator1 = "Search#FACET_COMPACT_LAYOUT_ITEM");
 		}
 
 		SearchFacetPortlet.updateFacetConfiguration(
@@ -256,8 +260,9 @@ definition {
 
 		for (var Document : list "dm title 1,dm title 2,dm title 3") {
 			AssertElementPresent(
-				facetValueName = "${Document}",
-				locator1 = "Search#FACET_LABEL_LAYOUT");
+				facetName = "Custom Facet",
+				facetValue = "${Document}",
+				locator1 = "Search#FACET_LABEL_LAYOUT_ITEM");
 		}
 	}
 
@@ -355,8 +360,9 @@ definition {
 
 			for (var folders : list "Company,Engineering,Product") {
 				AssertElementPresent(
-					facetValueName = "${folders}",
-					locator1 = "Search#FACET_COMPACT_LAYOUT");
+					facetName = "Folder Facet",
+					facetValue = "${folders}",
+					locator1 = "Search#FACET_COMPACT_LAYOUT_ITEM");
 			}
 		}
 
@@ -369,8 +375,9 @@ definition {
 
 			for (var folders : list "Company,Engineering,Product") {
 				AssertElementPresent(
-					facetValueName = "${folders}",
-					locator1 = "Search#FACET_LABEL_LAYOUT");
+					facetName = "Folder Facet",
+					facetValue = "${folders}",
+					locator1 = "Search#FACET_LABEL_LAYOUT_ITEM");
 			}
 		}
 	}
@@ -774,8 +781,9 @@ definition {
 
 		for (var siteName : list "Community,Engineering,Product") {
 			AssertElementPresent(
-				facetValueName = "${siteName}",
-				locator1 = "Search#FACET_COMPACT_LAYOUT");
+				facetName = "Site Facet",
+				facetValue = "${siteName}",
+				locator1 = "Search#FACET_COMPACT_LAYOUT_ITEM");
 		}
 
 		SearchFacetPortlet.updateFacetConfiguration(
@@ -786,8 +794,9 @@ definition {
 
 		for (var siteName : list "Community,Engineering,Product") {
 			AssertElementPresent(
-				facetValueName = "${siteName}",
-				locator1 = "Search#FACET_LABEL_LAYOUT");
+				facetName = "Site Facet",
+				facetValue = "${siteName}",
+				locator1 = "Search#FACET_LABEL_LAYOUT_ITEM");
 		}
 	}
 
@@ -901,8 +910,9 @@ definition {
 
 		for (var tagName : list "engineering,product,2021,2022") {
 			AssertElementPresent(
-				facetValueName = "${tagName}",
-				locator1 = "Search#FACET_CLOUD_LAYOUT");
+				facetName = "Tag Facet",
+				facetValue = "${tagName}",
+				locator1 = "Search#FACET_CLOUD_LAYOUT_ITEM");
 		}
 
 		SearchFacetPortlet.updateFacetConfiguration(
@@ -913,8 +923,9 @@ definition {
 
 		for (var tagName : list "engineering,product,2021,2022") {
 			AssertElementPresent(
-				facetValueName = "${tagName}",
-				locator1 = "Search#FACET_COMPACT_LAYOUT");
+				facetName = "Tag Facet",
+				facetValue = "${tagName}",
+				locator1 = "Search#FACET_COMPACT_LAYOUT_ITEM");
 		}
 
 		SearchFacetPortlet.updateFacetConfiguration(
@@ -925,8 +936,9 @@ definition {
 
 		for (var tagName : list "engineering,product,2021,2022") {
 			AssertElementPresent(
-				facetValueName = "${tagName}",
-				locator1 = "Search#FACET_LABEL_LAYOUT");
+				facetName = "Tag Facet",
+				facetValue = "${tagName}",
+				locator1 = "Search#FACET_LABEL_LAYOUT_ITEM");
 		}
 	}
 
@@ -957,8 +969,9 @@ definition {
 
 		for (var Document : list "Web Content Article,Document,Blogs Entry") {
 			AssertElementPresent(
-				facetValueName = "${Document}",
-				locator1 = "Search#FACET_COMPACT_LAYOUT");
+				facetName = "Type Facet",
+				facetValue = "${Document}",
+				locator1 = "Search#FACET_COMPACT_LAYOUT_ITEM");
 		}
 
 		SearchFacetPortlet.updateFacetConfiguration(
@@ -969,8 +982,9 @@ definition {
 
 		for (var Document : list "Web Content Article,Document,Blogs Entry") {
 			AssertElementPresent(
-				facetValueName = "${Document}",
-				locator1 = "Search#FACET_LABEL_LAYOUT");
+				facetName = "Type Facet",
+				facetValue = "${Document}",
+				locator1 = "Search#FACET_LABEL_LAYOUT_ITEM");
 		}
 	}
 
@@ -998,8 +1012,9 @@ definition {
 
 		for (var users : list "userfn1 userln1,userfn2 userln2,userfn3 userln3") {
 			AssertElementPresent(
-				facetValueName = "${users}",
-				locator1 = "Search#FACET_COMPACT_LAYOUT");
+				facetName = "User Facet",
+				facetValue = "${users}",
+				locator1 = "Search#FACET_COMPACT_LAYOUT_ITEM");
 		}
 
 		SearchFacetPortlet.updateFacetConfiguration(
@@ -1010,8 +1025,9 @@ definition {
 
 		for (var users : list "userfn1 userln1,userfn2 userln2,userfn3 userln3") {
 			AssertElementPresent(
-				facetValueName = "${users}",
-				locator1 = "Search#FACET_LABEL_LAYOUT");
+				facetName = "User Facet",
+				facetValue = "${users}",
+				locator1 = "Search#FACET_LABEL_LAYOUT_ITEM");
 		}
 	}
 
@@ -1506,6 +1522,181 @@ definition {
 		}
 	}
 
+	@description = "This is a use case for LPS-162049. When configuring the Type Facet, I can choose from different ordering options so that facet terms are displayed according to the sort strategy"
+	@priority = "3"
+	test CanOrderTypeFacetTerms {
+		task ("Add some Wiki Page examples") {
+			for (var wikiNumber : list "1,2,3,4") {
+				JSONWiki.addWikiPage(
+					groupName = "Guest",
+					wikiNodeName = "Main",
+					wikiPageContent = "Wiki Page Content",
+					wikiPageName = "Wiki Page ${wikiNumber}");
+			}
+		}
+
+		task ("Add two new Pages") {
+			for (var quantity : list "1,2") {
+				JSONLayout.addPublicLayout(
+					groupName = "Guest",
+					layoutName = "Test Page ${quantity}");
+			}
+		}
+
+		SearchPortlets.searchEmbedded(searchTerm = "test");
+
+		task ("Assert that the Type facet sorts by term frequency descending by default") {
+			SearchFacetPortlet.viewFacetItemsSpecificOrder(facetList = "Document,Wiki Page,Page,User");
+		}
+
+		task ("Assert that the Type facet values are correct when sorted by term frequency ascending") {
+			SearchFacetPortlet.updateFacetConfiguration(
+				portletName = "Type Facet",
+				sortOption = "Term Frequency Ascending");
+
+			Refresh();
+
+			SearchFacetPortlet.viewFacetItemsSpecificOrder(facetList = "User,Page,Wiki Page,Document");
+		}
+
+		task ("Assert that the Type facet values are correct when sorted by term value ascending") {
+			SearchFacetPortlet.updateFacetConfiguration(
+				portletName = "Type Facet",
+				sortOption = "Term Value Ascending");
+
+			Refresh();
+
+			SearchFacetPortlet.viewFacetItemsSpecificOrder(facetList = "Document,Page,User,Wiki Page");
+		}
+
+		task ("Assert that the Type facet values are correct when sorted by term value descending") {
+			SearchFacetPortlet.updateFacetConfiguration(
+				portletName = "Type Facet",
+				sortOption = "Term Value Descending");
+
+			Refresh();
+
+			SearchFacetPortlet.viewFacetItemsSpecificOrder(facetList = "Wiki Page,User,Page,Document");
+		}
+	}
+
+	@priority = "3"
+	test CanOrderUserFacetTerms {
+		for (var userList : list "carter.braxton,john.adams,jonathan.franklin") {
+			var firstName = StringUtil.extractFirst("${userList}", ".");
+			var lastName = StringUtil.extractLast("${userList}", ".");
+
+			JSONUser.addUser(
+				userEmailAddress = "${userList}@liferay.com",
+				userFirstName = "${firstName}",
+				userLastName = "${lastName}",
+				userScreenName = "${firstName}");
+
+			JSONUser.addUserToSite(
+				groupName = "Guest",
+				userEmailAddress = "${userList}@liferay.com");
+
+			JSONRole.assignSiteRoleToUser(
+				groupName = "Guest",
+				roleTitle = "Site Administrator",
+				userEmailAddress = "${userList}@liferay.com");
+		}
+
+		User.logoutAndLoginPG(
+			userLoginEmailAddress = "john.adams@liferay.com",
+			userLoginFullName = "john adams");
+
+		for (var count : list "1,2,3,4") {
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "Guest");
+
+			WebContentNavigator.gotoAddCP();
+
+			WebContent.addCP(
+				webContentContent = "Test",
+				webContentTitle = "WC WebContent Title ${count}");
+
+			PortletEntry.publish();
+		}
+
+		User.logoutAndLoginPG(
+			userLoginEmailAddress = "carter.braxton@liferay.com",
+			userLoginFullName = "carter braxton");
+
+		ProductMenu.gotoPortlet(
+			category = "Content & Data",
+			portlet = "Blogs");
+
+		for (var count : list "1,2") {
+			Blogs.addEntry(
+				entryContent = "Test",
+				entryTitle = "Blogs Entry Title ${count}");
+		}
+
+		User.logoutAndLoginPG(
+			userLoginEmailAddress = "jonathan.franklin@liferay.com",
+			userLoginFullName = "jonathan franklin");
+
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "Guest");
+
+		WebContentNavigator.gotoAddCP();
+
+		WebContent.addCP(
+			webContentContent = "Test",
+			webContentTitle = "WC WebContent Title");
+
+		PortletEntry.publish();
+
+		Navigator.gotoPage(pageName = "Home");
+
+		SearchPortlets.searchEmbedded(searchTerm = "test");
+
+		SearchFacetPortlet.viewFacetItemsSpecificOrder(facetList = "test test,john adams,carter braxton,jonathan franklin");
+
+		SearchFacetPortlet.updateFacetConfiguration(
+			portletName = "User Facet",
+			sortOption = "Term Frequency Ascending");
+
+		Refresh();
+
+		SearchFacetPortlet.viewFacetItemsSpecificOrder(facetList = "jonathan franklin,carter braxton,john adams,test test");
+
+		SearchFacetPortlet.updateFacetConfiguration(
+			portletName = "User Facet",
+			sortOption = "Term Value Ascending");
+
+		Refresh();
+
+		SearchFacetPortlet.viewFacetItemsSpecificOrder(facetList = "carter braxton,john adams,jonathan franklin,test test");
+
+		SearchFacetPortlet.updateFacetConfiguration(
+			portletName = "User Facet",
+			sortOption = "Term Value Descending");
+
+		Refresh();
+
+		SearchFacetPortlet.viewFacetItemsSpecificOrder(facetList = "test test,jonathan franklin,john adams,carter braxton");
+	}
+
+	@description = "This is a use case for LPS-172622 - Cannot perform empty searches after a non-empty search"
+	@priority = "3"
+	test CanPerformEmptySearches {
+		SearchPortlets.searchEmbedded(searchTerm = "test");
+
+		SearchResultPortlet.viewMultipleSearchResults(
+			resultsList = "tree.png/Document,stars.png/Document,satellite.png/Document,moon.png/Document,earth.png/Document,Home/Page,Test Test/User",
+			searchTerm = "test");
+
+		SearchPortlets.configureSearchOptions(allowEmptySearches = "true");
+
+		Refresh();
+
+		SearchPortlets.searchEmbedded(searchTerm = "");
+
+		SearchResultPortlet.viewMultipleSearchResults(
+			resultsList = "tree.png/Document,stars.png/Document,satellite.png/Document,moon.png/Document,earth.png/Document,Search/Page,Home/Page,Test Test/User",
+			searchTerm = "");
+	}
+
 	@priority = "4"
 	test CanViewTermsOfUseWhenEnterpriseSearchIsEnabled {
 		property custom.properties = "enterprise.product.notification.enabled=true";
@@ -1883,6 +2074,7 @@ definition {
 		property custom.properties = "search.container.page.default.delta=1";
 		property database.types = "db2,hypersonic,mariadb,mysql,oracle,postgresql,sqlserver,sybase";
 		property environment.acceptance = "true";
+		property operating.system.types = "alpine,amazonlinux,centos,debian,fedora,orcllinux,osx,redhat,solaris,suse,ubuntu,windows";
 		property portal.acceptance = "true";
 
 		JSONLayout.addPublicLayout(
@@ -2169,8 +2361,9 @@ definition {
 		Refresh();
 
 		AssertElementPresent(
-			facetValueName = "Category Name",
-			locator1 = "Search#FACET_CLOUD_LAYOUT");
+			facetName = "Category Facet",
+			facetValue = "Category Name",
+			locator1 = "Search#FACET_CLOUD_LAYOUT_ITEM");
 
 		SearchPortlets.searchEmbedded(searchTerm = "Category");
 

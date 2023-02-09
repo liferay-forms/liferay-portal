@@ -23,7 +23,7 @@ definition {
 	function openInTheNewTab {
 		WaitForSPARefresh();
 
-		selenium.executeJavaScript("window.open()");
+		selenium.executeJavaScript("sessionStorage.clear(); window.open();");
 
 		SelectWindow.selectPopUp(locator1 = "null");
 
@@ -33,6 +33,14 @@ definition {
 	function openNoError {
 		WaitForSPARefresh();
 
+		selenium.selectWindow("null");
+
+		selenium.selectFrame("relative=top");
+
+		selenium.open();
+	}
+
+	function openNoErrorNoSPARefresh {
 		selenium.selectWindow("null");
 
 		selenium.selectFrame("relative=top");

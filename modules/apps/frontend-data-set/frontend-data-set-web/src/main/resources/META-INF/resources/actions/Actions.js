@@ -71,6 +71,7 @@ export function handleAction(
 		onClick,
 		setLoading,
 		size,
+		status,
 		successMessage,
 		target,
 		title,
@@ -149,6 +150,8 @@ export function handleAction(
 					doAction();
 				}
 			},
+			status,
+			title,
 		});
 	}
 	else {
@@ -156,14 +159,19 @@ export function handleAction(
 	}
 }
 function Actions({actions, itemData, itemId, menuActive, onMenuActiveChange}) {
-	const context = useContext(FrontendDataSetContext);
+	const frontendDataSetContext = useContext(FrontendDataSetContext);
 	const [
 		{
 			activeView: {quickActionsEnabled},
 		},
 	] = useContext(ViewsContext);
 
-	const {inlineEditingSettings, onActionDropdownItemClick} = context;
+	const {
+		inlineEditingSettings,
+		loadData,
+		onActionDropdownItemClick,
+		openSidePanel,
+	} = frontendDataSetContext;
 
 	const [loading, setLoading] = useState(false);
 
@@ -195,6 +203,8 @@ function Actions({actions, itemData, itemId, menuActive, onMenuActiveChange}) {
 				action,
 				event,
 				itemData,
+				loadData,
+				openSidePanel,
 			});
 		}
 
@@ -213,11 +223,13 @@ function Actions({actions, itemData, itemId, menuActive, onMenuActiveChange}) {
 					onClick,
 					setLoading,
 					size,
+					status: data?.status,
 					successMessage: data?.successMessage,
 					target,
+					title: data?.title,
 					url: formatActionURL(action.href, itemData),
 				},
-				context
+				frontendDataSetContext
 			);
 		}
 

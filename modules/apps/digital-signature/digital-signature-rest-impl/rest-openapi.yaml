@@ -48,8 +48,14 @@ components:
                 status:
                     type: string
             type: object
+        DSEnvelopeSignatureURL:
+            properties:
+                url:
+                    type: string
         DSRecipient:
             properties:
+                dsClientUserId:
+                    type: string
                 emailAddress:
                     type: string
                 id:
@@ -58,10 +64,24 @@ components:
                     type: string
                 status:
                     type: string
+                tabs:
+                    type: object
+        DSRecipientViewDefinition:
+            properties:
+                authenticationMethod:
+                    type: string
+                dsClientUserId:
+                    type: string
+                emailAddress:
+                    type: string
+                returnURL:
+                    type: string
+                userName:
+                    type: string
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.digital.signature.rest.client', and version '1.0.8'."
+        'com.liferay.digital.signature.rest.client', and version '1.0.10'."
     license:
         name: "Apache 2.0"
         url: "http://www.apache.org/licenses/LICENSE-2.0.html"
@@ -153,3 +173,36 @@ paths:
                             schema:
                                 $ref: "#/components/schemas/DSEnvelope"
             tags: ["DSEnvelope"]
+    "/sites/{siteId}/ds-recipient-view-definition/{dsEnvelopeId}":
+        post:
+            operationId: postSiteDSRecipientViewDefinition
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: path
+                  name: dsEnvelopeId
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/DSRecipientViewDefinition"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/DSRecipientViewDefinition"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/DSEnvelopeSignatureURL"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/DSEnvelopeSignatureURL"
+            tags: ["DSRecipientViewDefinition"]

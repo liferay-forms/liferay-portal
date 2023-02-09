@@ -26,7 +26,6 @@ import com.liferay.portal.kernel.util.Tuple;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -135,46 +134,44 @@ public class TrafficChannel {
 
 		return JSONUtil.put(
 			"endpointURL",
-			Optional.ofNullable(
-				_tuples.get(_type)
-			).map(
-				tuple -> {
-					ResourceURL resourceURL =
-						(ResourceURL)liferayPortletResponse.createResourceURL();
+			() -> {
+				Tuple tuple = _tuples.get(_type);
 
-					resourceURL.setResourceID(
-						String.valueOf(tuple.getObject(0)));
-
-					HttpServletRequest httpServletRequest =
-						liferayPortletRequest.getHttpServletRequest();
-
-					Map<String, String[]> httpServletRequestParameterMap =
-						httpServletRequest.getParameterMap();
-
-					Set<Map.Entry<String, String[]>>
-						httpServletRequestParameterEntries =
-							httpServletRequestParameterMap.entrySet();
-
-					Map<String, String[]> parameterMap =
-						(Map<String, String[]>)tuple.getObject(1);
-
-					Set<Map.Entry<String, String[]>> parameterEntries =
-						parameterMap.entrySet();
-
-					resourceURL.setParameters(
-						Stream.concat(
-							httpServletRequestParameterEntries.stream(),
-							parameterEntries.stream()
-						).collect(
-							Collectors.toMap(
-								Map.Entry::getKey, Map.Entry::getValue)
-						));
-
-					return String.valueOf(resourceURL);
+				if (tuple == null) {
+					return null;
 				}
-			).orElse(
-				null
-			)
+
+				ResourceURL resourceURL =
+					liferayPortletResponse.createResourceURL();
+
+				resourceURL.setResourceID(String.valueOf(tuple.getObject(0)));
+
+				HttpServletRequest httpServletRequest =
+					liferayPortletRequest.getHttpServletRequest();
+
+				Map<String, String[]> httpServletRequestParameterMap =
+					httpServletRequest.getParameterMap();
+
+				Set<Map.Entry<String, String[]>>
+					httpServletRequestParameterEntries =
+						httpServletRequestParameterMap.entrySet();
+
+				Map<String, String[]> parameterMap =
+					(Map<String, String[]>)tuple.getObject(1);
+
+				Set<Map.Entry<String, String[]>> parameterEntries =
+					parameterMap.entrySet();
+
+				resourceURL.setParameters(
+					Stream.concat(
+						httpServletRequestParameterEntries.stream(),
+						parameterEntries.stream()
+					).collect(
+						Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)
+					));
+
+				return String.valueOf(resourceURL);
+			}
 		).put(
 			"helpMessage",
 			ResourceBundleUtil.getString(resourceBundle, getHelpMessageKey())

@@ -113,6 +113,12 @@ public class ObjectRelationshipLocalServiceImpl
 			objectRelationshipPersistence.findByPrimaryKey(
 				objectRelationshipId);
 
+		ObjectDefinition objectDefinition1 =
+			_objectDefinitionPersistence.findByPrimaryKey(
+				objectRelationship.getObjectDefinitionId1());
+
+		_validateObjectEntryId(objectDefinition1, primaryKey1);
+
 		ObjectDefinition objectDefinition2 =
 			_objectDefinitionPersistence.findByPrimaryKey(
 				objectRelationship.getObjectDefinitionId2());
@@ -120,10 +126,6 @@ public class ObjectRelationshipLocalServiceImpl
 		if (Objects.equals(
 				objectRelationship.getType(),
 				ObjectRelationshipConstants.TYPE_MANY_TO_MANY)) {
-
-			ObjectDefinition objectDefinition1 =
-				_objectDefinitionPersistence.findByPrimaryKey(
-					objectRelationship.getObjectDefinitionId1());
 
 			if (_hasManyToManyObjectRelationshipMappingTableValues(
 					objectDefinition1, objectDefinition2, objectRelationship,
@@ -390,11 +392,40 @@ public class ObjectRelationshipLocalServiceImpl
 
 	@Override
 	public ObjectRelationship fetchObjectRelationshipByObjectDefinitionId(
-			long objectDefinitionId, String name)
-		throws Exception {
+		long objectDefinitionId, String name) {
+
+		List<ObjectRelationship> objectRelationships = dslQuery(
+			DSLQueryFactoryUtil.select(
+			).from(
+				ObjectRelationshipTable.INSTANCE
+			).where(
+				Predicate.withParentheses(
+					ObjectRelationshipTable.INSTANCE.objectDefinitionId1.eq(
+						objectDefinitionId
+					).or(
+						ObjectRelationshipTable.INSTANCE.objectDefinitionId2.eq(
+							objectDefinitionId)
+					)
+				).and(
+					ObjectRelationshipTable.INSTANCE.name.eq(name)
+				).and(
+					ObjectRelationshipTable.INSTANCE.reverse.eq(false)
+				)
+			));
+
+		if (objectRelationships.isEmpty()) {
+			return null;
+		}
+
+		return objectRelationships.get(0);
+	}
+
+	@Override
+	public ObjectRelationship fetchObjectRelationshipByObjectDefinitionId1(
+		long objectDefinitionId1, String name) {
 
 		return objectRelationshipPersistence.fetchByODI1_N_First(
-			objectDefinitionId, name, null);
+			objectDefinitionId1, name, null);
 	}
 
 	@Override
@@ -462,7 +493,7 @@ public class ObjectRelationshipLocalServiceImpl
 
 	@Override
 	public ObjectRelationship getObjectRelationshipByObjectDefinitionId(
-			long objectDefinitionId, String objectRelationshipName)
+			long objectDefinitionId, String name)
 		throws Exception {
 
 		List<ObjectRelationship> objectRelationships = dslQuery(
@@ -478,8 +509,7 @@ public class ObjectRelationshipLocalServiceImpl
 							objectDefinitionId)
 					)
 				).and(
-					ObjectRelationshipTable.INSTANCE.name.eq(
-						objectRelationshipName)
+					ObjectRelationshipTable.INSTANCE.name.eq(name)
 				).and(
 					ObjectRelationshipTable.INSTANCE.reverse.eq(false)
 				)
@@ -487,8 +517,7 @@ public class ObjectRelationshipLocalServiceImpl
 
 		if (objectRelationships.isEmpty()) {
 			throw new NoSuchObjectRelationshipException(
-				"No ObjectRelationship exists with the name " +
-					objectRelationshipName);
+				"No object relationship exists with the name " + name);
 		}
 
 		return objectRelationships.get(0);
@@ -866,6 +895,23 @@ public class ObjectRelationshipLocalServiceImpl
 		_validateParameterObjectFieldId(
 			objectDefinitionId1, objectDefinitionId2, parameterObjectFieldId,
 			type);
+	}
+
+	private void _validateObjectEntryId(
+			ObjectDefinition objectDefinition, long primaryKey)
+		throws PortalException {
+
+		if (objectDefinition.isSystem()) {
+			SystemObjectDefinitionMetadata systemObjectDefinitionMetadata =
+				_systemObjectDefinitionMetadataRegistry.
+					getSystemObjectDefinitionMetadata(
+						objectDefinition.getName());
+
+			systemObjectDefinitionMetadata.getExternalReferenceCode(primaryKey);
+		}
+		else {
+			_objectEntryLocalService.getObjectEntry(primaryKey);
+		}
 	}
 
 	private void _validateParameterObjectFieldId(

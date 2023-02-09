@@ -63,7 +63,6 @@ import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.OrganizationLocalService;
@@ -96,6 +95,7 @@ import com.liferay.portal.search.sort.FieldSort;
 import com.liferay.portal.search.sort.SortFieldBuilder;
 import com.liferay.portal.search.sort.SortOrder;
 import com.liferay.portal.search.sort.Sorts;
+import com.liferay.portal.util.PortalInstances;
 import com.liferay.users.admin.kernel.file.uploads.UserFileUploadsSettings;
 
 import java.io.Serializable;
@@ -107,12 +107,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -314,7 +312,7 @@ public class AccountEntryLocalServiceImpl
 
 	@Override
 	public void deleteAccountEntriesByCompanyId(long companyId) {
-		if (!CompanyThreadLocal.isDeleteInProcess()) {
+		if (!PortalInstances.isCurrentCompanyInDeletionProcess()) {
 			throw new UnsupportedOperationException(
 				"Deleting account entries by company must be called when " +
 					"deleting a company");
@@ -886,31 +884,23 @@ public class AccountEntryLocalServiceImpl
 	}
 
 	private Long[] _getOrganizationIds(long userId) {
-		List<Organization> organizations =
-			_organizationLocalService.getUserOrganizations(userId);
+		Set<Long> organizationIds = new HashSet<>();
 
-		ListIterator<Organization> listIterator = organizations.listIterator();
+		for (Organization organization :
+				_organizationLocalService.getUserOrganizations(userId)) {
 
-		while (listIterator.hasNext()) {
-			Organization organization = listIterator.next();
+			organizationIds.add(organization.getOrganizationId());
 
 			for (Organization curOrganization :
 					_organizationLocalService.getOrganizations(
 						organization.getCompanyId(),
 						organization.getTreePath() + "%")) {
 
-				listIterator.add(curOrganization);
+				organizationIds.add(curOrganization.getOrganizationId());
 			}
 		}
 
-		Stream<Organization> stream = organizations.stream();
-
-		return stream.map(
-			Organization::getOrganizationId
-		).distinct(
-		).toArray(
-			Long[]::new
-		);
+		return organizationIds.toArray(new Long[0]);
 	}
 
 	private GroupByStep _getOrganizationsAccountEntriesGroupByStep(

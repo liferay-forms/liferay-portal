@@ -33,6 +33,7 @@ import com.liferay.item.selector.criteria.UUIDItemSelectorReturnType;
 import com.liferay.item.selector.criteria.group.criterion.GroupItemSelectorCriterion;
 import com.liferay.learn.LearnMessage;
 import com.liferay.learn.LearnMessageUtil;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.reflect.GenericUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -70,7 +71,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -174,9 +174,8 @@ public class ContentDashboardAdminDisplayContext {
 			return ResourceBundleUtil.getString(
 				_resourceBundle, "content-per-x", vocabularyNames.get(0));
 		}
-		else {
-			return ResourceBundleUtil.getString(_resourceBundle, "content");
-		}
+
+		return ResourceBundleUtil.getString(_resourceBundle, "content");
 	}
 
 	public List<Long> getAuthorIds() {
@@ -297,21 +296,14 @@ public class ContentDashboardAdminDisplayContext {
 			_contentDashboardItemSubtypePayloads = Collections.emptyList();
 		}
 		else {
-			return Stream.of(
-				contentDashboardItemSubtypePayloads
-			).map(
-				contentDashboardItemSubtypePayload ->
-					ContentDashboardItemSubtypeUtil.
-						toContentDashboardItemSubtypeOptional(
-							_contentDashboardItemSubtypeFactoryRegistry,
-							contentDashboardItemSubtypePayload)
-			).filter(
-				Optional::isPresent
-			).map(
-				Optional::get
-			).collect(
-				Collectors.toList()
-			);
+			_contentDashboardItemSubtypePayloads =
+				TransformUtil.transformToList(
+					contentDashboardItemSubtypePayloads,
+					contentDashboardItemSubtypePayload ->
+						ContentDashboardItemSubtypeUtil.
+							toContentDashboardItemSubtype(
+								_contentDashboardItemSubtypeFactoryRegistry,
+								contentDashboardItemSubtypePayload));
 		}
 
 		return _contentDashboardItemSubtypePayloads;

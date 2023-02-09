@@ -13,19 +13,10 @@
  */
 
 import Rest from './Rest';
-import {PickList} from './types';
-
-type TestrayDispatchTrigger = {
-	dispatchTriggerId: number;
-	externalReferenceCode: string;
-	id: number;
-	name: string;
-	output: string;
-	type: string;
-};
+import {PickList, TestrayDispatchTrigger} from './types';
 
 class TestrayDispatchTriggerImpl extends Rest<
-	Partial<TestrayDispatchTrigger & {dueStatus: string}>,
+	Partial<Omit<TestrayDispatchTrigger, 'dueStatus'> & {dueStatus: string}>,
 	TestrayDispatchTrigger & {dueStatus: PickList}
 > {
 	constructor() {

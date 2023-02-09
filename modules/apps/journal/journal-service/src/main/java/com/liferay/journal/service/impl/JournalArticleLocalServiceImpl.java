@@ -65,6 +65,7 @@ import com.liferay.journal.constants.JournalActivityKeys;
 import com.liferay.journal.constants.JournalArticleConstants;
 import com.liferay.journal.constants.JournalConstants;
 import com.liferay.journal.constants.JournalFolderConstants;
+import com.liferay.journal.constants.JournalPortletKeys;
 import com.liferay.journal.content.compatibility.converter.JournalContentCompatibilityConverter;
 import com.liferay.journal.exception.ArticleExpirationDateException;
 import com.liferay.journal.exception.ArticleFriendlyURLException;
@@ -73,6 +74,7 @@ import com.liferay.journal.exception.ArticleVersionException;
 import com.liferay.journal.exception.DuplicateArticleIdException;
 import com.liferay.journal.exception.NoSuchArticleException;
 import com.liferay.journal.exception.RequiredArticleLocalizationException;
+import com.liferay.journal.internal.transformer.JournalTransformer;
 import com.liferay.journal.internal.util.JournalTreePathUtil;
 import com.liferay.journal.internal.util.JournalUtil;
 import com.liferay.journal.internal.validation.JournalArticleModelValidator;
@@ -85,7 +87,6 @@ import com.liferay.journal.model.JournalFolder;
 import com.liferay.journal.model.impl.JournalArticleDisplayImpl;
 import com.liferay.journal.model.impl.JournalArticleImpl;
 import com.liferay.journal.service.JournalArticleResourceLocalService;
-import com.liferay.journal.service.JournalContentSearchLocalService;
 import com.liferay.journal.service.base.JournalArticleLocalServiceBaseImpl;
 import com.liferay.journal.service.persistence.JournalArticleLocalizationPersistence;
 import com.liferay.journal.service.persistence.JournalArticleResourcePersistence;
@@ -98,6 +99,8 @@ import com.liferay.journal.util.comparator.ArticleVersionComparator;
 import com.liferay.layout.display.page.LayoutDisplayPageProviderRegistry;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
+import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
+import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerListFactory;
 import com.liferay.petra.sql.dsl.DSLFunctionFactoryUtil;
 import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
 import com.liferay.petra.string.StringBundler;
@@ -164,6 +167,7 @@ import com.liferay.portal.kernel.settings.GroupServiceSettingsLocator;
 import com.liferay.portal.kernel.social.SocialActivityManagerUtil;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.systemevent.SystemEventHierarchyEntryThreadLocal;
+import com.liferay.portal.kernel.templateparser.TransformerListener;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -225,6 +229,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -1349,11 +1354,6 @@ public class JournalArticleLocalServiceImpl
 
 			_commentManager.deleteDiscussion(
 				JournalArticle.class.getName(), article.getResourcePrimKey());
-
-			// Content searches
-
-			_journalContentSearchLocalService.deleteArticleContentSearches(
-				article.getGroupId(), article.getArticleId());
 
 			// Friendly URL
 
@@ -5901,6 +5901,8 @@ public class JournalArticleLocalServiceImpl
 
 			serviceContext.setAttribute("articleURL", articleURL);
 
+			serviceContext.setCommand(Constants.UPDATE);
+
 			sendEmail(article, articleURL, "requested", serviceContext);
 
 			startWorkflowInstance(userId, article, serviceContext);
@@ -6932,10 +6934,14 @@ public class JournalArticleLocalServiceImpl
 	}
 
 	@Activate
-	protected void activate() {
+	protected void activate(BundleContext bundleContext) {
 		JournalArticleImpl.setDDMFormValuesToFieldsConverter(
 			_ddmFormValuesToFieldsConverter);
 		JournalArticleImpl.setJournalConverter(_journalConverter);
+
+		_serviceTrackerList = ServiceTrackerListFactory.open(
+			bundleContext, TransformerListener.class,
+			"(javax.portlet.name=" + JournalPortletKeys.JOURNAL + ")");
 	}
 
 	protected String addImageFileEntries(JournalArticle article, String value)
@@ -7339,6 +7345,8 @@ public class JournalArticleLocalServiceImpl
 
 		JournalArticleImpl.setDDMFormValuesToFieldsConverter(null);
 		JournalArticleImpl.setJournalConverter(null);
+
+		_serviceTrackerList.close();
 	}
 
 	protected void expireMaxVersionArticles(
@@ -7555,10 +7563,14 @@ public class JournalArticleLocalServiceImpl
 				cacheable = _journalDefaultTemplateProvider.isCacheable();
 			}
 
-			content = JournalUtil.transform(
+			content = _journalTransformer.transform(
 				article, ddmTemplate, _journalHelper, languageId,
-				_layoutDisplayPageProviderRegistry, portletRequestModel,
-				propagateException, script, themeDisplay, viewMode);
+				_layoutDisplayPageProviderRegistry,
+				ListUtil.filter(
+					_serviceTrackerList.toList(),
+					TransformerListener::isEnabled),
+				portletRequestModel, propagateException, script, themeDisplay,
+				viewMode);
 
 			JournalServiceConfiguration journalServiceConfiguration =
 				configurationProvider.getCompanyConfiguration(
@@ -9215,9 +9227,6 @@ public class JournalArticleLocalServiceImpl
 		_journalContentCompatibilityConverter;
 
 	@Reference
-	private JournalContentSearchLocalService _journalContentSearchLocalService;
-
-	@Reference
 	private JournalConverter _journalConverter;
 
 	@Reference
@@ -9228,6 +9237,9 @@ public class JournalArticleLocalServiceImpl
 
 	@Reference
 	private JournalHelper _journalHelper;
+
+	private final JournalTransformer _journalTransformer =
+		new JournalTransformer();
 
 	@Reference
 	private JSONFactory _jsonFactory;
@@ -9259,6 +9271,8 @@ public class JournalArticleLocalServiceImpl
 
 	@Reference
 	private ResourceLocalService _resourceLocalService;
+
+	private ServiceTrackerList<TransformerListener> _serviceTrackerList;
 
 	@Reference
 	private SubscriptionLocalService _subscriptionLocalService;

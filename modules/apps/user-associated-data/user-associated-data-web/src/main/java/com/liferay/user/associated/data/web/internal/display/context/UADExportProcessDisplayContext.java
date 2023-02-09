@@ -30,11 +30,13 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.user.associated.data.constants.UserAssociatedDataPortletKeys;
 import com.liferay.user.associated.data.web.internal.export.background.task.UADExportBackgroundTaskManagerUtil;
+import com.liferay.user.associated.data.web.internal.util.UADLanguageUtil;
 
 import java.io.Serializable;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -73,7 +75,7 @@ public class UADExportProcessDisplayContext {
 	}
 
 	public Comparator<BackgroundTask> getComparator(
-		String orderByCol, String orderByType) {
+		Locale locale, String orderByCol, String orderByType) {
 
 		Comparator<BackgroundTask> comparator = Comparator.comparing(
 			BackgroundTask::getCreateDate);
@@ -88,12 +90,16 @@ public class UADExportProcessDisplayContext {
 					Map<String, Serializable> taskContextMap2 =
 						backgroundTask2.getTaskContextMap();
 
-					String applicationKey1 = (String)taskContextMap1.get(
-						"applicationKey");
-					String applicationKey2 = (String)taskContextMap2.get(
-						"applicationKey");
+					String applicationName1 =
+						UADLanguageUtil.getApplicationName(
+							(String)taskContextMap1.get("applicationKey"),
+							locale);
+					String applicationName2 =
+						UADLanguageUtil.getApplicationName(
+							(String)taskContextMap2.get("applicationKey"),
+							locale);
 
-					return applicationKey1.compareTo(applicationKey2);
+					return applicationName1.compareTo(applicationName2);
 				};
 		}
 
@@ -215,6 +221,7 @@ public class UADExportProcessDisplayContext {
 
 					return backgroundTaskStream.sorted(
 						getComparator(
+							themeDisplay.getLocale(),
 							searchContainer.getOrderByCol(),
 							searchContainer.getOrderByType())
 					).skip(
@@ -242,6 +249,7 @@ public class UADExportProcessDisplayContext {
 
 					return backgroundTaskStream.sorted(
 						getComparator(
+							themeDisplay.getLocale(),
 							searchContainer.getOrderByCol(),
 							searchContainer.getOrderByType())
 					).skip(

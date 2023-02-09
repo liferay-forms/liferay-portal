@@ -1386,7 +1386,11 @@ definition {
 
 		User.viewNotPrimary(primaryValue = "4000 Westchase Blvd");
 
-		UserNavigator.gotoEdit(rowEntry = "205 West Wacker Dr");
+		Click.waitForMenuToggleJSClick(
+			key_listEntry = "205 West Wacker Dr",
+			locator1 = "LexiconList#LIST_ENTRY_ELLIPSIS");
+
+		MenuItem.click(menuItem = "Edit");
 
 		User.editPrimary(makePrimary = "false");
 
@@ -1394,7 +1398,7 @@ definition {
 
 		User.viewIsPrimary(primaryValue = "4000 Westchase Blvd");
 
-		User.makePrimary(rowEntry = "205 West Wacker Dr");
+		User.makeAddressPrimary(listEntry = "205 West Wacker Dr");
 
 		User.viewNotPrimary(primaryValue = "1400 Montefino Ave");
 
@@ -1402,11 +1406,11 @@ definition {
 
 		User.viewNotPrimary(primaryValue = "4000 Westchase Blvd");
 
-		User.removeContactInformation(rowEntry = "4000 Westchase Blvd");
+		User.removeAddress(listEntry = "4000 Westchase Blvd");
 
 		User.viewIsPrimary(primaryValue = "205 West Wacker Dr");
 
-		User.removeContactInformation(rowEntry = "205 West Wacker Dr");
+		User.removeAddress(listEntry = "205 West Wacker Dr");
 
 		User.viewIsPrimary(primaryValue = "1400 Montefino Ave");
 	}
@@ -1529,6 +1533,7 @@ definition {
 		property app.server.types = "jboss,tcserver,tomcat,weblogic,websphere,wildfly";
 		property database.types = "db2,hypersonic,mariadb,mysql,oracle,postgresql,sqlserver,sybase";
 		property environment.acceptance = "true";
+		property operating.system.types = "alpine,amazonlinux,centos,debian,fedora,orcllinux,osx,redhat,solaris,suse,ubuntu,windows";
 		property portal.acceptance = "true";
 
 		JSONUser.addUser(
@@ -1650,8 +1655,6 @@ definition {
 
 	@priority = "4"
 	test ImpersonatingAdministratorandOwner {
-		property test.name.skip.portal.instance = "UsersandorganizationsUsecase#ImpersonatingAdministratorandOwner";
-
 		var siteName = TestCase.getSiteName(siteName = "${siteName}");
 
 		JSONRole.addRegularRole(roleTitle = "Impersonating Role Name");
@@ -2015,11 +2018,10 @@ definition {
 			AssetCategorization.viewTag(tagName = "${tagName}");
 		}
 
-		AssertElementPresent.assertVisible(
-			locator1 = "AssetCategorization#TAGS_SELECT_BUTTON",
-			value1 = "Select");
-
-		Click(locator1 = "AssetCategorization#TAGS_SELECT_BUTTON");
+		Click(
+			key_fieldLabel = "Tags",
+			key_text = "Select",
+			locator1 = "Button#ANY_WITH_LABEL");
 
 		IFrame.selectTagFrame();
 
@@ -2303,7 +2305,7 @@ definition {
 	@description = "This is a use case for LPS-104643."
 	@priority = "3"
 	test UpdateExistUserEmailAddressByScript {
-		property test.name.skip.portal.instance = "UsersandorganizationsUsecase#UpdateExistUserEmailAddressByScript";
+		property test.name.skip.portal.instance = "UsersAdmin#UpdateExistUserEmailAddressByScript";
 
 		JSONUser.addUser(
 			userEmailAddress = "userea@liferay.com",
@@ -2345,7 +2347,7 @@ definition {
 			userEmailAddressEdit = "testadmin@liferay.com",
 			userScreenNameEdit = "testscreen");
 
-		User.viewUserInfomation(
+		User.viewUserInformation(
 			userEmailAddress = "testadmin@liferay.com",
 			userFirstName = "Test",
 			userLastName = "Test",
@@ -2729,10 +2731,6 @@ definition {
 
 	@priority = "4"
 	test ViewUpdateUserViaJSONWS {
-		property test.name.skip.portal.instance = "CPUsersandorganizations#ViewUpdateUserViaJSONWS";
-
-		SearchAdministration.executeReindex();
-
 		ApplicationsMenu.gotoPortlet(
 			category = "Users",
 			panel = "Control Panel",

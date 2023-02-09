@@ -72,6 +72,11 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>layoutSelectorURL</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
 			<name>localizable</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>

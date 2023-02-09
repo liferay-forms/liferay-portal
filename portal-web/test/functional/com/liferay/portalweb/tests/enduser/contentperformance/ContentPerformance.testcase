@@ -287,7 +287,9 @@ definition {
 				locator1 = "ContentPerformance#CONTENT_PERFORMANCE_URL",
 				value1 = "pt/web/test-site-name/test-widget-page-name");
 
-			ContentPerformance.viewTotalViews(numberViews = "0");
+			AssertTextEquals(
+				locator1 = "ContentPerformance#LOCALE_BUTTON",
+				value1 = "pt-BR");
 		}
 	}
 
@@ -336,7 +338,9 @@ definition {
 				locator1 = "ContentPerformance#CONTENT_PERFORMANCE_URL",
 				value1 = "pt/web/test-site-name");
 
-			ContentPerformance.viewTotalViews(numberViews = "0");
+			AssertTextEquals(
+				locator1 = "ContentPerformance#LOCALE_BUTTON",
+				value1 = "pt-BR");
 		}
 	}
 
@@ -665,7 +669,9 @@ definition {
 				locator1 = "ContentPerformance#CONTENT_PERFORMANCE_TITLE",
 				pageName = "Test Widget Page Name");
 
-			ContentPerformance.viewTotalViews(numberViews = "0");
+			AssertVisible(
+				locator1 = "ContentPerformance#CONTENT_PERFORMANCE_TRAFFIC",
+				value1 = "Traffic Channels");
 		}
 	}
 
@@ -681,7 +687,9 @@ definition {
 				locator1 = "ContentPerformance#CONTENT_PERFORMANCE_TITLE",
 				pageName = "Content Page");
 
-			ContentPerformance.viewTotalViews(numberViews = "0");
+			AssertVisible(
+				locator1 = "ContentPerformance#CONTENT_PERFORMANCE_TRAFFIC",
+				value1 = "Traffic Channels");
 		}
 	}
 
@@ -719,7 +727,9 @@ definition {
 				locator1 = "ContentPerformance#CONTENT_PERFORMANCE_TITLE",
 				pageName = "Test Widget Page Name");
 
-			ContentPerformance.viewTotalViews(numberViews = "0");
+			AssertVisible(
+				locator1 = "ContentPerformance#CONTENT_PERFORMANCE_TRAFFIC",
+				value1 = "Traffic Channels");
 		}
 	}
 
@@ -745,7 +755,9 @@ definition {
 				locator1 = "ContentPerformance#CONTENT_PERFORMANCE_TITLE",
 				pageName = "Widget Page Name");
 
-			ContentPerformance.viewTotalViews(numberViews = "0");
+			AssertVisible(
+				locator1 = "ContentPerformance#CONTENT_PERFORMANCE_TRAFFIC",
+				value1 = "Traffic Channels");
 		}
 	}
 

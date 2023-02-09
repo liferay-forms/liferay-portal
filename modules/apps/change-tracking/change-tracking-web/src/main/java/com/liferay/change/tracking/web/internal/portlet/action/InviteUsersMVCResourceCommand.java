@@ -15,6 +15,7 @@
 package com.liferay.change.tracking.web.internal.portlet.action;
 
 import com.liferay.change.tracking.constants.CTActionKeys;
+import com.liferay.change.tracking.constants.CTConstants;
 import com.liferay.change.tracking.constants.CTPortletKeys;
 import com.liferay.change.tracking.model.CTCollection;
 import com.liferay.change.tracking.service.CTCollectionLocalService;
@@ -59,7 +60,10 @@ import com.liferay.portal.kernel.util.WebKeys;
 
 import java.io.IOException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.portlet.PortletException;
 import javax.portlet.ResourceRequest;
@@ -128,10 +132,15 @@ public class InviteUsersMVCResourceCommand
 		HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(
 			resourceRequest);
 
-		CTCollection ctCollection = _ctCollectionLocalService.fetchCTCollection(
-			ParamUtil.getLong(resourceRequest, "ctCollectionId"));
+		long ctCollectionId = ParamUtil.getLong(
+			resourceRequest, "ctCollectionId");
 
-		if (ctCollection == null) {
+		CTCollection ctCollection = _ctCollectionLocalService.fetchCTCollection(
+			ctCollectionId);
+
+		if ((ctCollection == null) &&
+			(ctCollectionId != CTConstants.CT_COLLECTION_ID_PRODUCTION)) {
+
 			JSONPortletResponseUtil.writeJSON(
 				resourceRequest, resourceResponse,
 				JSONUtil.put(
@@ -146,7 +155,8 @@ public class InviteUsersMVCResourceCommand
 		ThemeDisplay themeDisplay = (ThemeDisplay)resourceRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		if (!CTCollectionPermission.contains(
+		if ((ctCollection != null) &&
+			!CTCollectionPermission.contains(
 				themeDisplay.getPermissionChecker(), ctCollection,
 				ActionKeys.PERMISSIONS)) {
 
@@ -162,21 +172,44 @@ public class InviteUsersMVCResourceCommand
 			return;
 		}
 
-		Group group = _groupLocalService.fetchGroup(
-			ctCollection.getCompanyId(),
-			_portal.getClassNameId(CTCollection.class),
-			ctCollection.getCtCollectionId());
+		Group group = null;
+
+		if (ctCollectionId == CTConstants.CT_COLLECTION_ID_PRODUCTION) {
+			group = _groupLocalService.fetchUserGroup(
+				themeDisplay.getCompanyId(), themeDisplay.getUserId());
+		}
+		else {
+			group = _groupLocalService.fetchGroup(
+				ctCollection.getCompanyId(),
+				_portal.getClassNameId(CTCollection.class),
+				ctCollection.getCtCollectionId());
+		}
 
 		if (group == null) {
-			group = _groupLocalService.addGroup(
-				ctCollection.getUserId(),
-				GroupConstants.DEFAULT_PARENT_GROUP_ID,
-				CTCollection.class.getName(), ctCollection.getCtCollectionId(),
-				GroupConstants.DEFAULT_LIVE_GROUP_ID,
-				HashMapBuilder.put(
+			long userId = 0;
+			String className = null;
+			long classPK = 0;
+			Map<Locale, String> nameMap = null;
+
+			if (ctCollectionId == CTConstants.CT_COLLECTION_ID_PRODUCTION) {
+				userId = themeDisplay.getDefaultUserId();
+				className = null;
+				classPK = 0;
+				nameMap = new HashMap<>();
+			}
+			else {
+				userId = ctCollection.getUserId();
+				className = CTCollection.class.getName();
+				classPK = ctCollection.getCtCollectionId();
+				nameMap = HashMapBuilder.put(
 					LocaleUtil.getDefault(), ctCollection.getName()
-				).build(),
-				null, GroupConstants.TYPE_SITE_PRIVATE, false,
+				).build();
+			}
+
+			group = _groupLocalService.addGroup(
+				userId, GroupConstants.DEFAULT_PARENT_GROUP_ID, className,
+				classPK, GroupConstants.DEFAULT_LIVE_GROUP_ID, nameMap, null,
+				GroupConstants.TYPE_SITE_PRIVATE, false,
 				GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION, null, false,
 				true, null);
 		}
@@ -232,8 +265,7 @@ public class InviteUsersMVCResourceCommand
 
 			if (userGroupRoles.isEmpty()) {
 				_sendNotificationEvent(
-					ctCollection.getCtCollectionId(), userIds[i], roleValues[i],
-					themeDisplay);
+					ctCollectionId, userIds[i], roleValues[i], themeDisplay);
 			}
 		}
 

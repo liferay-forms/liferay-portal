@@ -52,12 +52,22 @@ public class ArgPoshiElement extends PoshiElement {
 	public void parsePoshiScript(String poshiScript)
 		throws PoshiScriptParserException {
 
-		addAttribute("value", getDoubleQuotedContent(poshiScript));
+		if (isQuotedContent(poshiScript)) {
+			poshiScript = getDoubleQuotedContent(poshiScript);
+		}
+
+		addAttribute("value", poshiScript);
 	}
 
 	@Override
 	public String toPoshiScript() {
-		return doubleQuoteContent(attributeValue("value"));
+		String attributeValue = attributeValue("value");
+
+		if (isQuotedContent(attributeValue)) {
+			attributeValue = doubleQuoteContent(attributeValue);
+		}
+
+		return attributeValue;
 	}
 
 	protected ArgPoshiElement() {
@@ -93,7 +103,7 @@ public class ArgPoshiElement extends PoshiElement {
 
 		poshiScript = poshiScript.trim();
 
-		if (!poshiScript.startsWith("\"")) {
+		if (!poshiScript.startsWith("\"") && isQuotedContent(poshiScript)) {
 			return false;
 		}
 

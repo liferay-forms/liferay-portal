@@ -81,8 +81,43 @@ definition {
 		Alert.viewSuccessMessage();
 	}
 
+	macro createNewPublicationWithTemplate {
+		if ("${gotoPublicationsAdmin}" == "true") {
+			PublicationsNavigator.openPublicationsAdmin();
+
+			Click(locator1 = "Button#PLUS");
+		}
+		else {
+			Click(locator1 = "Publications#PUBLICATIONS_INDICATOR_BUTTON");
+
+			MenuItem.click(menuItem = "Create New Publication");
+		}
+
+		AssertElementPresent(locator1 = "Publications#TEMPLATE_SELECTOR");
+
+		Select(
+			locator1 = "Publications#TEMPLATE_OPTION",
+			value1 = "${templateName}");
+
+		if (isSet(publicationName)) {
+			AssertTextEquals(
+				locator1 = "Publications#PUBLICATION_NAME",
+				value1 = "${publicationName}");
+		}
+
+		if (isSet(publicationDescription)) {
+			AssertTextEquals(
+				locator1 = "Publications#PUBLICATION_DESCRIPTION",
+				value1 = "${publicationDescription}");
+		}
+
+		Button.click(button = "Create");
+
+		Alert.viewSuccessMessage();
+	}
+
 	macro deletePublication {
-		PublicationsNavigator._gotoPublicationEllipsisItem(
+		PublicationsNavigator.gotoPublicationEllipsisItem(
 			menuItem = "Delete",
 			publicationName = "${publicationName}");
 
@@ -198,9 +233,18 @@ definition {
 	}
 
 	macro inviteUsers {
-		PublicationsNavigator._gotoPublicationEllipsisItem(
-			menuItem = "Invite Users",
-			publicationName = "${publicationName}");
+		if ("${gotoReviewChanges}" == "true") {
+			PublicationsNavigator.gotoPublicationEllipsisItem(
+				menuItem = "Review Changes",
+				publicationName = "${publicationName}");
+
+			Click(locator1 = "PublicationsChanges#INVITE_USERS_ICON");
+		}
+		else {
+			PublicationsNavigator.gotoPublicationEllipsisItem(
+				menuItem = "Invite Users",
+				publicationName = "${publicationName}");
+		}
 
 		if (isSet(publicationRole)) {
 			Click(
@@ -295,14 +339,14 @@ definition {
 		if ("${gotoPublicationsAdmin}" == "true") {
 			PublicationsNavigator.openPublicationsAdmin();
 
-			PublicationsNavigator._gotoPublicationEllipsisItem(
+			PublicationsNavigator.gotoPublicationEllipsisItem(
 				menuItem = "Schedule",
 				publicationName = "${publicationName}");
 		}
 		else if ("${reschedule}" == "true") {
 			PublicationsNavigator.openPublicationsScheduled();
 
-			PublicationsNavigator._gotoPublicationEllipsisItem(
+			PublicationsNavigator.gotoPublicationEllipsisItem(
 				menuItem = "Reschedule",
 				publicationName = "${publicationName}");
 
@@ -381,7 +425,7 @@ definition {
 		if ("${gotoPublicationsAdmin}" == "true") {
 			PublicationsNavigator.openPublicationsAdmin();
 
-			PublicationsNavigator._gotoPublicationEllipsisItem(
+			PublicationsNavigator.gotoPublicationEllipsisItem(
 				menuItem = "Work on Publication",
 				publicationName = "${publicationName}");
 		}
@@ -407,7 +451,7 @@ definition {
 	macro unschedulePublication {
 		PublicationsNavigator.openPublicationsScheduled();
 
-		PublicationsNavigator._gotoPublicationEllipsisItem(
+		PublicationsNavigator.gotoPublicationEllipsisItem(
 			menuItem = "Unschedule",
 			publicationName = "${publicationName}");
 	}
@@ -427,6 +471,13 @@ definition {
 			locator1 = "Message#WARNING_SPECIFIC");
 
 		AssertVisible(locator1 = "Publications#DISABLED_PUBLISH_BUTTON");
+	}
+
+	macro viewInvitedUser {
+		AssertElementPresent(
+			key_publicationRole = "${publicationRole}",
+			key_userInvite = "${userInvite}",
+			locator1 = "Publications#INVITED_USER");
 	}
 
 	macro viewNeedsManualResolution {

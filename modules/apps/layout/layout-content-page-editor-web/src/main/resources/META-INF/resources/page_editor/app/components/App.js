@@ -12,13 +12,14 @@
  * details.
  */
 
+import {ClayIconSpriteContext} from '@clayui/icon';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import ConvertToPageTemplateModal from '../../plugins/convert-to-page-template-modal/components/ConvertToPageTemplateModal';
-import OldConvertToPageTemplateModal from '../../plugins/convert-to-page-template-modal/components/OldConvertToPageTemplateModal';
-import {StyleBookContextProvider} from '../../plugins/page-design-options/hooks/useStyleBook';
+import ConvertToPageTemplateModal from '../../plugins/convert_to_page_template_modal/components/ConvertToPageTemplateModal';
+import {StyleBookContextProvider} from '../../plugins/page_design_options/hooks/useStyleBook';
 import {INIT} from '../actions/types';
+import {config} from '../config/index';
 import {CollectionActiveItemContextProvider} from '../contexts/CollectionActiveItemContext';
 import {ControlsProvider} from '../contexts/ControlsContext';
 import {DisplayPagePreviewItemContextProvider} from '../contexts/DisplayPagePreviewItemContext';
@@ -30,8 +31,9 @@ import {
 	useMovementSource,
 } from '../contexts/KeyboardMovementContext';
 import {StoreContextProvider} from '../contexts/StoreContext';
+import AppHooks from '../hooks/app_hooks/index';
 import {reducer} from '../reducers/index';
-import {DragAndDropContextProvider} from '../utils/drag-and-drop/useDragAndDrop';
+import {DragAndDropContextProvider} from '../utils/drag_and_drop/useDragAndDrop';
 import CommonStylesManager from './CommonStylesManager';
 import {DisplayPagePreviewItemSelector} from './DisplayPagePreviewItemSelector';
 import DragPreview from './DragPreview';
@@ -45,63 +47,60 @@ import ShortcutManager from './ShortcutManager';
 import Sidebar from './Sidebar';
 import Toolbar from './Toolbar';
 import WidgetsManager from './WidgetsManager';
-import AppHooks from './app-hooks/index';
 
 export default function App({state}) {
 	const initialState = reducer(state, {type: INIT});
 
 	return (
-		<StoreContextProvider initialState={initialState} reducer={reducer}>
-			{Liferay.FeatureFlags['LPS-166201'] ? (
+		<ClayIconSpriteContext.Provider value={config.adminThemeSpritemap}>
+			<StoreContextProvider initialState={initialState} reducer={reducer}>
 				<ConvertToPageTemplateModal />
-			) : (
-				<OldConvertToPageTemplateModal />
-			)}
 
-			<ControlsProvider>
-				<CollectionActiveItemContextProvider>
-					<DragAndDropContextProvider>
-						<EditableProcessorContextProvider>
-							<DisplayPagePreviewItemContextProvider>
-								<AppHooks />
+				<ControlsProvider>
+					<CollectionActiveItemContextProvider>
+						<DragAndDropContextProvider>
+							<EditableProcessorContextProvider>
+								<DisplayPagePreviewItemContextProvider>
+									<AppHooks />
 
-								<DisplayPagePreviewItemSelector dark />
+									<DisplayPagePreviewItemSelector dark />
 
-								<DragPreview />
+									<DragPreview />
 
-								<WidgetsManager />
+									<WidgetsManager />
 
-								<FormValidationContextProvider>
-									<Toolbar />
+									<FormValidationContextProvider>
+										<Toolbar />
 
-									<KeyboardMovementContextProvider>
-										<KeyboardManager />
+										<KeyboardMovementContextProvider>
+											<KeyboardManager />
 
-										<KeyboardMovementPreview />
+											<KeyboardMovementPreview />
 
-										<KeyboardMovementText />
+											<KeyboardMovementText />
 
-										<GlobalContextProvider>
-											<CommonStylesManager />
+											<GlobalContextProvider>
+												<CommonStylesManager />
 
-											<LayoutViewport />
+												<LayoutViewport />
 
-											<LayoutBreadcrumbs />
+												<LayoutBreadcrumbs />
 
-											<StyleBookContextProvider>
-												<Sidebar />
+												<StyleBookContextProvider>
+													<Sidebar />
 
-												<ItemConfigurationSidebar />
-											</StyleBookContextProvider>
-										</GlobalContextProvider>
-									</KeyboardMovementContextProvider>
-								</FormValidationContextProvider>
-							</DisplayPagePreviewItemContextProvider>
-						</EditableProcessorContextProvider>
-					</DragAndDropContextProvider>
-				</CollectionActiveItemContextProvider>
-			</ControlsProvider>
-		</StoreContextProvider>
+													<ItemConfigurationSidebar />
+												</StyleBookContextProvider>
+											</GlobalContextProvider>
+										</KeyboardMovementContextProvider>
+									</FormValidationContextProvider>
+								</DisplayPagePreviewItemContextProvider>
+							</EditableProcessorContextProvider>
+						</DragAndDropContextProvider>
+					</CollectionActiveItemContextProvider>
+				</ControlsProvider>
+			</StoreContextProvider>
+		</ClayIconSpriteContext.Provider>
 	);
 }
 

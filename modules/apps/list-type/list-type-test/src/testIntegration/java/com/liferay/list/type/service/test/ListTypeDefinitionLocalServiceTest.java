@@ -27,7 +27,6 @@ import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.service.ObjectDefinitionLocalService;
-import com.liferay.object.util.LocalizedMapUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -37,6 +36,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
 import java.util.Collections;
 
@@ -72,7 +72,8 @@ public class ListTypeDefinitionLocalServiceTest {
 		try {
 			_listTypeDefinitionLocalService.addListTypeDefinition(
 				null, TestPropsValues.getUserId(),
-				Collections.singletonMap(LocaleUtil.US, ""));
+				Collections.singletonMap(LocaleUtil.US, ""),
+				Collections.emptyList());
 
 			Assert.fail();
 		}
@@ -91,11 +92,12 @@ public class ListTypeDefinitionLocalServiceTest {
 			_listTypeDefinitionLocalService.addListTypeDefinition(
 				null, TestPropsValues.getUserId(),
 				Collections.singletonMap(
-					LocaleUtil.US, RandomTestUtil.randomString()));
+					LocaleUtil.US, RandomTestUtil.randomString()),
+				Collections.emptyList());
 
 		ListTypeEntry listTypeEntry =
 			_listTypeEntryLocalService.addListTypeEntry(
-				TestPropsValues.getUserId(),
+				null, TestPropsValues.getUserId(),
 				listTypeDefinition.getListTypeDefinitionId(),
 				StringUtil.randomId(),
 				Collections.singletonMap(
@@ -156,7 +158,9 @@ public class ListTypeDefinitionLocalServiceTest {
 			_listTypeDefinitionLocalService.updateListTypeDefinition(
 				externalReferenceCode,
 				listTypeDefinition.getListTypeDefinitionId(),
-				Collections.singletonMap(LocaleUtil.getDefault(), name));
+				TestPropsValues.getUserId(),
+				Collections.singletonMap(LocaleUtil.getDefault(), name),
+				Collections.emptyList());
 
 		Assert.assertEquals(
 			externalReferenceCode,
@@ -167,7 +171,9 @@ public class ListTypeDefinitionLocalServiceTest {
 		listTypeDefinition =
 			_listTypeDefinitionLocalService.updateListTypeDefinition(
 				StringPool.BLANK, listTypeDefinition.getListTypeDefinitionId(),
-				Collections.singletonMap(LocaleUtil.getDefault(), name));
+				TestPropsValues.getUserId(),
+				Collections.singletonMap(LocaleUtil.getDefault(), name),
+				Collections.emptyList());
 
 		externalReferenceCode = listTypeDefinition.getExternalReferenceCode();
 
@@ -178,7 +184,8 @@ public class ListTypeDefinitionLocalServiceTest {
 		return _listTypeDefinitionLocalService.addListTypeDefinition(
 			null, TestPropsValues.getUserId(),
 			Collections.singletonMap(
-				LocaleUtil.US, RandomTestUtil.randomString()));
+				LocaleUtil.US, RandomTestUtil.randomString()),
+			Collections.emptyList());
 	}
 
 	@Inject

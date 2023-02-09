@@ -394,11 +394,13 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 		}
 
 		Long companyThreadLocalCompanyId = CompanyThreadLocal.getCompanyId();
-		boolean deleteInProcess = CompanyThreadLocal.isDeleteInProcess();
 
-		try {
-			CompanyThreadLocal.setCompanyId(companyId);
-			CompanyThreadLocal.setDeleteInProcess(true);
+		try (SafeCloseable safeCloseable1 =
+				CompanyThreadLocal.setWithSafeCloseable(
+					companyThreadLocalCompanyId);
+			SafeCloseable safeCloseable2 =
+				PortalInstances.setCompanyInDeletionProcess(
+					companyThreadLocalCompanyId)) {
 
 			return doDeleteCompany(companyId);
 		}
@@ -408,10 +410,6 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 			}
 
 			throw portalException;
-		}
-		finally {
-			CompanyThreadLocal.setCompanyId(companyThreadLocalCompanyId);
-			CompanyThreadLocal.setDeleteInProcess(deleteInProcess);
 		}
 	}
 
@@ -1405,16 +1403,6 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 	}
 
 	protected void preregisterCompany(Company company) {
-		try {
-			SearchEngineHelperUtil.initialize(company.getCompanyId());
-		}
-		catch (Exception exception) {
-			_log.error(
-				"Unable to initialize search engine for company " +
-					company.getCompanyId(),
-				exception);
-		}
-
 		PortalInstanceLifecycleManager portalInstanceLifecycleManager =
 			_serviceTracker.getService();
 
@@ -1585,22 +1573,20 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 				throw new CompanyVirtualHostException(
 					"Virtual hostname is invalid");
 			}
-			else {
-				VirtualHost virtualHost =
-					_virtualHostLocalService.fetchVirtualHost(virtualHostname);
 
-				if (virtualHost == null) {
-					return;
-				}
+			VirtualHost virtualHost = _virtualHostLocalService.fetchVirtualHost(
+				virtualHostname);
 
-				Company virtualHostnameCompany =
-					companyPersistence.findByPrimaryKey(
-						virtualHost.getCompanyId());
+			if (virtualHost == null) {
+				return;
+			}
 
-				if (!webId.equals(virtualHostnameCompany.getWebId())) {
-					throw new CompanyVirtualHostException(
-						"Duplicate virtual hostname " + virtualHostname);
-				}
+			Company virtualHostnameCompany =
+				companyPersistence.findByPrimaryKey(virtualHost.getCompanyId());
+
+			if (!webId.equals(virtualHostnameCompany.getWebId())) {
+				throw new CompanyVirtualHostException(
+					"Duplicate virtual hostname " + virtualHostname);
 			}
 		}
 		catch (CompanyVirtualHostException companyVirtualHostException) {
@@ -2254,8 +2240,9 @@ public class CompanyLocalServiceImpl extends CompanyLocalServiceBaseImpl {
 
 			synchronized (_preregisterPendingCompanies) {
 				forEachCompany(
-					company -> portalInstanceLifecycleManager.registerCompany(
-						company),
+					company ->
+						portalInstanceLifecycleManager.preregisterCompany(
+							company),
 					new ArrayList<Company>(_preregisterPendingCompanies));
 
 				_preregisterPendingCompanies.clear();

@@ -341,7 +341,7 @@ public class OracleDB extends BaseDB {
 	private static final String[] _ORACLE = {
 		"--", "1", "0",
 		"to_date('1970-01-01 00:00:00','YYYY-MM-DD HH24:MI:SS')", "sysdate",
-		" blob", " blob", " number(1, 0)", " timestamp", " number(30,20)",
+		" blob", " blob", " number(1, 0)", " timestamp", " binary_double",
 		" number(30,0)", " number(30,0)", " varchar2(4000 char)", " clob",
 		" varchar2", "", "commit"
 	};

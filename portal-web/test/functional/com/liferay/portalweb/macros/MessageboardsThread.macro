@@ -1032,7 +1032,19 @@ definition {
 			Check(locator1 = "Checkbox#ANONYMOUS");
 		}
 
-		Click(locator1 = "MessageBoardsThread#THREAD_PUBLISH_BUTTON");
+		if (isSet(saveAsDraft)) {
+			AssertClick(
+				key_text = "Advanced Reply",
+				locator1 = "Button#ANY",
+				value1 = "Advanced Reply");
+
+			AssertClick(
+				locator1 = "Button#SAVE_AS_DRAFT",
+				value1 = "Save as Draft");
+		}
+		else {
+			Click(locator1 = "MessageBoardsThread#THREAD_PUBLISH_BUTTON");
+		}
 
 		Alert.viewSuccessMessage();
 
@@ -1861,6 +1873,12 @@ definition {
 			AssertTextEquals(
 				locator1 = "MessageBoardsThread#MESSAGE_RATING_THUMBS_DOWN",
 				value1 = "0");
+
+			if (isSet(threadReplyStatus)) {
+				AssertTextEquals(
+					locator1 = "MessageBoardsThread#MESSAGE_WORKFLOW_STATUS_1",
+					value1 = "${threadReplyStatus}");
+			}
 		}
 
 		if ("${guestReply}" == "false") {

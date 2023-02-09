@@ -21,11 +21,11 @@ import PropTypes from 'prop-types';
 import React, {useEffect, useMemo, useState} from 'react';
 
 import SidebarPanelHeader from '../../common/components/SidebarPanelHeader';
-import {useId} from '../../core/hooks/useId';
+import {useId} from '../../common/hooks/useId';
 import {
 	PANELS,
 	selectPanels,
-} from '../../plugins/browser/components/page-structure/selectors/selectPanels';
+} from '../../plugins/browser/components/page_structure/selectors/selectPanels';
 import {ITEM_TYPES} from '../config/constants/itemTypes';
 import {useCollectionActiveItemContext} from '../contexts/CollectionActiveItemContext';
 import {CollectionItemContext} from '../contexts/CollectionItemContext';

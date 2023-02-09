@@ -686,7 +686,10 @@ definition {
 				locator1 = "APConfigurationSites#SITES_TABLE_NAME",
 				value1 = "${siteName}");
 
-			Click(locator1 = "SitesSelectSite#SITES_TABLE_CHOOSE_SITE_LINK");
+			Click(
+				key_columnName = "title",
+				key_tableEntry = "${siteName}",
+				locator1 = "LexiconTable#TABLE_ENTRY_INFO");
 
 			Alert.viewSuccessMessage();
 
@@ -1043,9 +1046,7 @@ definition {
 			}
 		}
 		else {
-			LexiconEntry.changeDisplayStyle(displayStyle = "list");
-
-			Click(locator1 = "AssetLists#ASSET_LIST_ENTRY_TITLE");
+			Click(locator1 = "AssetLists#ASSET_LIST_ENTRY_TITLE_CARD");
 		}
 
 		if (isSet(assetListName)) {
@@ -1303,7 +1304,11 @@ definition {
 				locator1 = "APConfigurationSites#SITES_TABLE_NAME",
 				value1 = "${liferaySiteName}");
 
-			AssertElementPresent(locator1 = "SitesSelectSite#SITES_TABLE_CHOOSE_SITE_LINK");
+			AssertTextEquals(
+				key_columnName = "title",
+				key_tableEntry = "${liferaySiteName}",
+				locator1 = "LexiconTable#TABLE_ENTRY_INFO",
+				value1 = "${liferaySiteName}");
 		}
 		else if ("${contentSharingAcrossSitesEnabled}" == "false") {
 			AssertTextEquals(

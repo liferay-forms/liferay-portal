@@ -97,19 +97,16 @@ definition {
 			fieldLabel = "Text",
 			fieldName = "Text");
 
-		var originalFieldReference = DEBuilder.getFieldReference(fieldLabel = "Text");
-
 		DEBuilder.editFieldReference(
 			fieldLabel = "Text",
 			fieldReference = "");
 
-		WebContentStructures.saveCP();
+		Button.click(button = "Save");
 
-		WebContentNavigator.gotoEditStructure(structureName = "WC Structure Title");
-
-		DEBuilder.assertFieldReference(
-			fieldLabel = "Text",
-			fieldReference = "${originalFieldReference}");
+		AssertTextEquals.assertPartialText(
+			key_alertMessage = "Invalid characters were defined for field",
+			locator1 = "Message#ERROR_ENTER_A_VALID_VALUE",
+			value1 = "Invalid characters were defined for field");
 	}
 
 	@description = "This is a test for LRQA-68737. This test verifies that field reference can not be blank for the Options of a field."
@@ -135,20 +132,17 @@ definition {
 			fieldLabel = "Single Selection",
 			optionReferenceList = "");
 
-		WebContentStructures.saveCP();
+		DEBuilder.openField(fieldLabel = "Single Selection");
 
-		WebContentNavigator.gotoEditStructure(structureName = "WC Structure Title");
-
-		DEBuilder.assertOptionReferences(
-			fieldLabel = "Single Selection",
-			optionReferenceList = "${originalOptionReference}");
+		AssertTextEquals.assertValue(
+			index = "1",
+			locator1 = "Sidebar#OPTION_WITHOUT_LABEL_FIELD_REFERENCE_INPUT",
+			value1 = "${originalOptionReference}");
 	}
 
 	@description = "This is a test for LRQA-68737. This test verifies that the field reference can not be the same for two fields."
 	@priority = "5"
 	test CanNotBeTheSameForTwoFields {
-		property portal.upstream = "quarantine";
-
 		NavItem.gotoStructures();
 
 		WebContentStructures.addCP(structureName = "WC Structure Title");
@@ -157,9 +151,11 @@ definition {
 			fieldLabel = "First Text",
 			fieldName = "Text");
 
+		var textReference = "TextReference";
+
 		DEBuilder.editFieldReference(
 			fieldLabel = "First Text",
-			fieldReference = "TextReference");
+			fieldReference = "${textReference}");
 
 		DEBuilder.addField(
 			fieldLabel = "Second Text",
@@ -170,15 +166,14 @@ definition {
 		DEBuilder.editFieldReference(
 			assertErrorMessage = "This reference is already being used. Try a different one.",
 			fieldLabel = "Second Text",
-			fieldReference = "TextReference");
+			fieldReference = "${textReference}");
 
-		WebContentStructures.saveCP();
+		Button.click(button = "Save");
 
-		WebContentNavigator.gotoEditStructure(structureName = "WC Structure Title");
-
-		DEBuilder.assertFieldReference(
-			fieldLabel = "Second Text",
-			fieldReference = "${originalFieldReference}");
+		AssertTextEquals.assertPartialText(
+			key_alertMessage = "The definition field name ${textReference} was defined more than once",
+			locator1 = "Message#ERROR_ENTER_A_VALID_VALUE",
+			value1 = "The definition field name ${textReference} was defined more than once");
 	}
 
 	@description = "This is a test for LRQA-68737. This test verifies that field reference can not be the same for two Options of fields."

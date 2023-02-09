@@ -73,6 +73,8 @@ public class CopyFragmentEntryMVCActionCommand extends BaseMVCActionCommand {
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
+		hideDefaultSuccessMessage(actionRequest);
+
 		sendRedirect(
 			actionRequest, actionResponse,
 			PortletURLBuilder.createRenderURL(

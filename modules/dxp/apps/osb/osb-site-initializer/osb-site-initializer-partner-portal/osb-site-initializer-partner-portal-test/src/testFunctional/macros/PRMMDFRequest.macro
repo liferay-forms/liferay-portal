@@ -1,5 +1,38 @@
 definition {
 
+	macro activityCollapseButton {
+		Click.mouseDownMouseUp(
+			key_textButton = "${button}",
+			locator1 = "PRMMDFRequest#TEXT_BUTTON");
+	}
+
+	@summary = "Add a new activity"
+	macro addNewActivity {
+		Click(
+			key_buttonText = "Add Activity",
+			locator1 = "PRMMDFRequest#ADD_BUTTON");
+	}
+
+	@summary = "Assert claim message"
+	macro assertClaimMessage {
+		AssertTextEquals.assertPartialText(
+			locator1 = "PRMMDFRequest#CLAIM_MESSAGE",
+			value1 = "${key_claimMessage}");
+	}
+
+	@summary = "Change MDF status"
+	macro changeMDFStatus {
+		Click(
+			key_MDFName = "${campaignName}",
+			locator1 = "PRMMDFRequest#REQUEST_ID");
+
+		ClickNoError(
+			buttonId = "${key_statusButton}",
+			locator1 = "PRMMDFRequest#STATUS_BUTTON");
+
+		Confirm.acceptAlert();
+	}
+
 	@summary = "Add a new MDF Request filling the goals and activity pages"
 	macro createNewRequest {
 		PRMMDFRequest.fillGoalsPage(
@@ -14,11 +47,8 @@ definition {
 
 		Button.click(button = "Continue");
 
-		Click(
-			key_buttonText = "Add Activity",
-			locator1 = "PRMMDFRequest#ADD_BUTTON");
-
 		PRMMDFRequest.newActivity(
+			activityDescription = "${activityDescription}",
 			activityName = "${activityName}",
 			budgetList = "${budgetList}",
 			followUpStrategy = "${followUpStrategy}",
@@ -41,38 +71,50 @@ definition {
 
 	@summary = "Fill the goals page form"
 	macro fillGoalsPage {
-		Select(
-			key_fieldName = "company",
-			locator1 = "PRMMDFRequest#SELECT",
-			value1 = "${accountName}");
-
-		Select(
-			key_fieldName = "country",
-			locator1 = "PRMMDFRequest#SELECT",
-			value1 = "${countryName}");
-
-		Type(
-			key_fieldName = "overallCampaignName",
-			locator1 = "PRMMDFRequest#TEXT_FIELD",
-			value1 = "${campaignName}");
-
-		Type(
-			key_fieldName = "overallCampaignDescription",
-			locator1 = "PRMMDFRequest#TEXT_FIELD",
-			value1 = "${campaignDescription}");
-
-		for (var goalsList : list "${goalsOptions}") {
-			Click.clickAtNotVisible(
-				key_fieldName = "liferayBusinessSalesGoals",
-				key_optionValue = "${goalsList}",
-				locator1 = "PRMMDFRequest#CHECKBOX");
+		if (isSet(accountName)) {
+			Select(
+				key_fieldName = "company",
+				locator1 = "PRMMDFRequest#SELECT",
+				value1 = "${accountName}");
 		}
 
-		for (var targetMarketList : list "${targetMarketOptions}") {
-			Click.clickAtNotVisible(
-				key_fieldName = "targetMarkets",
-				key_optionValue = "${targetMarketList}",
-				locator1 = "PRMMDFRequest#CHECKBOX");
+		if (isSet(countryName)) {
+			Select(
+				key_fieldName = "country",
+				locator1 = "PRMMDFRequest#SELECT",
+				value1 = "${countryName}");
+		}
+
+		if (isSet(campaignName)) {
+			Type(
+				key_fieldName = "overallCampaignName",
+				locator1 = "PRMMDFRequest#TEXT_FIELD",
+				value1 = "${campaignName}");
+		}
+
+		if (isSet(campaignDescription)) {
+			Type(
+				key_fieldName = "overallCampaignDescription",
+				locator1 = "PRMMDFRequest#TEXT_FIELD",
+				value1 = "${campaignDescription}");
+		}
+
+		if (isSet(goalsOptions)) {
+			for (var goalsList : list "${goalsOptions}") {
+				Click.clickAtNotVisible(
+					key_fieldName = "liferayBusinessSalesGoals",
+					key_optionValue = "${goalsList}",
+					locator1 = "PRMMDFRequest#CHECKBOX");
+			}
+		}
+
+		if (isSet(targetMarketOptions)) {
+			for (var targetMarketList : list "${targetMarketOptions}") {
+				Click.clickAtNotVisible(
+					key_fieldName = "targetMarkets",
+					key_optionValue = "${targetMarketList}",
+					locator1 = "PRMMDFRequest#CHECKBOX");
+			}
 		}
 
 		if (isSet(additionalOptions)) {
@@ -84,11 +126,13 @@ definition {
 			}
 		}
 
-		for (var targetRolesList : list "${targetRolesOptions}") {
-			Click.clickAtNotVisible(
-				key_fieldName = "targetAudienceRoles",
-				key_optionValue = "${targetRolesList}",
-				locator1 = "PRMMDFRequest#CHECKBOX");
+		if (isSet(targetRolesOptions)) {
+			for (var targetRolesList : list "${targetRolesOptions}") {
+				Click.clickAtNotVisible(
+					key_fieldName = "targetAudienceRoles",
+					key_optionValue = "${targetRolesList}",
+					locator1 = "PRMMDFRequest#CHECKBOX");
+			}
 		}
 	}
 
@@ -101,6 +145,37 @@ definition {
 		}
 
 		return "${nextDayDate}";
+	}
+
+	@summary = "Fill the date fields on Activity Form"
+	macro insertDate {
+		if (!(isSet(activityIndex))) {
+			var activityIndex = "0";
+		}
+
+		var currentDate = DateUtil.getFormattedDate("${dateRange}", "${dateFormat}");
+
+		if ("${fieldName}" == "startDate") {
+			Type.sendKeys(
+				key_fieldName = "activities[${activityIndex}].startDate",
+				locator1 = "PRMMDFRequest#TEXT_FIELD",
+				value1 = "${currentDate}");
+
+			Click(
+				key_fieldName = "activities[${activityIndex}].endDate",
+				locator1 = "PRMMDFRequest#TEXT_FIELD");
+		}
+
+		if ("${fieldName}" == "endDate") {
+			Type.sendKeys(
+				key_fieldName = "activities[${activityIndex}].endDate",
+				locator1 = "PRMMDFRequest#TEXT_FIELD",
+				value1 = "${currentDate}");
+
+			Click(
+				key_fieldName = "activities[${activityIndex}].startDate",
+				locator1 = "PRMMDFRequest#TEXT_FIELD");
+		}
 	}
 
 	@summary = "Add a new activity"
@@ -127,6 +202,35 @@ definition {
 			key_fieldName = "activities[${activityIndex}].tactic",
 			locator1 = "PRMMDFRequest#SELECT",
 			value1 = "${tactic}");
+
+		Type(
+			key_fieldName = "activities[${activityIndex}].activityDescription.marketingActivity",
+			locator1 = "PRMMDFRequest#TEXT_FIELD",
+			value1 = "${activityDescription}");
+
+		Click.clickAtNotVisible(
+			key_buttonText = "${leadList}",
+			key_fieldName = "activities[${activityIndex}].activityDescription.leadGenerated",
+			locator1 = "PRMMDFRequest#INPUT_BUTTON");
+
+		if ("${leadList}" == "Yes") {
+			Type(
+				key_fieldName = "activities[${activityIndex}].activityDescription.targetOfLeads",
+				locator1 = "PRMMDFRequest#TEXT_FIELD",
+				value1 = "${targetOfLeads}");
+
+			for (var leadFollowUp : list "${leadFollowUpList}") {
+				Click.clickAtNotVisible(
+					key_fieldName = "activities[${activityIndex}].activityDescription.leadFollowUpStrategies",
+					key_optionValue = "${leadFollowUp}",
+					locator1 = "PRMMDFRequest#CHECKBOX");
+			}
+
+			Type(
+				key_fieldName = "activities[${activityIndex}].activityDescription.detailsLeadFollowUp",
+				locator1 = "PRMMDFRequest#TEXT_FIELD",
+				value1 = "${followUpStrategy}");
+		}
 
 		var startDate = PRMMDFRequest.formatDate();
 
@@ -164,28 +268,20 @@ definition {
 
 			var budgetIndex = ${budgetIndex} + 1;
 		}
+	}
 
-		Click.clickAtNotVisible(
-			key_fieldName = "activities[${activityIndex}].leadGenerated",
-			key_optionValue = "${leadList}",
-			locator1 = "PRMMDFRequest#CHECKBOX");
+	@summary = "Assert button is not clickable"
+	macro viewDisabledButton {
+		AssertElementPresent(
+			key_text = "${buttonName}",
+			locator1 = "Button#ANY_DISABLED");
+	}
 
-		Type(
-			key_fieldName = "activities[${activityIndex}].targetOfLeads",
-			locator1 = "PRMMDFRequest#TEXT_FIELD",
-			value1 = "${targetOfLeads}");
+	@summary = "Verify error messages"
+	macro viewErrorMessage {
+		var key_errorMessage = "${errorMessage}";
 
-		for (var leadFollowUp : list "${leadFollowUpList}") {
-			Click.clickAtNotVisible(
-				key_fieldName = "activities[${activityIndex}].leadFollowUpStrategies",
-				key_optionValue = "${leadFollowUp}",
-				locator1 = "PRMMDFRequest#CHECKBOX");
-		}
-
-		Type(
-			key_fieldName = "activities[${activityIndex}].detailsLeadFollowUp",
-			locator1 = "PRMMDFRequest#TEXT_FIELD",
-			value1 = "${followUpStrategy}");
+		AssertElementPresent(locator1 = "PRMMDFRequest#ERROR_MESSAGE");
 	}
 
 }

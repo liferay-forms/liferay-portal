@@ -151,9 +151,6 @@ public interface PropsKeys {
 	public static final String ASSET_BROWSER_SEARCH_WITH_DATABASE =
 		"asset.browser.search.with.database";
 
-	public static final String ASSET_CATEGORIES_SEARCH_HIERARCHICAL =
-		"asset.categories.search.hierarchical";
-
 	public static final String ASSET_CATEGORIES_SELECTOR_MAX_ENTRIES =
 		"asset.categories.selector.max.entries";
 
@@ -2628,12 +2625,6 @@ public interface PropsKeys {
 		"template.engine.service.locator.restrict";
 
 	public static final String TERMS_OF_USE_REQUIRED = "terms.of.use.required";
-
-	public static final String TEXT_EXTRACTION_FORK_PROCESS_ENABLED =
-		"text.extraction.fork.process.enabled";
-
-	public static final String TEXT_EXTRACTION_FORK_PROCESS_MIME_TYPES =
-		"text.extraction.fork.process.mime.types";
 
 	public static final String THEME_CSS_FAST_LOAD = "theme.css.fast.load";
 

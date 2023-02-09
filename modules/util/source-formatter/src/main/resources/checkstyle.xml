@@ -283,7 +283,8 @@
 		<module name="com.liferay.source.formatter.checkstyle.check.ComponentAnnotationCheck">
 			<property name="category" value="Bug Prevention" />
 			<property name="description" value="Performs several checks on classes with @Component annotation." />
-			<message key="configuration.policy.incorrect" value="Always specify ''configurationPolicy = ConfigurationPolicy.REQUIRE'' when a classs extends ''BaseAuthVerifierPipelineConfigurator''" />
+			<message key="configuration.policy.incorrect" value="Always specify ''configurationPolicy = ConfigurationPolicy.REQUIRE'' when a class extends ''BaseAuthVerifierPipelineConfigurator''" />
+			<message key="configuration.policy.unnecessary" value="Remove ''configurationPolicy = {0}'' as it is unnecessary" />
 			<message key="osgi.jaxrs.name.incorrect" value="The value of ''osgi.jaxrs.name'' should end with ''{0}''" />
 		</module>
 		<module name="com.liferay.source.formatter.checkstyle.check.ConcatCheck">
@@ -677,7 +678,19 @@
 		<module name="com.liferay.source.formatter.checkstyle.check.ResourceImplCheck">
 			<property name="category" value="Bug Prevention" />
 			<property name="description" value="Performs several checks on `*ResourceImpl` classes (except `Base*ResourceImpl` classes)." />
+			<property name="enabled" value="false" />
 			<message key="invalid.method.parameter.annotation" value="Remove annotation ''{0}'' from method parameter ''{1}''" />
+		</module>
+		<module name="com.liferay.source.formatter.checkstyle.check.ResourcePermissionCheck">
+			<property name="category" value="Bug Prevention" />
+			<property name="description" value="Performs several checks on `*ResourcePermission` classes." />
+			<message key="remove.service.ranking.property" value="Remove property ''{0}'' from @Component annotation" />
+		</module>
+		<module name="com.liferay.source.formatter.checkstyle.check.ResourcePermissionFactoryCheck">
+			<property name="category" value="Performance" />
+			<property name="description" value="Checks usage of `*ResourcePermissionFactory` classes." />
+			<property name="enabled" value="false" />
+			<message key="deprecated.get.instance.usage" value="Do not use ''{0}''. Use @Reference instead" />
 		</module>
 		<module name="com.liferay.source.formatter.checkstyle.check.SelfReferenceCheck">
 			<property name="category" value="Bug Prevention" />

@@ -33,11 +33,14 @@ definition {
 			portlet = "Roles");
 
 		RoleNavigator.gotoDefineRolePermissions(
-			permissionNavigationKey = "CONTROL_PANEL_USERS_USERS_AND_ORGANIZATIONS",
-			portlet = "Users and Organizations",
+			permissionNavHeader = "Users",
+			permissionNavItem = "Users and Organizations",
 			roleTitle = "Guest");
 
-		AssertElementPresent.assertVisible(locator1 = "RolesPermissions#CONTROL_PANEL_CUSTOM_OBJECTS_PERMISSIONS_APPLICATION_PERMISSION_ACTION_CHECKBOX");
+		AssertElementPresent.assertVisible(
+			key_permissionSheetSubtitle = "Application Permissions",
+			key_permissionValue = "Action",
+			locator1 = "RolesPermissions#PERMISSION_CHECKBOX");
 	}
 
 	@priority = "3"
@@ -151,7 +154,7 @@ definition {
 
 		// The define permission via json macro is not able to change the permission scope
 
-		Role.editPermissionCmdCPUI(
+		Role.editPermissionCP(
 			define = "true",
 			permissionNavHeader = "Content & Data",
 			permissionNavItem = "Documents and Media",
@@ -172,7 +175,7 @@ definition {
 
 		// The define permission via json macro is not able to change the permission scope
 
-		Role.editPermissionCmdCPUI(
+		Role.editPermissionCP(
 			permissionNavHeader = "Content & Data",
 			permissionNavItem = "Documents and Media",
 			permissionSheetSubtitle = "Documents",
@@ -242,7 +245,7 @@ definition {
 
 		LexiconEntry.gotoEntry(rowEntry = "Permission Scope");
 
-		Role.editPermissionCmdCPUI(
+		Role.editPermissionCP(
 			define = "true",
 			permissionNavHeader = "Applications",
 			permissionNavItem = "Documents and Media",
@@ -521,6 +524,7 @@ definition {
 		property app.server.types = "jboss,tcserver,tomcat,weblogic,websphere,wildfly";
 		property database.types = "db2,hypersonic,mariadb,mysql,oracle,postgresql,sqlserver,sybase";
 		property environment.acceptance = "true";
+		property operating.system.types = "alpine,amazonlinux,centos,debian,fedora,orcllinux,osx,redhat,solaris,suse,ubuntu,windows";
 		property portal.acceptance = "true";
 
 		Role.openRolesAdmin();

@@ -50,7 +50,6 @@ import org.osgi.service.component.annotations.Reference;
  * @author Pavel Savinov
  */
 @Component(
-	immediate = true,
 	property = "ddm.form.field.type.name=" + JournalArticleDDMFormFieldTypeConstants.JOURNAL_ARTICLE,
 	service = {
 		DDMFormFieldTemplateContextContributor.class,
@@ -173,7 +172,7 @@ public class JournalArticleDDMFormFieldTemplateContextContributor
 	private long _getRefererClassPK(HttpServletRequest httpServletRequest) {
 		String articleId = ParamUtil.getString(httpServletRequest, "articleId");
 
-		if (Validator.isNotNull(articleId)) {
+		if (Validator.isNull(articleId)) {
 			return 0;
 		}
 

@@ -15,10 +15,11 @@
 package com.liferay.portal.search.tuning.rankings.web.internal.results.builder;
 
 import com.liferay.document.library.kernel.service.DLAppLocalService;
-import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.security.permission.ResourceActions;
 import com.liferay.portal.kernel.util.FastDateFormatFactory;
@@ -36,9 +37,6 @@ import com.liferay.portal.search.tuning.rankings.web.internal.index.RankingIndex
 import com.liferay.portal.search.tuning.rankings.web.internal.index.name.RankingIndexName;
 import com.liferay.portal.search.tuning.rankings.web.internal.searcher.helper.RankingSearchRequestHelper;
 import com.liferay.portal.search.tuning.rankings.web.internal.util.RankingResultUtil;
-
-import java.util.Optional;
-import java.util.stream.Stream;
 
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
@@ -75,10 +73,10 @@ public class RankingGetVisibleResultsBuilder {
 	}
 
 	public JSONObject build() {
-		Optional<Ranking> optional = _rankingIndexReader.fetchOptional(
+		Ranking ranking = _rankingIndexReader.fetch(
 			_rankingIndexName, _rankingId);
 
-		if (!optional.isPresent()) {
+		if (ranking == null) {
 			return JSONUtil.put(
 				"documents", JSONFactoryUtil.createJSONArray()
 			).put(
@@ -86,12 +84,13 @@ public class RankingGetVisibleResultsBuilder {
 			);
 		}
 
-		Ranking ranking = optional.get();
-
 		SearchResponse searchResponse = _getSearchResponse(ranking);
 
 		return JSONUtil.put(
-			"documents", buildDocuments(ranking, searchResponse)
+			"documents",
+			JSONUtil.toJSONArray(
+				searchResponse.getDocuments(),
+				document -> translate(document, ranking), _log)
 		).put(
 			"total", searchResponse.getTotalHits()
 		);
@@ -125,21 +124,6 @@ public class RankingGetVisibleResultsBuilder {
 		_size = size;
 
 		return this;
-	}
-
-	protected JSONArray buildDocuments(
-		Ranking ranking, SearchResponse searchResponse) {
-
-		Stream<Document> documentsStream = searchResponse.getDocumentsStream();
-
-		Stream<JSONObject> jsonObjectStream = documentsStream.map(
-			document -> translate(document, ranking));
-
-		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
-
-		jsonObjectStream.forEach(jsonArray::put);
-
-		return jsonArray;
 	}
 
 	protected SearchRequest buildSearchRequest(Ranking ranking) {
@@ -202,6 +186,9 @@ public class RankingGetVisibleResultsBuilder {
 	private boolean _isAssetDeleted(Document document) {
 		return RankingResultUtil.isAssetDeleted(document);
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		RankingGetVisibleResultsBuilder.class.getName());
 
 	private long _companyId;
 	private final ComplexQueryPartBuilderFactory

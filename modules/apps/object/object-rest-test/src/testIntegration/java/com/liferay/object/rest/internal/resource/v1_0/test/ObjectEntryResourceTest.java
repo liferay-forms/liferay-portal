@@ -24,17 +24,19 @@ import com.liferay.object.rest.internal.resource.v1_0.test.util.HTTPTestUtil;
 import com.liferay.object.rest.internal.resource.v1_0.test.util.ObjectDefinitionTestUtil;
 import com.liferay.object.rest.internal.resource.v1_0.test.util.ObjectEntryTestUtil;
 import com.liferay.object.rest.internal.resource.v1_0.test.util.ObjectRelationshipTestUtil;
+import com.liferay.object.service.ObjectDefinitionLocalService;
+import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
-import com.liferay.object.util.LocalizedMapUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
-import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
-import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.Http;
+import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
@@ -48,8 +50,10 @@ import java.util.Collections;
 import org.hamcrest.CoreMatchers;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -67,6 +71,30 @@ public class ObjectEntryResourceTest {
 		new AggregateTestRule(
 			new LiferayIntegrationTestRule(),
 			PermissionCheckerMethodTestRule.INSTANCE);
+
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+		PropsUtil.addProperties(
+			UnicodePropertiesBuilder.setProperty(
+				"feature.flag.LPS-153117", "true"
+			).build());
+		PropsUtil.addProperties(
+			UnicodePropertiesBuilder.setProperty(
+				"feature.flag.LPS-164801", "true"
+			).build());
+	}
+
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+		PropsUtil.addProperties(
+			UnicodePropertiesBuilder.setProperty(
+				"feature.flag.LPS-153117", "false"
+			).build());
+		PropsUtil.addProperties(
+			UnicodePropertiesBuilder.setProperty(
+				"feature.flag.LPS-164801", "false"
+			).build());
+	}
 
 	@Before
 	public void setUp() throws Exception {
@@ -95,145 +123,41 @@ public class ObjectEntryResourceTest {
 	public void tearDown() throws Exception {
 		_objectRelationshipLocalService.deleteObjectRelationship(
 			_objectRelationship);
+
+		_objectDefinitionLocalService.deleteObjectDefinition(
+			_objectDefinition1);
+		_objectDefinitionLocalService.deleteObjectDefinition(
+			_objectDefinition2);
 	}
 
 	@Test
-	public void testDeleteCustomObjectDefinition1WithCustomObjectDefinition2()
+	public void testFilterByRelatedObjectDefinitionSystemObjectField()
 		throws Exception {
 
-		Long irrelevantCurrentObjectId = RandomTestUtil.randomLong();
+		PropsUtil.addProperties(
+			UnicodePropertiesBuilder.setProperty(
+				"feature.flag.LPS-154672", "true"
+			).build());
 
-		_objectRelationship = _addObjectRelationship(
-			StringUtil.randomId(), _objectEntry1.getPrimaryKey(),
-			_objectEntry2.getPrimaryKey(),
+		_objectRelationship = _addObjectRelationshipAndRelateObjectsEntries(
 			ObjectRelationshipConstants.TYPE_MANY_TO_MANY);
 
-		_testDeleteCustomObjectDefinition1WithCustomObjectDefinition2(
-			com.liferay.petra.string.StringBundler.concat(
-				_objectDefinition1.getRESTContextPath(), StringPool.SLASH,
-				_objectEntry1.getPrimaryKey(), StringPool.SLASH,
-				_objectRelationship.getName(), StringPool.SLASH,
-				_objectEntry2.getPrimaryKey()),
-			com.liferay.petra.string.StringBundler.concat(
-				_objectDefinition1.getRESTContextPath(), StringPool.SLASH,
-				_objectEntry1.getPrimaryKey(), StringPool.SLASH,
-				_objectRelationship.getName()));
+		_testFilterByRelatedObjectDefinitionSystemObjectField(
+			_objectRelationship);
 
-		_objectRelationship = _addObjectRelationship(
-			StringUtil.randomId(), _objectEntry1.getPrimaryKey(),
-			_objectEntry2.getPrimaryKey(),
-			ObjectRelationshipConstants.TYPE_MANY_TO_MANY);
+		_objectRelationshipLocalService.deleteObjectRelationship(
+			_objectRelationship);
 
-		_testDeleteCustomObjectDefinition1WithCustomObjectDefinition2(
-			com.liferay.petra.string.StringBundler.concat(
-				_objectDefinition2.getRESTContextPath(), StringPool.SLASH,
-				_objectEntry2.getPrimaryKey(), StringPool.SLASH,
-				_objectRelationship.getName(), StringPool.SLASH,
-				_objectEntry1.getPrimaryKey()),
-			com.liferay.petra.string.StringBundler.concat(
-				_objectDefinition2.getRESTContextPath(), StringPool.SLASH,
-				_objectEntry2.getPrimaryKey(), StringPool.SLASH,
-				_objectRelationship.getName()));
-
-		_objectRelationship = _addObjectRelationship(
-			StringUtil.randomId(), _objectEntry1.getPrimaryKey(),
-			_objectEntry2.getPrimaryKey(),
-			ObjectRelationshipConstants.TYPE_MANY_TO_MANY);
-
-		_testDeleteCustomObjectDefinition1WithCustomObjectDefinition2NotFound(
-			com.liferay.petra.string.StringBundler.concat(
-				_objectDefinition2.getRESTContextPath(), StringPool.SLASH,
-				irrelevantCurrentObjectId, StringPool.SLASH,
-				_objectRelationship.getName(), StringPool.SLASH,
-				_objectEntry1.getPrimaryKey()),
-			com.liferay.petra.string.StringBundler.concat(
-				_objectDefinition2.getRESTContextPath(), StringPool.SLASH,
-				_objectEntry2.getPrimaryKey(), StringPool.SLASH,
-				_objectRelationship.getName(), StringPool.SLASH,
-				irrelevantCurrentObjectId),
-			com.liferay.petra.string.StringBundler.concat(
-				_objectDefinition2.getRESTContextPath(), StringPool.SLASH,
-				_objectEntry2.getPrimaryKey(), StringPool.SLASH,
-				_objectRelationship.getName()));
-
-		_objectRelationship = _addObjectRelationship(
-			StringUtil.randomId(), _objectEntry1.getPrimaryKey(),
-			_objectEntry2.getPrimaryKey(),
-			ObjectRelationshipConstants.TYPE_MANY_TO_MANY);
-
-		_testDeleteCustomObjectDefinition1WithCustomObjectDefinition2NotFound(
-			com.liferay.petra.string.StringBundler.concat(
-				_objectDefinition1.getRESTContextPath(), StringPool.SLASH,
-				irrelevantCurrentObjectId, StringPool.SLASH,
-				_objectRelationship.getName(), StringPool.SLASH,
-				_objectEntry2.getPrimaryKey()),
-			com.liferay.petra.string.StringBundler.concat(
-				_objectDefinition1.getRESTContextPath(), StringPool.SLASH,
-				_objectEntry1.getPrimaryKey(), StringPool.SLASH,
-				_objectRelationship.getName(), StringPool.SLASH,
-				irrelevantCurrentObjectId),
-			com.liferay.petra.string.StringBundler.concat(
-				_objectDefinition1.getRESTContextPath(), StringPool.SLASH,
-				_objectEntry1.getPrimaryKey(), StringPool.SLASH,
-				_objectRelationship.getName()));
-
-		_objectRelationship = _addObjectRelationship(
-			StringUtil.randomId(), _objectEntry1.getPrimaryKey(),
-			_objectEntry2.getPrimaryKey(),
+		_objectRelationship = _addObjectRelationshipAndRelateObjectsEntries(
 			ObjectRelationshipConstants.TYPE_ONE_TO_MANY);
 
-		_testDeleteCustomObjectDefinition1WithCustomObjectDefinition2(
-			com.liferay.petra.string.StringBundler.concat(
-				_objectDefinition1.getRESTContextPath(), StringPool.SLASH,
-				_objectEntry1.getPrimaryKey(), StringPool.SLASH,
-				_objectRelationship.getName(), StringPool.SLASH,
-				_objectEntry2.getPrimaryKey()),
-			com.liferay.petra.string.StringBundler.concat(
-				_objectDefinition1.getRESTContextPath(), StringPool.SLASH,
-				_objectEntry1.getPrimaryKey(), StringPool.SLASH,
-				_objectRelationship.getName()));
+		_testFilterByRelatedObjectDefinitionSystemObjectField(
+			_objectRelationship);
 
-		_objectRelationship = _addObjectRelationship(
-			StringUtil.randomId(), _objectEntry1.getPrimaryKey(),
-			_objectEntry2.getPrimaryKey(),
-			ObjectRelationshipConstants.TYPE_ONE_TO_MANY);
-
-		_testDeleteCustomObjectDefinition1WithCustomObjectDefinition2NotFound(
-			com.liferay.petra.string.StringBundler.concat(
-				_objectDefinition1.getRESTContextPath(), StringPool.SLASH,
-				irrelevantCurrentObjectId, StringPool.SLASH,
-				_objectRelationship.getName(), StringPool.SLASH,
-				_objectEntry2.getPrimaryKey()),
-			com.liferay.petra.string.StringBundler.concat(
-				_objectDefinition1.getRESTContextPath(), StringPool.SLASH,
-				_objectEntry1.getPrimaryKey(), StringPool.SLASH,
-				_objectRelationship.getName(), StringPool.SLASH,
-				irrelevantCurrentObjectId),
-			com.liferay.petra.string.StringBundler.concat(
-				_objectDefinition1.getRESTContextPath(), StringPool.SLASH,
-				_objectEntry1.getPrimaryKey(), StringPool.SLASH,
-				_objectRelationship.getName()));
-
-		_objectRelationship = _addObjectRelationship(
-			StringUtil.randomId(), _objectEntry1.getPrimaryKey(),
-			_objectEntry2.getPrimaryKey(),
-			ObjectRelationshipConstants.TYPE_ONE_TO_MANY);
-
-		_testDeleteCustomObjectDefinition1WithCustomObjectDefinition2NotFound(
-			com.liferay.petra.string.StringBundler.concat(
-				_objectDefinition2.getRESTContextPath(), StringPool.SLASH,
-				irrelevantCurrentObjectId, StringPool.SLASH,
-				_objectRelationship.getName(), StringPool.SLASH,
-				_objectEntry1.getPrimaryKey()),
-			com.liferay.petra.string.StringBundler.concat(
-				_objectDefinition2.getRESTContextPath(), StringPool.SLASH,
-				_objectEntry2.getPrimaryKey(), StringPool.SLASH,
-				_objectRelationship.getName(), StringPool.SLASH,
-				irrelevantCurrentObjectId),
-			com.liferay.petra.string.StringBundler.concat(
-				_objectDefinition1.getRESTContextPath(), StringPool.SLASH,
-				_objectEntry1.getPrimaryKey(), StringPool.SLASH,
-				_objectRelationship.getName()));
+		PropsUtil.addProperties(
+			UnicodePropertiesBuilder.setProperty(
+				"feature.flag.LPS-154672", "false"
+			).build());
 	}
 
 	@Test
@@ -271,7 +195,7 @@ public class ObjectEntryResourceTest {
 	}
 
 	@Test
-	public void testGetRelationshipERCFieldInOneToManyRelationship()
+	public void testGetObjectRelationshipERCFieldNameInOneToManyRelationship()
 		throws Exception {
 
 		PropsUtil.addProperties(
@@ -299,6 +223,199 @@ public class ObjectEntryResourceTest {
 			UnicodePropertiesBuilder.setProperty(
 				"feature.flag.LPS-161364", "false"
 			).build());
+	}
+
+	@Test
+	public void testGetObjectRelationshipERCFieldNameInOneToManyRelationshipFromRelatedObjectEntry()
+		throws Exception {
+
+		PropsUtil.addProperties(
+			UnicodePropertiesBuilder.setProperty(
+				"feature.flag.LPS-161364", "true"
+			).build());
+
+		_objectRelationship = _addObjectRelationshipAndRelateObjectsEntries(
+			ObjectRelationshipConstants.TYPE_ONE_TO_MANY);
+
+		JSONObject jsonObject = HTTPTestUtil.invoke(
+			null,
+			StringBundler.concat(
+				_objectDefinition1.getRESTContextPath(), "?nestedFields=",
+				_objectRelationship.getName()),
+			Http.Method.GET);
+
+		JSONArray itemsJSONArray = jsonObject.getJSONArray("items");
+
+		Assert.assertEquals(1, itemsJSONArray.length());
+
+		JSONObject itemJSONObject = itemsJSONArray.getJSONObject(0);
+
+		JSONArray relationshipJSONArray = itemJSONObject.getJSONArray(
+			_objectRelationship.getName());
+
+		Assert.assertEquals(1, relationshipJSONArray.length());
+
+		JSONObject relatedObjectEntryJSONObject =
+			relationshipJSONArray.getJSONObject(0);
+
+		Assert.assertEquals(
+			relatedObjectEntryJSONObject.getString(
+				_objectRelationship.getName() + "ERC"),
+			_objectEntry1.getExternalReferenceCode());
+
+		PropsUtil.addProperties(
+			UnicodePropertiesBuilder.setProperty(
+				"feature.flag.LPS-161364", "false"
+			).build());
+	}
+
+	@Test
+	public void testPostCustomObjectEntryWithNestedCustomObjectEntriesInManyToManyRelationship()
+		throws Exception {
+
+		_objectRelationship = ObjectRelationshipTestUtil.addObjectRelationship(
+			_objectDefinition1, _objectDefinition2, TestPropsValues.getUserId(),
+			ObjectRelationshipConstants.TYPE_MANY_TO_MANY);
+
+		JSONObject objectEntryJSONObject = JSONUtil.put(
+			_objectRelationship.getName(),
+			_createObjectEntriesJSONArray(
+				_OBJECT_FIELD_NAME_2,
+				new String[] {
+					_NEW_OBJECT_FIELD_VALUE_1, _NEW_OBJECT_FIELD_VALUE_2
+				}));
+
+		JSONObject jsonObject = HTTPTestUtil.invoke(
+			objectEntryJSONObject.toString(),
+			_objectDefinition1.getRESTContextPath(), Http.Method.POST);
+
+		Assert.assertEquals(
+			0,
+			jsonObject.getJSONObject(
+				"status"
+			).get(
+				"code"
+			));
+
+		String objectEntryId = jsonObject.getString("id");
+
+		jsonObject = HTTPTestUtil.invoke(
+			null,
+			StringBundler.concat(
+				_objectDefinition1.getRESTContextPath(), StringPool.SLASH,
+				objectEntryId, "?nestedFields=", _objectRelationship.getName()),
+			Http.Method.GET);
+
+		JSONArray nestedObjectEntriesJSONArray = jsonObject.getJSONArray(
+			_objectRelationship.getName());
+
+		Assert.assertEquals(2, nestedObjectEntriesJSONArray.length());
+
+		_assertObjectEntryField(
+			(JSONObject)nestedObjectEntriesJSONArray.get(0),
+			_OBJECT_FIELD_NAME_2, _NEW_OBJECT_FIELD_VALUE_1);
+		_assertObjectEntryField(
+			(JSONObject)nestedObjectEntriesJSONArray.get(1),
+			_OBJECT_FIELD_NAME_2, _NEW_OBJECT_FIELD_VALUE_2);
+	}
+
+	@Test
+	public void testPostCustomObjectEntryWithNestedCustomObjectEntriesInManyToOneRelationship()
+		throws Exception {
+
+		_objectRelationship = ObjectRelationshipTestUtil.addObjectRelationship(
+			_objectDefinition1, _objectDefinition2, TestPropsValues.getUserId(),
+			ObjectRelationshipConstants.TYPE_ONE_TO_MANY);
+
+		JSONObject objectEntryJSONObject = JSONUtil.put(
+			_objectRelationship.getName(),
+			JSONFactoryUtil.createJSONObject(
+				JSONUtil.put(
+					_OBJECT_FIELD_NAME_1, _NEW_OBJECT_FIELD_VALUE_1
+				).toString()));
+
+		JSONObject jsonObject = HTTPTestUtil.invoke(
+			objectEntryJSONObject.toString(),
+			_objectDefinition2.getRESTContextPath(), Http.Method.POST);
+
+		Assert.assertEquals(
+			0,
+			jsonObject.getJSONObject(
+				"status"
+			).get(
+				"code"
+			));
+
+		String objectEntryId = jsonObject.getString("id");
+
+		jsonObject = HTTPTestUtil.invoke(
+			null,
+			StringBundler.concat(
+				_objectDefinition2.getRESTContextPath(), StringPool.SLASH,
+				objectEntryId, "?nestedFields=",
+				StringBundler.concat(
+					"r_", _objectRelationship.getName(), "_",
+					StringUtil.replaceLast(
+						_objectDefinition1.getPKObjectFieldName(), "Id", ""))),
+			Http.Method.GET);
+
+		_assertObjectEntryField(
+			jsonObject.getJSONObject(
+				StringBundler.concat(
+					"r_", _objectRelationship.getName(), "_",
+					StringUtil.replaceLast(
+						_objectDefinition1.getPKObjectFieldName(), "Id", ""))),
+			_OBJECT_FIELD_NAME_1, _NEW_OBJECT_FIELD_VALUE_1);
+	}
+
+	@Test
+	public void testPostCustomObjectEntryWithNestedCustomObjectEntriesInOneToManyRelationship()
+		throws Exception {
+
+		_objectRelationship = ObjectRelationshipTestUtil.addObjectRelationship(
+			_objectDefinition1, _objectDefinition2, TestPropsValues.getUserId(),
+			ObjectRelationshipConstants.TYPE_ONE_TO_MANY);
+
+		JSONObject objectEntryJSONObject = JSONUtil.put(
+			_objectRelationship.getName(),
+			_createObjectEntriesJSONArray(
+				_OBJECT_FIELD_NAME_2,
+				new String[] {
+					_NEW_OBJECT_FIELD_VALUE_1, _NEW_OBJECT_FIELD_VALUE_2
+				}));
+
+		JSONObject jsonObject = HTTPTestUtil.invoke(
+			objectEntryJSONObject.toString(),
+			_objectDefinition1.getRESTContextPath(), Http.Method.POST);
+
+		Assert.assertEquals(
+			0,
+			jsonObject.getJSONObject(
+				"status"
+			).get(
+				"code"
+			));
+
+		String objectEntryId = jsonObject.getString("id");
+
+		jsonObject = HTTPTestUtil.invoke(
+			null,
+			StringBundler.concat(
+				_objectDefinition1.getRESTContextPath(), StringPool.SLASH,
+				objectEntryId, "?nestedFields=", _objectRelationship.getName()),
+			Http.Method.GET);
+
+		JSONArray nestedObjectEntriesJSONArray = jsonObject.getJSONArray(
+			_objectRelationship.getName());
+
+		Assert.assertEquals(2, nestedObjectEntriesJSONArray.length());
+
+		_assertObjectEntryField(
+			(JSONObject)nestedObjectEntriesJSONArray.get(0),
+			_OBJECT_FIELD_NAME_2, _NEW_OBJECT_FIELD_VALUE_1);
+		_assertObjectEntryField(
+			(JSONObject)nestedObjectEntriesJSONArray.get(1),
+			_OBJECT_FIELD_NAME_2, _NEW_OBJECT_FIELD_VALUE_2);
 	}
 
 	@Test
@@ -356,27 +473,6 @@ public class ObjectEntryResourceTest {
 			CoreMatchers.containsString("No ObjectEntry exists with the key"));
 	}
 
-	private ObjectRelationship _addObjectRelationship(
-			String name, long primaryKey1, long primaryKey2, String type)
-		throws Exception {
-
-		ObjectRelationship objectRelationship =
-			_objectRelationshipLocalService.addObjectRelationship(
-				TestPropsValues.getUserId(),
-				_objectDefinition1.getObjectDefinitionId(),
-				_objectDefinition2.getObjectDefinitionId(), 0,
-				ObjectRelationshipConstants.DELETION_TYPE_PREVENT,
-				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
-				name, type);
-
-		_objectRelationshipLocalService.addObjectRelationshipMappingTableValues(
-			TestPropsValues.getUserId(),
-			objectRelationship.getObjectRelationshipId(), primaryKey1,
-			primaryKey2, ServiceContextTestUtil.getServiceContext());
-
-		return objectRelationship;
-	}
-
 	private ObjectRelationship _addObjectRelationshipAndRelateObjectsEntries(
 			String type)
 		throws Exception {
@@ -393,47 +489,73 @@ public class ObjectEntryResourceTest {
 		return objectRelationship;
 	}
 
-	private void _testDeleteCustomObjectDefinition1WithCustomObjectDefinition2(
-			String deleteEndpoint, String getEndpoint)
-		throws Exception {
+	private void _assertObjectEntryField(
+		JSONObject objectEntryJSONObject, String objectFieldName,
+		String objectFieldValue) {
 
-		JSONObject jsonObject = HTTPTestUtil.invoke(
-			null, getEndpoint, Http.Method.GET);
+		int objectEntryId = objectEntryJSONObject.getInt("id");
 
-		JSONArray itemsJSONArray = jsonObject.getJSONArray("items");
+		ObjectEntry objectEntry = _objectEntryLocalService.fetchObjectEntry(
+			objectEntryId);
 
-		Assert.assertEquals(1, itemsJSONArray.length());
-
-		HTTPTestUtil.invoke(null, deleteEndpoint, Http.Method.DELETE);
-
-		jsonObject = HTTPTestUtil.invoke(null, getEndpoint, Http.Method.GET);
-
-		itemsJSONArray = jsonObject.getJSONArray("items");
-
-		Assert.assertEquals(0, itemsJSONArray.length());
+		Assert.assertEquals(
+			MapUtil.getString(objectEntry.getValues(), objectFieldName),
+			objectFieldValue);
 	}
 
-	private void
-			_testDeleteCustomObjectDefinition1WithCustomObjectDefinition2NotFound(
-				String deleteEndpoint1, String deleteEndpoint2,
-				String getEndpoint)
+	private JSONArray _createObjectEntriesJSONArray(
+			String objectFieldName, String[] objectFieldValues)
 		throws Exception {
 
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+
+		for (String objectFieldValue : objectFieldValues) {
+			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+				JSONUtil.put(
+					objectFieldName, objectFieldValue
+				).toString());
+
+			jsonArray.put(jsonObject);
+		}
+
+		return jsonArray;
+	}
+
+	private void _testFilterByRelatedObjectDefinitionSystemObjectField(
+			ObjectRelationship objectRelationship)
+		throws Exception {
+
+		_testFilterByRelatedObjectDefinitionSystemObjectField(
+			_OBJECT_FIELD_NAME_1, _OBJECT_FIELD_VALUE_1, _objectDefinition1,
+			objectRelationship, _objectEntry2.getObjectEntryId());
+		_testFilterByRelatedObjectDefinitionSystemObjectField(
+			_OBJECT_FIELD_NAME_2, _OBJECT_FIELD_VALUE_2, _objectDefinition2,
+			objectRelationship, _objectEntry1.getObjectEntryId());
+	}
+
+	private void _testFilterByRelatedObjectDefinitionSystemObjectField(
+			String expectedObjectFieldName, String expectedObjectFieldValue,
+			ObjectDefinition objectDefinition,
+			ObjectRelationship objectRelationship, long relatedObjectEntryId)
+		throws Exception {
+
+		String endpoint = StringBundler.concat(
+			objectDefinition.getRESTContextPath(), "?filter=",
+			objectRelationship.getName(), "/id%20eq%20'",
+			String.valueOf(relatedObjectEntryId), StringPool.APOSTROPHE);
+
 		JSONObject jsonObject = HTTPTestUtil.invoke(
-			null, deleteEndpoint1, Http.Method.DELETE);
-
-		Assert.assertEquals("NOT_FOUND", jsonObject.getString("status"));
-
-		jsonObject = HTTPTestUtil.invoke(
-			null, deleteEndpoint2, Http.Method.DELETE);
-
-		Assert.assertEquals("NOT_FOUND", jsonObject.getString("status"));
-
-		jsonObject = HTTPTestUtil.invoke(null, getEndpoint, Http.Method.GET);
+			null, endpoint, Http.Method.GET);
 
 		JSONArray itemsJSONArray = jsonObject.getJSONArray("items");
 
 		Assert.assertEquals(1, itemsJSONArray.length());
+
+		JSONObject itemJSONObject = itemsJSONArray.getJSONObject(0);
+
+		Assert.assertEquals(
+			expectedObjectFieldValue,
+			itemJSONObject.getString(expectedObjectFieldName));
 	}
 
 	private void _testGetNestedFieldDetailsInOneToManyRelationships(
@@ -461,6 +583,12 @@ public class ObjectEntryResourceTest {
 			relatedObjectJSONObject.getString(_OBJECT_FIELD_NAME_1));
 	}
 
+	private static final String _NEW_OBJECT_FIELD_VALUE_1 =
+		RandomTestUtil.randomString();
+
+	private static final String _NEW_OBJECT_FIELD_VALUE_2 =
+		RandomTestUtil.randomString();
+
 	private static final String _OBJECT_FIELD_NAME_1 =
 		"x" + RandomTestUtil.randomString();
 
@@ -473,19 +601,18 @@ public class ObjectEntryResourceTest {
 	private static final String _OBJECT_FIELD_VALUE_2 =
 		RandomTestUtil.randomString();
 
-	@DeleteAfterTestRun
 	private ObjectDefinition _objectDefinition1;
-
-	@DeleteAfterTestRun
 	private ObjectDefinition _objectDefinition2;
 
-	@DeleteAfterTestRun
-	private ObjectEntry _objectEntry1;
+	@Inject
+	private ObjectDefinitionLocalService _objectDefinitionLocalService;
 
-	@DeleteAfterTestRun
+	private ObjectEntry _objectEntry1;
 	private ObjectEntry _objectEntry2;
 
-	@DeleteAfterTestRun
+	@Inject
+	private ObjectEntryLocalService _objectEntryLocalService;
+
 	private ObjectRelationship _objectRelationship;
 
 	@Inject

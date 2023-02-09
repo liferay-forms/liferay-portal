@@ -196,7 +196,7 @@ const CaseResult = () => {
 						/>
 
 						<Link
-							to={`/project/${projectId}/cases/${caseResult.id}`}
+							to={`/project/${projectId}/cases/${caseResult.case?.id}`}
 						>
 							{i18n.translate('view-case')}
 						</Link>

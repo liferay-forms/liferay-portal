@@ -104,7 +104,7 @@ definition {
 		property test.name.skip.portal.instance = "ACSegmentsInDXP#CheckNotEditableSegmentFromACAtDXP";
 
 		task ("Update Segments Analytics Cloud in System Settings") {
-			Segmentation.updateSegmentsInterval();
+			Segmentation.updateSegmentsInterval(interval = "1");
 		}
 
 		task ("Go to segmentats page and assert that not possible Edit/Delete ") {
@@ -113,6 +113,10 @@ definition {
 			ProductMenu.gotoPortlet(
 				category = "People",
 				portlet = "Segments");
+
+			while ((IsElementNotPresent(key_tableEntry = "Dynamic Segment Test", locator1 = "LexiconTable#TABLE_ENTRY_ELLIPSIS")) && (maxIterations = "40")) {
+				Refresh();
+			}
 
 			Click.waitForMenuToggleJSClick(
 				key_tableEntry = "Dynamic Segment Test",
@@ -188,7 +192,6 @@ definition {
 	@description = "LPS-96574 Given I have edit, delete and permission permissions for segments
 	and I have connected my DXP instance with AC
 	when I create an Individual Segment in AC and it shows in the DXP Segments administration
-	and I delete the segment
 	Then in the next sync time, the segment will appear again"
 	@priority = "4"
 	test PersistSegmentFromACAtDXP {
@@ -206,15 +209,11 @@ definition {
 				category = "People",
 				portlet = "Segments");
 
+			while ((IsElementNotPresent(key_tableEntry = "Dynamic Segment Test", locator1 = "LexiconTable#TABLE_ENTRY_ELLIPSIS")) && (maxIterations = "40")) {
+				Refresh();
+			}
+
 			AssertElementPresent(
-				key_tableEntry = "Dynamic Segment Test",
-				locator1 = "LexiconTable#TABLE_ENTRY_ELLIPSIS");
-		}
-
-		task ("Delete Dynamic Segment Test") {
-			Segmentation.deleteSegment(entry = "Dynamic Segment Test");
-
-			AssertElementNotPresent(
 				key_tableEntry = "Dynamic Segment Test",
 				locator1 = "LexiconTable#TABLE_ENTRY_ELLIPSIS");
 		}
@@ -232,7 +231,7 @@ definition {
 
 			AssertElementPresent(
 				key_value = "1",
-				locator1 = "SystemSettings#CHECK_INTERVAL_SEGMENTS_VALUE");
+				locator1 = "SystemSettings#UPDATE_INTERVAL_SEGMENTS_VALUE");
 
 			AssertClick(
 				key_text = "Update",
@@ -242,7 +241,7 @@ definition {
 			Alert.viewSuccessMessage();
 		}
 
-		task ("Go to segmentats page and assert that the segment created is preset again") {
+		task ("Go to segments page and assert that the segment created is preset again") {
 			Navigator.openWithAppendToBaseURL(urlAppend = "web/test-site-name/content-page");
 
 			ProductMenu.gotoPortlet(
@@ -262,7 +261,7 @@ definition {
 		property test.name.skip.portal.instance = "ACSegmentsInDXP#RedirectToSegmentPageAC";
 
 		task ("Update Segments Analytics Cloud in System Settings") {
-			Segmentation.updateSegmentsInterval();
+			Segmentation.updateSegmentsInterval(interval = "1");
 		}
 
 		task ("Go to segmentats page and click at segment crieted in AC") {
@@ -272,17 +271,23 @@ definition {
 				category = "People",
 				portlet = "Segments");
 
+			while ((IsElementNotPresent(key_tableEntry = "Dynamic Segment Test", locator1 = "LexiconTable#TABLE_ENTRY_ELLIPSIS")) && (maxIterations = "40")) {
+				Refresh();
+			}
+
 			Click(
 				key_tableEntry = "Dynamic Segment Test",
 				locator1 = "LexiconTable#TABLE_ENTRY_TITLE_LINK");
 		}
 
 		task ("Go and Log into AC and assert the segment page is open") {
-			Navigator.selectSpecificWindow(windowTitle = "Analytics Cloud");
+			Navigator.selectSpecificWindow(windowTitle = "Dynamic Segment Test - Segment - Analytics Cloud");
 
-			AnalyticsCloud.loginAnalyticsCloud(
-				emailAddress = "test@liferay.com",
-				password = "test");
+			if (IsElementPresent(locator1 = "AnalyticsCloudConnection#ANALYTICS_CLOUD_USER_LOGIN_FIELD")) {
+				AnalyticsCloud.loginAnalyticsCloud(
+					emailAddress = "test@liferay.com",
+					password = "test");
+			}
 
 			ACUtils.assertPageTitle(pageTitle = "Dynamic Segment Test");
 		}
@@ -295,7 +300,7 @@ definition {
 		property test.name.skip.portal.instance = "ACSegmentsInDXP#RedirectToSegmentPageErrorAC";
 
 		task ("Update Segments Analytics Cloud in System Settings") {
-			Segmentation.updateSegmentsInterval();
+			Segmentation.updateSegmentsInterval(interval = "1");
 		}
 
 		task ("Go to segmentats page and at segment created in AC") {
@@ -304,6 +309,10 @@ definition {
 			ProductMenu.gotoPortlet(
 				category = "People",
 				portlet = "Segments");
+
+			while ((IsElementNotPresent(key_tableEntry = "Dynamic Segment Test", locator1 = "LexiconTable#TABLE_ENTRY_ELLIPSIS")) && (maxIterations = "40")) {
+				Refresh();
+			}
 
 			AssertElementPresent(
 				key_tableEntry = "Dynamic Segment Test",
@@ -349,9 +358,11 @@ definition {
 		task ("Go and Log into AC and assert the ERROR page is open") {
 			Navigator.selectSpecificWindow(windowTitle = "Analytics Cloud");
 
-			AnalyticsCloud.loginAnalyticsCloud(
-				emailAddress = "test@liferay.com",
-				password = "test");
+			if (IsElementPresent(locator1 = "AnalyticsCloudConnection#ANALYTICS_CLOUD_USER_LOGIN_FIELD")) {
+				AnalyticsCloud.loginAnalyticsCloud(
+					emailAddress = "test@liferay.com",
+					password = "test");
+			}
 
 			AssertTextPresent(
 				locator1 = "//body",

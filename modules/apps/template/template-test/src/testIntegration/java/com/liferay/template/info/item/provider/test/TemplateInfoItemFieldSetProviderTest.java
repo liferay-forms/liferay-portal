@@ -62,6 +62,7 @@ import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.DateUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -76,10 +77,13 @@ import com.liferay.template.info.item.provider.TemplateInfoItemFieldSetProvider;
 import com.liferay.template.model.TemplateEntry;
 import com.liferay.template.test.util.TemplateTestUtil;
 
+import java.time.chrono.IsoChronology;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.FormatStyle;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -165,16 +169,14 @@ public class TemplateInfoItemFieldSetProviderTest {
 
 		InfoField infoField = infoFields.get(0);
 
+		Assert.assertTrue(
+			GetterUtil.getBoolean(
+				infoField.getAttribute(TextInfoFieldType.HTML)));
 		Assert.assertEquals(
 			infoFields.toString(),
 			PortletDisplayTemplate.DISPLAY_STYLE_PREFIX +
 				journalArticleTemplateEntry.getTemplateEntryId(),
 			infoField.getName());
-
-		Optional<Boolean> optional = infoField.getAttributeOptional(
-			TextInfoFieldType.HTML);
-
-		Assert.assertTrue(optional.orElse(false));
 	}
 
 	@Test
@@ -209,16 +211,14 @@ public class TemplateInfoItemFieldSetProviderTest {
 
 		InfoField infoField = infoFields.get(0);
 
+		Assert.assertTrue(
+			GetterUtil.getBoolean(
+				infoField.getAttribute(TextInfoFieldType.HTML)));
 		Assert.assertEquals(
 			infoFields.toString(),
 			PortletDisplayTemplate.DISPLAY_STYLE_PREFIX +
 				categoryTemplateEntry.getTemplateEntryId(),
 			infoField.getName());
-
-		Optional<Boolean> optional = infoField.getAttributeOptional(
-			TextInfoFieldType.HTML);
-
-		Assert.assertTrue(optional.orElse(false));
 	}
 
 	@Test
@@ -269,6 +269,9 @@ public class TemplateInfoItemFieldSetProviderTest {
 
 		InfoField infoField = infoFieldValue.getInfoField();
 
+		Assert.assertTrue(
+			GetterUtil.getBoolean(
+				infoField.getAttribute(TextInfoFieldType.HTML)));
 		Assert.assertEquals(
 			infoField.toString(),
 			PortletDisplayTemplate.DISPLAY_STYLE_PREFIX +
@@ -280,11 +283,6 @@ public class TemplateInfoItemFieldSetProviderTest {
 			nameValue.getString(
 				_portal.getSiteDefaultLocale(_group.getGroupId())),
 			infoFieldValue.getValue());
-
-		Optional<Boolean> optional = infoField.getAttributeOptional(
-			TextInfoFieldType.HTML);
-
-		Assert.assertTrue(optional.orElse(false));
 	}
 
 	@Test
@@ -437,7 +435,10 @@ public class TemplateInfoItemFieldSetProviderTest {
 
 		Assert.assertEquals(
 			DateUtil.getDate(
-				_journalArticle.getCreateDate(), "MM/dd/yy H:mm a",
+				_journalArticle.getCreateDate(),
+				DateTimeFormatterBuilder.getLocalizedDateTimePattern(
+					FormatStyle.SHORT, FormatStyle.SHORT,
+					IsoChronology.INSTANCE, LocaleUtil.US),
 				LocaleUtil.US),
 			value);
 	}
@@ -489,7 +490,10 @@ public class TemplateInfoItemFieldSetProviderTest {
 
 		Assert.assertEquals(
 			DateUtil.getDate(
-				_journalArticle.getCreateDate(), "dd/MM/yy H:mm",
+				_journalArticle.getCreateDate(),
+				DateTimeFormatterBuilder.getLocalizedDateTimePattern(
+					FormatStyle.SHORT, FormatStyle.SHORT,
+					IsoChronology.INSTANCE, LocaleUtil.SPAIN),
 				LocaleUtil.SPAIN),
 			value);
 	}

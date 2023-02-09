@@ -324,7 +324,7 @@ definition {
 	}
 
 	macro changeExperience {
-		ContentPages.openExperienceMenu();
+		ContentPages.openExperienceMenu(locale = "${locale}");
 
 		MenuItem.click(menuItem = "${experienceName}");
 
@@ -362,15 +362,25 @@ return	Array.from(getWebElement("(//*[contains(@class,'lfr-layout-structure-item
 	}
 
 	macro openExperienceMenu {
+		if ("${locale}" == "es") {
+			var ariaLabel = "Selector de experiencia";
+		}
+		else if ("${locale}" == "ja") {
+			var ariaLabel = "エクスペリエンスセレクター";
+		}
+		else {
+			var ariaLabel = "Experience Selector";
+		}
+
 		Click(
-			key_text = "caret-double",
-			locator1 = "Icon#ANY");
+			ariaLabel = "${ariaLabel}",
+			locator1 = "Button#ANY_WITH_ARIA_LABEL");
 	}
 
 	macro viewCurrentExperience {
 		AssertVisible(
 			key_title = "${experienceName}",
-			locator1 = "Button#ANY_TITLE");
+			locator1 = "Experience#EXPERIENCE_SELECTED_VIEW_MODE");
 	}
 
 	macro viewExperienceOrder {
@@ -379,8 +389,8 @@ return	Array.from(getWebElement("(//*[contains(@class,'lfr-layout-structure-item
 		MenuItem.viewOrder(menuItemList = "${experienceNameList}");
 
 		Click(
-			key_text = "caret-double",
-			locator1 = "Icon#ANY");
+			ariaLabel = "Experience Selector",
+			locator1 = "Button#ANY_WITH_ARIA_LABEL");
 	}
 
 	macro viewFragmentBackgroundImage {

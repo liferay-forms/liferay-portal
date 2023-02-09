@@ -12,7 +12,7 @@
  * details.
  */
 
-import {openImageSelector} from '../../core/openImageSelector';
+import {openImageSelector} from '../../common/openImageSelector';
 import {getEditableLinkValue} from '../utils/getEditableLinkValue';
 import {getEditableLocalizedValue} from '../utils/getEditableLocalizedValue';
 
@@ -66,7 +66,8 @@ function render(element, value, editableConfig = {}, languageId) {
 	if (image) {
 		image.alt =
 			getEditableLocalizedValue(editableConfig.alt, languageId) ||
-			value?.alt;
+			value?.alt ||
+			'';
 
 		const link = getEditableLinkValue(editableConfig, languageId);
 
@@ -78,7 +79,9 @@ function render(element, value, editableConfig = {}, languageId) {
 			else {
 				const anchorElement = document.createElement('a');
 
-				anchorElement.href = link.href;
+				anchorElement.href = `${editableConfig.prefix || ''}${
+					link.href
+				}`;
 				anchorElement.target = link.target;
 
 				image.parentElement.replaceChild(anchorElement, image);

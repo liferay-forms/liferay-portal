@@ -32,8 +32,8 @@ definition {
 
 	@description = "This test covers LPS-113731. It ensures that roles and permissions from a library are removed after membership is revoked."
 	@priority = "5"
-	@refactorneeded
-	test AccessALAfterRevokingMembership {
+	@refactordone
+	test CanAccessALAfterRevokingMembership {
 		property custom.properties = "jsonws.web.service.paths.excludes=";
 
 		JSONUser.addUser(
@@ -68,21 +68,16 @@ definition {
 			resourceName = "com.liferay.depot.model.DepotEntry",
 			roleTitle = "Depot Regrole Name");
 
-		DepotNavigator.openDepotAdmin();
-
-		DepotNavigator.gotoDepotPortlet(
+		JSONUser.addUserToDepot(
 			depotName = "Test Depot Name",
-			portlet = "Memberships");
+			userEmailAddress = "userea@liferay.com");
 
-		Depot.assignUserAsMember(
+		JSONRole.assignDepotRoleToUser(
 			depotName = "Test Depot Name",
-			userFirstName = "userfn",
-			userLastName = "userln",
-			userScreenName = "usersn");
+			roleTitle = "Asset Library Administrator",
+			userEmailAddress = "userea@liferay.com");
 
-		Depot.assignAssetLibraryRole(
-			resourceName = "userfn userln",
-			roleTitle = "Asset Library Administrator");
+		DepotNavigator.openDepotMembershipsAdmin(depotName = "Test Depot Name");
 
 		Depot.removeMember(
 			userFirstName = "userfn",
@@ -127,8 +122,10 @@ definition {
 
 	@description = "This ensures that the Asset Library Connected Site Members role does not appear in user roles even after it is automatically assigned to a connected site member. This test also covers permissions and makes sure the library asset can be updated by the role."
 	@priority = "5"
-	@refactorneeded
-	test AddSiteMemberWithPermissionsAfterConnectingSite {
+	@refactordone
+	test CanAddSiteMemberWithPermissionsAfterConnectingSite {
+		property custom.properties = "jsonws.web.service.paths.excludes=";
+
 		JSONGroup.addGroup(groupName = "Site Name");
 
 		JSONLayout.addPublicLayout(
@@ -145,33 +142,22 @@ definition {
 			userLastName = "userln",
 			userScreenName = "usersn");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
-
-		User.editPasswordCP(
-			password = "password",
-			userEmailAddress = "user1@liferay.com",
-			userScreenName = "usersn");
+		JSONUser.setFirstPassword(
+			agreeToTermsAndAnswerReminderQuery = "true",
+			requireReset = "false",
+			userEmailAddress = "user1@liferay.com");
 
 		User.logoutAndLoginPG(
 			userLoginEmailAddress = "test@liferay.com",
 			userLoginFullName = "Test Test");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.editUserSiteCP(
 			siteName = "Site Name",
 			userScreenName = "usersn");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		UserNavigator.gotoUser(userScreenName = "usersn");
 
@@ -278,15 +264,11 @@ definition {
 
 	@description = "This ensures that the user can perform CRUD operations with an AL role that has all WC permissions."
 	@priority = "5"
-	@refactorneeded
-	test AssignALRoleWithAllWCPermissions {
+	@refactordone
+	test CanAssignALRoleWithAllWCPermissions {
 		property custom.properties = "jsonws.web.service.paths.excludes=";
 
-		Role.openRolesAdmin();
-
-		RoleNavigator.gotoRoleType(roleType = "Asset Library");
-
-		Role.add(roleTitle = "AL Role Name");
+		JSONRole.addDepotRole(roleTitle = "AL Role Name");
 
 		for (var resourceActionIndex : list "ACCESS_IN_CONTROL_PANEL,ADD_TO_PAGE,CONFIGURATION,PERMISSIONS,PREFERENCES,VIEW") {
 			Permissions.definePermissionViaJSONAPI(
@@ -330,34 +312,20 @@ definition {
 			resourceName = "com_liferay_depot_web_portlet_DepotAdminPortlet",
 			roleTitle = "Depot Regrole Name");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
-
-		User.editUserAssetLibraryCP(
+		JSONUser.addUserToDepot(
 			depotName = "Test Depot Name",
-			userScreenName = "usersn");
+			userEmailAddress = "userea@liferay.com");
 
-		DepotNavigator.openDepotAdmin();
-
-		DepotNavigator.gotoDepotPortlet(
+		JSONRole.assignDepotRoleToUser(
 			depotName = "Test Depot Name",
-			portlet = "Memberships");
-
-		Depot.assignAssetLibraryRole(
-			resourceName = "userfn userln",
-			roleTitle = "AL Role Name");
+			roleTitle = "AL Role Name",
+			userEmailAddress = "userea@liferay.com");
 
 		User.logoutAndLoginPG(
 			userLoginEmailAddress = "userea@liferay.com",
 			userLoginFullName = "userfn userln");
 
-		DepotNavigator.openDepotAdmin();
-
-		DepotNavigator.gotoDepotPortlet(
-			depotName = "Test Depot Name",
-			portlet = "Web Content");
+		DepotNavigator.openDepotWebContentAdmin(depotName = "Test Depot Name");
 
 		WebContentNavigator.gotoAddCP();
 
@@ -394,8 +362,8 @@ definition {
 
 	@description = "This ensures that the user can edit documents with an AL role that has edit documents permissions."
 	@priority = "5"
-	@refactorneeded
-	test AssignALRoleWithDMEditPermissions {
+	@refactordone
+	test CanAssignALRoleWithDMEditPermissions {
 		property custom.properties = "jsonws.web.service.paths.excludes=";
 
 		JSONDocument.addFile(
@@ -403,11 +371,7 @@ definition {
 			dmDocumentTitle = "DM Document Title",
 			groupName = "Test Depot Name");
 
-		Role.openRolesAdmin();
-
-		RoleNavigator.gotoRoleType(roleType = "Asset Library");
-
-		Role.add(roleTitle = "AL Role Name");
+		JSONRole.addDepotRole(roleTitle = "AL Role Name");
 
 		Permissions.definePermissionViaJSONAPI(
 			resourceAction = "VIEW_SITE_ADMINISTRATION",
@@ -453,24 +417,14 @@ definition {
 			resourceName = "com_liferay_depot_web_portlet_DepotAdminPortlet",
 			roleTitle = "Depot Regrole Name");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
-
-		User.editUserAssetLibraryCP(
+		JSONUser.addUserToDepot(
 			depotName = "Test Depot Name",
-			userScreenName = "usersn");
+			userEmailAddress = "userea@liferay.com");
 
-		DepotNavigator.openDepotAdmin();
-
-		DepotNavigator.gotoDepotPortlet(
+		JSONRole.assignDepotRoleToUser(
 			depotName = "Test Depot Name",
-			portlet = "Memberships");
-
-		Depot.assignAssetLibraryRole(
-			resourceName = "userfn userln",
-			roleTitle = "AL Role Name");
+			roleTitle = "AL Role Name",
+			userEmailAddress = "userea@liferay.com");
 
 		User.logoutAndLoginPG(
 			userLoginEmailAddress = "userea@liferay.com",
@@ -497,13 +451,9 @@ definition {
 
 	@description = "This ensures that an asset library role can be deleted."
 	@priority = "5"
-	@refactorneeded
-	test DeleteALRole {
-		Role.openRolesAdmin();
-
-		RoleNavigator.gotoRoleType(roleType = "Asset Library");
-
-		Role.add(roleTitle = "AL Role Name");
+	@refactordone
+	test CanDeleteALRole {
+		JSONRole.addDepotRole(roleTitle = "AL Role Name");
 
 		Permissions.definePermissionViaJSONAPI(
 			resourceAction = "VIEW",
@@ -526,15 +476,13 @@ definition {
 
 	@description = "This ensures that an asset library role can be edited."
 	@priority = "5"
-	@refactorneeded
-	test EditALRole {
+	@refactordone
+	test CanEditALRole {
 		Role.openRolesAdmin();
 
 		RoleNavigator.gotoRoleType(roleType = "Asset Library");
 
 		Role.add(roleTitle = "AL Role Name");
-
-		Role.openRolesAdmin();
 
 		Permissions.definePermissionViaJSONAPI(
 			resourceAction = "VIEW",
@@ -556,12 +504,144 @@ definition {
 
 		Role.editRole(roleTitleEdit = "AL Role Name Edit");
 
-		Role.editPermissionCmdCPUI(
+		Role.editPermissionCP(
 			define = "true",
 			permissionNavHeader = "Content & Data",
 			permissionNavItem = "Documents and Media",
 			permissionSheetSubtitle = "Documents",
 			permissionValues = "Add Document");
+	}
+
+	@description = "This ensures that an asset library role can be edited."
+	@priority = "5"
+	@refactordone
+	test CanViewALAdminRole {
+		property custom.properties = "jsonws.web.service.paths.excludes=";
+
+		JSONUser.addUser(
+			userEmailAddress = "userea@liferay.com",
+			userFirstName = "userfn",
+			userLastName = "userln",
+			userScreenName = "usersn");
+
+		JSONUser.setFirstPassword(
+			agreeToTermsAndAnswerReminderQuery = "true",
+			requireReset = "false",
+			userEmailAddress = "userea@liferay.com");
+
+		JSONUser.addUserToDepot(
+			depotName = "Test Depot Name",
+			userEmailAddress = "userea@liferay.com");
+
+		JSONRole.assignDepotRoleToUser(
+			depotName = "Test Depot Name",
+			roleTitle = "Asset Library Administrator",
+			userEmailAddress = "userea@liferay.com");
+
+		Role.openRolesAdmin();
+
+		Navigator.gotoNavItem(navItem = "Asset Library Roles");
+
+		PermissionsInline.gotoRolePermissions(roleName = "Asset Library Content Reviewer");
+
+		Role.definePermissionPG(
+			permissionDefinitionKey = "CONTENT_PERMISSIONS_ASSIGN_MEMBERS_CHECKBOX",
+			roleTitle = "Asset Library Administrator");
+
+		User.logoutAndLoginPG(
+			userLoginEmailAddress = "userea@liferay.com",
+			userLoginFullName = "userfn userln");
+
+		DepotNavigator.openDepotMembershipsAdmin(depotName = "Test Depot Name");
+
+		LexiconCard.clickEllipsisItem(
+			card = "userfn userln",
+			item = "Assign Roles");
+
+		SelectFrame(locator1 = "IFrame#MODAL_BODY");
+
+		AssertTextEquals(
+			key_card = "Asset Library Content Reviewer",
+			locator1 = "Card#CARD_TITLE",
+			value1 = "Asset Library Content Reviewer");
+
+		AssertElementNotPresent(
+			key_card = "Asset Library Administrator",
+			locator1 = "Card#CARD_TITLE");
+
+		AssertElementNotPresent(
+			key_card = "Asset Library Owner",
+			locator1 = "Card#CARD_TITLE");
+	}
+
+	@description = "This ensures that the Asset Library Connected Site Members role does not appear in user roles even it is automatically assigned to an existing site member after connecting site."
+	@priority = "5"
+	@refactordone
+	test CanViewExistingSiteMemberAfterConnectingSite {
+		property custom.properties = "jsonws.web.service.paths.excludes=";
+
+		JSONUser.addUser(
+			userEmailAddress = "user1@liferay.com",
+			userFirstName = "userfn",
+			userLastName = "userln",
+			userScreenName = "usersn");
+
+		JSONUser.setFirstPassword(
+			agreeToTermsAndAnswerReminderQuery = "true",
+			requireReset = "false",
+			userEmailAddress = "user1@liferay.com");
+
+		JSONGroup.addGroup(groupName = "Site Name");
+
+		JSONUser.addUserToSite(
+			groupName = "Site Name",
+			userEmailAddress = "user1@liferay.com");
+
+		JSONDepot.connectSite(
+			depotName = "Test Depot Name",
+			groupName = "Site Name");
+
+		User.openUsersAdmin();
+
+		UserNavigator.gotoUser(userScreenName = "usersn");
+
+		UserNavigator.gotoRoles();
+
+		AssertTextEquals(
+			locator1 = "Message#EMPTY_DEPOT_ROLE",
+			value1 = "This user is not assigned any asset library roles.");
+
+		AssertClick(
+			locator1 = "UsersAndOrganizationsEditUser#DEPOT_ROLES_SELECT_LINK",
+			value1 = "SELECT");
+
+		SelectFrame(locator1 = "IFrame#SELECT_DEPOT_ROLE");
+
+		AssertTextEquals(
+			locator1 = "Message#EMPTY_INFO_TAGLIB",
+			value1 = "No asset libraries were found.");
+
+		User.openUsersAdmin();
+
+		User.editUserAssetLibraryCP(
+			depotName = "Test Depot Name",
+			userScreenName = "usersn");
+
+		User.openUsersAdmin();
+
+		UserNavigator.gotoUser(userScreenName = "usersn");
+
+		UserNavigator.gotoRoles();
+
+		AssertClick(
+			locator1 = "UsersAndOrganizationsEditUser#DEPOT_ROLES_SELECT_LINK",
+			value1 = "SELECT");
+
+		SelectFrame(locator1 = "IFrame#SELECT_DEPOT_ROLE");
+
+		AssertElementNotPresent(
+			key_roleTitle = "Asset Library Connected Site Member",
+			locator1 = "UsersAndOrganizationsEditUser#DEPOT_ROLES_TITLE");
 	}
 
 	@description = "This ensures that a depot owner can assign specific roles to a user."
@@ -604,175 +684,6 @@ definition {
 		SelectFrameTop();
 
 		LexiconCard.viewCardTitle(card = "userfn userln");
-	}
-
-	@description = "This ensures that an asset library role can be edited."
-	@priority = "5"
-	@refactorneeded
-	test ViewALAdminRole {
-		property custom.properties = "jsonws.web.service.paths.excludes=";
-
-		JSONUser.addUser(
-			userEmailAddress = "userea@liferay.com",
-			userFirstName = "userfn",
-			userLastName = "userln",
-			userScreenName = "usersn");
-
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = "userea@liferay.com");
-
-		DepotNavigator.openDepotAdmin();
-
-		DepotNavigator.gotoDepotPortlet(
-			depotName = "Test Depot Name",
-			portlet = "Memberships");
-
-		Depot.assignUserAsMember(
-			depotName = "Test Depot Name",
-			userFirstName = "userfn",
-			userLastName = "userln",
-			userScreenName = "usersn");
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
-
-		User.assignAssetLibraryRole(
-			roleTitle = "Asset Library Administrator",
-			userScreenName = "usersn");
-
-		Role.openRolesAdmin();
-
-		Navigator.gotoNavItem(navItem = "Asset Library Roles");
-
-		PermissionsInline.gotoRolePermissions(roleName = "Asset Library Content Reviewer");
-
-		Role.definePermissionPG(
-			permissionDefinitionKey = "CONTENT_PERMISSIONS_ASSIGN_MEMBERS_CHECKBOX",
-			roleTitle = "Asset Library Administrator");
-
-		User.logoutPG();
-
-		User.loginUserPG(
-			password = "test",
-			userEmailAddress = "userea@liferay.com");
-
-		DepotNavigator.openDepotMembershipsAdmin(depotName = "Test Depot Name");
-
-		LexiconCard.clickEllipsisItem(
-			card = "userfn userln",
-			item = "Assign Roles");
-
-		SelectFrame(locator1 = "IFrame#MODAL_BODY");
-
-		AssertTextEquals(
-			key_card = "Asset Library Content Reviewer",
-			locator1 = "Card#CARD_TITLE",
-			value1 = "Asset Library Content Reviewer");
-
-		AssertElementNotPresent(
-			key_card = "Asset Library Administrator",
-			locator1 = "Card#CARD_TITLE");
-
-		AssertElementNotPresent(
-			key_card = "Asset Library Owner",
-			locator1 = "Card#CARD_TITLE");
-	}
-
-	@description = "This ensures that the Asset Library Connected Site Members role does not appear in user roles even it is automatically assigned to an existing site member after connecting site."
-	@priority = "5"
-	@refactorneeded
-	test ViewExistingSiteMemberAfterConnectingSite {
-		JSONUser.addUser(
-			userEmailAddress = "user1@liferay.com",
-			userFirstName = "userfn",
-			userLastName = "userln",
-			userScreenName = "usersn");
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
-
-		User.editPasswordCP(
-			password = "password",
-			userEmailAddress = "user1@liferay.com",
-			userScreenName = "usersn");
-
-		User.logoutAndLoginPG(
-			userLoginEmailAddress = "test@liferay.com",
-			userLoginFullName = "Test Test");
-
-		JSONGroup.addGroup(groupName = "Site Name");
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
-
-		User.editUserSiteCP(
-			siteName = "Site Name",
-			userScreenName = "usersn");
-
-		JSONDepot.connectSite(
-			depotName = "Test Depot Name",
-			groupName = "Site Name");
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
-
-		UserNavigator.gotoUser(userScreenName = "usersn");
-
-		UserNavigator.gotoRoles();
-
-		AssertTextEquals(
-			locator1 = "Message#EMPTY_DEPOT_ROLE",
-			value1 = "This user is not assigned any asset library roles.");
-
-		AssertClick(
-			locator1 = "UsersAndOrganizationsEditUser#DEPOT_ROLES_SELECT_LINK",
-			value1 = "SELECT");
-
-		SelectFrame(locator1 = "IFrame#SELECT_DEPOT_ROLE");
-
-		AssertTextEquals(
-			locator1 = "Message#EMPTY_INFO_TAGLIB",
-			value1 = "No asset libraries were found.");
-
-		Navigator.openURL();
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
-
-		User.editUserAssetLibraryCP(
-			depotName = "Test Depot Name",
-			userScreenName = "usersn");
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
-
-		UserNavigator.gotoUser(userScreenName = "usersn");
-
-		UserNavigator.gotoRoles();
-
-		AssertClick(
-			locator1 = "UsersAndOrganizationsEditUser#DEPOT_ROLES_SELECT_LINK",
-			value1 = "SELECT");
-
-		SelectFrame(locator1 = "IFrame#SELECT_DEPOT_ROLE");
-
-		AssertElementNotPresent(
-			key_roleTitle = "Asset Library Connected Site Member",
-			locator1 = "UsersAndOrganizationsEditUser#DEPOT_ROLES_TITLE");
 	}
 
 }

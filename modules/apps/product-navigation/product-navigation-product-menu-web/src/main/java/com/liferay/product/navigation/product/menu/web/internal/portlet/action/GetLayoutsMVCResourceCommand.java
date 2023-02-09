@@ -28,7 +28,6 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.product.navigation.product.menu.constants.ProductNavigationProductMenuPortletKeys;
-import com.liferay.product.navigation.product.menu.constants.ProductNavigationProductMenuWebKeys;
 
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
@@ -57,10 +56,6 @@ public class GetLayoutsMVCResourceCommand extends BaseMVCResourceCommand {
 
 		HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(
 			resourceRequest);
-
-		httpServletRequest.setAttribute(
-			ProductNavigationProductMenuWebKeys.RETURN_LAYOUTS_AS_ARRAY,
-			Boolean.TRUE);
 
 		ThemeDisplay themeDisplay =
 			(ThemeDisplay)httpServletRequest.getAttribute(
@@ -103,11 +98,10 @@ public class GetLayoutsMVCResourceCommand extends BaseMVCResourceCommand {
 				}
 			).put(
 				"items",
-				_jsonFactory.createJSONArray(
-					_layoutsTree.getLayoutsJSON(
-						httpServletRequest, themeDisplay.getScopeGroupId(),
-						true, privateLayout, parentLayoutId, null, incomplete,
-						"productMenuPagesTree", null))
+				_layoutsTree.getLayoutsJSONArray(
+					null, themeDisplay.getScopeGroupId(), httpServletRequest,
+					true, incomplete, true, parentLayoutId, privateLayout,
+					"productMenuPagesTree")
 			));
 	}
 

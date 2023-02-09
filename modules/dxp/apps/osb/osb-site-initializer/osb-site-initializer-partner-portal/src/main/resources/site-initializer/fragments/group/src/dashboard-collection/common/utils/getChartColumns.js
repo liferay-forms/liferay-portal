@@ -14,7 +14,8 @@ import {currencyFormat} from '.';
 export default function getChartColumns(
 	mdfRequests,
 	setColumnsMDFChart,
-	setTitleChart
+	setTitleChart,
+	setValueChart
 ) {
 	const chartColumns = [];
 
@@ -32,8 +33,8 @@ export default function getChartColumns(
 	expiringSoonTotalActivities(mdfRequests, chartColumns);
 
 	expiredTotalActivites(mdfRequests, chartColumns);
-
-	setTitleChart(`$${currencyFormat(totalMDFActivitiesAmount)} Total MDF`);
+	setValueChart(currencyFormat(totalMDFActivitiesAmount));
+	setTitleChart(`Total MDF`);
 	setColumnsMDFChart(chartColumns);
 }
 
@@ -42,7 +43,7 @@ const expiredDate = 30;
 function expiredTotalActivites(mdfRequests, chartColumns) {
 	const expiredActivities = mdfRequests?.items
 		?.map((activity) =>
-			activity?.mdfRequestToActivities?.filter(
+			activity?.mdfReqToActs?.filter(
 				(request) =>
 					new Date(request.endDate).setTime(expiredDate) > new Date()
 			)
@@ -58,7 +59,7 @@ function expiredTotalActivites(mdfRequests, chartColumns) {
 function expiringSoonTotalActivities(mdfRequests, chartColumns) {
 	const expiringSoonActivitiesDate = mdfRequests?.items
 		?.map((activity) =>
-			activity.mdfRequestToActivities.filter(
+			activity.mdfReqToActs.filter(
 				(request) =>
 					new Date(request.endDate).setTime(expiredDate) < new Date()
 			)
@@ -75,7 +76,7 @@ function expiringSoonTotalActivities(mdfRequests, chartColumns) {
 function totalApprovedMDFToClaims(mdfRequests, chartColumns) {
 	const claimedRequests = mdfRequests?.items
 		?.map((claim) =>
-			claim.mdfRequestToMdfClaims.filter(
+			claim.mdfReqToMDFClms.filter(
 				(request) => request.mdfClaimStatus.key === 'approved'
 			)
 		)

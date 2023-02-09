@@ -29,8 +29,6 @@ import com.liferay.document.library.kernel.util.PDFProcessor;
 import com.liferay.document.library.kernel.util.PDFProcessorUtil;
 import com.liferay.document.library.kernel.util.VideoProcessor;
 import com.liferay.document.library.kernel.util.VideoProcessorUtil;
-import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
-import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
 import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
@@ -54,7 +52,6 @@ import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.model.OrganizationTable;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.module.util.SystemBundleUtil;
 import com.liferay.portal.kernel.portlet.PortletProvider;
 import com.liferay.portal.kernel.portlet.PortletProviderUtil;
 import com.liferay.portal.kernel.portlet.constants.FriendlyURLResolverConstants;
@@ -76,6 +73,7 @@ import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
+import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermissionRegistryUtil;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.ImageLocalServiceUtil;
@@ -1295,8 +1293,7 @@ public class WebServerServlet extends HttpServlet {
 			return;
 		}
 
-		String fileName = HttpComponentsUtil.decodeURL(
-			HtmlUtil.escape(pathArray[2]));
+		String fileName = HtmlUtil.escape(pathArray[2]);
 
 		if (Validator.isNull(fileName)) {
 			throw new NoSuchFileEntryException("Invalid path " + path);
@@ -1399,7 +1396,7 @@ public class WebServerServlet extends HttpServlet {
 		else if (pathArray.length == 3) {
 			long groupId = GetterUtil.getLong(pathArray[0]);
 			long folderId = GetterUtil.getLong(pathArray[1]);
-			String fileName = HttpComponentsUtil.decodeURL(pathArray[2]);
+			String fileName = pathArray[2];
 
 			try {
 				try {
@@ -1527,7 +1524,7 @@ public class WebServerServlet extends HttpServlet {
 			httpServletRequest);
 
 		ModelResourcePermission<?> fileEntryModelResourcePermission =
-			_modelResourcePermissionServiceTrackerMap.getService(
+			ModelResourcePermissionRegistryUtil.getModelResourcePermission(
 				FileEntry.class.getName());
 
 		fileEntryModelResourcePermission.check(
@@ -1729,7 +1726,7 @@ public class WebServerServlet extends HttpServlet {
 			long groupId = GetterUtil.getLong(pathArray[0]);
 			long folderId = GetterUtil.getLong(pathArray[1]);
 
-			String fileName = HttpComponentsUtil.decodeURL(pathArray[2]);
+			String fileName = pathArray[2];
 
 			if (fileName.contains(StringPool.QUESTION)) {
 				fileName = fileName.substring(
@@ -1864,13 +1861,6 @@ public class WebServerServlet extends HttpServlet {
 	private static volatile MessageBus _messageBus =
 		ServiceProxyFactory.newServiceTrackedInstance(
 			MessageBus.class, WebServerServlet.class, "_messageBus", false);
-	private static final ServiceTrackerMap<String, ModelResourcePermission<?>>
-		_modelResourcePermissionServiceTrackerMap =
-			ServiceTrackerMapFactory.openSingleValueMap(
-				SystemBundleUtil.getBundleContext(),
-				(Class<ModelResourcePermission<?>>)
-					(Class<?>)ModelResourcePermission.class,
-				"model.class.name");
 	private static volatile TrashHelper _trashTitleResolver =
 		ServiceProxyFactory.newServiceTrackedInstance(
 			TrashHelper.class, WebServerServlet.class, "_trashTitleResolver",

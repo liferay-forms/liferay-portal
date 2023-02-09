@@ -26,12 +26,12 @@ import com.liferay.petra.string.StringUtil;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.util.PropsValues;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -60,61 +60,68 @@ public class OAuth2ProviderApplicationHeadlessServerConfigurationFactory
 			_log.debug("Activate " + properties);
 		}
 
-		long companyId = ConfigurationFactoryUtil.getCompanyId(
-			companyLocalService, properties);
-		String externalReferenceCode =
-			ConfigurationFactoryUtil.getExternalReferenceCode(properties);
+		ConfigurationFactoryUtil.executeAsCompany(
+			companyLocalService, properties,
+			companyId -> {
+				String externalReferenceCode =
+					ConfigurationFactoryUtil.getExternalReferenceCode(
+						properties);
 
-		OAuth2ProviderApplicationHeadlessServerConfiguration
-			oAuth2ProviderApplicationHeadlessServerConfiguration =
-				ConfigurableUtil.createConfigurable(
-					OAuth2ProviderApplicationHeadlessServerConfiguration.class,
+				OAuth2ProviderApplicationHeadlessServerConfiguration
+					oAuth2ProviderApplicationHeadlessServerConfiguration =
+						ConfigurableUtil.createConfigurable(
+							OAuth2ProviderApplicationHeadlessServerConfiguration.class,
+							properties);
+
+				List<String> scopeAliasesList = ListUtil.fromArray(
+					oAuth2ProviderApplicationHeadlessServerConfiguration.
+						scopes());
+
+				oAuth2Application = _addOrUpdateOAuth2Application(
+					companyId, externalReferenceCode,
+					oAuth2ProviderApplicationHeadlessServerConfiguration,
+					scopeAliasesList);
+
+				if (_log.isDebugEnabled()) {
+					_log.debug("OAuth 2 application " + oAuth2Application);
+				}
+
+				modifyConfigMap(
+					companyLocalService.getCompanyById(companyId),
+					HashMapBuilder.put(
+						externalReferenceCode +
+							".oauth2.headless.server.audience",
+						oAuth2Application.getHomePageURL()
+					).put(
+						externalReferenceCode +
+							".oauth2.headless.server.client.id",
+						oAuth2Application.getClientId()
+					).put(
+						externalReferenceCode +
+							".oauth2.headless.server.client.secret",
+						oAuth2Application.getClientSecret()
+					).put(
+						externalReferenceCode +
+							".oauth2.headless.server.scopes",
+						StringUtil.merge(scopeAliasesList, StringPool.NEW_LINE)
+					).put(
+						externalReferenceCode + ".oauth2.authorization.uri",
+						"/o/oauth2/authorize"
+					).put(
+						externalReferenceCode + ".oauth2.introspection.uri",
+						"/o/oauth2/introspect"
+					).put(
+						externalReferenceCode + ".oauth2.jwks.uri",
+						"/o/oauth2/jwks"
+					).put(
+						externalReferenceCode + ".oauth2.redirect.uris",
+						"/o/oauth2/redirect"
+					).put(
+						externalReferenceCode + ".oauth2.token.uri",
+						"/o/oauth2/token"
+					).build(),
 					properties);
-
-		List<String> scopeAliasesList = ListUtil.fromArray(
-			oAuth2ProviderApplicationHeadlessServerConfiguration.scopes());
-
-		oAuth2Application = _addOrUpdateOAuth2Application(
-			companyId, externalReferenceCode,
-			oAuth2ProviderApplicationHeadlessServerConfiguration,
-			scopeAliasesList);
-
-		if (_log.isDebugEnabled()) {
-			_log.debug("OAuth 2 application " + oAuth2Application);
-		}
-
-		Company company = companyLocalService.getCompanyById(companyId);
-
-		String serviceAddress = getServiceAddress(company);
-
-		modifyConfigMap(
-			company,
-			HashMapBuilder.put(
-				externalReferenceCode + ".oauth2.authorization.uri",
-				serviceAddress.concat("/o/oauth2/authorize")
-			).put(
-				externalReferenceCode + ".oauth2.headless.server.audience",
-				oAuth2Application.getHomePageURL()
-			).put(
-				externalReferenceCode + ".oauth2.headless.server.client.id",
-				oAuth2Application.getClientId()
-			).put(
-				externalReferenceCode + ".oauth2.headless.server.client.secret",
-				oAuth2Application.getClientSecret()
-			).put(
-				externalReferenceCode + ".oauth2.headless.server.scopes",
-				StringUtil.merge(scopeAliasesList, StringPool.NEW_LINE)
-			).put(
-				externalReferenceCode + ".oauth2.introspection.uri",
-				serviceAddress.concat("/o/oauth2/introspect")
-			).put(
-				externalReferenceCode + ".oauth2.jwks.uri",
-				serviceAddress.concat("/o/oauth2/jwks")
-			).put(
-				externalReferenceCode + ".oauth2.token.uri",
-				serviceAddress.concat("/o/oauth2/token")
-			).build(),
-			properties);
+			});
 	}
 
 	@Override
@@ -129,48 +136,41 @@ public class OAuth2ProviderApplicationHeadlessServerConfigurationFactory
 			List<String> scopeAliasesList)
 		throws Exception {
 
-		String userAccountEmailAddress =
-			oAuth2ProviderApplicationHeadlessServerConfiguration.
-				userAccountEmailAddress();
-
-		if (!Objects.equals(
-				_COMPANY_DEFAULT_USER_TOKEN, userAccountEmailAddress) &&
-			!Validator.isEmailAddress(userAccountEmailAddress)) {
-
-			throw new IllegalArgumentException(
-				"User account email address must be a valid email address or " +
-					_COMPANY_DEFAULT_USER_TOKEN);
-		}
-
 		User user = userLocalService.getDefaultUser(companyId);
 
-		User serviceUser = null;
+		User serviceUser = _getServiceUser(
+			companyId, oAuth2ProviderApplicationHeadlessServerConfiguration);
 
-		if (Objects.equals(
-				_COMPANY_DEFAULT_USER_TOKEN, userAccountEmailAddress)) {
-
-			serviceUser = user;
-		}
-		else {
-			serviceUser = userLocalService.getUserByEmailAddress(
-				companyId, userAccountEmailAddress);
-		}
+		String clientId = OAuth2SecureRandomGenerator.generateClientId();
+		String clientSecret =
+			OAuth2SecureRandomGenerator.generateClientSecret();
 
 		OAuth2Application oAuth2Application =
+			oAuth2ApplicationLocalService.
+				fetchOAuth2ApplicationByExternalReferenceCode(
+					externalReferenceCode, companyId);
+
+		if (oAuth2Application != null) {
+			clientId = oAuth2Application.getClientId();
+			clientSecret = oAuth2Application.getClientSecret();
+		}
+
+		oAuth2Application =
 			oAuth2ApplicationLocalService.addOrUpdateOAuth2Application(
 				externalReferenceCode, user.getUserId(), user.getScreenName(),
 				ListUtil.fromArray(
 					GrantType.CLIENT_CREDENTIALS, GrantType.JWT_BEARER),
-				"client_secret_post", serviceUser.getUserId(),
-				OAuth2SecureRandomGenerator.generateClientId(),
-				ClientProfile.HEADLESS_SERVER.id(),
-				OAuth2SecureRandomGenerator.generateClientSecret(),
+				"client_secret_post", serviceUser.getUserId(), clientId,
+				ClientProfile.HEADLESS_SERVER.id(), clientSecret,
 				oAuth2ProviderApplicationHeadlessServerConfiguration.
 					description(),
 				Arrays.asList("token.introspection"),
 				oAuth2ProviderApplicationHeadlessServerConfiguration.
 					homePageURL(),
-				0, null, externalReferenceCode,
+				0, null,
+				getName(
+					oAuth2ProviderApplicationHeadlessServerConfiguration.name(),
+					externalReferenceCode),
 				oAuth2ProviderApplicationHeadlessServerConfiguration.
 					privacyPolicyURL(),
 				Collections.emptyList(), false, true, null,
@@ -194,6 +194,49 @@ public class OAuth2ProviderApplicationHeadlessServerConfigurationFactory
 		return oAuth2ApplicationLocalService.updateIcon(
 			oAuth2Application.getOAuth2ApplicationId(),
 			clazz.getResourceAsStream("dependencies/logo.png"));
+	}
+
+	private User _getServiceUser(
+			long companyId,
+			OAuth2ProviderApplicationHeadlessServerConfiguration
+				oAuth2ProviderApplicationHeadlessServerConfiguration)
+		throws Exception {
+
+		String userAccountEmailAddress =
+			oAuth2ProviderApplicationHeadlessServerConfiguration.
+				userAccountEmailAddress();
+		String userAccountScreenName =
+			oAuth2ProviderApplicationHeadlessServerConfiguration.
+				userAccountScreenName();
+
+		if (!Objects.equals(
+				_COMPANY_DEFAULT_USER_TOKEN, userAccountEmailAddress) &&
+			Objects.equals(
+				_COMPANY_DEFAULT_USER_TOKEN, userAccountScreenName)) {
+
+			if (!Validator.isEmailAddress(userAccountEmailAddress)) {
+				throw new IllegalArgumentException(
+					"User account email address is not an email address");
+			}
+
+			return userLocalService.getUserByEmailAddress(
+				companyId, userAccountEmailAddress);
+		}
+
+		if (Validator.isNull(userAccountScreenName)) {
+			throw new IllegalArgumentException(
+				"User account screen name is null");
+		}
+
+		if (Objects.equals(
+				_COMPANY_DEFAULT_USER_TOKEN, userAccountScreenName)) {
+
+			return userLocalService.getUserByScreenName(
+				companyId, PropsValues.DEFAULT_ADMIN_SCREEN_NAME);
+		}
+
+		return userLocalService.getUserByScreenName(
+			companyId, userAccountScreenName);
 	}
 
 	private static final String _COMPANY_DEFAULT_USER_TOKEN =

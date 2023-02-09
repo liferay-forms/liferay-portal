@@ -16,10 +16,11 @@ import TestrayError from '../../TestrayError';
 import i18n from '../../i18n';
 import yupSchema from '../../schema/yup';
 import {DISPATCH_TRIGGER_TYPE} from '../../util/enum';
-import {SearchBuilder, searchUtil} from '../../util/search';
-import {TaskStatuses} from '../../util/statuses';
+import {SearchBuilder} from '../../util/search';
+import {DispatchTriggerStatuses, TaskStatuses} from '../../util/statuses';
 import {liferayDispatchTriggerImpl} from './LiferayDispatchTrigger';
 import Rest from './Rest';
+import {testrayDispatchTriggerImpl} from './TestrayDispatchTrigger';
 import {testrayTaskCaseTypesImpl} from './TestrayTaskCaseTypes';
 import {testrayTaskUsersImpl} from './TestrayTaskUsers';
 import {APIResponse, TestrayTask} from './types';
@@ -118,13 +119,15 @@ class TestrayTaskImpl extends Rest<TaskForm, TestrayTask, NestedObjectOptions> {
 			dispatchTaskExecutorType: DISPATCH_TRIGGER_TYPE.CREATE_TASK_SUBTASK,
 			dispatchTaskSettings: {
 				testrayBuildId: data.buildId,
-				testrayCaseTypesId: data.caseTypes,
+				testrayCaseTypeIds: data.caseTypes,
 				testrayTaskId: task.id,
 			},
 			externalReferenceCode: `T-${task.id}`,
 			name: `T-${task.id} / ${data.name}`,
 			overlapAllowed: false,
 		});
+
+		delete (data as any).taskToTasksCaseTypes;
 
 		const dispatchTriggerId = dispatchTrigger.liferayDispatchTrigger.id;
 
@@ -136,12 +139,32 @@ class TestrayTaskImpl extends Rest<TaskForm, TestrayTask, NestedObjectOptions> {
 			liferayDispatchTriggerImpl.run(dispatchTriggerId),
 		]);
 
+		const body = {
+			dueStatus: DispatchTriggerStatuses.INPROGRESS,
+			output: '',
+		};
+
+		try {
+			await liferayDispatchTriggerImpl.run(
+				dispatchTrigger.liferayDispatchTrigger.id
+			);
+		}
+		catch (error) {
+			body.dueStatus = DispatchTriggerStatuses.FAILED;
+			body.output = (error as TestrayError)?.message;
+		}
+
+		await testrayDispatchTriggerImpl.update(
+			dispatchTrigger.testrayDispatchTrigger.id,
+			body
+		);
+
 		return {...task, dispatchTriggerId};
 	}
 
 	public getTasksByBuildId(buildId: number) {
 		return this.fetcher<APIResponse<TestrayTask>>(
-			`/tasks?filter=${searchUtil.eq('buildId', buildId)}`
+			`/tasks?filter=${SearchBuilder.eq('buildId', buildId)}`
 		);
 	}
 

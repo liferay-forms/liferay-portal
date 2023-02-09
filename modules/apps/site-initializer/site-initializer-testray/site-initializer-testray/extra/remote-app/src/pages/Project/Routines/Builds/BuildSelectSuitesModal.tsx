@@ -21,20 +21,19 @@ import Modal from '../../../../components/Modal';
 import {withVisibleContent} from '../../../../hoc/withVisibleContent';
 import {FormModalOptions} from '../../../../hooks/useFormModal';
 import i18n from '../../../../i18n';
-import {filters} from '../../../../schema/filter';
 import fetcher from '../../../../services/fetcher';
 import {APIResponse, TestraySuiteCase} from '../../../../services/rest';
 import {getUniqueList} from '../../../../util';
-import {searchUtil} from '../../../../util/search';
+import {SearchBuilder} from '../../../../util/search';
 import SelectCase from '../../Suites/modal/SelectCase';
-
-type ModalType = {
-	type: 'select-cases' | 'select-suites';
-};
 
 type BuildSelectSuitesModalProps = {
 	displayTitle?: boolean;
 	modal: FormModalOptions;
+	type: 'select-cases' | 'select-suites';
+};
+
+type ModalType = {
 	type: 'select-cases' | 'select-suites';
 };
 
@@ -62,7 +61,7 @@ const BuildSelectSuitesModal: React.FC<BuildSelectSuitesModalProps> = ({
 
 		if (modalType.type === 'select-suites') {
 			fetcher<APIResponse<TestraySuiteCase>>(
-				`/suitescaseses?fields=r_caseToSuitesCases_c_caseId&filter=${searchUtil.in(
+				`/suitescaseses?fields=r_caseToSuitesCases_c_caseId&filter=${SearchBuilder.in(
 					'suiteId',
 					suiteIds
 				)}&pageSize=1000`
@@ -113,8 +112,7 @@ const BuildSelectSuitesModal: React.FC<BuildSelectSuitesModalProps> = ({
 			{modalType.type === 'select-suites' && (
 				<ListView
 					managementToolbarProps={{
-						filterFields: filters.suites as any,
-
+						filterSchema: 'suites',
 						title: displayTitle ? i18n.translate('suites') : '',
 					}}
 					onContextChange={({selectedRows}) =>
@@ -148,7 +146,10 @@ const BuildSelectSuitesModal: React.FC<BuildSelectSuitesModalProps> = ({
 						rowSelectable: true,
 					}}
 					variables={{
-						filter: searchUtil.eq('projectId', projectId as string),
+						filter: SearchBuilder.eq(
+							'projectId',
+							projectId as string
+						),
 					}}
 				/>
 			)}

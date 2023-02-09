@@ -19,12 +19,12 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.model.PortletApp;
 import com.liferay.portal.kernel.model.PortletWrapper;
-import com.liferay.portal.kernel.service.PortalPreferencesLocalServiceWrapper;
 import com.liferay.portal.kernel.service.PortletLocalServiceUtil;
 import com.liferay.portal.kernel.service.PortletLocalServiceWrapper;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PortletKeys;
+import com.liferay.portal.kernel.util.PrefsProps;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.language.LanguageImpl;
@@ -32,14 +32,12 @@ import com.liferay.portal.model.impl.PortletAppImpl;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 import com.liferay.portal.tools.ToolDependencies;
 import com.liferay.portal.util.PortalImpl;
-import com.liferay.portlet.PortalPreferencesWrapper;
+import com.liferay.portal.util.PropsValues;
 
 import java.util.Objects;
 
-import javax.portlet.PortletPreferences;
-
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
@@ -70,39 +68,24 @@ public class ComboServletTest {
 	public static void setUpClass() throws Exception {
 		ToolDependencies.wireCaches();
 
-		PortalUtil portalUtil = new PortalUtil();
-
-		portalUtil.setPortal(new PortalImpl());
-
 		ReflectionTestUtil.setFieldValue(
-			PrefsPropsUtil.class, "_portalPreferencesLocalService",
-			new PortalPreferencesLocalServiceWrapper() {
-
-				@Override
-				public PortletPreferences getPreferences(
-					long ownerId, int ownerType) {
-
-					return new PortalPreferencesWrapper(null) {
-
-						@Override
-						public String getValue(String key, String def) {
-							if (PropsKeys.COMBO_ALLOWED_FILE_EXTENSIONS.equals(
-									key)) {
-
-								return ".css,.js";
-							}
-
-							return null;
-						}
-
-					};
-				}
-
-			});
+			PropsValues.class, "COMBO_CHECK_TIMESTAMP", true);
 	}
 
 	@Before
 	public void setUp() throws ServletException {
+		_mockHttpServletRequest = new MockHttpServletRequest();
+
+		_mockHttpServletRequest.setLocalAddr("localhost");
+		_mockHttpServletRequest.setLocalPort(8080);
+		_mockHttpServletRequest.setScheme("http");
+
+		_mockHttpServletResponse = new MockHttpServletResponse();
+		_pluginServletContext = Mockito.spy(new MockServletContext());
+		_portalServletContext = _setUpPortalServletContext();
+
+		_portalUtil.setPortal(_portalImpl);
+
 		ReflectionTestUtil.setFieldValue(
 			PortletLocalServiceUtil.class, "_service",
 			new PortletLocalServiceWrapper() {
@@ -121,22 +104,22 @@ public class ComboServletTest {
 						return null;
 					}
 
-					return _portletUndeployed;
+					return _undeployedPortlet;
 				}
 
 			});
 
-		setUpComboServlet();
+		ReflectionTestUtil.setFieldValue(
+			PrefsPropsUtil.class, "_prefsProps", _prefsProps);
 
-		setUpPortalServletContext();
+		Mockito.when(
+			_prefsProps.getStringArray(
+				PropsKeys.COMBO_ALLOWED_FILE_EXTENSIONS, StringPool.COMMA)
+		).thenReturn(
+			new String[] {".css", ".js"}
+		);
 
-		setUpPortalPortlet();
-
-		setUpPluginServletContext();
-
-		setUpTestPortlet();
-
-		_portletUndeployed = new PortletWrapper(null) {
+		_undeployedPortlet = new PortletWrapper(null) {
 
 			@Override
 			public boolean isUndeployedPortlet() {
@@ -145,13 +128,9 @@ public class ComboServletTest {
 
 		};
 
-		_mockHttpServletRequest = new MockHttpServletRequest();
-
-		_mockHttpServletRequest.setLocalAddr("localhost");
-		_mockHttpServletRequest.setLocalPort(8080);
-		_mockHttpServletRequest.setScheme("http");
-
-		_mockHttpServletResponse = new MockHttpServletResponse();
+		_comboServlet = _setUpComboServlet(_portalServletContext);
+		_portalPortlet = _setUpPortalPortlet(_portalServletContext);
+		_testPortlet = _setUpTestPortlet(_pluginServletContext);
 	}
 
 	@Test
@@ -240,6 +219,61 @@ public class ComboServletTest {
 	}
 
 	@Test
+	public void testServiceWithoutPortletIdButWithContext() throws Exception {
+		_testService(
+			"/js/javascript.js", "/portal/js/javascript.js",
+			_portalServletContext);
+	}
+
+	@Test
+	public void testServiceWithoutPortletIdButWithProxy() throws Exception {
+		_setUpProxy();
+
+		_testService(
+			"/js/javascript.js", "/proxyPath/js/javascript.js",
+			_portalServletContext);
+	}
+
+	@Test
+	public void testServiceWithoutPortletIdButWithProxyAndContext()
+		throws Exception {
+
+		_setUpProxy();
+
+		_testService(
+			"/js/javascript.js", "/proxyPath/portal/js/javascript.js",
+			_portalServletContext);
+	}
+
+	@Test
+	public void testServiceWithPortletIdAndContext() throws Exception {
+		_testService(
+			"/portal/js/javascript.js",
+			_TEST_PORTLET_ID + ":/portal/js/javascript.js",
+			_pluginServletContext);
+	}
+
+	@Test
+	public void testServiceWithPortletIdAndProxy() throws Exception {
+		_setUpProxy();
+
+		_testService(
+			"/js/javascript.js",
+			_TEST_PORTLET_ID + ":/proxyPath/js/javascript.js",
+			_pluginServletContext);
+	}
+
+	@Test
+	public void testServiceWithPortletIdAndProxyAndContext() throws Exception {
+		_setUpProxy();
+
+		_testService(
+			"/portal/js/javascript.js",
+			_TEST_PORTLET_ID + ":/proxyPath/portal/js/javascript.js",
+			_pluginServletContext);
+	}
+
+	@Test
 	public void testValidateInValidModuleExtension() throws Exception {
 		boolean valid = _comboServlet.validateModuleExtension(
 			_TEST_PORTLET_ID +
@@ -267,35 +301,31 @@ public class ComboServletTest {
 		Assert.assertTrue(valid);
 	}
 
-	protected ServletConfig getServletConfig() {
-		return new MockServletConfig(_portalServletContext);
+	private ComboServlet _setUpComboServlet(ServletContext portalServletContext)
+		throws ServletException {
+
+		ComboServlet comboServlet = new ComboServlet();
+
+		comboServlet.init(new MockServletConfig(portalServletContext));
+
+		return comboServlet;
 	}
 
-	protected void setUpComboServlet() throws ServletException {
-		_comboServlet = new ComboServlet();
+	private Portlet _setUpPortalPortlet(ServletContext portalServletContext) {
+		PortletApp portletApp = new PortletAppImpl(StringPool.BLANK);
 
-		_comboServlet.init(getServletConfig());
-	}
+		portletApp.setServletContext(portalServletContext);
 
-	protected void setUpPluginServletContext() {
-		_pluginServletContext = Mockito.spy(new MockServletContext());
-	}
-
-	protected void setUpPortalPortlet() {
-		_portalPortletApp = new PortletAppImpl(StringPool.BLANK);
-
-		_portalPortletApp.setServletContext(_portalServletContext);
-
-		_portalPortlet = new PortletWrapper(null) {
+		return new PortletWrapper(null) {
 
 			@Override
 			public String getContextPath() {
-				return "portal";
+				return "/portal";
 			}
 
 			@Override
 			public PortletApp getPortletApp() {
-				return _portalPortletApp;
+				return portletApp;
 			}
 
 			@Override
@@ -311,22 +341,37 @@ public class ComboServletTest {
 		};
 	}
 
-	protected void setUpPortalServletContext() {
-		_portalServletContext = Mockito.spy(new MockServletContext());
+	private ServletContext _setUpPortalServletContext() {
+		MockServletContext mockServletContext = Mockito.spy(
+			new MockServletContext());
 
-		_portalServletContext.setContextPath("portal");
+		mockServletContext.setContextPath("/portal");
+
+		return mockServletContext;
 	}
 
-	protected void setUpTestPortlet() {
-		_testPortletApp = new PortletAppImpl(StringPool.BLANK);
+	private void _setUpProxy() {
+		ReflectionTestUtil.setFieldValue(
+			PropsValues.class, "PORTAL_PROXY_PATH", "/proxyPath");
 
-		_testPortletApp.setServletContext(_pluginServletContext);
+		_portalUtil.setPortal(new PortalImpl());
+	}
 
-		_testPortlet = new PortletWrapper(null) {
+	private Portlet _setUpTestPortlet(ServletContext pluginServletContext) {
+		PortletApp portletApp = new PortletAppImpl(StringPool.BLANK);
+
+		portletApp.setServletContext(pluginServletContext);
+
+		return new PortletWrapper(null) {
+
+			@Override
+			public String getContextPath() {
+				return "/portal";
+			}
 
 			@Override
 			public PortletApp getPortletApp() {
-				return _testPortletApp;
+				return portletApp;
 			}
 
 			@Override
@@ -342,19 +387,42 @@ public class ComboServletTest {
 		};
 	}
 
+	private void _testService(
+			String path, String queryString, ServletContext servletContext)
+		throws Exception {
+
+		MockHttpServletRequest mockHttpServletRequest =
+			new MockHttpServletRequest();
+
+		mockHttpServletRequest.setQueryString(queryString);
+
+		_comboServlet.service(
+			mockHttpServletRequest, new MockHttpServletResponse());
+
+		Mockito.verify(
+			servletContext
+		).getRequestDispatcher(
+			path
+		);
+
+		Mockito.reset(servletContext);
+	}
+
 	private static final String _NONEXISTING_PORTLET_ID = "2345678";
 
 	private static final String _TEST_PORTLET_ID = "TEST_PORTLET_ID";
 
+	private static final PortalImpl _portalImpl = new PortalImpl();
+	private static final PortalUtil _portalUtil = new PortalUtil();
+
 	private ComboServlet _comboServlet;
 	private MockHttpServletRequest _mockHttpServletRequest;
 	private MockHttpServletResponse _mockHttpServletResponse;
-	private MockServletContext _pluginServletContext;
+	private ServletContext _pluginServletContext;
 	private Portlet _portalPortlet;
-	private PortletApp _portalPortletApp;
-	private MockServletContext _portalServletContext;
-	private Portlet _portletUndeployed;
+	private ServletContext _portalServletContext;
+	private final PrefsProps _prefsProps = Mockito.mock(PrefsProps.class);
 	private Portlet _testPortlet;
-	private PortletApp _testPortletApp;
+	private Portlet _undeployedPortlet;
 
 }

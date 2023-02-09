@@ -27,6 +27,7 @@ import com.liferay.expando.kernel.model.ExpandoTable;
 import com.liferay.expando.kernel.model.ExpandoTableConstants;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalService;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.BaseModel;
@@ -104,10 +105,13 @@ public class DXPEntityDTOConverterImpl implements DXPEntityDTOConverter {
 					if (entry.getValue() instanceof Date) {
 						Date date = (Date)entry.getValue();
 
-						value = GetterUtil.getString(date.getTime());
+						value = String.valueOf(date.getTime());
+					}
+					else if (Validator.isNotNull(entry.getValue())) {
+						value = String.valueOf(entry.getValue());
 					}
 					else {
-						value = GetterUtil.getString(entry.getValue());
+						value = StringPool.BLANK;
 					}
 				}
 			};

@@ -27,7 +27,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 
@@ -134,20 +133,14 @@ public class RESTBuilderTest {
 
 		List<String> lines = Files.readAllLines(file.toPath());
 
-		Stream<String> stream = lines.stream();
+		Assert.assertTrue(
+			_matches(
+				lines,
+				"access = JsonProperty.Access.READ_WRITE, value = \"" +
+					propertyName + "\""));
 
 		Assert.assertTrue(
-			stream.anyMatch(
-				line -> line.contains(
-					"access = JsonProperty.Access.READ_WRITE, value = \"" +
-						propertyName + "\"")));
-
-		stream = lines.stream();
-
-		Assert.assertTrue(
-			stream.anyMatch(
-				line -> line.contains(
-					"sb.append(\"\\\"" + propertyName + "\\\": \");")));
+			_matches(lines, "sb.append(\"\\\"" + propertyName + "\\\": \");"));
 	}
 
 	private void _assertPropertiesWithXML(
@@ -162,12 +155,8 @@ public class RESTBuilderTest {
 
 		List<String> lines = Files.readAllLines(file.toPath());
 
-		Stream<String> stream = lines.stream();
-
 		Assert.assertTrue(
-			stream.anyMatch(
-				line -> line.contains(
-					"@XmlElement(name = \"" + xmlPropertyName + "\")")));
+			_matches(lines, "@XmlElement(name = \"" + xmlPropertyName + "\")"));
 	}
 
 	private void _assertResourceFilesExist(
@@ -234,6 +223,16 @@ public class RESTBuilderTest {
 
 		return StringBundler.concat(
 			filesPath, resourcePathPrefix, resourceName, resourcePathSuffix);
+	}
+
+	private boolean _matches(List<String> lines, String text) {
+		for (String line : lines) {
+			if (line.contains(text)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 }

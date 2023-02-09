@@ -711,6 +711,7 @@ definition {
 	@priority = "4"
 	test AddWebContentWithRepeatableRichTextField {
 		property environment.acceptance = "true";
+		property operating.system.types = "alpine,amazonlinux,centos,debian,fedora,orcllinux,osx,redhat,solaris,suse,ubuntu,windows";
 		property portal.acceptance = "true";
 
 		task ("Add a web content structure with a repeatable Rich Text field") {
@@ -1345,7 +1346,7 @@ definition {
 				structureDescription = "WC Structure Description",
 				structureName = "WC Structure Name");
 
-			DataEngine.addFields(fieldNameList = "Date,Numeric,Upload,Image,Link to Page,Numeric,Single Selection,Multiple Selection,Grid,Select from List,Text,Rich Text");
+			DataEngine.addFields(fieldNameList = "Date,Upload,Image,Link to Page,Numeric,Single Selection,Multiple Selection,Grid,Select from List,Text,Rich Text");
 
 			WebContentStructures.saveCP();
 		}
@@ -1356,7 +1357,7 @@ definition {
 			WebContentTemplates.addCP(
 				structureName = "WC Structure Name",
 				templateDescription = "WC Template Description",
-				templateFieldNames = "Date,Numeric,Upload,Image,Link to Page,Numeric,Single Selection,Multiple Selection,Grid,Select from List,Text,Rich Text",
+				templateFieldNames = "Date,Upload,Image,Link to Page,Numeric,Single Selection,Multiple Selection,Grid,Select from List,Text,Rich Text",
 				templateName = "WC Template Name");
 		}
 

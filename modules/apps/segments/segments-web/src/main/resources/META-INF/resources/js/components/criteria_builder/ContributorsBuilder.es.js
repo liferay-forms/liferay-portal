@@ -25,13 +25,7 @@ import React from 'react';
 import {DndProvider} from 'react-dnd';
 import {HTML5Backend} from 'react-dnd-html5-backend';
 
-import {
-	conjunctionShape,
-	contributorShape,
-	operatorShape,
-	propertyGroupShape,
-	propertyTypesShape,
-} from '../../utils/types.es';
+import {contributorShape, propertyGroupShape} from '../../utils/types.es';
 import {getPluralMessage} from '../../utils/utils.es';
 import CriteriaSidebar from '../criteria_sidebar/CriteriaSidebar.es';
 import Conjunction from './Conjunction.es';
@@ -57,9 +51,6 @@ class ContributorBuilder extends React.Component {
 		renderEmptyValuesErrors: PropTypes.bool,
 		scopeName: PropTypes.string,
 		siteItemSelectorURL: PropTypes.string,
-		supportedConjunctions: PropTypes.arrayOf(conjunctionShape).isRequired,
-		supportedOperators: PropTypes.arrayOf(operatorShape).isRequired,
-		supportedPropertyTypes: propertyTypesShape.isRequired,
 	};
 
 	static defaultProps = {
@@ -108,7 +99,9 @@ class ContributorBuilder extends React.Component {
 		openSelectionModal({
 			onSelect: (selectedItem) => {
 				this.setState({
-					scopeName: selectedItem.groupscopelabel,
+					scopeName: selectedItem.groupdescriptivename
+						? selectedItem.groupdescriptivename
+						: selectedItem.groupscopelabel,
 				});
 				const input = document.querySelector(
 					`[name="${this.props.portletNamespace}groupId"]`
@@ -138,9 +131,6 @@ class ContributorBuilder extends React.Component {
 			onPreviewMembers,
 			propertyGroups,
 			renderEmptyValuesErrors,
-			supportedConjunctions,
-			supportedOperators,
-			supportedPropertyTypes,
 		} = this.props;
 
 		const {editingId, scopeName} = this.state;
@@ -218,7 +208,7 @@ class ContributorBuilder extends React.Component {
 														<div className="align-items-center d-flex justify-content-between mb-3">
 															<p className="mb-0 mr-6 text-dark">
 																{Liferay.Language.get(
-																	'select-the-scope-of-your-segment'
+																	'select-the-scope-of-your-segment-to-specify-where-it-can-be-used'
 																)}
 															</p>
 
@@ -358,9 +348,6 @@ class ContributorBuilder extends React.Component {
 																				onSelect={
 																					onConjunctionChange
 																				}
-																				supportedConjunctions={
-																					supportedConjunctions
-																				}
 																			/>
 																		</>
 																	)}
@@ -391,17 +378,8 @@ class ContributorBuilder extends React.Component {
 																		renderEmptyValuesErrors={
 																			renderEmptyValuesErrors
 																		}
-																		supportedConjunctions={
-																			supportedConjunctions
-																		}
-																		supportedOperators={
-																			supportedOperators
-																		}
 																		supportedProperties={
 																			criteria.properties
-																		}
-																		supportedPropertyTypes={
-																			supportedPropertyTypes
 																		}
 																	/>
 																</React.Fragment>
@@ -502,9 +480,6 @@ class ContributorBuilder extends React.Component {
 																		onSelect={
 																			onConjunctionChange
 																		}
-																		supportedConjunctions={
-																			supportedConjunctions
-																		}
 																	/>
 																</>
 															)}
@@ -535,17 +510,8 @@ class ContributorBuilder extends React.Component {
 																renderEmptyValuesErrors={
 																	renderEmptyValuesErrors
 																}
-																supportedConjunctions={
-																	supportedConjunctions
-																}
-																supportedOperators={
-																	supportedOperators
-																}
 																supportedProperties={
 																	criteria.properties
-																}
-																supportedPropertyTypes={
-																	supportedPropertyTypes
 																}
 															/>
 														</React.Fragment>

@@ -2,8 +2,8 @@ definition {
 
 	property portal.release = "true";
 	property portal.upstream = "true";
-	property testray.component.names = "Remote Apps";
-	property testray.main.component.name = "Remote Apps";
+	property testray.component.names = "Client Extensions";
+	property testray.main.component.name = "Client Extensions";
 
 	setUp {
 		task ("Given a Liferay DXP instance") {
@@ -20,7 +20,7 @@ definition {
 			PortalInstances.tearDownCP();
 		}
 		else {
-			RemoteApps.tearDown();
+			ClientExtensionGeneral.tearDown();
 
 			Navigator.gotoPage(pageName = "Home");
 		}
@@ -29,15 +29,15 @@ definition {
 	@description = "LPS-168960 - Validates 'client extensions' is available as a selectable portlet category name"
 	@priority = "3"
 	test HasPortletCategoryNameClientExtension {
-		task ("When access IFrame type client extension") {
-			RemoteApps.goToRemoteAppsPortlet();
+		task ("When access IFrame type client extensions") {
+			ClientExtensionGeneral.goToRemoteAppsPortlet();
 
-			RemoteApps.addType(type = "IFrame");
+			ClientExtensionGeneral.addType(type = "IFrame");
 		}
 
 		task ("Then portal category name 'Client Extensions' is set by default") {
 			AssertSelectedLabel(
-				locator1 = "RemoteAppsEntry#REMOTE_APPS_PORTLET_CATEGORY_NAME",
+				locator1 = "ClientExtensionEntry#REMOTE_APPS_PORTLET_CATEGORY_NAME",
 				value1 = "Client Extensions");
 		}
 	}

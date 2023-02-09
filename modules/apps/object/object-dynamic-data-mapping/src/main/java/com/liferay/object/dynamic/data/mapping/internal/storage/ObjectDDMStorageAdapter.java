@@ -71,8 +71,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -337,10 +335,12 @@ public class ObjectDDMStorageAdapter implements DDMStorageAdapter {
 
 		Map<String, Object> properties = new HashMap<>();
 
-		Stream<ObjectField> stream = objectFields.stream();
+		Map<String, String> objectFieldDBTypes = new HashMap<>();
 
-		Map<String, String> objectFieldDBTypes = stream.collect(
-			Collectors.toMap(ObjectField::getName, ObjectField::getDBType));
+		for (ObjectField objectField : objectFields) {
+			objectFieldDBTypes.put(
+				objectField.getName(), objectField.getDBType());
+		}
 
 		Map<String, ObjectField> objectFieldsMap = _toObjectFieldsMap(
 			objectFields);
@@ -501,15 +501,14 @@ public class ObjectDDMStorageAdapter implements DDMStorageAdapter {
 			return ddmFormFieldOptions.getOptionReference(
 				value.getString(value.getDefaultLocale()));
 		}
-		else {
-			Map<Locale, String> values = value.getValues();
 
-			return String.valueOf(
-				_getValue(
-					ddmFormFieldValue, value.getDefaultLocale(),
-					objectFieldDBTypes.get(objectFieldName),
-					values.get(value.getDefaultLocale())));
-		}
+		Map<Locale, String> values = value.getValues();
+
+		return String.valueOf(
+			_getValue(
+				ddmFormFieldValue, value.getDefaultLocale(),
+				objectFieldDBTypes.get(objectFieldName),
+				values.get(value.getDefaultLocale())));
 	}
 
 	private Object _getValue(
@@ -544,9 +543,8 @@ public class ObjectDDMStorageAdapter implements DDMStorageAdapter {
 
 			return GetterUtil.getDouble(numberFormat.parse(value));
 		}
-		else {
-			return value;
-		}
+
+		return value;
 	}
 
 	private Map<String, ObjectField> _toObjectFieldsMap(

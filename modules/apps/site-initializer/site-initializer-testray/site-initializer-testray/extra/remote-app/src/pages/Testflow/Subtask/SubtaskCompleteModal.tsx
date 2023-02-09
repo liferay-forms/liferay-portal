@@ -31,7 +31,7 @@ import {
 	testraySubTaskImpl,
 } from '../../../services/rest';
 import {testraySubtaskIssuesImpl} from '../../../services/rest/TestraySubtaskIssues';
-import {searchUtil} from '../../../util/search';
+import {SearchBuilder} from '../../../util/search';
 import {CaseResultStatuses} from '../../../util/statuses';
 
 type SubtaskForm = typeof yupSchema.subtask.__outputType;
@@ -50,13 +50,13 @@ const SubtaskCompleteModal: React.FC<SubTaskCompleteModalProps> = ({
 	const {
 		data: subTaskIssuesResponse,
 		revalidate: revalidateSubtaskIssues,
-	} = useFetch(
-		`${testraySubtaskIssuesImpl.resource}&filter=${searchUtil.eq(
-			'subtaskId',
-			subtask.id
-		)}`,
-		(response) => testraySubtaskIssuesImpl.transformDataFromList(response)
-	);
+	} = useFetch(testraySubtaskIssuesImpl.resource, {
+		params: {
+			filter: SearchBuilder.eq('subtaskId', subtask.id),
+		},
+		transformData: (response) =>
+			testraySubtaskIssuesImpl.transformDataFromList(response),
+	});
 
 	const {data: mbMessage} = useFetch(
 		liferayMessageBoardImpl.getMessagesIdURL(subtask.mbMessageId)
@@ -146,10 +146,22 @@ const SubtaskCompleteModal: React.FC<SubTaskCompleteModalProps> = ({
 					label={i18n.translate('case-results-status')}
 					name="dueStatus"
 					options={[
-						{label: 'Blocked', value: CaseResultStatuses.BLOCKED},
-						{label: 'Failed', value: CaseResultStatuses.FAILED},
-						{label: 'Passed', value: CaseResultStatuses.PASSED},
-						{label: 'Test Fix', value: CaseResultStatuses.TEST_FIX},
+						{
+							label: i18n.translate('blocked'),
+							value: CaseResultStatuses.BLOCKED,
+						},
+						{
+							label: i18n.translate('failed'),
+							value: CaseResultStatuses.FAILED,
+						},
+						{
+							label: i18n.translate('passed'),
+							value: CaseResultStatuses.PASSED,
+						},
+						{
+							label: i18n.translate('test-fix'),
+							value: CaseResultStatuses.TEST_FIX,
+						},
 					]}
 					register={register}
 				/>

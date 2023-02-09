@@ -30,12 +30,8 @@ definition {
 		WaitForSPARefresh();
 
 		WaitForPageLoad();
-	}
 
-	macro assertAccountRestrictedFieldDisabled {
-		AssertElementPresent(
-			key_valueName = "${valueName}",
-			locator1 = "CreateObject#ACCOUNT_RESTRICTED_FIELD_DISABLED");
+		Alert.viewSuccessMessage();
 	}
 
 	macro assertAddedEntryRelationshipIsDisplayed {
@@ -48,12 +44,6 @@ definition {
 		AssertElementPresent(
 			key_entry = "${entry}",
 			locator1 = "CreateObject#ENTRY_RELATIONSHIP_FIELD_OPTION");
-	}
-
-	macro assertCannotAddRelationshipTabFirst {
-		LexiconEntry.gotoAddNoSelectFrame();
-
-		AssertElementPresent(locator1 = "CreateObject#DISABLED_TAB_TYPE_RELATIONSHIPS");
 	}
 
 	macro assertCustomObject {
@@ -76,29 +66,13 @@ definition {
 	}
 
 	macro assertDisabledAllFields {
-		CreateObject.assertDisabledObjectName();
-
-		for (var fieldsDisabled : list "Name,Label") {
+		for (var fieldsDisabled : list "Name,Label,Scope,Panel Category Key") {
 			AssertElementPresent(
 				key_nameDisabled = "${fieldsDisabled}",
 				locator1 = "CreateObject#VIEW_OBJECT_DATA_DISABLED");
 		}
 
-		for (var fieldsDisabled : list "Title Field,Scope,Panel Category Key") {
-			AssertElementPresent(
-				key_nameDisabled = "${fieldsDisabled}",
-				locator1 = "CreateObject#VIEW_OBJECT_ENTRY_DISPLAY_DISABLED");
-		}
-
 		AssertElementPresent(locator1 = "CreateObject#SAVE_BUTTON_DISABLED");
-	}
-
-	macro assertDisabledObjectName {
-		AssertElementPresent(locator1 = "CreateObject#DISABLED_OBJECT_NAME");
-	}
-
-	macro assertDisabledPublishObjectButton {
-		AssertElementPresent(locator1 = "CreateObject#DISABLED_PUBLISH_OBJECT_BUTTON");
 	}
 
 	macro assertEntrySelectedOnRelationshipField {
@@ -109,12 +83,6 @@ definition {
 
 	macro assertFieldAddedOnBlock {
 		AssertElementPresent(
-			key_fieldLabelName = "${fieldLabelName}",
-			locator1 = "CreateObject#FIELD_ADDED_ON_BLOCK");
-	}
-
-	macro assertFieldNotPresentInBlock {
-		AssertElementNotPresent(
 			key_fieldLabelName = "${fieldLabelName}",
 			locator1 = "CreateObject#FIELD_ADDED_ON_BLOCK");
 	}
@@ -151,12 +119,6 @@ definition {
 			locator1 = "CreateObject#FIELD_VALUE");
 	}
 
-	macro assertObjectDefinitionName {
-		AssertTextEquals(
-			locator1 = "CreateObject#OBJECT_DEFINITION_NAME",
-			value1 = "${objectName}");
-	}
-
 	macro assertObjectFieldNameIsAutofilled {
 		LexiconEntry.gotoAdd();
 
@@ -181,12 +143,6 @@ definition {
 			locator1 = "ObjectAdmin#ANY_TAB_ON_ENTRY");
 	}
 
-	macro assertObjectNotPresentInSubmissions {
-		AssertElementNotPresent(
-			key_submissionName = "${objectName}",
-			locator1 = "WorkflowSubmissions#SUBMISSION_BY_NAME");
-	}
-
 	macro assertObjectPluralLabel {
 		AssertTextEquals(
 			locator1 = "CreateObject#OBJECT_PLURAL_LABEL",
@@ -197,12 +153,6 @@ definition {
 		AssertElementPresent(locator1 = "CreateObject#ASSERT_ONE_COLUMN_FIELD_ENTRY");
 
 		AssertElementNotPresent(locator1 = "CreateObject#ASSERT_TWO_COLUMN_FIELD_ENTRY");
-	}
-
-	macro assertPanelCategoryKey {
-		AssertSelectedLabel(
-			locator1 = "CreateObject#PANEL_CATEGORY_KEY_SELECTED",
-			value1 = "${panelCategoryKey}");
 	}
 
 	macro assertRelatedObject {
@@ -221,12 +171,6 @@ definition {
 			value1 = "No entries were found.");
 	}
 
-	macro assertScopeFieldSelected {
-		AssertSelectedLabel(
-			locator1 = "ObjectAdmin#SELECT_OBJECT_SCOPE",
-			value1 = "${fieldScope}");
-	}
-
 	macro assertSearchableSectionOptionsAppears {
 		AssertElementPresent(
 			key_radioOption = "${radioOption}",
@@ -243,13 +187,9 @@ definition {
 	}
 
 	macro assertTitleFieldIsSelected {
-		AssertSelectedLabel(
+		AssertElementPresent(
 			locator1 = "CreateObject#TITLE_FIELD",
 			value1 = "${fieldLabel}");
-	}
-
-	macro assertToggleCollapsibleChecked {
-		AssertChecked.assertCheckedNotVisible(locator1 = "CreateObject#TOGGLE_COLLAPSIBLE");
 	}
 
 	macro assertValuesOnObjectData {
@@ -261,15 +201,13 @@ definition {
 	}
 
 	macro assertValuesOnScope {
-		AssertElementPresent(
-			key_fieldLabel = "Scope",
-			key_value = "${valueScope}",
-			locator1 = "CommerceEntry#SELECT_ASSERT_SELECTED_VALUE");
+		AssertTextEquals(
+			locator1 = "CreateObject#VIEW_OBJECT_SCOPE",
+			value1 = "${valueScope}");
 
-		AssertElementPresent(
-			key_fieldLabel = "Panel Category Key",
-			key_value = "${valuePanelCategory}",
-			locator1 = "CommerceEntry#SELECT_ASSERT_SELECTED_VALUE");
+		AssertTextEquals(
+			locator1 = "CreateObject#PANEL_CATEGORY_KEY",
+			value1 = "${valuePanelCategory}");
 	}
 
 	macro checkToggleActive {
@@ -356,17 +294,21 @@ definition {
 	}
 
 	macro saveObject {
-		Click(locator1 = "CreateObject#SAVE_BUTTON");
+		Button.clickSave();
 
-		WaitForSPARefresh();
+		Alert.viewSuccessMessage();
+
+		WaitForElementNotPresent(locator1 = "Message#SUCCESS");
 
 		WaitForPageLoad();
 	}
 
 	macro selectAccountRestrictedField {
-		Select(
-			locator1 = "CreateObject#ACCOUNT_RESTRICTED_FIELD",
-			value1 = "${accountRestrictedField}");
+		Click(locator1 = "CreateObject#ACCOUNT_RESTRICTED_FIELD");
+
+		Click(
+			key_menuItem = "${accountRestrictedField}",
+			locator1 = "MenuItem#ANY_MENU_ITEM");
 	}
 
 	macro selectDeletionType {
@@ -386,27 +328,29 @@ definition {
 	}
 
 	macro selectPanelCategoryKey {
-		Select(
-			locator1 = "CreateObject#PANEL_CATEGORY_KEY",
-			value1 = "${panelCategoryKey}");
+		Click(locator1 = "CreateObject#PANEL_CATEGORY_KEY");
+
+		Click(
+			key_menuItem = "${panelCategoryKey}",
+			locator1 = "MenuItem#ANY_MENU_ITEM");
 	}
 
 	macro selectTitleField {
-		Select(
-			locator1 = "CreateObject#TITLE_FIELD",
-			value1 = "${fieldLabel}");
+		Click(locator1 = "CreateObject#TITLE_FIELD");
+
+		Click(
+			key_menuItem = "${fieldLabel}",
+			locator1 = "MenuItem#ANY_MENU_ITEM");
 	}
 
 	macro viewAccountRestrictedFieldIsRequiredOnEntries {
-		FormFields.viewRequiredAsteriskDataField(fieldFieldLabel = "${relationshipName}");
+		AssertElementPresent(
+			key_fieldName = "${relationshipName}",
+			locator1 = "FormFields#TEXT_FIELD");
 
 		Button.clickSave();
 
 		Alert.viewRequiredField();
-	}
-
-	macro viewEmptyFieldTable {
-		AssertElementPresent(locator1 = "RemoteApps#EMPTY_REMOTE_TABLE_MESSAGE");
 	}
 
 	macro viewErrorValueInvalid {
@@ -420,10 +364,6 @@ definition {
 		Click(
 			key_labelName = "${labelName}",
 			locator1 = "CreateObject#VIEW_OBJECT");
-	}
-
-	macro viewToogleAccountRestrictionDisabled {
-		AssertElementPresent(locator1 = "CreateObject#TOGGLE_ACCOUNT_RESTRICTION_DISABLED");
 	}
 
 	macro withdrawObjectTask {

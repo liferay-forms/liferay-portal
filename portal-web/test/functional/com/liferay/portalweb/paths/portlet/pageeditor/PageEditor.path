@@ -161,7 +161,7 @@
 </tr>
 <tr>
 	<td>COLLECTION_ITEM_PAGINATION_NEXT_BUTTON_NUMERIC</td>
-	<td>//a[contains(@class, 'page-link') and contains(@aria-label,'next')]</td>
+	<td>//div[contains(@class, 'page-link')]//*[name()='svg'][contains(@class,'right')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -171,7 +171,7 @@
 </tr>
 <tr>
 	<td>COLLECTION_ITEM_PAGINATION_PREVIOUS_BUTTON_NUMERIC</td>
-	<td>//a[contains(@class, 'page-link') and contains(@aria-label,'previous')]</td>
+	<td>//div[contains(@class, 'page-link')]//*[name()='svg'][contains(@class,'left')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -204,6 +204,16 @@
 	<td></td>
 </tr>
 <tr>
+	<td>COLLECTION_FILTER_HELP_TEXT</td>
+	<td>xpath=(//div[@aria-label='Collection Filter'])[${index}]//p[contains(@id,'HelpText')][normalize-space(text())='${helpText}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>COLLECTION_FILTER_LABEL</td>
+	<td>xpath=(//div[@aria-label='Collection Filter'])[${index}]//label[normalize-space(text())='${label}']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>COLLECTION_FILTER_SEARCH_FIELD</td>
 	<td>xpath=(//input[contains(@id,'keywordsInput')])[${index}]</td>
 	<td></td>
@@ -216,6 +226,11 @@
 <tr>
 	<td>COLLECTION_FILTER_SOURCE_LABEL_VISIBLE</td>
 	<td>//div[.//button[contains(@class,'dropdown-toggle')]]//label[normalize-space(text())='${sourceLabel}'][not(contains(@class,'sr-only'))]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>COLLECTION_FILTER_TAGS_SELECTOR</td>
+	<td>xpath=(//input[contains(@id,'MultiSelect')])[${index}]</td>
 	<td></td>
 </tr>
 
@@ -350,7 +365,7 @@
 </tr>
 <tr>
 	<td>EXPERIENCE_ACTIVE_LABEL_VIEW_CONTROL_MENU</td>
-	<td>//*[contains(@class, 'align-items-center')]//*[contains(text(),'${key_experienceName}')]/parent::span//span[contains(text(),'Active')]</td>
+	<td>//div[contains(@class,'dropdown-menu')]//li//*[contains(text(),'${key_experienceName}')]/parent::div//following-sibling::div//span[normalize-space(text())='Active']</td>
 	<td></td>
 </tr>
 <tr>
@@ -868,12 +883,7 @@
 
 <tr>
 	<td>AUTOSAVE_MESSAGE</td>
-	<td>//div[contains(@class,'management-bar')]//span[contains(@class,'text-success')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>DRAFT_SAVING_MESSAGE</td>
-	<td>//div[contains(@class,'management-bar')]//span[contains(@class,'text-info')][normalize-space(text())='Saving']</td>
+	<td>//div[contains(@class,'management-bar')]//*[name()='svg'][contains(@class,'text-success')]</td>
 	<td></td>
 </tr>
 <tr>

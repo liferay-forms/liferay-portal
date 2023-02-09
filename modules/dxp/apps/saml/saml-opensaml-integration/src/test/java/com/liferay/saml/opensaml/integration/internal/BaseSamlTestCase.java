@@ -38,10 +38,7 @@ import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.saml.constants.SamlProviderConfigurationKeys;
-import com.liferay.saml.opensaml.integration.internal.binding.HttpPostBinding;
-import com.liferay.saml.opensaml.integration.internal.binding.HttpRedirectBinding;
-import com.liferay.saml.opensaml.integration.internal.binding.HttpSoap11Binding;
-import com.liferay.saml.opensaml.integration.internal.binding.SamlBinding;
+import com.liferay.saml.opensaml.integration.internal.binding.SamlBindingProvider;
 import com.liferay.saml.opensaml.integration.internal.bootstrap.OpenSamlBootstrap;
 import com.liferay.saml.opensaml.integration.internal.credential.FileSystemKeyStoreManagerImpl;
 import com.liferay.saml.opensaml.integration.internal.credential.KeyStoreCredentialResolver;
@@ -78,7 +75,6 @@ import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrate
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 
 import org.apache.http.client.HttpClient;
-import org.apache.velocity.app.VelocityEngine;
 
 import org.junit.After;
 import org.junit.Before;
@@ -332,7 +328,7 @@ public abstract class BaseSamlTestCase {
 	protected MetadataManagerImpl metadataManagerImpl;
 	protected ParserPool parserPool;
 	protected Portal portal;
-	protected List<SamlBinding> samlBindings;
+	protected SamlBindingProvider samlBindingProvider;
 	protected IdentifierGenerationStrategy samlIdentifierGenerator;
 	protected SamlPeerBindingLocalService samlPeerBindingLocalService;
 	protected SamlProviderConfiguration samlProviderConfiguration;
@@ -753,14 +749,23 @@ public abstract class BaseSamlTestCase {
 
 		Thread currentThread = Thread.currentThread();
 
-		VelocityEngine velocityEngine = velocityEngineFactory.getVelocityEngine(
-			currentThread.getContextClassLoader());
+		ReflectionTestUtil.setFieldValue(
+			velocityEngineFactory, "_velocityEngine",
+			velocityEngineFactory.getVelocityEngine(
+				currentThread.getContextClassLoader()));
 
-		samlBindings = new ArrayList<>();
+		samlBindingProvider = new SamlBindingProvider();
 
-		samlBindings.add(new HttpPostBinding(parserPool, velocityEngine));
-		samlBindings.add(new HttpRedirectBinding(parserPool));
-		samlBindings.add(new HttpSoap11Binding(parserPool, httpClient));
+		ReflectionTestUtil.setFieldValue(
+			samlBindingProvider, "_httpClient", httpClient);
+		ReflectionTestUtil.setFieldValue(
+			samlBindingProvider, "_parserPool", parserPool);
+		ReflectionTestUtil.setFieldValue(
+			samlBindingProvider, "_velocityEngineFactory",
+			velocityEngineFactory);
+
+		ReflectionTestUtil.invoke(
+			samlBindingProvider, "activate", new Class<?>[0]);
 	}
 
 	private void _setupSamlPeerBindingsLocalService() throws Exception {

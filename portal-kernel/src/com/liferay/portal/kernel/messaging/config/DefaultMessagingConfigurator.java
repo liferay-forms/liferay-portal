@@ -25,7 +25,6 @@ import com.liferay.portal.kernel.messaging.MessageBusEventListener;
 import com.liferay.portal.kernel.messaging.MessageListener;
 import com.liferay.portal.kernel.module.util.ServiceLatch;
 import com.liferay.portal.kernel.module.util.SystemBundleUtil;
-import com.liferay.portal.kernel.servlet.ServletContextClassLoaderPool;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.MapUtil;
 
@@ -55,53 +54,6 @@ public class DefaultMessagingConfigurator implements MessagingConfigurator {
 	}
 
 	@Override
-	public void connect() {
-		Thread currentThread = Thread.currentThread();
-
-		ClassLoader contextClassLoader = currentThread.getContextClassLoader();
-
-		try {
-			currentThread.setContextClassLoader(getOperatingClassLoader());
-
-			for (Map.Entry<String, List<MessageListener>> messageListeners :
-					_messageListeners.entrySet()) {
-
-				String destinationName = messageListeners.getKey();
-
-				ServiceLatch serviceLatch = SystemBundleUtil.newServiceLatch();
-
-				serviceLatch.waitFor(
-					StringBundler.concat(
-						"(&(destination.name=", destinationName,
-						")(objectClass=", Destination.class.getName(), "))"));
-
-				serviceLatch.openOn(
-					bundleContext -> {
-						Dictionary<String, Object> properties =
-							HashMapDictionaryBuilder.<String, Object>put(
-								"destination.name", destinationName
-							).put(
-								"message.listener.operating.class.loader",
-								getOperatingClassLoader()
-							).build();
-
-						for (MessageListener messageListener :
-								messageListeners.getValue()) {
-
-							_serviceRegistrations.add(
-								bundleContext.registerService(
-									MessageListener.class, messageListener,
-									properties));
-						}
-					});
-			}
-		}
-		finally {
-			currentThread.setContextClassLoader(contextClassLoader);
-		}
-	}
-
-	@Override
 	public void destroy() {
 		for (ServiceRegistration<?> serviceRegistration :
 				_serviceRegistrations) {
@@ -121,31 +73,6 @@ public class DefaultMessagingConfigurator implements MessagingConfigurator {
 
 		_destinations.clear();
 		_messageBusEventListeners.clear();
-
-		String servletContextName =
-			ServletContextClassLoaderPool.getServletContextName(
-				getOperatingClassLoader());
-
-		if (servletContextName != null) {
-			MessagingConfiguratorRegistry.unregisterMessagingConfigurator(
-				servletContextName, this);
-		}
-	}
-
-	@Override
-	public void disconnect() {
-		for (Map.Entry<String, List<MessageListener>> messageListeners :
-				_messageListeners.entrySet()) {
-
-			String destinationName = messageListeners.getKey();
-
-			for (MessageListener messageListener :
-					messageListeners.getValue()) {
-
-				_messageBus.unregisterMessageListener(
-					destinationName, messageListener);
-			}
-		}
 	}
 
 	@Override
@@ -181,12 +108,6 @@ public class DefaultMessagingConfigurator implements MessagingConfigurator {
 		_messageListeners.putAll(messageListeners);
 	}
 
-	protected ClassLoader getOperatingClassLoader() {
-		Thread currentThread = Thread.currentThread();
-
-		return currentThread.getContextClassLoader();
-	}
-
 	protected void initialize() {
 		registerMessageBusEventListeners();
 
@@ -194,15 +115,34 @@ public class DefaultMessagingConfigurator implements MessagingConfigurator {
 
 		registerDestinationEventListeners();
 
-		connect();
+		for (Map.Entry<String, List<MessageListener>> messageListeners :
+				_messageListeners.entrySet()) {
 
-		String servletContextName =
-			ServletContextClassLoaderPool.getServletContextName(
-				getOperatingClassLoader());
+			String destinationName = messageListeners.getKey();
 
-		if (servletContextName != null) {
-			MessagingConfiguratorRegistry.registerMessagingConfigurator(
-				servletContextName, this);
+			ServiceLatch serviceLatch = SystemBundleUtil.newServiceLatch();
+
+			serviceLatch.waitFor(
+				StringBundler.concat(
+					"(&(destination.name=", destinationName, ")(objectClass=",
+					Destination.class.getName(), "))"));
+
+			serviceLatch.openOn(
+				bundleContext -> {
+					Dictionary<String, Object> properties =
+						HashMapDictionaryBuilder.<String, Object>put(
+							"destination.name", destinationName
+						).build();
+
+					for (MessageListener messageListener :
+							messageListeners.getValue()) {
+
+						_serviceRegistrations.add(
+							bundleContext.registerService(
+								MessageListener.class, messageListener,
+								properties));
+					}
+				});
 		}
 	}
 

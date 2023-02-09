@@ -20,6 +20,7 @@ import com.liferay.headless.commerce.admin.catalog.dto.v1_0.AttachmentUrl;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Catalog;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Category;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Diagram;
+import com.liferay.headless.commerce.admin.catalog.dto.v1_0.GroupedProduct;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.MappedProduct;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Option;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.OptionCategory;
@@ -42,6 +43,7 @@ import com.liferay.headless.commerce.admin.catalog.resource.v1_0.AttachmentResou
 import com.liferay.headless.commerce.admin.catalog.resource.v1_0.CatalogResource;
 import com.liferay.headless.commerce.admin.catalog.resource.v1_0.CategoryResource;
 import com.liferay.headless.commerce.admin.catalog.resource.v1_0.DiagramResource;
+import com.liferay.headless.commerce.admin.catalog.resource.v1_0.GroupedProductResource;
 import com.liferay.headless.commerce.admin.catalog.resource.v1_0.MappedProductResource;
 import com.liferay.headless.commerce.admin.catalog.resource.v1_0.OptionCategoryResource;
 import com.liferay.headless.commerce.admin.catalog.resource.v1_0.OptionResource;
@@ -122,6 +124,14 @@ public class Mutation {
 
 		_diagramResourceComponentServiceObjects =
 			diagramResourceComponentServiceObjects;
+	}
+
+	public static void setGroupedProductResourceComponentServiceObjects(
+		ComponentServiceObjects<GroupedProductResource>
+			groupedProductResourceComponentServiceObjects) {
+
+		_groupedProductResourceComponentServiceObjects =
+			groupedProductResourceComponentServiceObjects;
 	}
 
 	public static void setMappedProductResourceComponentServiceObjects(
@@ -617,6 +627,77 @@ public class Mutation {
 			this::_populateResourceContext,
 			diagramResource -> diagramResource.postProductIdDiagram(
 				productId, diagram));
+	}
+
+	@GraphQLField
+	public boolean deleteGroupedProduct(
+			@GraphQLName("groupedProductId") Long groupedProductId)
+		throws Exception {
+
+		_applyVoidComponentServiceObjects(
+			_groupedProductResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			groupedProductResource ->
+				groupedProductResource.deleteGroupedProduct(groupedProductId));
+
+		return true;
+	}
+
+	@GraphQLField
+	public Response deleteGroupedProductBatch(
+			@GraphQLName("callbackURL") String callbackURL,
+			@GraphQLName("object") Object object)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_groupedProductResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			groupedProductResource ->
+				groupedProductResource.deleteGroupedProductBatch(
+					callbackURL, object));
+	}
+
+	@GraphQLField
+	public GroupedProduct patchGroupedProduct(
+			@GraphQLName("groupedProductId") Long groupedProductId,
+			@GraphQLName("groupedProduct") GroupedProduct groupedProduct)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_groupedProductResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			groupedProductResource ->
+				groupedProductResource.patchGroupedProduct(
+					groupedProductId, groupedProduct));
+	}
+
+	@GraphQLField
+	public GroupedProduct createProductByExternalReferenceCodeGroupedProduct(
+			@GraphQLName("externalReferenceCode") String externalReferenceCode,
+			@GraphQLName("groupedProduct") GroupedProduct groupedProduct)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_groupedProductResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			groupedProductResource ->
+				groupedProductResource.
+					postProductByExternalReferenceCodeGroupedProduct(
+						externalReferenceCode, groupedProduct));
+	}
+
+	@GraphQLField
+	public GroupedProduct createProductIdGroupedProduct(
+			@GraphQLName("productId") Long productId,
+			@GraphQLName("groupedProduct") GroupedProduct groupedProduct)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_groupedProductResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			groupedProductResource ->
+				groupedProductResource.postProductIdGroupedProduct(
+					productId, groupedProduct));
 	}
 
 	@GraphQLField
@@ -1761,7 +1842,7 @@ public class Mutation {
 	}
 
 	@GraphQLField
-	public Response patchSkuByExternalReferenceCode(
+	public Sku patchSkuByExternalReferenceCode(
 			@GraphQLName("externalReferenceCode") String externalReferenceCode,
 			@GraphQLName("sku") Sku sku)
 		throws Exception {
@@ -1792,8 +1873,7 @@ public class Mutation {
 	}
 
 	@GraphQLField
-	public Response patchSku(
-			@GraphQLName("id") Long id, @GraphQLName("sku") Sku sku)
+	public Sku patchSku(@GraphQLName("id") Long id, @GraphQLName("sku") Sku sku)
 		throws Exception {
 
 		return _applyComponentServiceObjects(
@@ -1963,6 +2043,25 @@ public class Mutation {
 		diagramResource.setContextUser(_user);
 		diagramResource.setGroupLocalService(_groupLocalService);
 		diagramResource.setRoleLocalService(_roleLocalService);
+	}
+
+	private void _populateResourceContext(
+			GroupedProductResource groupedProductResource)
+		throws Exception {
+
+		groupedProductResource.setContextAcceptLanguage(_acceptLanguage);
+		groupedProductResource.setContextCompany(_company);
+		groupedProductResource.setContextHttpServletRequest(
+			_httpServletRequest);
+		groupedProductResource.setContextHttpServletResponse(
+			_httpServletResponse);
+		groupedProductResource.setContextUriInfo(_uriInfo);
+		groupedProductResource.setContextUser(_user);
+		groupedProductResource.setGroupLocalService(_groupLocalService);
+		groupedProductResource.setRoleLocalService(_roleLocalService);
+
+		groupedProductResource.setVulcanBatchEngineImportTaskResource(
+			_vulcanBatchEngineImportTaskResource);
 	}
 
 	private void _populateResourceContext(
@@ -2333,6 +2432,8 @@ public class Mutation {
 		_categoryResourceComponentServiceObjects;
 	private static ComponentServiceObjects<DiagramResource>
 		_diagramResourceComponentServiceObjects;
+	private static ComponentServiceObjects<GroupedProductResource>
+		_groupedProductResourceComponentServiceObjects;
 	private static ComponentServiceObjects<MappedProductResource>
 		_mappedProductResourceComponentServiceObjects;
 	private static ComponentServiceObjects<OptionResource>

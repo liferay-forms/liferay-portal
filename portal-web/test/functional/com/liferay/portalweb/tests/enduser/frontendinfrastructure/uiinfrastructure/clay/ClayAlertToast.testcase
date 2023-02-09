@@ -1,5 +1,6 @@
 definition {
 
+	property osgi.modules.includes = "frontend-taglib-clay-sample-web";
 	property portal.release = "true";
 	property portal.upstream = "true";
 	property testray.component.names = "Clay";
@@ -56,18 +57,71 @@ definition {
 
 			Pause(locator1 = "19000");
 
-			if (IsElementPresent.isElementPresentNoSPARefresh(locator1 = "Message#ERROR_DISMISSIBLE")) {
+			if (IsElementPresent.isElementPresentNoSPARefresh(key_type = "dismissible alert-danger", locator1 = "ClayAlertToast#ALERT_TOAST")) {
 
 				// For LPS-170578, need this to pause longer than the auto close time of the fail message
 
 				Pause(locator1 = "1100");
 
-				if (IsElementPresent.isElementPresentNoSPARefresh(locator1 = "Message#ERROR_DISMISSIBLE")) {
+				if (IsElementPresent.isElementPresentNoSPARefresh(key_type = "dismissible alert-danger", locator1 = "ClayAlertToast#ALERT_TOAST")) {
 					fail("Alert message did not disappear after 20 seconds");
 				}
 			}
 			else {
 				fail("Alert message disappeared before 20 seconds");
+			}
+		}
+	}
+
+	@description = "LPS-170575 - Verify toast alert with no actions disappears after 5 seconds"
+	@priority = "5"
+	test DisappearsAfter5SecsWithoutActions {
+		task ("When a toast alert appears") {
+			Click(
+				key_text = "Disappears After 5 Seconds",
+				locator1 = "Button#ANY");
+		}
+
+		task ("And When no actions on alert") {
+			VerifyElementNotPresent(locator1 = "//*[@id='ToastAlertContainer']//a");
+		}
+
+		task ("Then the alert disappears after 5 secs") {
+
+			// For LPS-170575, need this pause to see if after 5 seconds, the alert is not showing anymore
+
+			Pause(locator1 = "5000");
+
+			AssertElementNotPresent(
+				key_type = "dismissible alert-danger",
+				locator1 = "ClayAlertToast#ALERT_TOAST");
+		}
+	}
+
+	@description = "LPS-170577 - Verify toast alert with action button disappears after 10 seconds"
+	@priority = "5"
+	test DisappearsAfter10SecsWithActions {
+		task ("When a toast alert appears") {
+			Click(
+				key_text = "Disappears After 10 Seconds",
+				locator1 = "Button#ANY");
+		}
+
+		task ("And When there is an action button on it") {
+			VerifyElementPresent(locator1 = "//*[@id='ToastAlertContainer']//*[contains(@class, 'alert-info')]//a");
+		}
+
+		task ("Then the alert disappears after 10 secs") {
+
+			// For LPS-170577, need this pause to see if after 10 seconds, the alert is not showing anymore
+
+			Pause(locator1 = "10000");
+
+			if (!(IsElementPresent.isElementPresentNoSPARefresh(key_type = "info", locator1 = "ClayAlertToast#ALERT_TOAST"))) {
+				TestUtils.pass(message = "Test passed: Alert toast with action disappeared after 10 seconds");
+			}
+			else {
+				fail("Test failed: Clay Toast alert with action is still present after 10 seconds.");
 			}
 		}
 	}
@@ -96,6 +150,32 @@ definition {
 			// For LPS-170578, need this to pause longer than the auto close time of the fail message
 
 			Pause(locator1 = "20100");
+
+			AssertElementPresent(locator1 = "Message#ERROR_DISMISSIBLE");
+		}
+	}
+
+	@description = "LPS-170579 - Assert that multiples messages can be displayed"
+	@priority = "5"
+	test MultipleContainersCanBeDisplayed {
+		task ("When a toast alert appears") {
+			WaitForElementPresent(
+				key_text = "Success Submit",
+				locator1 = "Button#ANY");
+
+			Click(
+				key_text = "Fail Submit",
+				locator1 = "Button#ANY");
+		}
+
+		task ("Then user should be able to activate another toast alert") {
+			Click(
+				key_text = "Success Submit",
+				locator1 = "Button#ANY");
+		}
+
+		task ("And both toast alerts should be displayed") {
+			AssertElementPresent(locator1 = "Message#SUCCESS_DISMISSIBLE");
 
 			AssertElementPresent(locator1 = "Message#ERROR_DISMISSIBLE");
 		}

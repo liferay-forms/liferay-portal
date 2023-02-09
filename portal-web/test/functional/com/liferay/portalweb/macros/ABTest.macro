@@ -114,6 +114,12 @@ definition {
 		Alert.viewSuccessMessage();
 	}
 
+	macro editVariant {
+		Click(
+			key_variantName = "${variantName}",
+			locator1 = "ABTest#EDIT_VARIANT_BUTTON");
+	}
+
 	macro editVariantName {
 		if (!(isSet(key_index))) {
 			var key_index = "1";
@@ -179,6 +185,12 @@ definition {
 		Click(
 			key_name = "OK",
 			locator1 = "Button#GENERAL_BUTTON_MODAL_FOOTER");
+	}
+
+	macro saveVariant {
+		Click(
+			key_text = "Save Variant",
+			locator1 = "Button#ANY");
 	}
 
 	macro selectElementID {

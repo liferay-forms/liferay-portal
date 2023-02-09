@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portlet.usersadmin.search.GroupSearch;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.portlet.PortletURL;
@@ -50,28 +49,40 @@ public class GroupSelectorDisplayContext {
 	}
 
 	public String getGroupItemSelectorIcon() {
-		Optional<GroupItemSelectorProvider> optional =
-			GroupItemSelectorProviderRegistryUtil.
-				getGroupItemSelectorProviderOptional(_getGroupType());
+		GroupItemSelectorProvider groupItemSelectorProvider =
+			GroupItemSelectorProviderRegistryUtil.getGroupItemSelectorProvider(
+				_getGroupType());
 
-		return optional.map(
-			GroupItemSelectorProvider::getIcon
-		).orElse(
-			"folder"
-		);
+		if (groupItemSelectorProvider == null) {
+			return "folder";
+		}
+
+		String icon = groupItemSelectorProvider.getIcon();
+
+		if (icon == null) {
+			return "folder";
+		}
+
+		return icon;
 	}
 
 	public String getGroupItemSelectorLabel(String groupType) {
-		Optional<GroupItemSelectorProvider> optional =
-			GroupItemSelectorProviderRegistryUtil.
-				getGroupItemSelectorProviderOptional(groupType);
+		GroupItemSelectorProvider groupItemSelectorProvider =
+			GroupItemSelectorProviderRegistryUtil.getGroupItemSelectorProvider(
+				groupType);
 
-		return optional.map(
-			groupItemSelectorProvider -> groupItemSelectorProvider.getLabel(
-				_liferayPortletRequest.getLocale())
-		).orElse(
-			StringPool.BLANK
-		);
+		if (groupItemSelectorProvider == null) {
+			return StringPool.BLANK;
+		}
+
+		String label = groupItemSelectorProvider.getLabel(
+			_liferayPortletRequest.getLocale());
+
+		if (label == null) {
+			return StringPool.BLANK;
+		}
+
+		return label;
 	}
 
 	public PortletURL getGroupItemSelectorURL(String groupType) {
@@ -133,21 +144,27 @@ public class GroupSelectorDisplayContext {
 	}
 
 	private String _getEmptyResultsMessage() {
+		GroupItemSelectorProvider groupItemSelectorProvider =
+			GroupItemSelectorProviderRegistryUtil.getGroupItemSelectorProvider(
+				_getGroupType());
+
+		if (groupItemSelectorProvider == null) {
+			return GroupSearch.EMPTY_RESULTS_MESSAGE;
+		}
+
 		ThemeDisplay themeDisplay =
 			(ThemeDisplay)_liferayPortletRequest.getAttribute(
 				WebKeys.THEME_DISPLAY);
 
-		Optional<GroupItemSelectorProvider> optional =
-			GroupItemSelectorProviderRegistryUtil.
-				getGroupItemSelectorProviderOptional(_getGroupType());
+		String emptyResultsMessage =
+			groupItemSelectorProvider.getEmptyResultsMessage(
+				themeDisplay.getLocale());
 
-		return optional.map(
-			groupItemSelectorProvider ->
-				groupItemSelectorProvider.getEmptyResultsMessage(
-					themeDisplay.getLocale())
-		).orElse(
-			GroupSearch.EMPTY_RESULTS_MESSAGE
-		);
+		if (emptyResultsMessage == null) {
+			return GroupSearch.EMPTY_RESULTS_MESSAGE;
+		}
+
+		return emptyResultsMessage;
 	}
 
 	private String _getGroupType() {

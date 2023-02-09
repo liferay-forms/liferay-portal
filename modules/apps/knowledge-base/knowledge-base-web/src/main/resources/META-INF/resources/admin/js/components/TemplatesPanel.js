@@ -28,10 +28,20 @@ const ITEM_TYPES_SYMBOL = {
 	template: 'document-text',
 };
 
+const normalizeItems = (items) => {
+	if (items) {
+		return items.map((item) => {
+			return {
+				...item,
+				actions: normalizeDropdownItems(item.actions),
+				children: normalizeItems(item.children),
+			};
+		});
+	}
+};
+
 export default function TemplatesPanel({items: initialItems, selectedItemId}) {
-	const items = useMemo(() => normalizeDropdownItems(initialItems), [
-		initialItems,
-	]);
+	const items = useMemo(() => normalizeItems(initialItems), [initialItems]);
 
 	return items?.length ? (
 		<ClayTreeView

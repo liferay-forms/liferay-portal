@@ -68,16 +68,27 @@ const CaseForm = () => {
 	} = useOutletContext();
 
 	useHeader({
+		tabs: [],
 		timeout: 100,
-		useTabs: [],
 	});
 
 	const {data: testrayComponentsData} = useFetch<
 		APIResponse<TestrayComponent>
-	>('/components?fields=id,name&pageSize=1000');
+	>('/components', {
+		params: {
+			fields: 'id,name',
+			pageSize: 1000,
+		},
+	});
 
 	const {data: testrayCaseTypesData} = useFetch<APIResponse<TestrayCaseType>>(
-		'/casetypes?fields=id,name&pageSize=1000'
+		'/casetypes',
+		{
+			params: {
+				fields: 'id,name',
+				pageSize: 1000,
+			},
+		}
 	);
 
 	const testrayCaseTypes = testrayCaseTypesData?.items || [];
@@ -115,8 +126,8 @@ const CaseForm = () => {
 		onSubmit(
 			{...form, projectId},
 			{
-				create: (...params) => testrayCaseRest.create(...params),
-				update: (...params) => testrayCaseRest.update(...params),
+				create: (data) => testrayCaseRest.create(data),
+				update: (id, data) => testrayCaseRest.update(id, data),
 			}
 		)
 			.then(mutateTestrayCase)
@@ -132,11 +143,11 @@ const CaseForm = () => {
 			.catch(onError);
 	};
 
+	const addAnother = watch('addAnother');
 	const caseTypeId = watch('caseTypeId');
 	const componentId = watch('componentId');
 	const description = watch('description');
 	const steps = watch('steps');
-	const addAnother = watch('addAnother');
 
 	const inputProps = {
 		errors,

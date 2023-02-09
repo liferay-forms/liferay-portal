@@ -20,12 +20,12 @@ import com.liferay.petra.io.unsync.UnsyncStringWriter;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
-import com.liferay.petra.xml.Dom4jUtil;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.dao.db.IndexMetadata;
 import com.liferay.portal.kernel.dao.db.IndexMetadataFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.io.unsync.UnsyncByteArrayOutputStream;
 import com.liferay.portal.kernel.model.ModelHintsUtil;
 import com.liferay.portal.kernel.model.cache.CacheField;
 import com.liferay.portal.kernel.plugin.Version;
@@ -127,7 +127,9 @@ import org.dom4j.DocumentType;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.XPath;
+import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
 
 /**
  * @author Brian Wing Shun Chan
@@ -4778,6 +4780,20 @@ public class ServiceBuilder {
 	}
 
 	private String _formatXml(String xml) throws Exception {
+		UnsyncByteArrayOutputStream unsyncByteArrayOutputStream =
+			new UnsyncByteArrayOutputStream();
+
+		OutputFormat outputFormat = new OutputFormat(StringPool.TAB, true);
+
+		outputFormat.setOmitEncoding(true);
+		outputFormat.setPadText(true);
+		outputFormat.setTrimText(true);
+
+		XMLWriter xmlWriter = new XMLWriter(
+			unsyncByteArrayOutputStream, outputFormat);
+
+		SAXReader saxReader = _getSAXReader();
+
 		String doctype = null;
 
 		int x = xml.indexOf("<!DOCTYPE");
@@ -4791,7 +4807,16 @@ public class ServiceBuilder {
 		}
 
 		xml = StringUtil.replace(xml, '\r', "");
-		xml = Dom4jUtil.toString(xml);
+
+		xmlWriter.write(saxReader.read(new XMLSafeReader(xml)));
+
+		xml = StringUtil.trimTrailing(
+			unsyncByteArrayOutputStream.toString(StringPool.UTF8));
+
+		while (xml.contains(" \n")) {
+			xml = StringUtil.replace(xml, " \n", "\n");
+		}
+
 		xml = StringUtil.replace(xml, "\"/>", "\" />");
 
 		if (Validator.isNotNull(doctype)) {

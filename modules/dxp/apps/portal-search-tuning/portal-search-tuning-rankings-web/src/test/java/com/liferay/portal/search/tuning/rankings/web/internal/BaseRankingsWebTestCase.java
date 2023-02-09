@@ -64,10 +64,10 @@ import com.liferay.portal.search.web.interpreter.SearchResultInterpreterProvider
 
 import java.text.SimpleDateFormat;
 
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 import javax.portlet.ActionResponse;
 import javax.portlet.MimeResponse;
@@ -212,9 +212,8 @@ public abstract class BaseRankingsWebTestCase {
 				else if (argument.equals("userName")) {
 					return "theAuthor";
 				}
-				else {
-					return "undefined";
-				}
+
+				return "undefined";
 			}
 		);
 
@@ -735,10 +734,10 @@ public abstract class BaseRankingsWebTestCase {
 		SearchResponse searchResponse = Mockito.mock(SearchResponse.class);
 
 		Mockito.doReturn(
-			Stream.of(document)
+			Collections.singletonList(document)
 		).when(
 			searchResponse
-		).getDocumentsStream();
+		).getDocuments();
 
 		Mockito.doReturn(
 			1

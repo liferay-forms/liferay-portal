@@ -36,9 +36,10 @@ import com.liferay.item.selector.criteria.InfoListItemSelectorReturnType;
 import com.liferay.layout.content.page.editor.web.internal.info.item.InfoItemServiceRegistryUtil;
 import com.liferay.layout.content.page.editor.web.internal.info.search.InfoSearchClassMapperRegistryUtil;
 import com.liferay.layout.content.page.editor.web.internal.security.permission.resource.ModelResourcePermissionUtil;
-import com.liferay.layout.content.page.editor.web.internal.util.layout.structure.LayoutStructureUtil;
+import com.liferay.layout.util.structure.CollectionStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.LayoutStructureItem;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -82,26 +83,30 @@ public class AssetListEntryUsagesUtil {
 
 	public static JSONArray getPageContentsJSONArray(
 			HttpServletRequest httpServletRequest,
-			HttpServletResponse httpServletResponse, long plid,
-			long segmentsExperienceId)
+			HttpServletResponse httpServletResponse,
+			LayoutStructure layoutStructure, long plid,
+			List<String> restrictedItemIds)
 		throws PortalException {
 
 		JSONArray mappedContentsJSONArray = JSONFactoryUtil.createJSONArray();
 
-		LayoutStructure layoutStructure = _getLayoutStructure(
-			httpServletRequest, plid, segmentsExperienceId);
 		Set<String> uniqueAssetListEntryUsagesKeys = new HashSet<>();
 
 		List<AssetListEntryUsage> assetListEntryUsages =
 			AssetListEntryUsageLocalServiceUtil.getAssetEntryListUsagesByPlid(
 				plid);
 
+		String redirect = _getRedirect(httpServletRequest);
+
 		for (AssetListEntryUsage assetListEntryUsage : assetListEntryUsages) {
-			if (uniqueAssetListEntryUsagesKeys.contains(
-					_generateUniqueLayoutClassedModelUsageKey(
-						assetListEntryUsage)) ||
-				_isFragmentEntryLinkDeleted(
-					assetListEntryUsage, layoutStructure)) {
+			String uniqueKey = _generateUniqueLayoutClassedModelUsageKey(
+				assetListEntryUsage);
+
+			if (uniqueAssetListEntryUsagesKeys.contains(uniqueKey) ||
+				_isCollectionStyledLayoutStructureItemDeletedOrRestricted(
+					assetListEntryUsage, layoutStructure, restrictedItemIds) ||
+				_isFragmentEntryLinkDeletedOrRestricted(
+					assetListEntryUsage, layoutStructure, restrictedItemIds)) {
 
 				continue;
 			}
@@ -109,10 +114,9 @@ public class AssetListEntryUsagesUtil {
 			mappedContentsJSONArray.put(
 				_getPageContentJSONObject(
 					assetListEntryUsage, httpServletRequest,
-					httpServletResponse));
+					httpServletResponse, redirect));
 
-			uniqueAssetListEntryUsagesKeys.add(
-				_generateUniqueLayoutClassedModelUsageKey(assetListEntryUsage));
+			uniqueAssetListEntryUsagesKeys.add(uniqueKey);
 		}
 
 		return mappedContentsJSONArray;
@@ -121,8 +125,10 @@ public class AssetListEntryUsagesUtil {
 	private static String _generateUniqueLayoutClassedModelUsageKey(
 		AssetListEntryUsage assetListEntryUsage) {
 
-		return assetListEntryUsage.getClassNameId() + StringPool.DASH +
-			assetListEntryUsage.getKey();
+		return StringBundler.concat(
+			assetListEntryUsage.getClassNameId(), StringPool.DASH,
+			assetListEntryUsage.getContainerKey(), StringPool.DASH,
+			assetListEntryUsage.getKey());
 	}
 
 	private static String _getAssetEntryListSubtypeLabel(
@@ -320,6 +326,29 @@ public class AssetListEntryUsagesUtil {
 					className));
 	}
 
+	private static long _getCollectionStyledLayoutStructureItemClassNameId() {
+		if (_collectionStyledLayoutStructureItemClassNameId != null) {
+			return _collectionStyledLayoutStructureItemClassNameId;
+		}
+
+		_collectionStyledLayoutStructureItemClassNameId =
+			PortalUtil.getClassNameId(
+				CollectionStyledLayoutStructureItem.class.getName());
+
+		return _collectionStyledLayoutStructureItemClassNameId;
+	}
+
+	private static long _getFragmentEntryLinkClassNameId() {
+		if (_fragmentEntryLinkClassNameId != null) {
+			return _fragmentEntryLinkClassNameId;
+		}
+
+		_fragmentEntryLinkClassNameId = PortalUtil.getClassNameId(
+			FragmentEntryLink.class.getName());
+
+		return _fragmentEntryLinkClassNameId;
+	}
+
 	private static JSONObject _getInfoCollectionProviderActionsJSONObject(
 		InfoCollectionProvider<?> infoCollectionProvider,
 		HttpServletRequest httpServletRequest, String redirect) {
@@ -419,29 +448,10 @@ public class AssetListEntryUsagesUtil {
 		return portletURL.toString();
 	}
 
-	private static LayoutStructure _getLayoutStructure(
-			HttpServletRequest httpServletRequest, long plid,
-			long segmentsExperienceId)
-		throws PortalException {
-
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)httpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
-
-		return LayoutStructureUtil.getLayoutStructure(
-			themeDisplay.getScopeGroupId(), plid, segmentsExperienceId);
-	}
-
 	private static JSONObject _getPageContentJSONObject(
 		AssetListEntryUsage assetListEntryUsage,
 		HttpServletRequest httpServletRequest,
-		HttpServletResponse httpServletResponse) {
-
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)httpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
-
-		String redirect = _getRedirect(httpServletRequest);
+		HttpServletResponse httpServletResponse, String redirect) {
 
 		JSONObject mappedContentJSONObject = JSONUtil.put(
 			"className", assetListEntryUsage.getClassName()
@@ -454,6 +464,10 @@ public class AssetListEntryUsagesUtil {
 		).put(
 			"type", LanguageUtil.get(httpServletRequest, "collection")
 		);
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
 
 		if (Objects.equals(
 				assetListEntryUsage.getClassName(),
@@ -581,12 +595,44 @@ public class AssetListEntryUsagesUtil {
 		}
 	}
 
-	private static boolean _isFragmentEntryLinkDeleted(
-		AssetListEntryUsage assetListEntryUsage,
-		LayoutStructure layoutStructure) {
+	private static boolean
+		_isCollectionStyledLayoutStructureItemDeletedOrRestricted(
+			AssetListEntryUsage assetListEntryUsage,
+			LayoutStructure layoutStructure, List<String> restrictedItemIds) {
 
-		if (assetListEntryUsage.getContainerType() != PortalUtil.getClassNameId(
-				FragmentEntryLink.class)) {
+		if (assetListEntryUsage.getContainerType() !=
+				_getCollectionStyledLayoutStructureItemClassNameId()) {
+
+			return false;
+		}
+
+		LayoutStructureItem layoutStructureItem =
+			layoutStructure.getLayoutStructureItem(
+				assetListEntryUsage.getContainerKey());
+
+		if (layoutStructureItem == null) {
+			AssetListEntryUsageLocalServiceUtil.deleteAssetListEntryUsage(
+				assetListEntryUsage);
+
+			return true;
+		}
+
+		if (layoutStructure.isItemMarkedForDeletion(
+				layoutStructureItem.getItemId()) ||
+			restrictedItemIds.contains(layoutStructureItem.getItemId())) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private static boolean _isFragmentEntryLinkDeletedOrRestricted(
+		AssetListEntryUsage assetListEntryUsage,
+		LayoutStructure layoutStructure, List<String> restrictedItemIds) {
+
+		if (assetListEntryUsage.getContainerType() !=
+				_getFragmentEntryLinkClassNameId()) {
 
 			return false;
 		}
@@ -602,13 +648,18 @@ public class AssetListEntryUsagesUtil {
 			return true;
 		}
 
+		if (fragmentEntryLink.isDeleted()) {
+			return true;
+		}
+
 		LayoutStructureItem layoutStructureItem =
 			layoutStructure.getLayoutStructureItemByFragmentEntryLinkId(
 				fragmentEntryLink.getFragmentEntryLinkId());
 
 		if ((layoutStructureItem == null) ||
 			layoutStructure.isItemMarkedForDeletion(
-				layoutStructureItem.getItemId())) {
+				layoutStructureItem.getItemId()) ||
+			restrictedItemIds.contains(layoutStructureItem.getItemId())) {
 
 			return true;
 		}
@@ -618,5 +669,8 @@ public class AssetListEntryUsagesUtil {
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		AssetListEntryUsagesUtil.class);
+
+	private static Long _collectionStyledLayoutStructureItemClassNameId;
+	private static Long _fragmentEntryLinkClassNameId;
 
 }

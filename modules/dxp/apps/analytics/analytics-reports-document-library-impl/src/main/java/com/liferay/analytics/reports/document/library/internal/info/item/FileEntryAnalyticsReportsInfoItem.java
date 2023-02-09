@@ -35,7 +35,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -55,24 +54,24 @@ public class FileEntryAnalyticsReportsInfoItem
 
 	@Override
 	public String getAuthorName(FileEntry fileEntry) {
-		return _getUser(
-			fileEntry
-		).map(
-			User::getFullName
-		).orElse(
-			StringPool.BLANK
-		);
+		User user = _getUser(fileEntry);
+
+		if (user == null) {
+			return StringPool.BLANK;
+		}
+
+		return user.getFullName();
 	}
 
 	@Override
 	public long getAuthorUserId(FileEntry fileEntity) {
-		return _getUser(
-			fileEntity
-		).map(
-			User::getUserId
-		).orElse(
-			0L
-		);
+		User user = _getUser(fileEntity);
+
+		if (user == null) {
+			return 0L;
+		}
+
+		return user.getUserId();
 	}
 
 	@Override
@@ -145,9 +144,8 @@ public class FileEntryAnalyticsReportsInfoItem
 					FileEntry.class.getName(), fileEntry.getPrimaryKey()));
 	}
 
-	private Optional<User> _getUser(FileEntry fileEntry) {
-		return Optional.ofNullable(
-			_userLocalService.fetchUser(fileEntry.getUserId()));
+	private User _getUser(FileEntry fileEntry) {
+		return _userLocalService.fetchUser(fileEntry.getUserId());
 	}
 
 	@Reference

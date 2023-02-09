@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -71,21 +70,31 @@ public class DefaultFacetTranslator implements FacetTranslator {
 				continue;
 			}
 
-			Optional<QueryBuilder> postFilterQueryBuilderOptional =
-				_translateFacetQuery(facet);
+			BooleanClause<Filter> booleanClause =
+				facet.getFacetFilterBooleanClause();
 
-			postFilterQueryBuilderOptional.ifPresent(
-				postFilterQueryBuilders::add);
+			if (booleanClause != null) {
+				QueryBuilder postFilterQueryBuilder = _translateBooleanClause(
+					booleanClause);
 
-			Optional<AggregationBuilder> optional =
+				if (postFilterQueryBuilder != null) {
+					postFilterQueryBuilders.add(postFilterQueryBuilder);
+				}
+			}
+
+			AggregationBuilder aggregationBuilder =
 				_facetProcessor.processFacet(facet);
 
-			optional.map(
-				aggregationBuilder -> postProcessAggregationBuilder(
-					aggregationBuilder, facetProcessorContext)
-			).ifPresent(
-				searchSourceBuilder::aggregation
-			);
+			if (aggregationBuilder != null) {
+				AggregationBuilder postProcessAggregationBuilder =
+					postProcessAggregationBuilder(
+						aggregationBuilder, facetProcessorContext);
+
+				if (postProcessAggregationBuilder != null) {
+					searchSourceBuilder.aggregation(
+						postProcessAggregationBuilder);
+				}
+			}
 		}
 
 		if (ListUtil.isNotEmpty(postFilterQueryBuilders)) {
@@ -139,19 +148,6 @@ public class DefaultFacetTranslator implements FacetTranslator {
 			booleanClause.getClause(), booleanClause.getBooleanClauseOccur());
 
 		return _filterTranslator.translate(booleanFilter, null);
-	}
-
-	private Optional<QueryBuilder> _translateFacetQuery(Facet facet) {
-		BooleanClause<Filter> booleanClause =
-			facet.getFacetFilterBooleanClause();
-
-		if (booleanClause == null) {
-			return Optional.empty();
-		}
-
-		QueryBuilder queryBuilder = _translateBooleanClause(booleanClause);
-
-		return Optional.of(queryBuilder);
 	}
 
 	@Reference(service = CompositeFacetProcessor.class)

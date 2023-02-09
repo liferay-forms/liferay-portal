@@ -27,7 +27,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import org.junit.Assert;
@@ -49,12 +48,9 @@ public class GroupItemSelectorProviderRegistryUtilTest {
 
 	@Test
 	public void testGetGroupItemSelectorProviderOptionalWithoutRegisteredGroupItemSelectorProvider() {
-		Optional<GroupItemSelectorProvider> groupItemSelectorProviderOptional =
-			GroupItemSelectorProviderRegistryUtil.
-				getGroupItemSelectorProviderOptional(
-					RandomTestUtil.randomString());
-
-		Assert.assertTrue(!groupItemSelectorProviderOptional.isPresent());
+		Assert.assertNull(
+			GroupItemSelectorProviderRegistryUtil.getGroupItemSelectorProvider(
+				RandomTestUtil.randomString()));
 	}
 
 	@Test
@@ -65,15 +61,11 @@ public class GroupItemSelectorProviderRegistryUtilTest {
 				Collections.singletonMap(
 					"test", new MockGroupItemSelectorProvider())));
 
-		Optional<GroupItemSelectorProvider> groupItemSelectorProviderOptional =
-			GroupItemSelectorProviderRegistryUtil.
-				getGroupItemSelectorProviderOptional("test");
-
-		Assert.assertTrue(groupItemSelectorProviderOptional.isPresent());
-
 		GroupItemSelectorProvider groupItemSelectorProvider =
-			groupItemSelectorProviderOptional.get();
+			GroupItemSelectorProviderRegistryUtil.getGroupItemSelectorProvider(
+				"test");
 
+		Assert.assertNotNull(groupItemSelectorProvider);
 		Assert.assertEquals("icon", groupItemSelectorProvider.getIcon());
 
 		ReflectionTestUtil.setFieldValue(
@@ -89,12 +81,9 @@ public class GroupItemSelectorProviderRegistryUtilTest {
 				Collections.singletonMap(
 					"test", new MockGroupItemSelectorProvider(false))));
 
-		Optional<GroupItemSelectorProvider> groupItemSelectorProviderOptional =
-			GroupItemSelectorProviderRegistryUtil.
-				getGroupItemSelectorProviderOptional("test");
-
-		Assert.assertFalse(groupItemSelectorProviderOptional.isPresent());
-
+		Assert.assertNull(
+			GroupItemSelectorProviderRegistryUtil.getGroupItemSelectorProvider(
+				"test"));
 		Assert.assertTrue(
 			SetUtil.isEmpty(
 				GroupItemSelectorProviderRegistryUtil.

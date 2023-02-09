@@ -32,7 +32,7 @@ definition {
 	@description = "This is a test for LPS-166207. The site designer could add a page template set during convert to page template when the site doesn't have a page template set."
 	@priority = "5"
 	test AddFirstPageTemplateSetWhenCreatePageTemplate {
-		property custom.properties = "feature.flag.LPS-166201=true";
+		property portal.acceptance = "true";
 
 		task ("Given a site designer has a content page") {
 			JSONLayout.addPublicLayout(
@@ -86,7 +86,7 @@ definition {
 	@description = "This is a test for LPS-166207. The site designer could save in a new set during convert to page template when the site has page template sets."
 	@priority = "5"
 	test AddNewPageTemplateSetWhenCreatePageTemplate {
-		property custom.properties = "feature.flag.LPS-166201=true";
+		property portal.acceptance = "true";
 
 		task ("Given a site designer has a page template set and content page") {
 			JSONLayoutpagetemplate.addLayoutPageTemplateCollection(
@@ -149,10 +149,10 @@ definition {
 		}
 	}
 
-	@description = "This is a test for LPS-140483. The site admin cannot create page templates with same names from content page in the same collection."
+	@description = "This is a test for LPS-140483. The created page template from content page will be auto renamed when site designer creates the second one in the same collection."
 	@priority = "4"
-	test CannotCreatePageTemplatesWithSameNameFromContentPageInTheSameCollection {
-		task ("Create a content page template from the content page under page template collection") {
+	test AutoRenamePageTemplateCreatedFromContentPageInTheSameCollection {
+		task ("Given a site designer creates a content page template from the content page") {
 			JSONLayoutpagetemplate.addLayoutPageTemplateCollection(
 				groupName = "Test Site Name",
 				layoutPageTemplateCollectionName = "Page Template Collection");
@@ -166,23 +166,27 @@ definition {
 				pageName = "Test Page Name",
 				siteName = "Test Site Name");
 
-			PageEditor.createPageTemplate(
-				collectionName = "Page Template Collection",
-				pageTemplateName = "Content Page Template Name");
+			PageEditor.createPageTemplate(collectionName = "Page Template Collection");
 		}
 
-		task ("View error message shown when create page template with same name from content page in the same collection") {
-			PageEditor.createPageTemplate(
-				alertMessage = "A page template entry with that name already exists.",
-				collectionName = "Page Template Collection",
-				pageTemplateName = "Content Page Template Name");
+		task ("When the site designer creates the second page template from content page in the same collection") {
+			PageEditor.createPageTemplate(collectionName = "Page Template Collection");
+		}
+
+		task ("Then created page template is auto renamed") {
+			AssertClick(
+				locator1 = "Message#SUCCESS_LINK",
+				value1 = "See in Page Templates");
+
+			for (var pageTemplateName : list "Test Page Name - Page Template 2,Test Page Name - Page Template") {
+				PageTemplatesAdmin.viewPageTemplatePresent(pageTemplateName = "${pageTemplateName}");
+			}
 		}
 	}
 
 	@description = "This is a test for LPS-140483 and LPS-166207. The site admin could create page template from a content page with elements."
 	@priority = "5"
 	test CreatePageTemplateFromContentPage {
-		property custom.properties = "feature.flag.LPS-166201=true";
 		property portal.acceptance = "true";
 
 		task ("Add a Heading fragment and an Asset Publisher widget to content page then publish") {
@@ -286,9 +290,7 @@ definition {
 		}
 
 		task ("Create a content page template from the content page under page template collection") {
-			PageEditor.createPageTemplate(
-				collectionName = "Page Template Collection",
-				pageTemplateName = "Content Page Template Name 2");
+			PageEditor.createPageTemplate(collectionName = "Page Template Collection");
 		}
 
 		task ("View the content page template shown in Page Templates admin") {
@@ -296,15 +298,15 @@ definition {
 
 			Navigator.gotoNavNested(navNested = "Page Template Collection");
 
-			PageTemplatesAdmin.viewPageTemplatePresent(pageTemplateName = "Content Page Template Name 2");
+			PageTemplatesAdmin.viewPageTemplatePresent(pageTemplateName = "Test Page Name - Page Template");
 
 			PageTemplatesAdmin.viewEntryWorkflowStatus(
-				entry = "Content Page Template Name 2",
+				entry = "Test Page Name - Page Template",
 				workflowStatus = "Draft");
 		}
 
 		task ("View the Heading and Button are shown in content page template") {
-			PageTemplatesAdmin.gotoPageTemplate(pageTemplateName = "Content Page Template Name 2");
+			PageTemplatesAdmin.gotoPageTemplate(pageTemplateName = "Test Page Name - Page Template");
 
 			for (var fragmentName : list "Heading,Button") {
 				PageEditor.viewFragment(fragmentName = "${fragmentName}");
@@ -352,9 +354,7 @@ definition {
 		}
 
 		task ("Create a content page template from the content page under page template collection") {
-			PageEditor.createPageTemplate(
-				collectionName = "Page Template Collection",
-				pageTemplateName = "Content Page Template Name");
+			PageEditor.createPageTemplate(collectionName = "Page Template Collection");
 		}
 
 		task ("View the content page template shown in Page Templates admin") {
@@ -362,15 +362,15 @@ definition {
 
 			Navigator.gotoNavNested(navNested = "Page Template Collection");
 
-			PageTemplatesAdmin.viewPageTemplatePresent(pageTemplateName = "Content Page Template Name");
+			PageTemplatesAdmin.viewPageTemplatePresent(pageTemplateName = "Test Page Name - Page Template");
 
 			PageTemplatesAdmin.viewEntryWorkflowStatus(
-				entry = "Content Page Template Name",
+				entry = "Test Page Name - Page Template",
 				workflowStatus = "Draft");
 		}
 
 		task ("View the Header Dark and Button are shown in content page template") {
-			PageTemplatesAdmin.gotoPageTemplate(pageTemplateName = "Content Page Template Name");
+			PageTemplatesAdmin.gotoPageTemplate(pageTemplateName = "Test Page Name - Page Template");
 
 			AssertVisible(
 				key_type = "dark",
@@ -448,9 +448,7 @@ definition {
 		}
 
 		task ("Create a content page template from the content page under page template collection") {
-			PageEditor.createPageTemplate(
-				collectionName = "Page Template Collection",
-				pageTemplateName = "Content Page Template Name");
+			PageEditor.createPageTemplate(collectionName = "Page Template Collection");
 		}
 
 		task ("View the content page template shown in Page Templates admin") {
@@ -458,15 +456,15 @@ definition {
 
 			Navigator.gotoNavNested(navNested = "Page Template Collection");
 
-			PageTemplatesAdmin.viewPageTemplatePresent(pageTemplateName = "Content Page Template Name");
+			PageTemplatesAdmin.viewPageTemplatePresent(pageTemplateName = "Test Page Name - Page Template");
 
 			PageTemplatesAdmin.viewEntryWorkflowStatus(
-				entry = "Content Page Template Name",
+				entry = "Test Page Name - Page Template",
 				workflowStatus = "Draft");
 		}
 
 		task ("View the font family of Heading is times in content page template") {
-			PageTemplatesAdmin.gotoPageTemplate(pageTemplateName = "Content Page Template Name");
+			PageTemplatesAdmin.gotoPageTemplate(pageTemplateName = "Test Page Name - Page Template");
 
 			AssertCssValue(
 				fragmentName = "heading",
@@ -505,9 +503,7 @@ definition {
 				pageName = "Test Page Name",
 				siteName = "Test Site Name");
 
-			PageEditor.createPageTemplate(
-				collectionName = "Page Template Collection",
-				pageTemplateName = "Content Page Template Name");
+			PageEditor.createPageTemplate(collectionName = "Page Template Collection");
 		}
 
 		task ("View the content page template shown in Page Templates admin") {
@@ -515,10 +511,10 @@ definition {
 
 			Navigator.gotoNavNested(navNested = "Page Template Collection");
 
-			PageTemplatesAdmin.viewPageTemplatePresent(pageTemplateName = "Content Page Template Name");
+			PageTemplatesAdmin.viewPageTemplatePresent(pageTemplateName = "Test Page Name - Page Template");
 
 			PageTemplatesAdmin.viewEntryWorkflowStatus(
-				entry = "Content Page Template Name",
+				entry = "Test Page Name - Page Template",
 				workflowStatus = "Draft");
 		}
 

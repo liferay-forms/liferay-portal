@@ -28,11 +28,11 @@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="com.liferay.change.tracking.constants.CTActionKeys" %><%@
 page import="com.liferay.change.tracking.constants.CTConstants" %><%@
-page import="com.liferay.change.tracking.exception.CTCollectionDescriptionException" %><%@
-page import="com.liferay.change.tracking.exception.CTCollectionNameException" %><%@
 page import="com.liferay.change.tracking.exception.CTLocalizedException" %><%@
 page import="com.liferay.change.tracking.model.CTCollection" %><%@
+page import="com.liferay.change.tracking.model.CTCollectionTemplate" %><%@
 page import="com.liferay.change.tracking.model.CTProcess" %><%@
+page import="com.liferay.change.tracking.service.CTCollectionTemplateLocalServiceUtil" %><%@
 page import="com.liferay.change.tracking.web.internal.constants.CTWebKeys" %><%@
 page import="com.liferay.change.tracking.web.internal.display.CTDisplayRendererRegistry" %><%@
 page import="com.liferay.change.tracking.web.internal.display.context.PublicationsConfigurationDisplayContext" %><%@
@@ -46,6 +46,8 @@ page import="com.liferay.change.tracking.web.internal.display.context.ViewHistor
 page import="com.liferay.change.tracking.web.internal.display.context.ViewHistoryManagementToolbarDisplayContext" %><%@
 page import="com.liferay.change.tracking.web.internal.display.context.ViewScheduledDisplayContext" %><%@
 page import="com.liferay.change.tracking.web.internal.display.context.ViewScheduledManagementToolbarDisplayContext" %><%@
+page import="com.liferay.change.tracking.web.internal.display.context.ViewTemplatesDisplayContext" %><%@
+page import="com.liferay.change.tracking.web.internal.display.context.ViewTemplatesManagementToolbarDisplayContext" %><%@
 page import="com.liferay.change.tracking.web.internal.security.permission.resource.CTCollectionPermission" %><%@
 page import="com.liferay.petra.string.StringBundler" %><%@
 page import="com.liferay.petra.string.StringPool" %><%@
@@ -53,10 +55,14 @@ page import="com.liferay.portal.kernel.dao.search.ResultRow" %><%@
 page import="com.liferay.portal.kernel.dao.search.SearchContainer" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
 page import="com.liferay.portal.kernel.model.ModelHintsUtil" %><%@
+page import="com.liferay.portal.kernel.portlet.url.builder.ResourceURLBuilder" %><%@
 page import="com.liferay.portal.kernel.servlet.MultiSessionErrors" %><%@
 page import="com.liferay.portal.kernel.util.FastDateFormatFactoryUtil" %><%@
+page import="com.liferay.portal.kernel.util.GetterUtil" %><%@
+page import="com.liferay.portal.kernel.util.HashMapBuilder" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
+page import="com.liferay.portal.kernel.util.PropsUtil" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %>
 
@@ -64,6 +70,8 @@ page import="com.liferay.portal.kernel.util.WebKeys" %>
 
 <%@ page import="java.util.Date" %><%@
 page import="java.util.Objects" %>
+
+<%@ page import="javax.portlet.RenderResponse" %>
 
 <liferay-frontend:defineObjects />
 

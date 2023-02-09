@@ -59,6 +59,7 @@ export function ModalAddDefaultSortColumn({
 }: IProps) {
 	const [
 		{
+			creationLanguageId,
 			objectFields,
 			objectView: {objectViewColumns, objectViewSortColumns},
 		},
@@ -74,8 +75,10 @@ export function ModalAddDefaultSortColumn({
 			(objectViewColumn) =>
 				!objectViewColumn.defaultSort &&
 				objectViewColumn.objectFieldBusinessType !== 'Aggregation' &&
+				objectViewColumn.objectFieldBusinessType !== 'Attachment' &&
 				objectViewColumn.objectFieldBusinessType !== 'Formula' &&
-				objectViewColumn.objectFieldBusinessType !== 'Relationship'
+				objectViewColumn.objectFieldBusinessType !== 'Relationship' &&
+				objectViewColumn.objectFieldBusinessType !== 'RichText'
 		);
 
 		setAvailableViewColumns(newAvailableViewColumns);
@@ -88,7 +91,11 @@ export function ModalAddDefaultSortColumn({
 	const [query, setQuery] = useState<string>('');
 
 	const filteredObjectSortColumn = useMemo(() => {
-		return filterArrayByQuery(availableViewColumns, 'fieldLabel', query);
+		return filterArrayByQuery({
+			array: availableViewColumns,
+			query,
+			str: 'fieldLabel',
+		});
 	}, [availableViewColumns, query]);
 
 	const onSubmit = (event: FormEvent) => {
@@ -112,6 +119,7 @@ export function ModalAddDefaultSortColumn({
 		else {
 			dispatch({
 				payload: {
+					creationLanguageId,
 					objectFieldName: objectFieldName!,
 					objectFields,
 					objectViewSortColumns,

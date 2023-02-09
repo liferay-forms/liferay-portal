@@ -9,7 +9,6 @@
  * distribution rights of the Software.
  */
 
-import ClayLoadingIndicator from '@clayui/loading-indicator';
 import React, {useEffect, useState} from 'react';
 
 import Container from '../../common/components/container';
@@ -17,19 +16,20 @@ import DonutChart from '../../common/components/donut-chart';
 import getRevenueChartColumns from '../../common/utils/getRevenueChartColumns';
 
 const colors = {
-	'New Business': '#000239',
-	'Project Revenue': '#83B6FE',
+	'Growth Revenue': '#000239',
+	'Renewal Revenue': '#83B6FE',
 };
 
 export default function () {
 	const [titleChart, setTitleChart] = useState('');
+	const [valueChart, setValueChart] = useState('');
 	const [columnsRevenueChart, setColumnsRevenueChart] = useState([]);
 	const [loading, setLoading] = useState(false);
 
 	const getRevenueData = async () => {
 		setLoading(true);
 		// eslint-disable-next-line @liferay/portal/no-global-fetch
-		const response = await fetch('/o/c/opportunitysfs', {
+		const response = await fetch('/o/c/opportunitysfs?&pageSize=200', {
 			headers: {
 				'accept': 'application/json',
 				'x-csrf-token': Liferay.authToken,
@@ -42,6 +42,7 @@ export default function () {
 			getRevenueChartColumns(
 				revenueData,
 				setTitleChart,
+				setValueChart,
 				setColumnsRevenueChart
 			);
 			setLoading(false);
@@ -65,10 +66,13 @@ export default function () {
 	};
 
 	return (
-		<Container className="revenue-chart-card-height" title="Revenue">
-			{loading && <ClayLoadingIndicator className="mt-10" size="md" />}
-
-			<DonutChart chartData={chartData} titleChart={titleChart} />
+		<Container title="Revenue">
+			<DonutChart
+				chartData={chartData}
+				isLoading={loading}
+				titleChart={titleChart}
+				valueChart={valueChart}
+			/>
 		</Container>
 	);
 }

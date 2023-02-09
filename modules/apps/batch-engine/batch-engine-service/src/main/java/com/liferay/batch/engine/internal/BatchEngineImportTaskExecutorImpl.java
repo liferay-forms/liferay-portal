@@ -68,10 +68,10 @@ public class BatchEngineImportTaskExecutorImpl
 
 	@Override
 	public void execute(BatchEngineImportTask batchEngineImportTask) {
-		try (SafeCloseable safeCloseable =
-				CompanyThreadLocal.setWithSafeCloseable(
-					batchEngineImportTask.getCompanyId())) {
+		SafeCloseable safeCloseable = CompanyThreadLocal.setWithSafeCloseable(
+			batchEngineImportTask.getCompanyId());
 
+		try {
 			batchEngineImportTask.setExecuteStatus(
 				BatchEngineTaskExecuteStatus.STARTED.toString());
 			batchEngineImportTask.setStartTime(new Date());
@@ -106,6 +106,13 @@ public class BatchEngineImportTaskExecutorImpl
 			_updateBatchEngineImportTask(
 				BatchEngineTaskExecuteStatus.FAILED, batchEngineImportTask,
 				throwable.toString());
+		}
+		finally {
+
+			// LPS-167011 Because of call to _updateBatchEngineImportTask when
+			// catching a Throwable
+
+			safeCloseable.close();
 		}
 	}
 
