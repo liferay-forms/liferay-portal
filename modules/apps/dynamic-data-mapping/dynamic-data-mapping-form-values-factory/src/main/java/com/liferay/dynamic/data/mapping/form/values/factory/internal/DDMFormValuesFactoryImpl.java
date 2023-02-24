@@ -108,17 +108,24 @@ public class DDMFormValuesFactoryImpl implements DDMFormValuesFactory {
 			return;
 		}
 
+		HashMap<String, DDMFormField> fullDDMFormFields = new HashMap<>();
+
 		_checkDDMFormFieldParameterNames(
 			ddmForm.getDDMFormFields(), StringPool.BLANK,
-			ddmFormFieldParameterNames);
+			ddmFormFieldParameterNames, fullDDMFormFields);
 	}
 
 	private void _checkDDMFormFieldParameterNames(
 		List<DDMFormField> ddmFormFields,
 		String parentDDMFormFieldParameterName,
-		Set<String> ddmFormFieldParameterNames) {
+		Set<String> ddmFormFieldParameterNames,
+		HashMap<String, DDMFormField> fullDDMFormFields) {
 
 		for (DDMFormField ddmFormField : ddmFormFields) {
+			if (fullDDMFormFields.containsKey(ddmFormField.getName())) {
+				continue;
+			}
+
 			Set<String> filteredDDMFormFieldParameterNames =
 				_filterDDMFormFieldParameterNames(
 					ddmFormField, ddmFormFieldParameterNames);
@@ -137,18 +144,26 @@ public class DDMFormValuesFactoryImpl implements DDMFormValuesFactory {
 				ddmFormFieldParameterNames.add(
 					defaultDDMFormFieldParameterName);
 
-				_checkDDMFormFieldParameterNames(
-					ddmFormField.getNestedDDMFormFields(), StringPool.BLANK,
-					ddmFormFieldParameterNames);
+					fullDDMFormFields.put(ddmFormField.getName(), ddmFormField);
+
+					_checkDDMFormFieldParameterNames(
+						ddmFormField.getNestedDDMFormFields(), StringPool.BLANK,
+						ddmFormFieldParameterNames, fullDDMFormFields);
+				
 			}
 
 			for (String filteredDDMFormFieldParameterName :
 					filteredDDMFormFieldParameterNames) {
 
-				_checkDDMFormFieldParameterNames(
-					ddmFormField.getNestedDDMFormFields(),
-					filteredDDMFormFieldParameterName,
-					ddmFormFieldParameterNames);
+					_checkDDMFormFieldParameterNames(
+						ddmFormField.getNestedDDMFormFields(),
+						filteredDDMFormFieldParameterName,
+						ddmFormFieldParameterNames, fullDDMFormFields);
+				
+			}
+
+			if (!fullDDMFormFields.containsKey(ddmFormField.getName())) {
+				fullDDMFormFields.put(ddmFormField.getName(), ddmFormField);
 			}
 		}
 	}
