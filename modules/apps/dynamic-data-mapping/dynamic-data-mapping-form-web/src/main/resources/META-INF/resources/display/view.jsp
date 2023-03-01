@@ -130,166 +130,168 @@ boolean limitToOneSubmissionPerUser = DDMFormInstanceSubmissionLimitStatusUtil.i
 
 				<div class="portlet-forms">
 					<aui:form action="<%= addFormInstanceRecordActionURL %>" data-DDMFormInstanceId="<%= formInstanceId %>" data-senna-off="true" method="post" name="fm">
-						<aui:input name="currentURL" type="hidden" value="<%= currentURL %>" />
-
-						<%
-						String redirectURL = ddmFormDisplayContext.getRedirectURL();
-						%>
-
-						<c:if test="<%= Validator.isNull(redirectURL) %>">
-							<aui:input name="redirect" type="hidden" value='<%= ParamUtil.getString(request, "redirect", currentURL) %>' />
-						</c:if>
-
-						<aui:input name="groupId" type="hidden" value="<%= formInstance.getGroupId() %>" />
-						<aui:input name="formInstanceId" type="hidden" value="<%= formInstance.getFormInstanceId() %>" />
-						<aui:input name="languageId" type="hidden" value="<%= languageId %>" />
-						<aui:input name="workflowAction" type="hidden" value="<%= WorkflowConstants.ACTION_PUBLISH %>" />
-
-						<liferay-ui:error exception="<%= CaptchaException.class %>" message="captcha-verification-failed" />
-						<liferay-ui:error exception="<%= CaptchaTextException.class %>" message="text-verification-failed" />
-						<liferay-ui:error exception="<%= DDMFormRenderingException.class %>" message="unable-to-render-the-selected-form" />
-						<liferay-ui:error exception="<%= DDMFormValuesValidationException.class %>" message="field-validation-failed" />
-
-						<liferay-ui:error exception="<%= DDMFormValuesValidationException.MustSetValidValue.class %>">
+						<div>
+							<aui:input name="currentURL" type="hidden" value="<%= currentURL %>" />
 
 							<%
-							DDMFormValuesValidationException.MustSetValidValue msvv = (DDMFormValuesValidationException.MustSetValidValue)errorException;
-
-							String fieldLabelValue = msvv.getFieldLabelValue(displayLocale);
-
-							if (Validator.isNull(fieldLabelValue)) {
-								fieldLabelValue = msvv.getFieldName();
-							}
+							String redirectURL = ddmFormDisplayContext.getRedirectURL();
 							%>
 
-							<liferay-ui:message arguments="<%= HtmlUtil.escape(fieldLabelValue) %>" key="validation-failed-for-field-x" translateArguments="<%= false %>" />
-						</liferay-ui:error>
+							<c:if test="<%= Validator.isNull(redirectURL) %>">
+								<aui:input name="redirect" type="hidden" value='<%= ParamUtil.getString(request, "redirect", currentURL) %>' />
+							</c:if>
 
-						<liferay-ui:error exception="<%= DDMFormValuesValidationException.RequiredValue.class %>">
+							<aui:input name="groupId" type="hidden" value="<%= formInstance.getGroupId() %>" />
+							<aui:input name="formInstanceId" type="hidden" value="<%= formInstance.getFormInstanceId() %>" />
+							<aui:input name="languageId" type="hidden" value="<%= languageId %>" />
+							<aui:input name="workflowAction" type="hidden" value="<%= WorkflowConstants.ACTION_PUBLISH %>" />
 
-							<%
-							DDMFormValuesValidationException.RequiredValue rv = (DDMFormValuesValidationException.RequiredValue)errorException;
+							<liferay-ui:error exception="<%= CaptchaException.class %>" message="captcha-verification-failed" />
+							<liferay-ui:error exception="<%= CaptchaTextException.class %>" message="text-verification-failed" />
+							<liferay-ui:error exception="<%= DDMFormRenderingException.class %>" message="unable-to-render-the-selected-form" />
+							<liferay-ui:error exception="<%= DDMFormValuesValidationException.class %>" message="field-validation-failed" />
 
-							String fieldLabelValue = rv.getFieldLabelValue(displayLocale);
+							<liferay-ui:error exception="<%= DDMFormValuesValidationException.MustSetValidValue.class %>">
 
-							if (Validator.isNull(fieldLabelValue)) {
-								fieldLabelValue = rv.getFieldName();
-							}
-							%>
+								<%
+								DDMFormValuesValidationException.MustSetValidValue msvv = (DDMFormValuesValidationException.MustSetValidValue)errorException;
 
-							<liferay-ui:message arguments="<%= HtmlUtil.escape(fieldLabelValue) %>" key="no-value-is-defined-for-field-x" translateArguments="<%= false %>" />
-						</liferay-ui:error>
+								String fieldLabelValue = msvv.getFieldLabelValue(displayLocale);
 
-						<liferay-ui:error exception="<%= NoSuchFormInstanceException.class %>" message="the-selected-form-no-longer-exists" />
-						<liferay-ui:error exception="<%= NoSuchStructureException.class %>" message="unable-to-retrieve-the-definition-of-the-selected-form" />
-						<liferay-ui:error exception="<%= NoSuchStructureLayoutException.class %>" message="unable-to-retrieve-the-layout-of-the-selected-form" />
-						<liferay-ui:error exception="<%= ObjectEntryValuesException.ExceedsIntegerSize.class %>" message="object-entry-value-exceeds-integer-field-allowed-size" />
-						<liferay-ui:error exception="<%= ObjectEntryValuesException.ExceedsLongMaxSize.class %>" message="object-entry-value-exceeds-maximum-long-field-allowed-size" />
-						<liferay-ui:error exception="<%= ObjectEntryValuesException.ExceedsLongMinSize.class %>" message="object-entry-value-falls-below-minimum-long-field-allowed-size" />
-						<liferay-ui:error exception="<%= ObjectEntryValuesException.ExceedsLongSize.class %>" message="object-entry-value-exceeds-long-field-allowed-size" />
+								if (Validator.isNull(fieldLabelValue)) {
+									fieldLabelValue = msvv.getFieldName();
+								}
+								%>
 
-						<liferay-ui:error exception="<%= ObjectEntryValuesException.ExceedsTextMaxLength.class %>">
+								<liferay-ui:message arguments="<%= HtmlUtil.escape(fieldLabelValue) %>" key="validation-failed-for-field-x" translateArguments="<%= false %>" />
+							</liferay-ui:error>
 
-							<%
-							ObjectEntryValuesException.ExceedsTextMaxLength etml = (ObjectEntryValuesException.ExceedsTextMaxLength)errorException;
-							%>
+							<liferay-ui:error exception="<%= DDMFormValuesValidationException.RequiredValue.class %>">
 
-							<liferay-ui:message arguments="<%= new String[] {String.valueOf(etml.getMaxLength()), etml.getObjectFieldName()} %>" key="the-entry-value-exceeds-the-maximum-length-of-x-characters-for-object-field-x" translateArguments="<%= false %>" />
-						</liferay-ui:error>
+								<%
+								DDMFormValuesValidationException.RequiredValue rv = (DDMFormValuesValidationException.RequiredValue)errorException;
 
-						<liferay-ui:error exception="<%= StorageException.class %>" message="there-was-an-error-when-accessing-the-data-storage" />
+								String fieldLabelValue = rv.getFieldLabelValue(displayLocale);
 
-						<liferay-ui:error-principal />
+								if (Validator.isNull(fieldLabelValue)) {
+									fieldLabelValue = rv.getFieldName();
+								}
+								%>
 
-						<c:if test="<%= formShared || preview %>">
-							<clay:container-fluid>
-								<div class="locale-actions">
-									<liferay-ui:language
-										formAction="<%= currentURL %>"
-										languageId="<%= languageId %>"
-										languageIds="<%= ddmFormDisplayContext.getAvailableLanguageIds() %>"
-									/>
+								<liferay-ui:message arguments="<%= HtmlUtil.escape(fieldLabelValue) %>" key="no-value-is-defined-for-field-x" translateArguments="<%= false %>" />
+							</liferay-ui:error>
+
+							<liferay-ui:error exception="<%= NoSuchFormInstanceException.class %>" message="the-selected-form-no-longer-exists" />
+							<liferay-ui:error exception="<%= NoSuchStructureException.class %>" message="unable-to-retrieve-the-definition-of-the-selected-form" />
+							<liferay-ui:error exception="<%= NoSuchStructureLayoutException.class %>" message="unable-to-retrieve-the-layout-of-the-selected-form" />
+							<liferay-ui:error exception="<%= ObjectEntryValuesException.ExceedsIntegerSize.class %>" message="object-entry-value-exceeds-integer-field-allowed-size" />
+							<liferay-ui:error exception="<%= ObjectEntryValuesException.ExceedsLongMaxSize.class %>" message="object-entry-value-exceeds-maximum-long-field-allowed-size" />
+							<liferay-ui:error exception="<%= ObjectEntryValuesException.ExceedsLongMinSize.class %>" message="object-entry-value-falls-below-minimum-long-field-allowed-size" />
+							<liferay-ui:error exception="<%= ObjectEntryValuesException.ExceedsLongSize.class %>" message="object-entry-value-exceeds-long-field-allowed-size" />
+
+							<liferay-ui:error exception="<%= ObjectEntryValuesException.ExceedsTextMaxLength.class %>">
+
+								<%
+								ObjectEntryValuesException.ExceedsTextMaxLength etml = (ObjectEntryValuesException.ExceedsTextMaxLength)errorException;
+								%>
+
+								<liferay-ui:message arguments="<%= new String[] {String.valueOf(etml.getMaxLength()), etml.getObjectFieldName()} %>" key="the-entry-value-exceeds-the-maximum-length-of-x-characters-for-object-field-x" translateArguments="<%= false %>" />
+							</liferay-ui:error>
+
+							<liferay-ui:error exception="<%= StorageException.class %>" message="there-was-an-error-when-accessing-the-data-storage" />
+
+							<liferay-ui:error-principal />
+
+							<c:if test="<%= formShared || preview %>">
+								<clay:container-fluid>
+									<div class="locale-actions">
+										<liferay-ui:language
+											formAction="<%= currentURL %>"
+											languageId="<%= languageId %>"
+											languageIds="<%= ddmFormDisplayContext.getAvailableLanguageIds() %>"
+										/>
+									</div>
+								</clay:container-fluid>
+							</c:if>
+
+							<c:if test="<%= !ddmFormDisplayContext.hasAddFormInstanceRecordPermission() %>">
+								<div class="ddm-form-basic-info">
+									<clay:container-fluid>
+										<clay:alert
+											displayType="warning"
+											message="you-do-not-have-the-permission-to-submit-this-form"
+										/>
+									</clay:container-fluid>
 								</div>
-							</clay:container-fluid>
-						</c:if>
+							</c:if>
 
-						<c:if test="<%= !ddmFormDisplayContext.hasAddFormInstanceRecordPermission() %>">
-							<div class="ddm-form-basic-info">
+							<c:if test="<%= !ddmFormDisplayContext.hasValidStorageType(formInstance) %>">
+								<div class="ddm-form-basic-info">
+									<clay:container-fluid>
+										<clay:alert
+											displayType="danger"
+											message='<%= LanguageUtil.format(request, "this-form-was-created-using-a-storage-type-x-that-is-not-available-for-this-liferay-dxp-installation.-install-x-to-make-it-available-for-editing", formInstance.getStorageType()) %>'
+										/>
+									</clay:container-fluid>
+								</div>
+							</c:if>
+
+							<div class="ddm-form-upload-permission-message hide mt-4">
 								<clay:container-fluid>
 									<clay:alert
 										displayType="warning"
-										message="you-do-not-have-the-permission-to-submit-this-form"
+										message="you-do-not-have-the-permission-to-access-the-upload-fields-on-this-form"
 									/>
 								</clay:container-fluid>
 							</div>
-						</c:if>
 
-						<c:if test="<%= !ddmFormDisplayContext.hasValidStorageType(formInstance) %>">
-							<div class="ddm-form-basic-info">
-								<clay:container-fluid>
-									<clay:alert
-										displayType="danger"
-										message='<%= LanguageUtil.format(request, "this-form-was-created-using-a-storage-type-x-that-is-not-available-for-this-liferay-dxp-installation.-install-x-to-make-it-available-for-editing", formInstance.getStorageType()) %>'
-									/>
-								</clay:container-fluid>
-							</div>
-						</c:if>
-
-						<div class="ddm-form-upload-permission-message hide mt-4">
 							<clay:container-fluid>
-								<clay:alert
-									displayType="warning"
-									message="you-do-not-have-the-permission-to-access-the-upload-fields-on-this-form"
+								<react:component
+									module="admin/js/util/ShowPartialResultsAlert"
+									props='<%=
+										HashMapBuilder.<String, Object>put(
+											"dismissible", true
+										).put(
+											"showPartialResultsToRespondents", ddmFormDisplayContext.isShowPartialResultsToRespondents()
+										).build()
+									%>'
 								/>
 							</clay:container-fluid>
+
+							<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" id="/dynamic_data_mapping_form/get_form_report_data" var="formReportDataURL">
+								<portlet:param name="formInstanceId" value="<%= String.valueOf(formInstanceId) %>" />
+							</liferay-portlet:resourceURL>
+
+							<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" id="/dynamic_data_mapping_form/validate_csrf_token" var="validateCSRFTokenURL" />
+
+							<clay:container-fluid
+								cssClass="ddm-form-builder-app ddm-form-builder-app-not-ready"
+								id="<%= ddmFormDisplayContext.getContainerId() %>"
+							>
+								<react:component
+									module="admin/js/FormView"
+									props='<%=
+										HashMapBuilder.<String, Object>put(
+											"dataEngineModule", ddmFormDisplayContext.getDataEngineModule()
+										).put(
+											"description", StringUtil.trim(formInstance.getDescription(displayLocale))
+										).put(
+											"displayChartAsTable", ddmFormDisplayContext.isDisplayChartAsTable()
+										).put(
+											"formReportDataURL", formReportDataURL.toString()
+										).put(
+											"title", formInstance.getName(displayLocale)
+										).put(
+											"validateCSRFTokenURL", validateCSRFTokenURL.toString()
+										).putAll(
+											ddmFormDisplayContext.getDDMFormContext()
+										).build()
+									%>'
+								/>
+							</clay:container-fluid>
+
+							<aui:input name="empty" type="hidden" value="" />
 						</div>
-
-						<clay:container-fluid>
-							<react:component
-								module="admin/js/util/ShowPartialResultsAlert"
-								props='<%=
-									HashMapBuilder.<String, Object>put(
-										"dismissible", true
-									).put(
-										"showPartialResultsToRespondents", ddmFormDisplayContext.isShowPartialResultsToRespondents()
-									).build()
-								%>'
-							/>
-						</clay:container-fluid>
-
-						<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" id="/dynamic_data_mapping_form/get_form_report_data" var="formReportDataURL">
-							<portlet:param name="formInstanceId" value="<%= String.valueOf(formInstanceId) %>" />
-						</liferay-portlet:resourceURL>
-
-						<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" id="/dynamic_data_mapping_form/validate_csrf_token" var="validateCSRFTokenURL" />
-
-						<clay:container-fluid
-							cssClass="ddm-form-builder-app ddm-form-builder-app-not-ready"
-							id="<%= ddmFormDisplayContext.getContainerId() %>"
-						>
-							<react:component
-								module="admin/js/FormView"
-								props='<%=
-									HashMapBuilder.<String, Object>put(
-										"dataEngineModule", ddmFormDisplayContext.getDataEngineModule()
-									).put(
-										"description", StringUtil.trim(formInstance.getDescription(displayLocale))
-									).put(
-										"displayChartAsTable", ddmFormDisplayContext.isDisplayChartAsTable()
-									).put(
-										"formReportDataURL", formReportDataURL.toString()
-									).put(
-										"title", formInstance.getName(displayLocale)
-									).put(
-										"validateCSRFTokenURL", validateCSRFTokenURL.toString()
-									).putAll(
-										ddmFormDisplayContext.getDDMFormContext()
-									).build()
-								%>'
-							/>
-						</clay:container-fluid>
-
-						<aui:input name="empty" type="hidden" value="" />
 					</aui:form>
 				</div>
 
