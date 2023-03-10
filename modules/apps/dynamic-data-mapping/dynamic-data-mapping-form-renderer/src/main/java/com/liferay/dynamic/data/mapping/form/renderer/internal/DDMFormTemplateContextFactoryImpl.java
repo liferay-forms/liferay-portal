@@ -250,6 +250,14 @@ public class DDMFormTemplateContextFactoryImpl
 		templateContext.put("cancelLabel", cancelLabel);
 
 		templateContext.put("containerId", containerId);
+
+		String contentType = GetterUtil.getString(
+			ddmFormRenderingContext.getProperty("contentType"));
+
+		if (Validator.isNotNull(contentType)) {
+			templateContext.put("contentType", contentType);
+		}
+
 		templateContext.put(
 			"currentPage",
 			ParamUtil.getString(
