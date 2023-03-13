@@ -34,6 +34,7 @@ import com.liferay.osgi.service.tracker.collections.map.PropertyServiceReference
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.service.GroupLocalService;
@@ -251,7 +252,9 @@ public class DDMFormTemplateContextFactoryImpl
 		String contentType = GetterUtil.getString(
 			ddmFormRenderingContext.getProperty("contentType"));
 
-		if (Validator.isNotNull(contentType)) {
+		if (Validator.isNotNull(contentType) &&
+			FeatureFlagManagerUtil.isEnabled("LPS-168179")) {
+
 			templateContext.put("contentType", contentType);
 		}
 
