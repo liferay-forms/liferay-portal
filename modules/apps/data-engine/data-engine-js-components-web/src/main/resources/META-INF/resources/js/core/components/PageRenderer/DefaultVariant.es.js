@@ -145,15 +145,8 @@ export function Page({
 
 Page.displayName = 'DefaultVariant.Page';
 
-export function PageHeader({description, title}) {
-	return (
-		<>
-			{title && <h2 className="lfr-ddm-form-page-title">{title}</h2>}
-			{description && (
-				<h3 className="lfr-ddm-form-page-description">{description}</h3>
-			)}
-		</>
-	);
+export function PageHeader({title}) {
+	return <>{title && <h2 className="lfr-ddm-form-page-title">{title}</h2>}</>;
 }
 
 PageHeader.displayName = 'DefaultVariant.PageHeader';
