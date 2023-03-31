@@ -17,6 +17,7 @@ package com.liferay.dynamic.data.mapping.internal.storage;
 import com.liferay.counter.kernel.service.CounterLocalService;
 import com.liferay.dynamic.data.mapping.exception.StorageException;
 import com.liferay.dynamic.data.mapping.service.DDMFieldLocalService;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.DDMStorageAdapter;
 import com.liferay.dynamic.data.mapping.storage.DDMStorageAdapterDeleteRequest;
 import com.liferay.dynamic.data.mapping.storage.DDMStorageAdapterDeleteResponse;
@@ -24,7 +25,10 @@ import com.liferay.dynamic.data.mapping.storage.DDMStorageAdapterGetRequest;
 import com.liferay.dynamic.data.mapping.storage.DDMStorageAdapterGetResponse;
 import com.liferay.dynamic.data.mapping.storage.DDMStorageAdapterSaveRequest;
 import com.liferay.dynamic.data.mapping.storage.DDMStorageAdapterSaveResponse;
+import com.liferay.dynamic.data.mapping.util.DDMFormValuesTransformer;
+import com.liferay.dynamic.data.mapping.util.HTMLSanitizerDDMFormFieldValueTransformer;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -71,6 +75,25 @@ public class DefaultDDMStorageAdapter implements DDMStorageAdapter {
 
 		if (ddmStorageAdapterSaveRequest.isInsert()) {
 			primaryKey = _counterLocalService.increment();
+		}
+
+		DDMFormValues ddmFormValues =
+			ddmStorageAdapterSaveRequest.getDDMFormValues();
+
+		DDMFormValuesTransformer ddmFormValuesTransformer =
+			new DDMFormValuesTransformer(ddmFormValues);
+
+		ddmFormValuesTransformer.addTransformer(
+			new HTMLSanitizerDDMFormFieldValueTransformer(
+				CompanyThreadLocal.getCompanyId(),
+				ddmStorageAdapterSaveRequest.getGroupId(),
+				ddmStorageAdapterSaveRequest.getUserId()));
+
+		try {
+			ddmFormValuesTransformer.transform();
+		}
+		catch (PortalException portalException) {
+			throw new RuntimeException(portalException);
 		}
 
 		try {

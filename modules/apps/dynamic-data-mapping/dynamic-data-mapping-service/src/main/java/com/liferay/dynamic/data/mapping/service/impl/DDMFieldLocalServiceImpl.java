@@ -505,9 +505,9 @@ public class DDMFieldLocalServiceImpl extends DDMFieldLocalServiceBaseImpl {
 	}
 
 	private void _collectDDMFieldInfos(
-		Map<String, DDMFieldInfo> ddmFieldInfoMap,
-		Map<String, DDMFormField> ddmFormFieldMap,
-		List<DDMFormFieldValue> ddmFormValues, String parentInstanceId) {
+			Map<String, DDMFieldInfo> ddmFieldInfoMap,
+			Map<String, DDMFormField> ddmFormFieldMap,
+			List<DDMFormFieldValue> ddmFormValues, String parentInstanceId) {
 
 		for (DDMFormFieldValue ddmFormFieldValue : ddmFormValues) {
 			DDMFormField ddmFormField = ddmFormFieldMap.get(
