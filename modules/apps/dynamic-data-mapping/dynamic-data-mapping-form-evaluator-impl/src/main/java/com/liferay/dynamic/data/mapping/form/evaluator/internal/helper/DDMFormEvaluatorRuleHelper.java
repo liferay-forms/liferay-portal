@@ -92,7 +92,7 @@ public class DDMFormEvaluatorRuleHelper {
 
 			UpdateFieldPropertyRequest.Builder builder =
 				UpdateFieldPropertyRequest.Builder.newBuilder(
-					ddmFormField.getName(), "visible", false);
+					ddmFormField.getName(), "visible", true);
 
 			_ddmFormEvaluatorExpressionObserver.updateFieldProperty(
 				builder.build());
