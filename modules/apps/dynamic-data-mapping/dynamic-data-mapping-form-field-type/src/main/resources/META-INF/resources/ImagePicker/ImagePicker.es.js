@@ -266,7 +266,7 @@ const Main = ({
 	errorMessage,
 	id,
 	localizable,
-	localizedValue = {},
+	localizedValue,
 	inputValue,
 	itemSelectorURL,
 	message,
@@ -324,6 +324,7 @@ const Main = ({
 			errorMessage={getErrorMessages(errorMessage, isSignedIn)}
 			id={id}
 			name={name}
+			localizedValue={localizedValue}
 			readOnly={isSignedIn ? readOnly : true}
 			valid={isSignedIn ? valid : false}
 		>
