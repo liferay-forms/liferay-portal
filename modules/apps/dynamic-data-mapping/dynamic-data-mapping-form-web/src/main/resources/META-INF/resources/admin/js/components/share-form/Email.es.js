@@ -15,7 +15,9 @@
 import {useResource} from '@clayui/data-provider';
 import ClayForm, {ClayInput} from '@clayui/form';
 import ClayMultiSelect, {itemLabelFilter} from '@clayui/multi-select';
-import React, {useState} from 'react';
+import {usePrevious} from '@liferay/frontend-js-react-web';
+import {fetch} from 'frontend-js-web';
+import React, {useEffect, useState} from 'react';
 
 function formatAutocompleteValue(data) {
 	return `${data.fullName} (${data.emailAddress})`;
@@ -51,19 +53,34 @@ const Email = ({
 	onMessageChanged,
 	onMultiSelectItemsChanged,
 	onSubjectChanged,
+	portletNamespace,
 	subject,
 }) => {
 	const [multiSelectValue, setMultiSelectValue] = useState('');
 
 	const [networkStatus, setNetworkStatus] = useState(4);
 
-	const {resource} = useResource({
+	const {refetch, resource} = useResource({
+		fetch,
 		fetchPolicy: 'cache-first',
-		link: autocompleteUserURL,
+		link:
+			autocompleteUserURL +
+			'&' +
+			portletNamespace +
+			'query=' +
+			multiSelectValue,
 		onNetworkStatusChange: setNetworkStatus,
 	});
 
 	const error = networkStatus === 5;
+
+	const previousMultiSelectValue = usePrevious(multiSelectValue);
+
+	useEffect(() => {
+		if (multiSelectValue && multiSelectValue !== previousMultiSelectValue) {
+			refetch();
+		}
+	}, [multiSelectValue, previousMultiSelectValue, refetch]);
 
 	return (
 		<div className="share-form-modal-item-email">
