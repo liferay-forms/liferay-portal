@@ -254,6 +254,9 @@ const usePublicAPI = ({apiRef, containerRef, unstable_onEventRef}) => {
 					activePage,
 					defaultLanguageId,
 					editingLanguageId,
+					formId: containerRef.current
+						? getFormId(getFormNode(containerRef.current))
+						: 0,
 					groupId,
 					pages,
 					portletNamespace,
@@ -265,6 +268,7 @@ const usePublicAPI = ({apiRef, containerRef, unstable_onEventRef}) => {
 			dispatch,
 			activePage,
 			defaultLanguageId,
+			containerRef,
 			editingLanguageId,
 			groupId,
 			pages,
@@ -310,6 +314,7 @@ const usePublicAPI = ({apiRef, containerRef, unstable_onEventRef}) => {
 			evaluate(null, {
 				defaultLanguageId,
 				editingLanguageId,
+				formId: getFormId(getFormNode(containerRef.current)),
 				groupId,
 				pages,
 				portletNamespace,
