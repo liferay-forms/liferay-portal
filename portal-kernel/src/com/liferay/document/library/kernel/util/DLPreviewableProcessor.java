@@ -16,10 +16,13 @@ package com.liferay.document.library.kernel.util;
 
 import com.liferay.document.library.kernel.store.DLStoreRequest;
 import com.liferay.document.library.kernel.store.DLStoreUtil;
+import com.liferay.exportimport.kernel.background.task.BackgroundTaskExecutorNames;
 import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil;
+import com.liferay.portal.kernel.backgroundtask.constants.BackgroundTaskContextMapConstants;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.image.ImageBag;
 import com.liferay.portal.kernel.image.ImageToolUtil;
@@ -30,8 +33,10 @@ import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.FileVersion;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
@@ -45,6 +50,7 @@ import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 
 import java.nio.file.Files;
 
@@ -99,6 +105,33 @@ public abstract class DLPreviewableProcessor implements DLProcessor {
 
 					DLStoreUtil.deleteDirectory(
 						companyId, REPOSITORY_ID, THUMBNAIL_PATH);
+				}
+				catch (PortalException portalException) {
+					if (_log.isWarnEnabled()) {
+						_log.warn(portalException);
+					}
+				}
+			});
+	}
+
+	public static void generatePDFPreviews(long userId) throws PortalException {
+		CompanyLocalServiceUtil.forEachCompanyId(
+			companyId -> {
+				try {
+					String jobName = "generatePDFPreviews-".concat(
+						String.valueOf(companyId));
+
+					BackgroundTaskManagerUtil.addBackgroundTask(
+						userId, CompanyConstants.SYSTEM, jobName,
+						BackgroundTaskExecutorNames.
+							PDF_PREVIEW_BACKGROUND_TASK_EXECUTOR,
+						HashMapBuilder.<String, Serializable>put(
+							BackgroundTaskContextMapConstants.DELETE_ON_SUCCESS,
+							true
+						).put(
+							"COMPANY_ID", companyId
+						).build(),
+						new ServiceContext());
 				}
 				catch (PortalException portalException) {
 					if (_log.isWarnEnabled()) {

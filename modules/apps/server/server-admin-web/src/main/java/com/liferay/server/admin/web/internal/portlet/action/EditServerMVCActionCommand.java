@@ -209,8 +209,12 @@ public class EditServerMVCActionCommand
 		else if (cmd.startsWith("convertProcess.")) {
 			redirect = _convertProcess(actionRequest, actionResponse, cmd);
 		}
-		else if (cmd.equals("dlPreviews")) {
+		else if (cmd.equals("dlDeleteFiles")) {
 			DLPreviewableProcessor.deleteFiles();
+		}
+		else if (cmd.equals("dlGeneratePDFPreviews")) {
+			DLPreviewableProcessor.generatePDFPreviews(
+				themeDisplay.getUserId());
 		}
 		else if (cmd.equals("gc")) {
 			_gc();

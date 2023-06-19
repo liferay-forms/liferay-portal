@@ -53,6 +53,10 @@ public class BackgroundTaskExecutorNames {
 		"com.liferay.exportimport.internal.background.task." +
 			"LayoutStagingBackgroundTaskExecutor";
 
+	public static final String PDF_PREVIEW_BACKGROUND_TASK_EXECUTOR =
+		"com.liferay.document.library.preview.pdf.internal.background.task." +
+			"PDFPreviewBackgroundTaskExecutor";
+
 	public static final String PORTLET_EXPORT_BACKGROUND_TASK_EXECUTOR =
 		"com.liferay.exportimport.internal.background.task." +
 			"PortletExportBackgroundTaskExecutor";
