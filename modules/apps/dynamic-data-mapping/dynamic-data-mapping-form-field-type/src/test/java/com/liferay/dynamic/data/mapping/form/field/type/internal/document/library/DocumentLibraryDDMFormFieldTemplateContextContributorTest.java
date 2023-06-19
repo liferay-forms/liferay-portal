@@ -673,7 +673,8 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributorTest
 
 		ReflectionTestUtil.setFieldValue(
 			_documentLibraryDDMFormFieldTemplateContextContributor,
-			"_dlFolderModelResourcePermission", _modelResourcePermission);
+			"_ddmFormInstanceModelResourcePermission",
+			_modelResourcePermission);
 	}
 
 	private void _setUpParamUtil() {
