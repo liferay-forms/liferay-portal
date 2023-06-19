@@ -23,6 +23,8 @@ import com.liferay.dynamic.data.mapping.form.field.type.BaseDDMFormFieldTypeSett
 import com.liferay.dynamic.data.mapping.form.item.selector.criterion.DDMUserPersonalFolderItemSelectorCriterion;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
+import com.liferay.dynamic.data.mapping.security.permission.DDMFormsPortletPermissionChecker;
+import com.liferay.dynamic.data.mapping.security.permission.DDMFormsPortletPermissionCheckerRegistry;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.criteria.file.criterion.FileItemSelectorCriterion;
 import com.liferay.portal.json.JSONFactoryImpl;
@@ -40,13 +42,13 @@ import com.liferay.portal.kernel.portletfilerepository.PortletFileRepository;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.portlet.MockLiferayPortletURL;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Html;
 import com.liferay.portal.kernel.util.Portal;
@@ -95,6 +97,7 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributorTest
 		super.setUp();
 
 		_setUpCompanyLocalService();
+		_setUpDDMFormsPortletPermissionChecker();
 		_setUpDLAppLocalService();
 		_setUpDLAppService();
 		_setUpFileEntry();
@@ -103,7 +106,6 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributorTest
 		_setUpItemSelector();
 		_setUpJSONFactory();
 		_setUpJSONFactoryUtil();
-		_setUpModelResourcePermission();
 		_setUpParamUtil();
 		_setUpPortal();
 		_setUpPortletFileRepository();
@@ -226,11 +228,10 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributorTest
 	@Test
 	public void testGetParametersForUserWithoutPermission() throws Exception {
 		Mockito.when(
-			_modelResourcePermission.contains(
-				Mockito.nullable(PermissionChecker.class), Mockito.anyLong(),
-				Mockito.anyString())
+			_ddmFormsPortletPermissionChecker.containsPermission(
+				Mockito.any(DDMFormFieldRenderingContext.class))
 		).thenReturn(
-			false
+			Boolean.FALSE
 		);
 
 		ThemeDisplay themeDisplay = _mockThemeDisplay();
@@ -494,6 +495,18 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributorTest
 		);
 	}
 
+	private PortletDisplay _mockPortletDisplay() {
+		PortletDisplay portletDisplay = Mockito.mock(PortletDisplay.class);
+
+		Mockito.when(
+			portletDisplay.getRootPortletId()
+		).thenReturn(
+			"portletId"
+		);
+
+		return portletDisplay;
+	}
+
 	private Repository _mockRepository() {
 		Repository repository = Mockito.mock(Repository.class);
 
@@ -525,6 +538,14 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributorTest
 			themeDisplay.getPathThemeImages()
 		).thenReturn(
 			"/my/theme/images/"
+		);
+
+		PortletDisplay portletDisplay = _mockPortletDisplay();
+
+		Mockito.when(
+			themeDisplay.getPortletDisplay()
+		).thenReturn(
+			portletDisplay
 		);
 
 		User user = _mockUser();
@@ -571,6 +592,27 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributorTest
 		ReflectionTestUtil.setFieldValue(
 			_documentLibraryDDMFormFieldTemplateContextContributor,
 			"_companyLocalService", companyLocalService);
+	}
+
+	private void _setUpDDMFormsPortletPermissionChecker() throws Exception {
+		Mockito.when(
+			_ddmFormsPortletPermissionChecker.containsPermission(
+				Mockito.any(DDMFormFieldRenderingContext.class))
+		).thenReturn(
+			Boolean.TRUE
+		);
+
+		Mockito.when(
+			_ddmFormsPortletPermissionCheckerRegistry.
+				getDDMPortletPermissionChecker(Mockito.anyString())
+		).thenReturn(
+			_ddmFormsPortletPermissionChecker
+		);
+
+		ReflectionTestUtil.setFieldValue(
+			_documentLibraryDDMFormFieldTemplateContextContributor,
+			"_ddmFormsPortletPermissionCheckerRegistry",
+			_ddmFormsPortletPermissionCheckerRegistry);
 	}
 
 	private void _setUpDLAppLocalService() throws Exception {
@@ -660,20 +702,6 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributorTest
 		JSONFactoryUtil jsonFactoryUtil = new JSONFactoryUtil();
 
 		jsonFactoryUtil.setJSONFactory(new JSONFactoryImpl());
-	}
-
-	private void _setUpModelResourcePermission() throws Exception {
-		Mockito.when(
-			_modelResourcePermission.contains(
-				Mockito.nullable(PermissionChecker.class), Mockito.anyLong(),
-				Mockito.anyString())
-		).thenReturn(
-			true
-		);
-
-		ReflectionTestUtil.setFieldValue(
-			_documentLibraryDDMFormFieldTemplateContextContributor,
-			"_dlFolderModelResourcePermission", _modelResourcePermission);
 	}
 
 	private void _setUpParamUtil() {
@@ -786,6 +814,12 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributorTest
 
 	private static final long _REPOSITORY_ID = RandomTestUtil.randomLong();
 
+	private final DDMFormsPortletPermissionChecker
+		_ddmFormsPortletPermissionChecker = Mockito.mock(
+			DDMFormsPortletPermissionChecker.class);
+	private final DDMFormsPortletPermissionCheckerRegistry
+		_ddmFormsPortletPermissionCheckerRegistry = Mockito.mock(
+			DDMFormsPortletPermissionCheckerRegistry.class);
 	private final DLAppLocalService _dlAppLocalService = Mockito.mock(
 		DLAppLocalService.class);
 	private final DLAppService _dlAppService = Mockito.mock(DLAppService.class);
@@ -799,8 +833,6 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributorTest
 	private final Html _html = new HtmlImpl();
 	private final ItemSelector _itemSelector = Mockito.mock(ItemSelector.class);
 	private final JSONFactory _jsonFactory = new JSONFactoryImpl();
-	private final ModelResourcePermission<?> _modelResourcePermission =
-		Mockito.mock(ModelResourcePermission.class);
 	private final Portal _portal = Mockito.mock(Portal.class);
 	private final PortletFileRepository _portletFileRepository = Mockito.mock(
 		PortletFileRepository.class);
