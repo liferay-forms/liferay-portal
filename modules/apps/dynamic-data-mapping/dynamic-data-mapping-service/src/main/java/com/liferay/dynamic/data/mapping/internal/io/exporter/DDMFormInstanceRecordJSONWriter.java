@@ -17,11 +17,14 @@ package com.liferay.dynamic.data.mapping.internal.io.exporter;
 import com.liferay.dynamic.data.mapping.io.exporter.DDMFormInstanceRecordWriter;
 import com.liferay.dynamic.data.mapping.io.exporter.DDMFormInstanceRecordWriterRequest;
 import com.liferay.dynamic.data.mapping.io.exporter.DDMFormInstanceRecordWriterResponse;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.json.JSONUtil;
 
+import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.collections4.ListUtils;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -42,10 +45,25 @@ public class DDMFormInstanceRecordJSONWriter
 				ddmFormInstanceRecordWriterRequest)
 		throws Exception {
 
-		String json = String.valueOf(
-			JSONUtil.toJSONArray(
-				ddmFormInstanceRecordWriterRequest.getDDMFormFieldValues(),
-				this::_createJSONObject));
+		List<Map<String, String>> ddmFormFieldsValueList =
+			ddmFormInstanceRecordWriterRequest.getDDMFormFieldValues();
+
+		JSONArray jsonArray = jsonFactory.createJSONArray();
+
+		int packageSize = 1000;
+
+		List<List<Map<String, String>>> partitions = ListUtils.partition(
+			ddmFormFieldsValueList, packageSize);
+
+		for (List<Map<String, String>> partition : partitions) {
+			for (Map<String, String> ddmFormFieldsValue : partition) {
+				JSONObject jsonObject = _createJSONObject(ddmFormFieldsValue);
+
+				jsonArray.put(jsonObject);
+			}
+		}
+
+		String json = jsonArray.toString();
 
 		DDMFormInstanceRecordWriterResponse.Builder builder =
 			DDMFormInstanceRecordWriterResponse.Builder.newBuilder(

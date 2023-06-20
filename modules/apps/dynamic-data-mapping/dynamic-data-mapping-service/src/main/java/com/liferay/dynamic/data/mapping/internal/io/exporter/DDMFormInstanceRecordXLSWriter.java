@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.ListUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -56,6 +57,7 @@ public class DDMFormInstanceRecordXLSWriter
 
 		Map<String, String> ddmFormFieldsLabel =
 			ddmFormInstanceRecordWriterRequest.getDDMFormFieldsLabel();
+		int packageSize = 1000;
 
 		int rowIndex = 0;
 
@@ -87,14 +89,18 @@ public class DDMFormInstanceRecordXLSWriter
 			List<Map<String, String>> ddmFormFieldsValueList =
 				ddmFormInstanceRecordWriterRequest.getDDMFormFieldValues();
 
-			for (Map<String, String> ddmFormFieldsValue :
-					ddmFormFieldsValueList) {
+			List<List<Map<String, String>>> packages = ListUtils.partition(
+				ddmFormFieldsValueList, packageSize);
 
-				rowCellStyle.setQuotePrefixed(true);
+			for (List<Map<String, String>> packageList : packages) {
+				for (Map<String, String> ddmFormFieldsValue : packageList) {
+					rowCellStyle.setQuotePrefixed(true);
 
-				createRow(
-					rowIndex++, rowCellStyle, ddmFormFieldsValue.values(),
-					sheet);
+					Collection<String> fieldValues =
+						ddmFormFieldsValue.values();
+
+					createRow(rowIndex++, rowCellStyle, fieldValues, sheet);
+				}
 			}
 
 			workbook.write(byteArrayOutputStream);

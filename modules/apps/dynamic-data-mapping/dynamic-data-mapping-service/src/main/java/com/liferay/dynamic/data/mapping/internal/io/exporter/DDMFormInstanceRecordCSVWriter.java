@@ -25,6 +25,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.ListUtils;
+
 import org.osgi.service.component.annotations.Component;
 
 /**
@@ -48,13 +50,19 @@ public class DDMFormInstanceRecordCSVWriter
 		Map<String, String> ddmFormFieldsLabel =
 			ddmFormInstanceRecordWriterRequest.getDDMFormFieldsLabel();
 
+		int packageSize = 1000;
+
 		sb.append(writeValues(ddmFormFieldsLabel.values()));
 
 		sb.append(StringPool.NEW_LINE);
 
-		sb.append(
-			writeRecords(
-				ddmFormInstanceRecordWriterRequest.getDDMFormFieldValues()));
+		List<List<Map<String, String>>> partitions = ListUtils.partition(
+			ddmFormInstanceRecordWriterRequest.getDDMFormFieldValues(),
+			packageSize);
+
+		for (List<Map<String, String>> partition : partitions) {
+			sb.append(writeRecords(partition));
+		}
 
 		String csv = sb.toString();
 
@@ -70,12 +78,10 @@ public class DDMFormInstanceRecordCSVWriter
 
 		StringBundler sb = new StringBundler(ddmFormFieldValues.size() * 2);
 
-		for (Map<String, String> ddmFormFieldValue : ddmFormFieldValues) {
-			sb.append(writeValues(ddmFormFieldValue.values()));
+		for (Map<String, String> ddmFormFieldsValue : ddmFormFieldValues) {
+			sb.append(writeValues(ddmFormFieldsValue.values()));
 			sb.append(StringPool.NEW_LINE);
 		}
-
-		sb.setIndex(sb.index() - 1);
 
 		return sb.toString();
 	}
@@ -87,8 +93,6 @@ public class DDMFormInstanceRecordCSVWriter
 			sb.append(CSVUtil.encode(value));
 			sb.append(StringPool.COMMA);
 		}
-
-		sb.setIndex(sb.index() - 1);
 
 		return sb.toString();
 	}

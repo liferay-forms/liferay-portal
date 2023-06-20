@@ -24,6 +24,8 @@ import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.ListUtils;
+
 import org.osgi.service.component.annotations.Component;
 
 /**
@@ -46,16 +48,23 @@ public class DDMFormInstanceRecordXMLWriter
 
 		Element rootElement = document.addElement("root");
 
+		int packageSize = 1000;
+
 		Map<String, String> ddmFormFieldsLabel =
 			ddmFormInstanceRecordWriterRequest.getDDMFormFieldsLabel();
 
 		List<Map<String, String>> ddmFormFieldsValueList =
 			ddmFormInstanceRecordWriterRequest.getDDMFormFieldValues();
 
-		for (Map<String, String> ddmFormFieldsValue : ddmFormFieldsValueList) {
-			addFieldElements(
-				rootElement.addElement("fields"), ddmFormFieldsLabel,
-				ddmFormFieldsValue);
+		List<List<Map<String, String>>> partitions = ListUtils.partition(
+			ddmFormFieldsValueList, packageSize);
+
+		for (List<Map<String, String>> partition : partitions) {
+			for (Map<String, String> ddmFormFieldsValue : partition) {
+				addFieldElements(
+					rootElement.addElement("fields"), ddmFormFieldsLabel,
+					ddmFormFieldsValue);
+			}
 		}
 
 		String xml = document.asXML();
