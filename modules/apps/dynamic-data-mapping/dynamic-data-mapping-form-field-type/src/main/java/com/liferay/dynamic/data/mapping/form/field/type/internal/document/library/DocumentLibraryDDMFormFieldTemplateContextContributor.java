@@ -17,15 +17,15 @@ package com.liferay.dynamic.data.mapping.form.field.type.internal.document.libra
 import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.document.library.kernel.service.DLAppService;
-import com.liferay.dynamic.data.mapping.constants.DDMActionKeys;
 import com.liferay.dynamic.data.mapping.constants.DDMFormConstants;
 import com.liferay.dynamic.data.mapping.constants.DDMPortletKeys;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTemplateContextContributor;
 import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
 import com.liferay.dynamic.data.mapping.form.item.selector.criterion.DDMUserPersonalFolderItemSelectorCriterion;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
-import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
+import com.liferay.dynamic.data.mapping.security.permission.DDMFormsPortletPermissionChecker;
+import com.liferay.dynamic.data.mapping.security.permission.DDMFormsPortletPermissionCheckerRegistry;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.ItemSelectorCriterion;
 import com.liferay.item.selector.criteria.FileEntryItemSelectorReturnType;
@@ -53,13 +53,12 @@ import com.liferay.portal.kernel.portlet.url.builder.ResourceURLBuilder;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepository;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
-import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.AggregateResourceBundle;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -160,17 +159,27 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributor
 			WebKeys.THEME_DISPLAY);
 	}
 
-	private boolean _containsAddFormInstanceRecordPermission(
-		PermissionChecker permissionChecker, long formInstanceId) {
+	private boolean _containsPermission(
+		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
 
 		try {
-			return _ddmFormInstanceModelResourcePermission.contains(
-				permissionChecker, formInstanceId,
-				DDMActionKeys.ADD_FORM_INSTANCE_RECORD);
+			ThemeDisplay themeDisplay = getThemeDisplay(
+				ddmFormFieldRenderingContext.getHttpServletRequest());
+
+			PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
+
+			String portletId = portletDisplay.getRootPortletId();
+
+			DDMFormsPortletPermissionChecker ddmFormsPortletPermissionChecker =
+				_ddmFormsPortletPermissionCheckerRegistry.
+					getDDMPortletPermissionChecker(portletId);
+
+			return ddmFormsPortletPermissionChecker.containsPermission(
+				ddmFormFieldRenderingContext);
 		}
-		catch (PortalException portalException) {
+		catch (Exception exception) {
 			if (_log.isDebugEnabled()) {
-				_log.debug(portalException);
+				_log.debug(exception);
 			}
 
 			return false;
@@ -639,10 +648,7 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributor
 			return new HashMap<>();
 		}
 
-		if (!_containsAddFormInstanceRecordPermission(
-				themeDisplay.getPermissionChecker(),
-				ddmFormFieldRenderingContext.getDDMFormInstanceId())) {
-
+		if (!_containsPermission(ddmFormFieldRenderingContext)) {
 			return HashMapBuilder.<String, Object>put(
 				"showUploadPermissionMessage", true
 			).build();
@@ -724,11 +730,9 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributor
 	@Reference
 	private CompanyLocalService _companyLocalService;
 
-	@Reference(
-		target = "(model.class.name=com.liferay.dynamic.data.mapping.model.DDMFormInstance)"
-	)
-	private ModelResourcePermission<DDMFormInstance>
-		_ddmFormInstanceModelResourcePermission;
+	@Reference
+	private DDMFormsPortletPermissionCheckerRegistry
+		_ddmFormsPortletPermissionCheckerRegistry;
 
 	@Reference
 	private DLAppLocalService _dlAppLocalService;
