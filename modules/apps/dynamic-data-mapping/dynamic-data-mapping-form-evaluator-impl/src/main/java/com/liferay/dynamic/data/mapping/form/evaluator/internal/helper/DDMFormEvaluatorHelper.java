@@ -107,7 +107,8 @@ public class DDMFormEvaluatorHelper {
 				ddmFormEvaluatorEvaluateRequest.getLocale());
 
 		ddmFormEvaluatorExpressionActionHandler =
-			new DDMFormEvaluatorExpressionActionHandler(_pageFlow);
+			new DDMFormEvaluatorExpressionActionHandler(
+				_pageFlow, getDisabledPagesIndexes());
 
 		ddmFormEvaluatorExpressionParameterAccessor =
 			new DDMFormEvaluatorExpressionParameterAccessor(
