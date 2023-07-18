@@ -28,7 +28,7 @@ export const BUILDER_INITIAL_STATE = {
 	// Flag that indicates the index of the rule being edited.
 
 	currentRuleLoc: null,
-	editingLanguageId: themeDisplay.getDefaultLanguageId(),
+	editingLanguageId: themeDisplay.getLanguageId(),
 	fieldSets: [],
 	fieldTypes: [],
 	formInstanceId: 0,

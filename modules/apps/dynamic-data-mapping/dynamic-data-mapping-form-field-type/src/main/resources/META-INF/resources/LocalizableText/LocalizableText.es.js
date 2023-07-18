@@ -29,12 +29,12 @@ import {
 import InputComponent from './InputComponent.es';
 
 const INITIAL_DEFAULT_LOCALE = {
-	icon: themeDisplay.getDefaultLanguageId(),
-	localeId: themeDisplay.getDefaultLanguageId(),
+	icon: themeDisplay.getLanguageId(),
+	localeId: themeDisplay.getLanguageId(),
 };
 const INITIAL_EDITING_LOCALE = {
-	icon: normalizeLocaleId(themeDisplay.getDefaultLanguageId()),
-	localeId: themeDisplay.getDefaultLanguageId(),
+	icon: normalizeLocaleId(themeDisplay.getLanguageId()),
+	localeId: themeDisplay.getLanguageId(),
 };
 
 const LocalizableText = ({

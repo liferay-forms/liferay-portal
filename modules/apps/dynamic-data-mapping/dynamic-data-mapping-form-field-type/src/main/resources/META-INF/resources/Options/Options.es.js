@@ -544,8 +544,8 @@ const Options = ({
 
 const Main = ({
 	allowSpecialCharacters,
-	defaultLanguageId = themeDisplay.getDefaultLanguageId(),
-	editingLanguageId = themeDisplay.getDefaultLanguageId(),
+	defaultLanguageId = themeDisplay.getLanguageId(),
+	editingLanguageId = themeDisplay.getLanguageId(),
 	generateOptionValueUsingOptionLabel = false,
 	onChange,
 	keywordReadOnly,
