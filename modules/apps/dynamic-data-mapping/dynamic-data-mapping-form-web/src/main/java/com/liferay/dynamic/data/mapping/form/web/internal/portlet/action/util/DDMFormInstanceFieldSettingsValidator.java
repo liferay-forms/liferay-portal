@@ -177,7 +177,8 @@ public class DDMFormInstanceFieldSettingsValidator {
 									defaultJSONArray);
 							}
 
-							return new UnlocalizedValue(optionsJSONObject.toString());
+							return new UnlocalizedValue(
+								optionsJSONObject.toString());
 						}
 						catch (JSONException jsonException) {
 							if (_log.isDebugEnabled()) {
