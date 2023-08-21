@@ -42,12 +42,30 @@ public class DDMFormWebConfigurationModelListener
 				properties.get("autosaveInterval"),
 				ddmFormWebConfiguration.autosaveInterval());
 
+			_ensureCorrectGuestUploadMaximumFileSize(
+				ddmFormWebConfiguration, properties);
+
 			_validateAutosaveInterval(autosaveInterval);
 		}
 		catch (Exception exception) {
 			throw new ConfigurationModelListenerException(
 				exception.getMessage(), DDMFormWebConfiguration.class,
 				getClass(), properties);
+		}
+	}
+
+	private void _ensureCorrectGuestUploadMaximumFileSize(
+		DDMFormWebConfiguration ddmFormWebConfiguration,
+		Dictionary<String, Object> properties) {
+
+		long guestUploadMaximumFileSize = GetterUtil.getLong(
+			properties.get("guestUploadMaximumFileSize"),
+			ddmFormWebConfiguration.guestUploadMaximumFileSize());
+
+		if (guestUploadMaximumFileSize <= 0) {
+			properties.put(
+				"guestUploadMaximumFileSize",
+				ddmFormWebConfiguration.guestUploadMaximumFileSize());
 		}
 	}
 
