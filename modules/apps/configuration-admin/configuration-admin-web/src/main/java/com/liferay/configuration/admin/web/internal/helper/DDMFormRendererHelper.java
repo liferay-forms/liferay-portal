@@ -15,6 +15,8 @@ import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingException;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
+import com.liferay.dynamic.data.mapping.model.LocalizedValue;
+import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.util.DDMFormLayoutFactory;
 import com.liferay.dynamic.data.mapping.util.DDMUtil;
@@ -27,6 +29,7 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.portlet.PortletException;
@@ -130,7 +133,12 @@ public class DDMFormRendererHelper {
 					_configurationModel, ddmForm, _getLocale(),
 					_locationVariableResolver);
 
-		return configurationModelToDDMFormValuesConverter.getDDMFormValues();
+		DDMFormValues ddmFormValues =
+			configurationModelToDDMFormValuesConverter.getDDMFormValues();
+
+		_validateDDMFormValuesWithOverrideConfiguration(ddmFormValues);
+
+		return ddmFormValues;
 	}
 
 	private Locale _getLocale() {
@@ -138,6 +146,31 @@ public class DDMFormRendererHelper {
 			WebKeys.THEME_DISPLAY);
 
 		return themeDisplay.getLocale();
+	}
+
+	private void _validateDDMFormValuesWithOverrideConfiguration(
+		DDMFormValues ddmFormValues) {
+
+		LocalizedValue localizedValue = new LocalizedValue();
+
+		Map<String, Object> configurationOverrideProperties =
+			_configurationModel.getConfigurationOverrideProperties();
+
+		for (DDMFormFieldValue ddmFormFieldValue :
+				ddmFormValues.getDDMFormFieldValues()) {
+
+			if (configurationOverrideProperties.containsKey(
+					ddmFormFieldValue.getName())) {
+
+				localizedValue.addString(
+					ddmFormValues.getDefaultLocale(),
+					configurationOverrideProperties.get(
+						ddmFormFieldValue.getName()
+					).toString());
+
+				ddmFormFieldValue.setValue(localizedValue);
+			}
+		}
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
