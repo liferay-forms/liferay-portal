@@ -20,7 +20,6 @@ import com.liferay.dynamic.data.mapping.internal.io.DDMFormLayoutJSONDeserialize
 import com.liferay.dynamic.data.mapping.internal.io.DDMFormLayoutJSONSerializer;
 import com.liferay.dynamic.data.mapping.internal.io.DDMFormValuesJSONDeserializer;
 import com.liferay.dynamic.data.mapping.internal.io.DDMFormValuesJSONSerializer;
-import com.liferay.dynamic.data.mapping.internal.util.DDMImpl;
 import com.liferay.dynamic.data.mapping.io.DDMFormDeserializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormDeserializerDeserializeRequest;
 import com.liferay.dynamic.data.mapping.io.DDMFormDeserializerDeserializeResponse;
@@ -49,6 +48,7 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.Field;
 import com.liferay.dynamic.data.mapping.storage.Fields;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormFieldTypeSettingsTestUtil;
+import com.liferay.dynamic.data.mapping.util.DDM;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.configuration.Configuration;
@@ -195,7 +195,7 @@ public abstract class BaseDDMTestCase {
 		long ddmStructureId, String fieldName, List<Serializable> ptValues) {
 
 		return new MockField(
-			ddmStructureId, fieldName, ptValues, LocaleUtil.BRAZIL);
+			ddmStructureId, fieldName, fieldName, ptValues, LocaleUtil.BRAZIL);
 	}
 
 	protected DDMForm createDDMForm(
@@ -279,7 +279,7 @@ public abstract class BaseDDMTestCase {
 			enValues, ptValues);
 
 		return new MockField(
-			ddmStructureId, fieldName, valuesMap, LocaleUtil.US);
+			ddmStructureId, fieldName, fieldName, valuesMap, LocaleUtil.US);
 	}
 
 	protected Fields createFields(Field... fieldsArray) {
@@ -296,7 +296,7 @@ public abstract class BaseDDMTestCase {
 		long ddmStructureId, String value) {
 
 		Field fieldsDisplayField = new MockField(
-			ddmStructureId, DDMImpl.FIELDS_DISPLAY_NAME,
+			ddmStructureId, DDM.FIELDS_DISPLAY_NAME, DDM.FIELDS_DISPLAY_NAME,
 			createValuesList(value), LocaleUtil.US);
 
 		fieldsDisplayField.setDefaultLocale(LocaleUtil.US);
@@ -856,17 +856,18 @@ public abstract class BaseDDMTestCase {
 	protected class MockField extends Field {
 
 		public MockField(
-			long ddmStructureId, String name, List<Serializable> values,
-			Locale locale) {
+			long ddmStructureId, String fieldReference, String name,
+			List<Serializable> values, Locale locale) {
 
-			super(ddmStructureId, name, values, locale);
+			super(ddmStructureId, fieldReference, name, values, locale);
 		}
 
 		public MockField(
-			long ddmStructureId, String name,
+			long ddmStructureId, String fieldReference, String name,
 			Map<Locale, List<Serializable>> valuesMap, Locale defaultLocale) {
 
-			super(ddmStructureId, name, valuesMap, defaultLocale);
+			super(
+				ddmStructureId, fieldReference, name, valuesMap, defaultLocale);
 		}
 
 		@Override
