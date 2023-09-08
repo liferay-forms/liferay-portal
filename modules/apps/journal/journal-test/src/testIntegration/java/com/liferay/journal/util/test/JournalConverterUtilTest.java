@@ -527,6 +527,7 @@ public class JournalConverterUtilTest {
 		Field fieldsDisplayField = new Field();
 
 		fieldsDisplayField.setDDMStructureId(ddmStructureId);
+		fieldsDisplayField.setFieldReference(DDM.FIELDS_DISPLAY_NAME);
 		fieldsDisplayField.setName(DDM.FIELDS_DISPLAY_NAME);
 		fieldsDisplayField.setValue(value);
 
@@ -768,6 +769,7 @@ public class JournalConverterUtilTest {
 		Field field = new Field();
 
 		field.setDDMStructureId(ddmStructureId);
+		field.setFieldReference(name);
 
 		if (defaultLocale != null) {
 			field.setDefaultLocale(defaultLocale);
