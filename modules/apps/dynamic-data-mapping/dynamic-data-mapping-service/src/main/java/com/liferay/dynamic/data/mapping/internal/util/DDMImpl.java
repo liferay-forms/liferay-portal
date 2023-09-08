@@ -626,12 +626,12 @@ public class DDMImpl implements DDM {
 		}
 
 		field.setDefaultLocale(defaultLocale);
-		field.setName(fieldName);
 
 		DDMFormField ddmFormField = ddmStructure.getDDMFormField(fieldName);
 
 		field.setFieldReference(ddmFormField.getFieldReference());
 
+		field.setName(fieldName);
 		field.setValues(locale, fieldValues);
 
 		return field;
