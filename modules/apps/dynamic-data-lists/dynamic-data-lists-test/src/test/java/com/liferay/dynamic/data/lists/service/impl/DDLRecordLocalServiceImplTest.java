@@ -5,6 +5,8 @@
 
 package com.liferay.dynamic.data.lists.service.impl;
 
+import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.storage.Field;
 import com.liferay.dynamic.data.mapping.storage.Fields;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -26,6 +28,8 @@ import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+
+import org.mockito.Mockito;
 
 /**
  * @author Marcellus Tavares
@@ -196,7 +200,7 @@ public class DDLRecordLocalServiceImplTest {
 		String fieldName = StringUtil.randomString();
 
 		Fields fields = _ddlRecordLocalServiceImpl.toFields(
-			0,
+			_mockDDMStructure(fieldName),
 			HashMapBuilder.<String, Serializable>put(
 				fieldName, (Serializable)fieldValues
 			).build(),
@@ -211,7 +215,7 @@ public class DDLRecordLocalServiceImplTest {
 		String fieldName = StringUtil.randomString();
 
 		Fields fields = _ddlRecordLocalServiceImpl.toFields(
-			0,
+			_mockDDMStructure(fieldName),
 			HashMapBuilder.<String, Serializable>put(
 				fieldName, (Serializable)fieldValues
 			).build(),
@@ -227,7 +231,7 @@ public class DDLRecordLocalServiceImplTest {
 		String fieldName = StringUtil.randomString();
 
 		Fields fields = _ddlRecordLocalServiceImpl.toFields(
-			0,
+			_mockDDMStructure(fieldName),
 			HashMapBuilder.<String, Serializable>put(
 				fieldName, fieldValue
 			).build(),
@@ -264,6 +268,32 @@ public class DDLRecordLocalServiceImplTest {
 		}
 
 		return fieldValuesList;
+	}
+
+	private DDMStructure _mockDDMStructure(String fieldName) throws Exception {
+		DDMStructure ddmStructure = Mockito.mock(DDMStructure.class);
+
+		DDMFormField ddmFormField = Mockito.mock(DDMFormField.class);
+
+		Mockito.when(
+			ddmFormField.getFieldReference()
+		).thenReturn(
+			fieldName
+		);
+
+		Mockito.when(
+			ddmStructure.getDDMFormField(fieldName)
+		).thenReturn(
+			ddmFormField
+		);
+
+		Mockito.when(
+			ddmStructure.getStructureId()
+		).thenReturn(
+			0L
+		);
+
+		return ddmStructure;
 	}
 
 	private final DDLRecordLocalServiceImpl _ddlRecordLocalServiceImpl =
