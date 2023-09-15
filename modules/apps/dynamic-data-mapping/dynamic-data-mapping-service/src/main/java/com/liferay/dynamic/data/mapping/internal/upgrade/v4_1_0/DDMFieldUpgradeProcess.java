@@ -230,9 +230,15 @@ public class DDMFieldUpgradeProcess extends UpgradeProcess {
 		List<DDMFormFieldValue> ddmFormValues, String parentInstanceId) {
 
 		for (DDMFormFieldValue ddmFormFieldValue : ddmFormValues) {
+			String instanceId = ddmFormFieldValue.getInstanceId();
+
+			if (ddmFieldInfoMap.containsKey(instanceId)) {
+				instanceId =
+					com.liferay.portal.kernel.util.StringUtil.randomString(8);
+			}
+
 			DDMFieldInfo ddmFieldInfo = new DDMFieldInfo(
-				ddmFormFieldValue.getName(), ddmFormFieldValue.getInstanceId(),
-				parentInstanceId);
+				ddmFormFieldValue.getName(), instanceId, parentInstanceId);
 
 			ddmFieldInfoMap.put(ddmFieldInfo._instanceId, ddmFieldInfo);
 
