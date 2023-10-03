@@ -38,6 +38,7 @@ import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItemListBuilder;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.ViewTypeItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.ViewTypeItemList;
+import com.liferay.learn.LearnMessageUtil;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
@@ -62,9 +63,12 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PrefsParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.vulcan.util.ObjectMapperUtil;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.portlet.PortletException;
 import javax.portlet.PortletURL;
@@ -300,6 +304,38 @@ public class DDLDisplayContext {
 		return PrefsParamUtil.getLong(
 			_ddlRequestHelper.getPortletPreferences(),
 			_ddlRequestHelper.getRenderRequest(), "formDDMTemplateId");
+	}
+
+	public Map<String, String> getLearnMessage(String resourceKey) {
+		Map<String, Object> learnResources = ObjectMapperUtil.readValue(
+			HashMap.class,
+			String.valueOf(
+				LearnMessageUtil.getReactDataJSONObject(
+					"dynamic-data-lists-web")));
+
+		Map<String, Object> resourceDynamicDataListWeb =
+			(Map<String, Object>)learnResources.get("dynamic-data-lists-web");
+
+		Map<String, Object> resource =
+			(Map<String, Object>)resourceDynamicDataListWeb.get(resourceKey);
+
+		ThemeDisplay themeDisplay = _ddlRequestHelper.getThemeDisplay();
+
+		Map<String, String> learnMessage = (Map<String, String>)resource.get(
+			themeDisplay.getLanguageId());
+
+		if (learnMessage != null) {
+			return learnMessage;
+		}
+
+		learnMessage = (Map<String, String>)resource.get(
+			LanguageUtil.getLanguageId(themeDisplay.getSiteDefaultLocale()));
+
+		if (learnMessage != null) {
+			return learnMessage;
+		}
+
+		return (Map<String, String>)resource.get("en_US");
 	}
 
 	public List<NavigationItem> getNavigationItems() {
