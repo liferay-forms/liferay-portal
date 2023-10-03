@@ -70,6 +70,7 @@ const ImagePicker = ({
 						description: '',
 						event,
 						height,
+						preview: true,
 						title: '',
 						url: '',
 						width,
@@ -81,6 +82,26 @@ const ImagePicker = ({
 					onFieldChanged(mergedValues)
 				);
 			});
+
+			selectedImage.addEventListener('error', (event) => {
+				const imageData = {
+					...{
+						description: '',
+						event,
+						height: 0,
+						preview: false,
+						title: '',
+						url: '',
+						width: 0,
+					},
+					...selectedItemValue,
+				};
+
+				dispatchValue({value: imageData}, (mergedValues) =>
+					onFieldChanged(mergedValues)
+				);
+			});
+
 			selectedImage.src = selectedItemValue.url;
 		}
 	};
@@ -209,17 +230,25 @@ const ImagePicker = ({
 			) : (
 				imageValues.url && (
 					<>
-						<div className="image-picker-preview">
-							<img
-								alt={imageValues.description}
-								className="d-block img-fluid mb-2 rounded"
-								onClick={() => setModalVisible(true)}
-								src={imageValues.url}
-								style={{
-									cursor: 'pointer',
-								}}
-							/>
-						</div>
+						{imageValues.preview ? (
+							<div className="image-picker-preview">
+								<img
+									alt={imageValues.description}
+									className="d-block img-fluid mb-2 rounded"
+									onClick={() => setModalVisible(true)}
+									src={imageValues.url}
+									style={{
+										cursor: 'pointer',
+									}}
+								/>
+							</div>
+						) : (
+							<p className="small text-secondary">
+								{Liferay.Language.get(
+									'your-browser-does-not-support-the-display-of-this-format'
+								)}
+							</p>
+						)}
 
 						<ClayForm.Group>
 							<ClayInput
