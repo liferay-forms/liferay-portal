@@ -87,7 +87,6 @@ exports[`Options shows the options 1`] = `
               </label>
               <input
                 class="key-value-input"
-                tabindex="0"
                 type="text"
                 value="Option1"
               />
@@ -103,7 +102,6 @@ exports[`Options shows the options 1`] = `
               </label>
               <input
                 class="key-value-reference-input"
-                tabindex="0"
                 type="text"
                 value="Option1"
               />
@@ -193,7 +191,6 @@ exports[`Options shows the options 1`] = `
               </label>
               <input
                 class="key-value-input"
-                tabindex="0"
                 type="text"
                 value="Option2"
               />
@@ -209,7 +206,6 @@ exports[`Options shows the options 1`] = `
               </label>
               <input
                 class="key-value-reference-input"
-                tabindex="0"
                 type="text"
                 value="Option2"
               />
@@ -285,7 +281,6 @@ exports[`Options shows the options 1`] = `
               </label>
               <input
                 class="key-value-input"
-                tabindex="0"
                 type="text"
                 value="Any<String>"
               />
@@ -301,7 +296,6 @@ exports[`Options shows the options 1`] = `
               </label>
               <input
                 class="key-value-reference-input"
-                tabindex="0"
                 type="text"
                 value="Any<String>"
               />

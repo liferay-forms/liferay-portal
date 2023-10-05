@@ -41,7 +41,6 @@ exports[`KeyValue has a helptext 1`] = `
       </label>
       <input
         class="key-value-reference-input"
-        tabindex="0"
         type="text"
         value=""
       />
@@ -80,7 +79,6 @@ exports[`KeyValue has a label 1`] = `
     <label
       aria-labelledby="keyValue_fieldDetails"
       class="ddm-label"
-      tabindex="0"
     >
       label
     </label>
@@ -118,7 +116,6 @@ exports[`KeyValue has a label 1`] = `
       </label>
       <input
         class="key-value-reference-input"
-        tabindex="0"
         type="text"
         value=""
       />
@@ -181,7 +178,6 @@ exports[`KeyValue has a predefined Value 1`] = `
       </label>
       <input
         class="key-value-reference-input"
-        tabindex="0"
         type="text"
         value=""
       />
@@ -237,7 +233,6 @@ exports[`KeyValue has a value 1`] = `
       </label>
       <input
         class="key-value-reference-input"
-        tabindex="0"
         type="text"
         value=""
       />
@@ -292,7 +287,6 @@ exports[`KeyValue has an id 1`] = `
       </label>
       <input
         class="key-value-reference-input"
-        tabindex="0"
         type="text"
         value=""
       />
@@ -348,7 +342,6 @@ exports[`KeyValue is not editable 1`] = `
       </label>
       <input
         class="key-value-reference-input"
-        tabindex="0"
         type="text"
         value=""
       />
@@ -404,7 +397,6 @@ exports[`KeyValue is not required 1`] = `
       </label>
       <input
         class="key-value-reference-input"
-        tabindex="0"
         type="text"
         value=""
       />
@@ -427,7 +419,6 @@ exports[`KeyValue renders Label if showLabel is true 1`] = `
     <label
       aria-labelledby="keyValue_fieldDetails"
       class="ddm-label"
-      tabindex="0"
     >
       text
     </label>
@@ -465,7 +456,6 @@ exports[`KeyValue renders Label if showLabel is true 1`] = `
       </label>
       <input
         class="key-value-reference-input"
-        tabindex="0"
         type="text"
         value=""
       />
@@ -526,7 +516,6 @@ exports[`KeyValue renders component with a key 1`] = `
       </label>
       <input
         class="key-value-reference-input"
-        tabindex="0"
         type="text"
         value=""
       />

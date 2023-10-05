@@ -102,7 +102,6 @@ exports[`Field DocumentLibrary has a label 1`] = `
     <label
       aria-labelledby="uploadField_fieldDetails"
       class="ddm-label"
-      tabindex="0"
     >
       label
     </label>
@@ -682,7 +681,6 @@ exports[`Field DocumentLibrary renders Label if showLabel is true 1`] = `
     <label
       aria-labelledby="uploadField_fieldDetails"
       class="ddm-label"
-      tabindex="0"
     >
       text
     </label>
