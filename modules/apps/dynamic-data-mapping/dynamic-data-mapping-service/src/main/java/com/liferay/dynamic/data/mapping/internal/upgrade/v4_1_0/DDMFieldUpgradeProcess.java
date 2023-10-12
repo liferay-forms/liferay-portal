@@ -555,7 +555,7 @@ public class DDMFieldUpgradeProcess extends UpgradeProcess {
 
 			ddmFormValues.setDDMFormFieldValues(
 				_upgradeDDMFormValuesHierarchy(
-					ddmFormValues.getDDMFormFieldValues()));
+					ddmFormValues.getDDMFormFieldValues(), contentId));
 		}
 
 		Map<String, DDMFormField> ddmFormFieldsMap =
@@ -601,7 +601,7 @@ public class DDMFieldUpgradeProcess extends UpgradeProcess {
 	}
 
 	private List<DDMFormFieldValue> _upgradeDDMFormValuesHierarchy(
-		List<DDMFormFieldValue> ddmFormFieldValues) {
+		List<DDMFormFieldValue> ddmFormFieldValues, long contentId) {
 
 		List<DDMFormFieldValue> newDDMFormFieldValues = new ArrayList<>();
 
@@ -613,7 +613,9 @@ public class DDMFieldUpgradeProcess extends UpgradeProcess {
 			}
 			catch (Exception exception) {
 				if (_log.isWarnEnabled()) {
-					_log.warn(exception);
+					_log.warn(
+						"Error while upgrading DDM content " + contentId,
+						exception);
 				}
 			}
 
@@ -643,7 +645,7 @@ public class DDMFieldUpgradeProcess extends UpgradeProcess {
 					ListUtil.concat(
 						Collections.singletonList(ddmFormFieldValue),
 						_upgradeDDMFormValuesHierarchy(
-							nestedDDMFormFieldValues)));
+							nestedDDMFormFieldValues, contentId)));
 
 				newDDMFormFieldValues.add(newDDMFormFieldValue);
 			}
