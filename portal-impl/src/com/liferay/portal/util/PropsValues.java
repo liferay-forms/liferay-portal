@@ -449,6 +449,10 @@ public class PropsValues {
 	public static final String CUSTOM_SQL_FUNCTION_ISNULL = PropsUtil.get(
 		PropsKeys.CUSTOM_SQL_FUNCTION_ISNULL);
 
+	public static final boolean DATA_ENGINE_NORMALIZE_LINKED_FIELD_NAMES =
+		GetterUtil.getBoolean(
+			PropsUtil.get(PropsKeys.DATA_ENGINE_NORMALIZE_LINKED_FIELD_NAMES));
+
 	public static final long DATA_LIMIT_DL_STORAGE_MAX_SIZE =
 		GetterUtil.getLong(
 			PropsUtil.get(PropsKeys.DATA_LIMIT_DL_STORAGE_MAX_SIZE));

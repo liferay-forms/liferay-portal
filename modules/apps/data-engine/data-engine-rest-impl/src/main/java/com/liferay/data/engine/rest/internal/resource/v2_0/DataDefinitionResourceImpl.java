@@ -111,6 +111,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.odata.entity.EntityModel;
+import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.permission.Permission;
@@ -464,8 +465,10 @@ public class DataDefinitionResourceImpl extends BaseDataDefinitionResourceImpl {
 			_ddmStructureLocalService.getDDMStructure(dataDefinitionId),
 			ActionKeys.UPDATE);
 
-		_normalizeDataDefinitionFields(
-			dataDefinition.getDataDefinitionFields());
+		if (PropsValues.DATA_ENGINE_NORMALIZE_LINKED_FIELD_NAMES) {
+			_normalizeDataDefinitionFields(
+				dataDefinition.getDataDefinitionFields());
+		}
 
 		DataLayout dataLayout = dataDefinition.getDefaultDataLayout();
 
@@ -992,7 +995,9 @@ public class DataDefinitionResourceImpl extends BaseDataDefinitionResourceImpl {
 			DataDefinitionField[] nestedDataDefinitionFields)
 		throws Exception {
 
-		if (dataDefinitionFieldsCount == 0) {
+		if ((dataDefinitionFieldsCount == 0) ||
+			!PropsValues.DATA_ENGINE_NORMALIZE_LINKED_FIELD_NAMES) {
+
 			return;
 		}
 
@@ -1034,7 +1039,9 @@ public class DataDefinitionResourceImpl extends BaseDataDefinitionResourceImpl {
 	private String _normalizeRowsJSONArray(
 		int dataDefinitionFieldsCount, JSONArray rowsJSONArray) {
 
-		if (dataDefinitionFieldsCount == 0) {
+		if ((dataDefinitionFieldsCount == 0) ||
+			!PropsValues.DATA_ENGINE_NORMALIZE_LINKED_FIELD_NAMES) {
+
 			return rowsJSONArray.toString();
 		}
 
@@ -1074,8 +1081,10 @@ public class DataDefinitionResourceImpl extends BaseDataDefinitionResourceImpl {
 			PermissionThreadLocal.getPermissionChecker(), contentType, siteId,
 			DataActionKeys.ADD_DATA_DEFINITION);
 
-		_normalizeDataDefinitionFields(
-			dataDefinition.getDataDefinitionFields());
+		if (PropsValues.DATA_ENGINE_NORMALIZE_LINKED_FIELD_NAMES) {
+			_normalizeDataDefinitionFields(
+				dataDefinition.getDataDefinitionFields());
+		}
 
 		DDMForm ddmForm = DataDefinitionDDMFormUtil.toDDMForm(
 			dataDefinition, _ddmFormFieldTypeServicesRegistry);

@@ -530,6 +530,9 @@ public interface PropsKeys {
 	public static final String CUSTOM_SQL_FUNCTION_ISNULL =
 		"custom.sql.function.isnull";
 
+	public static final String DATA_ENGINE_NORMALIZE_LINKED_FIELD_NAMES =
+		"data.engine.normalize.linked.field.names";
+
 	public static final String DATA_LIMIT_DL_STORAGE_MAX_SIZE =
 		"data.limit.dl.storage.max.size";
 
