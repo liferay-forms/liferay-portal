@@ -1,32 +1,21 @@
 /**
- * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
+ * SPDX-FileCopyrightText: (c) 2023 Liferay, Inc. https://liferay.com
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-package com.liferay.dynamic.data.mapping.internal.upgrade.v5_1_4;
+package com.liferay.dynamic.data.mapping.internal.upgrade.v5_4_2;
 
 import com.liferay.dynamic.data.mapping.constants.DDMPortletKeys;
 import com.liferay.dynamic.data.mapping.internal.upgrade.BasePollsPortletIdUpgradeProcess;
-import com.liferay.petra.string.StringBundler;
 
 /**
- * @author Rebeca Silva
+ * @author Carolina Barbosa
  */
 public class PollsPortletIdToDDMPortletIdUpgradeProcess
 	extends BasePollsPortletIdUpgradeProcess {
 
 	@Override
 	protected void doUpgrade() throws Exception {
-		runSQL(
-			StringBundler.concat(
-				"delete from Portlet where portletId = '", PORTLET_ID_POLLS,
-				"' OR portletId = '", PORTLET_ID_POLLS_DISPLAY, "'"));
-		runSQL(
-			StringBundler.concat(
-				"delete from ResourcePermission where name = '",
-				PORTLET_ID_POLLS, "' OR name = '", PORTLET_ID_POLLS_DISPLAY,
-				"'"));
-
 		removeDuplicatePortletPreferences(
 			PORTLET_ID_POLLS, DDMPortletKeys.DYNAMIC_DATA_MAPPING_FORM_ADMIN);
 
