@@ -31,6 +31,7 @@ export default function DatePicker({
 	onFocus,
 	predefinedValue,
 	readOnly,
+	timeZone,
 	type,
 	value,
 	weekdaysShort,
@@ -209,6 +210,7 @@ export default function DatePicker({
 						placeholder={placeholder}
 						ref={inputRef}
 						time={isDateTime}
+						timezone={timeZone}
 						use12Hours={use12Hours}
 						value={formattedDate}
 						weekdaysShort={weekdaysShort}

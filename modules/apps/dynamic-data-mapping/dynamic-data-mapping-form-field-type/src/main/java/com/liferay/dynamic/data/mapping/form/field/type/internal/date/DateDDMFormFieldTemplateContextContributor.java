@@ -14,6 +14,7 @@ import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.util.CalendarUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.TimeZoneUtil;
 
 import java.time.DayOfWeek;
 import java.time.temporal.WeekFields;
@@ -24,6 +25,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -60,6 +62,8 @@ public class DateDDMFormFieldTemplateContextContributor
 				ddmFormField, ddmFormFieldRenderingContext.getLocale(),
 				"predefinedValue")
 		).put(
+			"timeZone", _getTimeZone()
+		).put(
 			"tooltip",
 			DDMFormFieldTypeUtil.getPropertyValue(
 				ddmFormField, ddmFormFieldRenderingContext.getLocale(),
@@ -81,6 +85,12 @@ public class DateDDMFormFieldTemplateContextContributor
 		DayOfWeek dayOfWeek = weekFields.getFirstDayOfWeek();
 
 		return dayOfWeek.getValue() % 7;
+	}
+
+	private String _getTimeZone() {
+		TimeZone defaultTimeZone = TimeZoneUtil.getDefault();
+
+		return defaultTimeZone.getID();
 	}
 
 	private List<Integer> _getYears() {
