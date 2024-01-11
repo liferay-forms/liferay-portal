@@ -515,16 +515,7 @@ const Main = ({
 				name={name}
 				normalizeField={normalizeField}
 				onBlur={onBlur}
-				onChange={(event) => {
-					if (
-						!event?.relatedTarget ||
-						(event?.realatedTarget &&
-							event?.relatedTarget?.dataset?.restoreTitle !==
-								'Duplicate')
-					) {
-						onChange(event);
-					}
-				}}
+				onChange={onChange}
 				onFocus={onFocus}
 				onKeyDown={onKeyDown}
 				options={optionsMemo}
