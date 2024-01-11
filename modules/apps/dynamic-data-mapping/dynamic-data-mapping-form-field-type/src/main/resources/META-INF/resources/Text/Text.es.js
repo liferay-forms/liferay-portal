@@ -136,51 +136,44 @@ const Text = ({
 		shouldUpdateValue,
 	]);
 
-	const handleChangeInput = (event) => {
-		const {value} = event.target;
-
-		if (normalizeField) {
-			event.target.value = normalizeFieldName(value);
-		}
-		else if (invalidCharacters) {
-			const regex = new RegExp(invalidCharacters, 'g');
-
-			event.target.value = value.replace(regex, '');
-		}
-		setValue(event.target.value);
-		onChange(event);
-	};
-
 	return (
 		<>
-			<ClayTooltipProvider autoAlign>
-				<div
-					data-tooltip-align="top"
-					{...getTooltipTitle({placeholder, value})}
-				>
-					<ClayInput
-						{...accessibleProps}
-						className="ddm-field-text"
-						dir={Liferay.Language.direction[editingLanguageId]}
-						disabled={disabled}
-						id={id}
-						lang={editingLanguageId?.replaceAll('_', '-')}
-						maxLength={showCounter ? '' : maxLength}
-						name={name}
-						onBlur={(event) => {
-							onBlur(event);
-							handleChangeInput(event);
-						}}
-						onChange={handleChangeInput}
-						onFocus={onFocus}
-						onKeyDown={onKeyDown}
-						placeholder={placeholder}
-						ref={inputRef}
-						type="text"
-						value={value}
-					/>
-				</div>
-			</ClayTooltipProvider>
+			<ClayInput
+				className="ddm-field-text"
+				dir={Liferay.Language.direction[editingLanguageId]}
+				disabled={disabled}
+				id={id}
+				lang={editingLanguageId}
+				maxLength={showCounter ? '' : maxLength}
+				name={name}
+				onBlur={(event) => {
+					if (normalizeField) {
+						onBlur({target: {value: initialValue}});
+					}
+					else {
+						onBlur(event);
+					}
+				}}
+				onChange={(event) => {
+					const {value} = event.target;
+
+					if (normalizeField) {
+						event.target.value = normalizeFieldName(value);
+					}
+					else if (invalidCharacters) {
+						const regex = new RegExp(invalidCharacters, 'g');
+
+						event.target.value = value.replace(regex, '');
+					}
+					setValue(event.target.value);
+					onChange(event);
+				}}
+				onFocus={onFocus}
+				placeholder={placeholder}
+				ref={inputRef}
+				type="text"
+				value={value}
+			/>
 
 			<CounterContainer
 				counter={value?.length}
