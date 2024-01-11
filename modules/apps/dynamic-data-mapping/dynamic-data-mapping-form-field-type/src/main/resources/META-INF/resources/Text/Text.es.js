@@ -147,9 +147,8 @@ const Text = ({
 
 			event.target.value = value.replace(regex, '');
 		}
-
-		onChange(event);
 		setValue(event.target.value);
+		onChange(event);
 	};
 
 	return (
