@@ -63,7 +63,6 @@ const CounterContainer = ({
 };
 
 const Text = ({
-	accessibleProps,
 	defaultLanguageId,
 	disabled,
 	displayErrors,
@@ -80,7 +79,6 @@ const Text = ({
 	onBlur,
 	onChange,
 	onFocus,
-	onKeyDown,
 	placeholder,
 	setError,
 	shouldUpdateValue,
