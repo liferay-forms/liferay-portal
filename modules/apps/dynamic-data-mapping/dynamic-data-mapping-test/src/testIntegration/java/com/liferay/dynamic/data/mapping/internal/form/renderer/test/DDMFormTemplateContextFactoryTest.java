@@ -377,7 +377,7 @@ public class DDMFormTemplateContextFactoryTest {
 			HashMapBuilder.put(
 				"dateRange",
 				"futureDates({name}, \"{parameter}\") AND pastDates({name}, " +
-				"\"{parameter}\")"
+					"\"{parameter}\")"
 			).put(
 				"futureDates", "futureDates({name}, \"{parameter}\")"
 			).put(
@@ -437,7 +437,7 @@ public class DDMFormTemplateContextFactoryTest {
 			HashMapBuilder.put(
 				"dateRange",
 				"futureDates({name}, \"{parameter}\") AND pastDates({name}, " +
-				"\"{parameter}\")"
+					"\"{parameter}\")"
 			).put(
 				"futureDates", "futureDates({name}, \"{parameter}\")"
 			).put(

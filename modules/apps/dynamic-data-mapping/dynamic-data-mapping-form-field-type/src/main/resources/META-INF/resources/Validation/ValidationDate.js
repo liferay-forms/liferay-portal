@@ -80,20 +80,20 @@ export default function ValidationDate({
 	const initialParameter = {
 		endsOn: {
 			date: 'responseDate',
-			unit: 'days',
 			quantity: 1,
-			type: 'responseDate'
+			type: 'responseDate',
+			unit: 'days',
 		},
 		startsFrom: {
 			date: 'responseDate',
-			unit: 'days',
 			quantity: 1,
-			type: 'responseDate'
-		}
-	}
+			type: 'responseDate',
+			unit: 'days',
+		},
+	};
 
-	if(parameter["en_US"] === void(0)) {
-		parameter["en_US"] = initialParameter
+	if (parameter['en_US'] === void 0) {
+		parameter['en_US'] = initialParameter;
 	}
 
 	const startDate = getFromParameter(parameter, 'startsFrom', localizedValue);
