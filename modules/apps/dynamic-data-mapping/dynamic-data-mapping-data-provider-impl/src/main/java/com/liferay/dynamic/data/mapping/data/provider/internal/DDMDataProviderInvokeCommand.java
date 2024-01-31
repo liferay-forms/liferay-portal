@@ -43,6 +43,9 @@ public class DDMDataProviderInvokeCommand
 				HystrixCommandProperties.Setter().
 					withExecutionTimeoutInMilliseconds(
 						_getTimeout(ddmRESTDataProviderSettings))
+			).andCommandPropertiesDefaults(
+			   HystrixCommandProperties.Setter()
+					.withExecutionIsolationSemaphoreMaxConcurrentRequests(20)
 			));
 
 		_ddmDataProvider = ddmDataProvider;
