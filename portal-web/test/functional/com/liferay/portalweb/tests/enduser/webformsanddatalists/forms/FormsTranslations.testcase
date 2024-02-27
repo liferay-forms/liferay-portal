@@ -117,7 +117,7 @@ definition {
 
 		FormViewBuilder.changeAppLanguageTo(changeAppLanguageTo = "ja-JP");
 
-		FormViewBuilder.changeAppLanguageTo(changeAppLanguageTo = "العربية-السعودية");
+		FormViewBuilder.changeAppLanguageTo(changeAppLanguageTo = "العربية-المملكة العربية السعودية");
 
 		FormViewBuilder.validateFieldLabel(fieldLabel = "عربى");
 	}
