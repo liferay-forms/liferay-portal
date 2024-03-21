@@ -57,6 +57,8 @@ definition {
 
 		WaitForElementPresent(locator1 = "FormPortlet#SUBMIT_BUTTON");
 
+		Click(locator1 = "FormPortlet#FORM_CONTAINER");
+
 		FormPortlet.clickSubmit();
 	}
 
@@ -135,6 +137,8 @@ definition {
 		WaitForElementPresent(
 			locator1 = "Message#ERROR_FORM_FIELD_REQUIRED",
 			value1 = ${validationErrorMessage});
+
+		Click(locator1 = "FormPortlet#FORM_CONTAINER");
 
 		AssertTextEquals(
 			locator1 = "Message#ERROR_FORM_FIELD_REQUIRED",
