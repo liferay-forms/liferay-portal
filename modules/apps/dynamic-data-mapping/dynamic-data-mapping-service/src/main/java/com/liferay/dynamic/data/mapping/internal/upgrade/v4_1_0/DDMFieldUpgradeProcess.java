@@ -25,8 +25,10 @@ import com.liferay.portal.kernel.dao.jdbc.AutoBatchPreparedStatementUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONSerializer;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -45,6 +47,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -485,7 +488,7 @@ public class DDMFieldUpgradeProcess extends UpgradeProcess {
 				preparedStatement2.setLong(1, parentStructureId);
 
 				try (ResultSet resultSet2 = preparedStatement2.executeQuery()) {
-					if (resultSet2.next()) {
+					while (resultSet2.next()) {
 						DDMForm parentDDMForm = _getFullHierarchyDDMForm(
 							parentStructureId,
 							resultSet2.getLong("structureVersionId"));
