@@ -59,6 +59,11 @@ AUI.add(
 					value: defaultLanguageId,
 				},
 
+				edited: {
+					validator: Lang.isBoolean,
+					value: false,
+				},
+
 				editor: {},
 
 				fieldPrefix: {
@@ -193,6 +198,18 @@ AUI.add(
 				},
 
 				_animating: null,
+
+				_autoSave() {
+					const instance = this;
+
+					if (instance.get('edited')) {
+						instance.set('edited', false);
+
+						Liferay.fire('autoSave', {
+							fieldName: instance.get('name'),
+						});
+					}
+				},
 
 				_availableLanguagesSubscription: null,
 
@@ -362,6 +379,10 @@ AUI.add(
 						input = input || event.currentTarget;
 
 						value = input.val();
+					}
+
+					if (Liferay.FeatureFlags['LPD-22301']) {
+						instance.set('edited', true);
 					}
 
 					instance.updateInputLanguage(value);
@@ -800,6 +821,14 @@ AUI.add(
 					];
 
 					if (!instance.get('editor')) {
+						if (Liferay.FeatureFlags['LPD-22301']) {
+							eventHandles.push(
+								inputPlaceholder.on(
+									'blur',
+									A.bind('_autoSave', instance)
+								)
+							);
+						}
 						eventHandles.push(
 							inputPlaceholder.on(
 								'input',

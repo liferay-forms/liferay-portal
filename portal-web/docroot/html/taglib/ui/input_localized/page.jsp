@@ -29,6 +29,7 @@ Map<String, Map<String, String>> languagesTranslationsAriaLabelsMap = new HashMa
 					cssClass='<%= "language-value " + cssClass %>'
 					editorName="<%= editorName %>"
 					name="<%= inputEditorName %>"
+					onBlurMethod='<%= randomNamespace + "onBlurMethod" %>'
 					onChangeMethod='<%= randomNamespace + "onChangeEditor" %>'
 					onInitMethod='<%= randomNamespace + "onInitEditor" %>'
 					placeholder="<%= placeholder %>"
@@ -36,12 +37,26 @@ Map<String, Map<String, String>> languagesTranslationsAriaLabelsMap = new HashMa
 				/>
 
 				<aui:script>
+					var lock = false;
+
+					function <%= namespace + randomNamespace %>onBlurMethod() {
+						if (lock && Liferay.FeatureFlags['LPD-22301']) {
+							lock = false;
+
+							Liferay.fire('autoSave', {fieldName: "<%= inputEditorName %>"});
+						}
+					}
+
 					function <%= namespace + randomNamespace %>onChangeEditor() {
-						var inputLocalized = Liferay.component('<%= namespace + HtmlUtil.escapeJS(fieldName) %>');
+						if (Liferay.FeatureFlags['LPD-22301']) {
+							lock = true;
 
-						var editor = window['<%= namespace + HtmlUtil.escapeJS(inputEditorName) %>'];
+							var inputLocalized = Liferay.component('<%= namespace + HtmlUtil.escapeJS(fieldName) %>');
 
-						inputLocalized.updateInputLanguage(editor.getHTML());
+							var editor = window['<%= namespace + HtmlUtil.escapeJS(inputEditorName) %>'];
+
+							inputLocalized.updateInputLanguage(editor.getHTML());
+						}
 					}
 
 					function <%= namespace + randomNamespace %>onInitEditor() {
