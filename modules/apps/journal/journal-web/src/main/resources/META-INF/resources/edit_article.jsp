@@ -145,6 +145,23 @@ journalEditArticleDisplayContext.setViewAttributes();
 					<div class="c-gap-3 form-group-sm journal-article-button-row mb-0 tbar-section text-right">
 						<c:choose>
 							<c:when test='<%= FeatureFlagManagerUtil.isEnabled("LPS-141392") %>'>
+								<c:if test='<%= FeatureFlagManagerUtil.isEnabled("LPD-22301") %>'>
+									<div>
+										<react:component
+											module="{UndoRedo} from journal-web"
+											props='<%=
+												HashMapBuilder.<String, Object>put(
+													"initialDefaultLanguageId", journalEditArticleDisplayContext.getDefaultArticleLanguageId()
+												).put(
+													"languageId", journalEditArticleDisplayContext.getSelectedLanguageId()
+												).put(
+													"namespace", liferayPortletResponse.getNamespace()
+												).build()
+											%>'
+										/>
+									</div>
+								</c:if>
+
 								<div class="align-items-center d-none mx-3 small" id="<portlet:namespace />savingChangesIndicator">
 									<liferay-ui:message key="saving" />
 

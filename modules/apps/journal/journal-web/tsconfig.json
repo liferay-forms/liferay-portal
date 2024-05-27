@@ -1,5 +1,5 @@
 {
-	"@generated": "eafdaa32eaaaa1ea2d06f922bcd722233127d870",
+	"@generated": "9d23af5eb0fc3fe25a488faa382acdbc956de942",
 	"@overrides": {
 		"compilerOptions": {
 			"lib": [
@@ -28,6 +28,9 @@
 			],
 			"@liferay/layout-js-components-web": [
 				"../../layout/layout-js-components-web/src/main/resources/META-INF/resources/js/index.ts"
+			],
+			"data-engine-js-components-web": [
+				"../../data-engine/data-engine-js-components-web/src/main/resources/META-INF/resources/js/index.d.ts"
 			],
 			"frontend-js-components-web": [
 				"../../frontend-js/frontend-js-components-web/src/main/resources/META-INF/resources/index.ts"
@@ -59,6 +62,9 @@
 		},
 		{
 			"path": "../../layout/layout-js-components-web"
+		},
+		{
+			"path": "../../data-engine/data-engine-js-components-web"
 		},
 		{
 			"path": "../../frontend-js/frontend-js-components-web"
