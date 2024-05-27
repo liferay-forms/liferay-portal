@@ -23,6 +23,7 @@ import {FormProvider, useForm, useFormState} from '../../core/hooks/useForm.es';
 import {
 	activePageReducer,
 	fieldReducer,
+	historyReducer,
 	languageReducer,
 	pageValidationReducer,
 	pagesStructureReducer,
@@ -435,6 +436,7 @@ export const FormView = React.forwardRef((props, ref) => {
 						activePageReducer,
 						fieldReducer,
 						languageReducer,
+						historyReducer,
 						objectRelationshipReducer,
 						pagesStructureReducer,
 						pageValidationReducer,

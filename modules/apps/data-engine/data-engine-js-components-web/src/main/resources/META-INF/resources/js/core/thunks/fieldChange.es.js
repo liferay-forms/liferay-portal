@@ -89,6 +89,19 @@ export default function fieldChange({
 
 		dispatch({payload: editedPages, type: EVENT_TYPES.PAGE.UPDATE});
 
+		if (Liferay.FeatureFlags['LPD-22301']) {
+			if (
+				fieldInstance.type === 'numeric' ||
+				fieldInstance.type === 'text' ||
+				fieldInstance.type === 'rich_text'
+			) {
+				dispatch({type: EVENT_TYPES.HISTORY.LOCK});
+			}
+			else {
+				Liferay.fire('autoSave', {fieldName: fieldInstance.label});
+			}
+		}
+
 		if (evaluable && (viewMode || needsPageEvaluation(fieldName))) {
 			try {
 				disableSubmitButton(submitButtonId);
