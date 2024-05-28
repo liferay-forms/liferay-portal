@@ -18,6 +18,7 @@ export default function UndoRedo({
 	namespace,
 }) {
 	const [
+		// eslint-disable-next-line no-unused-vars
 		{defaultLanguageId, history, selectedLanguageId, step},
 		setState,
 	] = useState({
