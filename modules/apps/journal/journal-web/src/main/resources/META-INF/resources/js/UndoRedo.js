@@ -27,10 +27,8 @@ export default function UndoRedo({
 		step: -1,
 	});
 
-	const handleUndo = () => {
-		Liferay.fire('undo');
-
-		const nextStep = history[step - 1];
+	const handleUndoRedo = (newStep) => {
+		const nextStep = history[newStep];
 
 		const titleInputComponent = Liferay.component(
 			`${namespace}${META_FIELD_NAMES.title}`
@@ -44,6 +42,18 @@ export default function UndoRedo({
 			`${namespace}${META_FIELD_NAMES.friendlyURL}`
 		);
 
+		if (nextStep.selectedLanguageId !== selectedLanguageId) {
+			const selectedLanguageIdInput = document.getElementById(
+				`${namespace}languageId`
+			);
+
+			selectedLanguageIdInput.value = nextStep.selectedLanguageId;
+
+			titleInputComponent.selectFlag(nextStep.selectedLanguageId);
+			descriptionInputComponent.selectFlag(nextStep.selectedLanguageId);
+			friendlyURLInputComponent.selectFlag(nextStep.selectedLanguageId);
+		}
+		else {
 			titleInputComponent.updateInputLanguage(
 				nextStep.titleInputComponent,
 				nextStep.selectedLanguageId
@@ -63,67 +73,12 @@ export default function UndoRedo({
 			friendlyURLInputComponent.updateInput(
 				nextStep.friendlyURLInputComponent
 			);
+		}
 		setState({
 			defaultLanguageId: nextStep.defaultLanguageId,
 			history,
 			selectedLanguageId: nextStep.selectedLanguageId,
-			step: step - 1,
-		});
-	};
-
-	const handleRedo = () => {
-		Liferay.fire('redo');
-
-		const nextStep = history[step + 1];
-
-		const titleInputComponent = Liferay.component(
-			`${namespace}${META_FIELD_NAMES.title}`
-		);
-
-		const descriptionInputComponent = Liferay.component(
-			`${namespace}${META_FIELD_NAMES.description}`
-		);
-
-		const friendlyURLInputComponent = Liferay.component(
-			`${namespace}${META_FIELD_NAMES.friendlyURL}`
-		);
-
-			const titleInputComponent = Liferay.component(
-				`${namespace}${META_FIELD_NAMES.title}`
-			);
-
-			const descriptionInputComponent = Liferay.component(
-				`${namespace}${META_FIELD_NAMES.description}`
-			);
-
-			const friendlyURLInputComponent = Liferay.component(
-				`${namespace}${META_FIELD_NAMES.friendlyURL}`
-			);
-
-			titleInputComponent.updateInputLanguage(
-				nextStep.titleInputComponent,
-				nextStep.selectedLanguageId
-			);
-			descriptionInputComponent.updateInputLanguage(
-				nextStep.descriptionInputComponent,
-				nextStep.selectedLanguageId
-			);
-			friendlyURLInputComponent.updateInputLanguage(
-				nextStep.friendlyURLInputComponent,
-				nextStep.selectedLanguageId
-			);
-			titleInputComponent.updateInput(nextStep.titleInputComponent);
-			descriptionInputComponent.updateInput(
-				nextStep.descriptionInputComponent
-			);
-			friendlyURLInputComponent.updateInput(
-				nextStep.friendlyURLInputComponent
-			);
-		setState({
-			defaultLanguageId: nextStep.defaultLanguageId,
-			history,
-			selectedLanguageId: nextStep.selectedLanguageId,
-			step: step + 1,
+			step: newStep,
 		});
 	};
 
@@ -186,6 +141,29 @@ export default function UndoRedo({
 		[history, namespace, selectedLanguageId, step]
 	);
 
+	const localeChangeHandler = useCallback(
+		(event) => {
+			const selectedLanguageId = event.item.getAttribute('data-value');
+
+			const selectedLanguageIdInput = document.getElementById(
+				`${namespace}languageId`
+			);
+
+			selectedLanguageIdInput.value = selectedLanguageId;
+
+			Liferay.fire('autoSave', {fieldName: 'Locale Change'});
+		},
+		[namespace]
+	);
+
+	useEffect(() => {
+		Liferay.after('inputLocalized:localeChanged', localeChangeHandler);
+
+		return () => {
+			Liferay.detach('inputLocalized:localeChanged', localeChangeHandler);
+		};
+	}, [localeChangeHandler]);
+
 	useEffect(() => {
 		Liferay.on('autoSave', handleAutoSave);
 
@@ -208,7 +186,10 @@ export default function UndoRedo({
 				className="btn-monospaced"
 				disabled={step <= 0}
 				displayType="secondary"
-				onClick={handleUndo}
+				onClick={() => {
+					Liferay.fire('undo');
+					handleUndoRedo(step - 1);
+				}}
 				size="sm"
 				symbol="undo"
 				title="Undo"
@@ -219,7 +200,10 @@ export default function UndoRedo({
 				className="btn-monospaced"
 				disabled={!history.length || step === history.length - 1}
 				displayType="secondary"
-				onClick={handleRedo}
+				onClick={() => {
+					Liferay.fire('redo');
+					handleUndoRedo(step + 1);
+				}}
 				size="sm"
 				symbol="redo"
 				title="Redo"
