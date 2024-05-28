@@ -207,6 +207,12 @@ const RichText = ({
 		};
 	}, [resetTranslation]);
 
+	useEffect(() => {
+		if (Liferay.FeatureFlags['LPD-22301']) {
+			editorRef.current.editor.setData(value ? value : '');
+		}
+	}, [value]);
+
 	return (
 		<FieldBase
 			{...otherProps}
