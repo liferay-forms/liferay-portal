@@ -9,7 +9,9 @@ import React from 'react';
 
 import '@testing-library/jest-dom/extend-expect';
 
-import FieldBase from '../../../src/main/resources/META-INF/resources/FieldBase/ReactFieldBase.es';
+import FieldBase, {
+	updateFieldNameLanguageId,
+} from '../../../src/main/resources/META-INF/resources/FieldBase/ReactFieldBase.es';
 
 const spritemap = 'icons.svg';
 
@@ -322,6 +324,29 @@ describe('ReactFieldBase', () => {
 				'class',
 				'label ml-1 label-secondary'
 			);
+		});
+	});
+
+	describe('updateFieldNameLanguageId(editingLanguageId, locale, name)', () => {
+		it('checks if the name only changes the language id at the end even when using a custom language', () => {
+
+			// en_US -> language out-of-the-box
+			// co -> language customized
+
+			expect(
+				updateFieldNameLanguageId(
+					'co',
+					'en_US',
+					'com_liferay_fieldname$$co'
+				)
+			).toBe('com_liferay_fieldname$$en_US');
+			expect(
+				updateFieldNameLanguageId(
+					'en_US',
+					'co',
+					'com_liferay_fieldname$$en_US'
+				)
+			).toBe('com_liferay_fieldname$$co');
 		});
 	});
 });
