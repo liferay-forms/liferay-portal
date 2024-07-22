@@ -1,0 +1,168 @@
+{
+	"availableLanguageIds": [
+		"en_US"
+	],
+	"contentType": "journal",
+	"dataDefinitionFields": [
+		{
+			"customProperties": {
+				"ddmStructureKey": "34544",
+				"ddmStructureLayoutId": "",
+				"fieldReference": "Fieldset02814730",
+				"rows": [
+					{
+						"columns": [
+							{
+								"fields": [
+									"Fieldset00621641"
+								],
+								"size": 12
+							}
+						]
+					},
+					{
+						"columns": [
+							{
+								"fields": [
+									"Text29301610"
+								],
+								"size": 12
+							}
+						]
+					}
+				]
+			},
+			"fieldType": "fieldset",
+			"label": {
+				"en_US": "structure 2"
+			},
+			"name": "Fieldset02814730",
+			"nestedDataDefinitionFields": [
+				{
+					"customProperties": {
+						"ddmStructureKey": "34535",
+						"ddmStructureLayoutId": "",
+						"fieldReference": "Fieldset00621641",
+						"rows": [
+							{
+								"columns": [
+									{
+										"fields": [
+											"Text35518527"
+										],
+										"size": 12
+									}
+								]
+							}
+						]
+					},
+					"fieldType": "fieldset",
+					"label": {
+						"en_US": "structure 1"
+					},
+					"name": "Fieldset00621641",
+					"nestedDataDefinitionFields": [
+						{
+							"customProperties": {
+								"dataType": "string",
+								"direction": [
+									"vertical"
+								],
+								"displayStyle": "singleline",
+								"fieldReference": "Text35518527"
+							},
+							"fieldType": "text",
+							"indexType": "keyword",
+							"label": {
+								"en_US": "Text"
+							},
+							"name": "Text35518527",
+							"nestedDataDefinitionFields": [
+							]
+						}
+					]
+				},
+				{
+					"customProperties": {
+						"dataType": "string",
+						"direction": [
+							"vertical"
+						],
+						"displayStyle": "singleline",
+						"fieldReference": "Text29301610"
+					},
+					"fieldType": "text",
+					"indexType": "keyword",
+					"label": {
+						"en_US": "Text"
+					},
+					"name": "Text29301610",
+					"nestedDataDefinitionFields": [
+					]
+				}
+			]
+		},
+		{
+			"customProperties": {
+				"dataType": "string",
+				"direction": [
+					"vertical"
+				],
+				"displayStyle": "singleline",
+				"fieldReference": "Text94390744"
+			},
+			"fieldType": "text",
+			"indexType": "keyword",
+			"label": {
+				"en_US": "Text"
+			},
+			"name": "Text94390744",
+			"nestedDataDefinitionFields": [
+			]
+		}
+	],
+	"dataDefinitionKey": "34556",
+	"defaultDataLayout": {
+		"dataLayoutPages": [
+			{
+				"dataLayoutRows": [
+					{
+						"dataLayoutColumns": [
+							{
+								"columnSize": 12,
+								"fieldNames": [
+									"Fieldset02814730"
+								]
+							}
+						]
+					},
+					{
+						"dataLayoutColumns": [
+							{
+								"columnSize": 12,
+								"fieldNames": [
+									"Text94390744"
+								]
+							}
+						]
+					}
+				],
+				"description": {
+					"en_US": ""
+				},
+				"title": {
+					"en_US": ""
+				}
+			}
+		],
+		"name": {
+			"en_US": "structure 3"
+		},
+		"paginationMode": "single-page"
+	},
+	"defaultLanguageId": "en_US",
+	"name": {
+		"en_US": "structure 3"
+	},
+	"storageType": "default"
+}
