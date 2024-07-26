@@ -52,6 +52,10 @@ export function Layout({components, editable, itemPath, rows, viewMode}) {
 		};
 	}, [dispatch]);
 
+	useEffect(() => {
+		dispatch({type: EVENT_TYPES.HISTORY.RESET});
+	}, []);
+
 	return (
 		<Components.Rows
 			activePage={activePage}
