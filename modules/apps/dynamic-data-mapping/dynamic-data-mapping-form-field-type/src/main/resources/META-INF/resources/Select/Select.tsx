@@ -241,7 +241,7 @@ const Main = ({
 	if (!multiple) {
 		if (
 			normalizedOptions.length &&
-			newValue?.[0] &&
+			!newValue?.[0] &&
 			!normalizedOptions.find((option) => option.value === newValue?.[0])
 		) {
 			newValue = undefined;
