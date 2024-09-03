@@ -6,7 +6,6 @@
 package com.liferay.dynamic.data.mapping.form.web.internal.portlet.action.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.dynamic.data.mapping.constants.DDMActionKeys;
 import com.liferay.dynamic.data.mapping.constants.DDMPortletKeys;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceReport;
@@ -18,24 +17,24 @@ import com.liferay.dynamic.data.mapping.util.DDMFormReportDataUtil;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.model.ResourceConstants;
-import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.portlet.LiferayPortletConfig;
 import com.liferay.portal.kernel.portlet.PortletConfigFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
+import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.PortletLocalService;
-import com.liferay.portal.kernel.service.ResourcePermissionLocalServiceUtil;
-import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.portlet.MockLiferayResourceRequest;
 import com.liferay.portal.kernel.test.portlet.MockLiferayResourceResponse;
+import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
-import com.liferay.portal.kernel.test.util.RoleTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -46,6 +45,7 @@ import com.liferay.portal.kernel.util.TimeZoneUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 
 import java.io.ByteArrayOutputStream;
 
@@ -56,7 +56,6 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 
 /**
@@ -67,7 +66,10 @@ public class GetFormReportDataMVCResourceCommandTest {
 
 	@ClassRule
 	@Rule
-	public static final TestRule testRule = new LiferayIntegrationTestRule();
+	public static final AggregateTestRule aggregateTestRule =
+		new AggregateTestRule(
+			new LiferayIntegrationTestRule(),
+			PermissionCheckerMethodTestRule.INSTANCE);
 
 	@Before
 	public void setUp() throws Exception {
@@ -83,13 +85,21 @@ public class GetFormReportDataMVCResourceCommandTest {
 		DDMFormInstance ddmFormInstance = _getDDMFormInstance(
 			TestPropsValues.getUser());
 
-		DDMFormInstanceReport ddmFormInstanceReport = _getDDMFormInstanceReport(
-			ddmFormInstance, _user);
+		DDMFormInstanceRecordTestUtil.addDDMFormInstanceRecord(
+			ddmFormInstance,
+			DDMFormValuesTestUtil.createDDMFormValuesWithRandomValues(
+				ddmFormInstance.getDDMForm()),
+			_group, _user.getUserId());
+
+		DDMFormInstanceReport ddmFormInstanceReport =
+			_ddmFormInstanceReportLocalService.
+				getFormInstanceReportByFormInstanceId(
+					ddmFormInstance.getFormInstanceId());
 
 		Assert.assertNotNull(ddmFormInstanceReport);
 
 		JSONObject jsonObject = _getJSONObject(
-			ddmFormInstance.getFormInstanceId());
+			ddmFormInstance.getFormInstanceId(), true);
 
 		Assert.assertEquals(
 			ddmFormInstanceReport.getData(), jsonObject.get("data"));
@@ -115,52 +125,49 @@ public class GetFormReportDataMVCResourceCommandTest {
 	@Test
 	public void testServeResourceWithError() throws Exception {
 
-		// 		NO CONTENT JSON
+		// 		TO DO: RANDOM DDMFORMINSTANCEID
 
-		JSONObject jsonObject = _getJSONObject(RandomTestUtil.randomLong());
+		JSONObject jsonObject = _getJSONObject(
+			RandomTestUtil.randomLong(), true);
 
 		Assert.assertTrue(jsonObject.has("errorMessage"));
 
 		// 		ACCESS ATTEMPT BY GUEST USER
 
-		User user = _userLocalService.getGuestUser(
-			TestPropsValues.getCompanyId());
+		DDMFormInstance ddmFormInstance = _getDDMFormInstance(_user);
 
-		DDMFormInstance ddmFormInstance = _getDDMFormInstance(user);
-
-		DDMFormInstanceReport ddmFormInstanceReport = _getDDMFormInstanceReport(
-			ddmFormInstance, user);
-
-		Assert.assertNotNull(ddmFormInstanceReport);
-
-		jsonObject = _getJSONObject(ddmFormInstance.getFormInstanceId());
+		jsonObject = _getJSONObject(ddmFormInstance.getFormInstanceId(), false);
 
 		Assert.assertTrue(jsonObject.has("errorMessage"));
 
-		// 		ACCESS ATTEMPT BY USER WITHOUT VIEW PERMISSION
+		// 		TO DO: ACCESS ATTEMPT BY USER WITHOUT VIEW PERMISSION
 
-		user = UserTestUtil.addUser();
+		PermissionChecker originalPermissionChecker =
+			PermissionThreadLocal.getPermissionChecker();
 
-		ddmFormInstance = _getDDMFormInstance(user);
+		String originalName = PrincipalThreadLocal.getName();
 
-		Role role = RoleTestUtil.addRole(RoleConstants.TYPE_REGULAR);
+		User user = UserTestUtil.addGroupUser(_group, RoleConstants.POWER_USER);
 
-		ResourcePermissionLocalServiceUtil.setResourcePermissions(
-			TestPropsValues.getCompanyId(), DDMFormInstance.class.getName(),
-			ResourceConstants.SCOPE_INDIVIDUAL,
-			String.valueOf(ddmFormInstance.getPrimaryKey()), role.getRoleId(),
-			new String[] {DDMActionKeys.ADD_FORM_INSTANCE_RECORD});
+		try {
+			PermissionThreadLocal.setPermissionChecker(
+				PermissionCheckerFactoryUtil.create(user));
 
-		RoleLocalServiceUtil.addUserRole(user.getUserId(), role);
+			PrincipalThreadLocal.setName(user.getUserId());
 
-		ddmFormInstanceReport = _getDDMFormInstanceReport(
-			ddmFormInstance, user);
+			ddmFormInstance = _getDDMFormInstance(user);
 
-		Assert.assertNotNull(ddmFormInstanceReport);
+			jsonObject = _getJSONObject(
+				ddmFormInstance.getFormInstanceId(), true);
 
-		jsonObject = _getJSONObject(ddmFormInstance.getFormInstanceId());
+			Assert.assertTrue(jsonObject.has("errorMessage"));
+		}
+		finally {
+			PermissionThreadLocal.setPermissionChecker(
+				originalPermissionChecker);
 
-		Assert.assertTrue(jsonObject.has("errorMessage"));
+			PrincipalThreadLocal.setName(originalName);
+		}
 	}
 
 	private DDMFormInstance _getDDMFormInstance(User user) throws Exception {
@@ -168,27 +175,14 @@ public class GetFormReportDataMVCResourceCommandTest {
 			_group, user.getUserId());
 	}
 
-	private DDMFormInstanceReport _getDDMFormInstanceReport(
-			DDMFormInstance ddmFormInstance, User user)
+	private JSONObject _getJSONObject(long formInstanceId, boolean userSignedIn)
 		throws Exception {
 
-		DDMFormInstanceRecordTestUtil.addDDMFormInstanceRecord(
-			ddmFormInstance,
-			DDMFormValuesTestUtil.createDDMFormValuesWithRandomValues(
-				ddmFormInstance.getDDMForm()),
-			_group, user.getUserId());
-
-		return _ddmFormInstanceReportLocalService.
-			getFormInstanceReportByFormInstanceId(
-				ddmFormInstance.getFormInstanceId());
-	}
-
-	private JSONObject _getJSONObject(long formInstanceId) throws Exception {
 		MockLiferayResourceResponse mockLiferayResourceResponse =
 			new MockLiferayResourceResponse();
 
 		_mvcResourceCommand.serveResource(
-			_mockLiferayResourceRequest(formInstanceId),
+			_mockLiferayResourceRequest(formInstanceId, userSignedIn),
 			mockLiferayResourceResponse);
 
 		ByteArrayOutputStream byteArrayOutputStream =
@@ -206,17 +200,20 @@ public class GetFormReportDataMVCResourceCommandTest {
 			null);
 	}
 
-	private ThemeDisplay _getThemeDisplay() throws Exception {
+	private ThemeDisplay _getThemeDisplay(boolean userSignedIn)
+		throws Exception {
+
 		ThemeDisplay themeDisplay = new ThemeDisplay();
 
 		themeDisplay.setLocale(LocaleUtil.getSiteDefault());
+		themeDisplay.setSignedIn(userSignedIn);
 		themeDisplay.setTimeZone(TimeZoneUtil.getDefault());
 
 		return themeDisplay;
 	}
 
 	private MockLiferayResourceRequest _mockLiferayResourceRequest(
-			long formInstanceId)
+			long formInstanceId, boolean userSignedIn)
 		throws Exception {
 
 		MockLiferayResourceRequest mockLiferayResourceRequest =
@@ -225,7 +222,7 @@ public class GetFormReportDataMVCResourceCommandTest {
 		mockLiferayResourceRequest.setAttribute(
 			JavaConstants.JAVAX_PORTLET_CONFIG, _getLiferayPortletConfig());
 		mockLiferayResourceRequest.setAttribute(
-			WebKeys.THEME_DISPLAY, _getThemeDisplay());
+			WebKeys.THEME_DISPLAY, _getThemeDisplay(userSignedIn));
 		mockLiferayResourceRequest.addParameter(
 			"formInstanceId", String.valueOf(formInstanceId));
 
