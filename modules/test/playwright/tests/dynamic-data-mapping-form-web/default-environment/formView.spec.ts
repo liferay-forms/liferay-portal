@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {Page, expect, mergeTests} from '@playwright/test';
+import { Page, expect, mergeTests } from '@playwright/test';
 
-import {ObjectAdminRestClient} from '../../../../../apps/object/object-admin-rest-client-js/src/main/resources/META-INF/resources/node';
-import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
-import {applicationsMenuPageTest} from '../../../fixtures/applicationsMenuPageTest';
-import {formsPagesTest} from '../../../fixtures/formsPagesTest';
-import {loginTest} from '../../../fixtures/loginTest';
-import {getRandomInt} from '../../../utils/getRandomInt';
+import { ObjectAdminRestClient } from '../../../../../apps/object/object-admin-rest-client-js/src/main/resources/META-INF/resources/node';
+import { dataApiHelpersTest } from '../../../fixtures/dataApiHelpersTest';
+import { applicationsMenuPageTest } from '../../../fixtures/applicationsMenuPageTest';
+import { formsPagesTest } from '../../../fixtures/formsPagesTest';
+import { loginTest } from '../../../fixtures/loginTest';
+import { getRandomInt } from '../../../utils/getRandomInt';
 
 export const test = mergeTests(
 	applicationsMenuPageTest,
@@ -20,8 +20,8 @@ export const test = mergeTests(
 );
 
 test.describe('FormView when form storage type is object', () => {
-	test.beforeEach(({page}) => {
-		page.setViewportSize({height: 1080, width: 1920});
+	test.beforeEach(({ page }) => {
+		page.setViewportSize({ height: 1080, width: 1920 });
 	});
 
 	test('make sure the button submit label is Submit to workflow when the object definition has a linked workflow and Save when it does not', async ({
@@ -37,7 +37,7 @@ test.describe('FormView when form storage type is object', () => {
 		const objectDefinition =
 			await apiHelpers.objectAdmin.postRandomObjectDefinition({
 				objectFolderExternalReferenceCode: 'default',
-				status: {code: 0},
+				status: { code: 0 },
 			});
 
 		apiHelpers.data.push({
@@ -95,7 +95,7 @@ test.describe('FormView when form storage type is object', () => {
 
 		const newTabPage = await newTabPagePromise;
 
-		newTabPage.setViewportSize({height: 1080, width: 1920});
+		newTabPage.setViewportSize({ height: 1080, width: 1920 });
 
 		await expect(
 			newTabPage.getByRole('button', {
