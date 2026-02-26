@@ -6,19 +6,20 @@
 package com.liferay.portal.search.internal.ml.embedding.text;
 
 import com.liferay.blogs.model.BlogsEntry;
+import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
-import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.search.configuration.SemanticSearchConfiguration;
 import com.liferay.portal.search.configuration.SemanticSearchConfigurationProvider;
 import com.liferay.portal.search.ml.embedding.EmbeddingProviderStatus;
 import com.liferay.portal.search.rest.dto.v1_0.EmbeddingProviderConfiguration;
-import com.liferay.portal.test.rule.FeatureFlag;
+import com.liferay.portal.search.rest.text.embeddings.configuration.TextEmbeddingProvider;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,7 +31,6 @@ import org.mockito.Mockito;
 /**
  * @author Petteri Karttunen
  */
-@FeatureFlag("LPS-122920")
 public class TextEmbeddingRetrieverTest {
 
 	@ClassRule
@@ -43,6 +43,7 @@ public class TextEmbeddingRetrieverTest {
 			new String[] {LocaleUtil.toLanguageId(LocaleUtil.US)},
 			new String[] {BlogsEntry.class.getName()});
 		_setUpTextEmbeddingProvider();
+		_setUpTextEmbeddingProviderServiceTrackerList();
 		_setUpTextEmbeddingRetrieverImpl();
 	}
 
@@ -245,19 +246,34 @@ public class TextEmbeddingRetrieverTest {
 		).thenReturn(
 			new Double[] {1.0, 2.0, 3.0}
 		);
+
+		Mockito.when(
+			_textEmbeddingProvider.getProviderName()
+		).thenReturn(
+			_TEST_PROVIDER_NAME
+		);
+	}
+
+	private void _setUpTextEmbeddingProviderServiceTrackerList() {
+		Mockito.when(
+			_textEmbeddingProviderServiceTrackerList.toList()
+		).thenReturn(
+			List.of(_textEmbeddingProvider)
+		);
 	}
 
 	private void _setUpTextEmbeddingRetrieverImpl() {
 		_textEmbeddingRetrieverImpl = new TextEmbeddingRetrieverImpl();
 
 		ReflectionTestUtil.setFieldValue(
+			_textEmbeddingRetrieverImpl, "_betaTextEmbeddingsEnabled", true);
+		ReflectionTestUtil.setFieldValue(
 			_textEmbeddingRetrieverImpl, "_semanticSearchConfigurationProvider",
 			_semanticSearchConfigurationProvider);
 		ReflectionTestUtil.setFieldValue(
-			_textEmbeddingRetrieverImpl, "_textEmbeddingProviders",
-			HashMapBuilder.put(
-				_TEST_PROVIDER_NAME, _textEmbeddingProvider
-			).build());
+			_textEmbeddingRetrieverImpl,
+			"_textEmbeddingProviderServiceTrackerList",
+			_textEmbeddingProviderServiceTrackerList);
 	}
 
 	private static final String _TEST_PROVIDER_NAME =
@@ -268,6 +284,9 @@ public class TextEmbeddingRetrieverTest {
 			SemanticSearchConfigurationProvider.class);
 	private final TextEmbeddingProvider _textEmbeddingProvider = Mockito.mock(
 		TextEmbeddingProvider.class);
+	private final ServiceTrackerList<TextEmbeddingProvider>
+		_textEmbeddingProviderServiceTrackerList = Mockito.mock(
+			ServiceTrackerList.class);
 	private TextEmbeddingRetrieverImpl _textEmbeddingRetrieverImpl;
 
 }

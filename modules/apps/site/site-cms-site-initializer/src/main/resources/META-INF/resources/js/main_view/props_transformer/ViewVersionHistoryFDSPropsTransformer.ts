@@ -47,6 +47,7 @@ export default function ViewVersionHistoryFDSPropsTransformer({
 				} as IInternalRenderer,
 			],
 		},
+		hideManagementBarInEmptyState: true,
 		itemsActions: itemsActions.map((action) => {
 			if (action?.data?.id === 'download') {
 				return {
@@ -209,6 +210,7 @@ export default function ViewVersionHistoryFDSPropsTransformer({
 			if (action?.data.id === 'delete') {
 				deleteAssetVersionBulkAction({
 					apiURL: otherProps.apiURL,
+					dataSetId: otherProps.id,
 					entryClassName: additionalProps.entryClassName,
 					objectEntryCurrentVersion:
 						additionalProps.objectEntryCurrentVersion,

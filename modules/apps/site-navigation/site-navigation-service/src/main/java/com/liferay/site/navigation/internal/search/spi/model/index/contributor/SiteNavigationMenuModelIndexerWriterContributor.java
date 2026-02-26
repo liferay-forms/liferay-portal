@@ -8,7 +8,6 @@ package com.liferay.site.navigation.internal.search.spi.model.index.contributor;
 import com.liferay.portal.search.batch.BatchIndexingActionable;
 import com.liferay.portal.search.batch.DynamicQueryBatchIndexingActionableFactory;
 import com.liferay.portal.search.spi.model.index.contributor.ModelIndexerWriterContributor;
-import com.liferay.portal.search.spi.model.index.contributor.helper.ModelIndexerWriterDocumentHelper;
 import com.liferay.site.navigation.model.SiteNavigationMenu;
 import com.liferay.site.navigation.service.SiteNavigationMenuLocalService;
 
@@ -29,28 +28,11 @@ public class SiteNavigationMenuModelIndexerWriterContributor
 	}
 
 	@Override
-	public void customize(
-		BatchIndexingActionable batchIndexingActionable,
-		ModelIndexerWriterDocumentHelper modelIndexerWriterDocumentHelper) {
-
-		batchIndexingActionable.setPerformActionMethod(
-			(SiteNavigationMenu siteNavigationMenu) ->
-				batchIndexingActionable.addDocument(
-					modelIndexerWriterDocumentHelper.getDocument(
-						siteNavigationMenu)));
-	}
-
-	@Override
 	public BatchIndexingActionable getBatchIndexingActionable() {
 		return _dynamicQueryBatchIndexingActionableFactory.
 			getBatchIndexingActionable(
 				_siteNavigationMenuLocalService.
 					getIndexableActionableDynamicQuery());
-	}
-
-	@Override
-	public long getCompanyId(SiteNavigationMenu siteNavigationMenu) {
-		return siteNavigationMenu.getCompanyId();
 	}
 
 	private final DynamicQueryBatchIndexingActionableFactory

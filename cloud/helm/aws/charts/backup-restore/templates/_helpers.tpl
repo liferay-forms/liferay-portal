@@ -19,17 +19,21 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "liferayAWSBackupRestore.gitCredentials.secretName" -}}
+{{- define "liferayAWSBackupRestore.gitCredentials.externalSecretName" -}}
 {{- printf "%s-git-creds" (include "liferayAWSBackupRestore.name" .) | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{- define "liferayAWSBackupRestore.gitCredentials.volumeMount" -}}
-{{- if and .Values.git.credentials.token .Values.git.credentials.username -}}
 volumeMounts:
     -   mountPath: /mnt/.git-credentials
         name: git-credentials
         subPath: .git-credentials
 {{- end -}}
+
+{{- define "liferayAWSBackupRestore.infraResourceBaseName" -}}
+{{- $projectIdFull := printf "%s-%s" .Values.global.projectId .Values.global.environmentId -}}
+{{- $uidHash := printf "%s-%s-%s" .Values.global.aws.accountId .Values.global.deploymentName $projectIdFull | sha256sum | trunc 6 -}}
+{{- printf "%.18s-%s" $projectIdFull $uidHash -}}
 {{- end -}}
 
 {{- define "liferayAWSBackupRestore.labels" -}}

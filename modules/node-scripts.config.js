@@ -10,7 +10,7 @@
  */
 
 module.exports = {
-	hash: '8b55073b68db15037b6f9f0adc8358cbb80d12a191f18fa45b4d8489aa1b35e0',
+	hash: '74ff5b249e1f34d9f2a8b889d60a9f36e39daa08243cc0e914b3d9d8a4682237',
 	imports: {
 		'@liferay/accessibility-menu-web': [],
 		'@liferay/accessibility-settings-state-web': [],
@@ -98,7 +98,6 @@ module.exports = {
 			'@clayui/breadcrumb',
 			'@clayui/button',
 			'@clayui/card',
-			'@clayui/charts',
 			'@clayui/color-picker',
 			'@clayui/core',
 			'@clayui/data-provider',
@@ -243,6 +242,7 @@ module.exports = {
 		'@liferay/portal-security-script-management-web': [],
 		'@liferay/portal-settings-web': [],
 		'@liferay/portal-tools-rest-builder-test-client-js': [],
+		'@liferay/portal-url-builder-impl': [],
 		'@liferay/portal-workflow-instance-tracker-web': [],
 		'@liferay/portal-workflow-taglib': [],
 		'@liferay/product-analytics-web': [],

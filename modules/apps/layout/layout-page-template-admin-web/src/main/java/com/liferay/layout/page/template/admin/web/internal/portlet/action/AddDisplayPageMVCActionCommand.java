@@ -11,6 +11,7 @@ import com.liferay.layout.page.template.admin.web.internal.handler.LayoutPageTem
 import com.liferay.layout.page.template.constants.LayoutPageTemplateConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryService;
+import com.liferay.layout.page.template.util.LayoutPageTemplateEntryUtil;
 import com.liferay.portal.kernel.exception.NoSuchClassNameException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -128,8 +129,11 @@ public class AddDisplayPageMVCActionCommand extends BaseMVCActionCommand {
 				_layoutPageTemplateEntryService.addLayoutPageTemplateEntry(
 					null, serviceContext.getScopeGroupId(),
 					layoutPageTemplateCollectionId, null, classNameId,
-					classTypeId, name, masterLayoutPlid,
-					WorkflowConstants.STATUS_DRAFT, serviceContext);
+					LayoutPageTemplateEntryUtil.getClassTypeKey(
+						classNameId, classTypeId,
+						serviceContext.getScopeGroupId()),
+					name, masterLayoutPlid, WorkflowConstants.STATUS_DRAFT,
+					serviceContext);
 
 			return JSONUtil.put(
 				"redirectURL",

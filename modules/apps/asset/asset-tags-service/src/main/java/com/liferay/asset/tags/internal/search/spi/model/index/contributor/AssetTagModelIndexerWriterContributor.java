@@ -10,7 +10,6 @@ import com.liferay.asset.kernel.service.AssetTagLocalService;
 import com.liferay.portal.search.batch.BatchIndexingActionable;
 import com.liferay.portal.search.batch.DynamicQueryBatchIndexingActionableFactory;
 import com.liferay.portal.search.spi.model.index.contributor.ModelIndexerWriterContributor;
-import com.liferay.portal.search.spi.model.index.contributor.helper.ModelIndexerWriterDocumentHelper;
 
 /**
  * @author Luan Maoski
@@ -30,25 +29,10 @@ public class AssetTagModelIndexerWriterContributor
 	}
 
 	@Override
-	public void customize(
-		BatchIndexingActionable batchIndexingActionable,
-		ModelIndexerWriterDocumentHelper modelIndexerWriterDocumentHelper) {
-
-		batchIndexingActionable.setPerformActionMethod(
-			(AssetTag assetTag) -> batchIndexingActionable.addDocument(
-				modelIndexerWriterDocumentHelper.getDocument(assetTag)));
-	}
-
-	@Override
 	public BatchIndexingActionable getBatchIndexingActionable() {
 		return _dynamicQueryBatchIndexingActionableFactory.
 			getBatchIndexingActionable(
 				_assetTagLocalService.getIndexableActionableDynamicQuery());
-	}
-
-	@Override
-	public long getCompanyId(AssetTag assetTag) {
-		return assetTag.getCompanyId();
 	}
 
 	private final AssetTagLocalService _assetTagLocalService;

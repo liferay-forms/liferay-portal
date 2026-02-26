@@ -12,7 +12,7 @@ import {PaymentStatus as PaymentStatusCode} from '../../../../enums/Order';
 import i18n from '../../../../i18n';
 import {Liferay} from '../../../../liferay/liferay';
 import PublisherSalesSummary from '../../../../services/rest/PublisherSalesSummary';
-import PaymentStatus from '../../components/PaymentStatus/PaymentStatus';
+import PaymentStatus from '../../components/PaymentStatus/PaymentStatusBadge';
 import {getTotalByOrderKey} from '../../util/finance';
 
 export enum PublisherPayoutStatus {

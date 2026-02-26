@@ -26,6 +26,7 @@ import {applyTimeZone, formatDateToTimeZone, formatUTCDate} from './date';
 import {Colors} from './colors-size';
 import {formatTime} from './time';
 import {get, isNil, noop, pickBy} from 'lodash';
+import {getSafeDecodedURIComponent} from './util';
 import {Routes, setUriQueryValues, toRoute} from 'shared/util/router';
 import {sub} from 'shared/util/lang';
 
@@ -92,7 +93,9 @@ export const activityAssetsListColumns = {
 		cellRenderer: NameCell,
 		cellRendererProps: {
 			renderSecondaryInfo: ({dataSourceAssetPK}) => (
-				<TextTruncate title={decodeURIComponent(dataSourceAssetPK)} />
+				<TextTruncate
+					title={getSafeDecodedURIComponent(dataSourceAssetPK)}
+				/>
 			)
 		},
 		className: 'table-cell-expand',
@@ -583,8 +586,8 @@ export const eventListColumns = {
  * Individuals List Columns
  */
 export const individualsListColumns = {
-	accountNames: {
-		accessor: 'accountNames',
+	accountName: {
+		accessor: 'accountName',
 		cellRenderer: AccountNames,
 		label: Liferay.Language.get('account-names'),
 		sortable: false
@@ -929,7 +932,7 @@ export const sitePagesListColumns = {
 		cellRendererProps: {
 			nameKey: 'assetTitle',
 			renderSecondaryInfo: ({assetId}) => (
-				<TextTruncate title={decodeURIComponent(assetId)} />
+				<TextTruncate title={getSafeDecodedURIComponent(assetId)} />
 			),
 			routeFn: ({data: {assetId, assetTitle}}) =>
 				setUriQueryValues(
@@ -1049,6 +1052,23 @@ export const segmentsListColumns = {
 		cellRendererProps: {timeZoneId},
 		label: Liferay.Language.get('last-modified')
 	}),
+	getSegmentType: ENABLE_CDP => {
+		if (!ENABLE_CDP) return null;
+
+		return {
+			accessor: 'segmentType',
+			cellRenderer: ({data}) => {
+				const segmentTypeMap = {
+					BATCH: Liferay.Language.get('batch'),
+					REAL_TIME: Liferay.Language.get('real-time')
+				};
+
+				return <td>{segmentTypeMap[data.segmentType]}</td>;
+			},
+			label: Liferay.Language.get('type'),
+			sortable: false
+		};
+	},
 	individualAddedDate: {
 		cellRenderer: DateCell,
 		cellRendererProps: {

@@ -258,7 +258,6 @@ public class PageTemplateResourceTest extends BasePageTemplateResourceTestCase {
 					group.getExternalReferenceCode())));
 	}
 
-	@Ignore
 	@Override
 	@Test
 	public void testGetSitePageTemplatesPageWithSortDateTime()
@@ -267,14 +266,12 @@ public class PageTemplateResourceTest extends BasePageTemplateResourceTestCase {
 		super.testGetSitePageTemplatesPageWithSortDateTime();
 	}
 
-	@Ignore
 	@Override
 	@Test
 	public void testGetSitePageTemplatesPageWithSortDouble() throws Exception {
 		super.testGetSitePageTemplatesPageWithSortDouble();
 	}
 
-	@Ignore
 	@Override
 	@Test
 	public void testGetSitePageTemplatesPageWithSortInteger() throws Exception {
@@ -1489,7 +1486,7 @@ public class PageTemplateResourceTest extends BasePageTemplateResourceTestCase {
 	}
 
 	private void _testPatchSitePageTemplateWithThumbnail() throws Exception {
-		PageTemplate pageTemplate1 = randomPageTemplate();
+		PageTemplate pageTemplate = randomPageTemplate();
 
 		Repository repository = _portletFileRepository.addPortletRepository(
 			testGroup.getGroupId(), RandomTestUtil.randomString(),
@@ -1498,7 +1495,7 @@ public class PageTemplateResourceTest extends BasePageTemplateResourceTestCase {
 
 		FileEntry fileEntry = _addPortletFileEntry(repository.getDlFolderId());
 
-		pageTemplate1.setThumbnailURLReference(
+		pageTemplate.setThumbnailURLReference(
 			() -> new ThumbnailURLReference() {
 				{
 					setExternalReferenceCode(
@@ -1509,16 +1506,16 @@ public class PageTemplateResourceTest extends BasePageTemplateResourceTestCase {
 		PageTemplateResource pageTemplateResource = _getPageTemplateResource();
 
 		pageTemplateResource.postSitePageTemplate(
-			testGroup.getExternalReferenceCode(), pageTemplate1);
+			testGroup.getExternalReferenceCode(), pageTemplate);
 
 		_assertThumbnailFileEntryId(
-			false, pageTemplate1.getExternalReferenceCode(),
+			false, pageTemplate.getExternalReferenceCode(),
 			fileEntry.getExternalReferenceCode());
 
 		FileEntry newFileEntry = _addPortletFileEntry(
 			repository.getDlFolderId());
 
-		pageTemplate1.setThumbnailURLReference(
+		pageTemplate.setThumbnailURLReference(
 			() -> new ThumbnailURLReference() {
 				{
 					setExternalReferenceCode(
@@ -1529,13 +1526,11 @@ public class PageTemplateResourceTest extends BasePageTemplateResourceTestCase {
 
 		pageTemplateResource.patchSitePageTemplate(
 			testGroup.getExternalReferenceCode(),
-			pageTemplate1.getExternalReferenceCode(), pageTemplate1);
+			pageTemplate.getExternalReferenceCode(), pageTemplate);
 
 		_assertThumbnailFileEntryId(
-			false, pageTemplate1.getExternalReferenceCode(),
+			false, pageTemplate.getExternalReferenceCode(),
 			newFileEntry.getExternalReferenceCode());
-
-		PageTemplate pageTemplate2 = randomPageTemplate();
 
 		ThumbnailURLReference thumbnailURLReference =
 			new ThumbnailURLReference() {
@@ -1548,12 +1543,12 @@ public class PageTemplateResourceTest extends BasePageTemplateResourceTestCase {
 				}
 			};
 
-		pageTemplate2.setThumbnailURLReference(thumbnailURLReference);
+		pageTemplate.setThumbnailURLReference(thumbnailURLReference);
 
 		try {
 			pageTemplateResource.patchSitePageTemplate(
 				testGroup.getExternalReferenceCode(),
-				pageTemplate1.getExternalReferenceCode(), pageTemplate2);
+				pageTemplate.getExternalReferenceCode(), pageTemplate);
 		}
 		catch (Problem.ProblemException problemException) {
 			Problem problem = problemException.getProblem();
@@ -2045,8 +2040,6 @@ public class PageTemplateResourceTest extends BasePageTemplateResourceTestCase {
 		_assertThumbnailFileEntryId(
 			true, putPageTemplate.getExternalReferenceCode(), null);
 
-		pageTemplate = randomPageTemplate();
-
 		ThumbnailURLReference thumbnailURLReference =
 			new ThumbnailURLReference() {
 				{
@@ -2058,12 +2051,12 @@ public class PageTemplateResourceTest extends BasePageTemplateResourceTestCase {
 				}
 			};
 
-		pageTemplate.setThumbnailURLReference(thumbnailURLReference);
+		putPageTemplate.setThumbnailURLReference(thumbnailURLReference);
 
 		try {
 			pageTemplateResource.putSitePageTemplate(
 				testGroup.getExternalReferenceCode(),
-				putPageTemplate.getExternalReferenceCode(), pageTemplate);
+				putPageTemplate.getExternalReferenceCode(), putPageTemplate);
 		}
 		catch (Problem.ProblemException problemException) {
 			Problem problem = problemException.getProblem();

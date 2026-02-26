@@ -11,7 +11,6 @@ import com.liferay.portal.search.batch.BatchIndexingActionable;
 import com.liferay.portal.search.batch.DynamicQueryBatchIndexingActionableFactory;
 import com.liferay.portal.search.spi.model.index.contributor.ModelIndexerWriterContributor;
 import com.liferay.portal.search.spi.model.index.contributor.helper.IndexerWriterMode;
-import com.liferay.portal.search.spi.model.index.contributor.helper.ModelIndexerWriterDocumentHelper;
 
 /**
  * @author Alessio Antonio Rendina
@@ -30,28 +29,11 @@ public class CommerceShipmentModelIndexerWriterContributor
 	}
 
 	@Override
-	public void customize(
-		BatchIndexingActionable batchIndexingActionable,
-		ModelIndexerWriterDocumentHelper modelIndexerWriterDocumentHelper) {
-
-		batchIndexingActionable.setPerformActionMethod(
-			(CommerceShipment commerceShipment) ->
-				batchIndexingActionable.addDocument(
-					modelIndexerWriterDocumentHelper.getDocument(
-						commerceShipment)));
-	}
-
-	@Override
 	public BatchIndexingActionable getBatchIndexingActionable() {
 		return _dynamicQueryBatchIndexingActionableFactory.
 			getBatchIndexingActionable(
 				_commerceShipmentLocalService.
 					getIndexableActionableDynamicQuery());
-	}
-
-	@Override
-	public long getCompanyId(CommerceShipment commerceShipment) {
-		return commerceShipment.getCompanyId();
 	}
 
 	@Override

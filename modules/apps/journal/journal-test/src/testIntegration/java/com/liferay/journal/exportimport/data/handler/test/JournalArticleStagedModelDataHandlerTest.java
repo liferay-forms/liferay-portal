@@ -44,9 +44,11 @@ import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.journal.service.JournalFolderLocalServiceUtil;
 import com.liferay.journal.service.persistence.JournalArticleResourceUtil;
 import com.liferay.journal.test.util.JournalTestUtil;
+import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
+import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalServiceUtil;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
 import com.liferay.layout.page.template.test.util.DisplayPageTemplateTestUtil;
 import com.liferay.layout.test.util.LayoutTestUtil;
@@ -431,7 +433,7 @@ public class JournalArticleStagedModelDataHandlerTest
 			DisplayPageTemplateTestUtil.addDisplayPageTemplate(
 				stagingGroup.getGroupId(),
 				_portal.getClassNameId(JournalArticle.class.getName()),
-				journalArticle.getDDMStructureId(), true,
+				journalArticle.getDDMStructureKey(), true,
 				WorkflowConstants.STATUS_APPROVED);
 
 		ServiceContext serviceContext =
@@ -506,6 +508,8 @@ public class JournalArticleStagedModelDataHandlerTest
 				JournalContentPortletKeys.JOURNAL_CONTENT),
 			PortletPreferencesFactoryUtil.toXML(portletPreferences));
 
+		portletDataContext.setPortletId(JournalPortletKeys.JOURNAL);
+
 		StagedModelDataHandlerUtil.exportStagedModel(
 			portletDataContext, journalArticle);
 
@@ -514,6 +518,16 @@ public class JournalArticleStagedModelDataHandlerTest
 				journalArticle);
 
 			Assert.assertNotNull(exportedStagedModel);
+
+			LayoutPageTemplateEntryLocalServiceUtil.addLayoutPageTemplateEntry(
+				layoutPageTemplateEntry.getExternalReferenceCode(),
+				TestPropsValues.getUserId(), liveGroup.getGroupId(), 0, null,
+				_portal.getClassNameId(JournalArticle.class.getName()), null,
+				RandomTestUtil.randomString(),
+				LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE, 0, true, 0,
+				0, 0, WorkflowConstants.STATUS_APPROVED,
+				ServiceContextTestUtil.getServiceContext(
+					liveGroup.getGroupId(), TestPropsValues.getUserId()));
 
 			boolean portletImportInProcess =
 				ExportImportThreadLocal.isPortletImportInProcess();
@@ -554,160 +568,6 @@ public class JournalArticleStagedModelDataHandlerTest
 		journalArticle = JournalTestUtil.updateArticle(journalArticle);
 
 		exportImportStagedModel(journalArticle);
-	}
-
-	@Test
-	public void testCircularDependencyBetweenAssetDisplayPageEntryAndConfiguredWebContentDisplayPortlet()
-		throws Exception {
-
-		initExport();
-
-		JournalArticle journalArticle = JournalTestUtil.addArticle(
-			stagingGroup.getGroupId(),
-			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID);
-
-		LayoutPageTemplateEntry layoutPageTemplateEntry =
-			DisplayPageTemplateTestUtil.addDisplayPageTemplate(
-				stagingGroup.getGroupId(),
-				_portal.getClassNameId(JournalArticle.class.getName()),
-				journalArticle.getDDMStructureId(), true,
-				WorkflowConstants.STATUS_APPROVED);
-
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(stagingGroup.getGroupId());
-
-		_assetDisplayPageEntryLocalService.addAssetDisplayPageEntry(
-			journalArticle.getUserId(), stagingGroup.getGroupId(),
-			_portal.getClassNameId(JournalArticle.class.getName()),
-			journalArticle.getResourcePrimKey(),
-			layoutPageTemplateEntry.getLayoutPageTemplateEntryId(),
-			AssetDisplayPageConstants.TYPE_SPECIFIC, serviceContext);
-
-		LayoutPageTemplateStructure layoutPageTemplateStructure =
-			_layoutPageTemplateStructureLocalService.
-				fetchLayoutPageTemplateStructure(
-					stagingGroup.getGroupId(),
-					layoutPageTemplateEntry.getPlid());
-
-		Assert.assertNotNull(layoutPageTemplateStructure);
-
-		LayoutStructure layoutStructure = LayoutStructure.of(
-			layoutPageTemplateStructure.getDefaultSegmentsExperienceData());
-
-		long defaultSegmentsExperienceId =
-			_segmentsExperienceLocalService.fetchDefaultSegmentsExperienceId(
-				layoutPageTemplateStructure.getPlid());
-
-		FragmentEntryLink fragmentEntryLink =
-			_fragmentEntryLinkLocalService.addFragmentEntryLink(
-				null, layoutPageTemplateStructure.getUserId(),
-				stagingGroup.getGroupId(), null, null, null,
-				defaultSegmentsExperienceId,
-				layoutPageTemplateStructure.getPlid(), StringPool.BLANK,
-				StringPool.BLANK, StringPool.BLANK, StringPool.BLANK,
-				JSONUtil.put(
-					"instanceId", StringUtil.randomId()
-				).put(
-					"portletId", JournalContentPortletKeys.JOURNAL_CONTENT
-				).toString(),
-				StringPool.BLANK, 0, StringPool.BLANK,
-				FragmentConstants.TYPE_PORTLET, serviceContext);
-
-		layoutStructure.addFragmentStyledLayoutStructureItem(
-			fragmentEntryLink.getFragmentEntryLinkId(),
-			layoutStructure.getMainItemId(), 0);
-
-		_layoutPageTemplateStructureLocalService.
-			updateLayoutPageTemplateStructureData(
-				TestPropsValues.getUserId(),
-				layoutPageTemplateStructure.getGroupId(),
-				layoutPageTemplateStructure.getPlid(),
-				defaultSegmentsExperienceId, layoutStructure.toString());
-
-		PortletPreferences portletPreferences =
-			_portletPreferencesLocalService.getPreferences(
-				stagingGroup.getCompanyId(), PortletKeys.PREFS_OWNER_ID_DEFAULT,
-				PortletKeys.PREFS_OWNER_TYPE_ARCHIVED, 0,
-				JournalContentPortletKeys.JOURNAL_CONTENT);
-
-		portletPreferences.setValue(
-			"articleExternalReferenceCode",
-			journalArticle.getExternalReferenceCode());
-		portletPreferences.setValue(
-			"groupExternalReferenceCode",
-			stagingGroup.getExternalReferenceCode());
-
-		_portletPreferencesLocalService.addPortletPreferences(
-			stagingGroup.getCompanyId(), PortletKeys.PREFS_OWNER_ID_DEFAULT,
-			PortletKeys.PREFS_OWNER_TYPE_LAYOUT,
-			layoutPageTemplateStructure.getPlid(),
-			JournalContentPortletKeys.JOURNAL_CONTENT,
-			_portletLocalService.fetchPortletById(
-				stagingGroup.getCompanyId(),
-				JournalContentPortletKeys.JOURNAL_CONTENT),
-			PortletPreferencesFactoryUtil.toXML(portletPreferences));
-
-		StagedModelDataHandlerUtil.exportStagedModel(
-			portletDataContext, journalArticle);
-
-		try (SafeCloseable safeCloseable = initImportWithSafeCloseable()) {
-			StagedModel exportedStagedModel = readExportedStagedModel(
-				journalArticle);
-
-			Assert.assertNotNull(exportedStagedModel);
-
-			boolean portletImportInProcess =
-				ExportImportThreadLocal.isPortletImportInProcess();
-
-			try {
-				ExportImportThreadLocal.setPortletImportInProcess(true);
-
-				StagedModelDataHandlerUtil.importStagedModel(
-					portletDataContext, exportedStagedModel);
-			}
-			finally {
-				ExportImportThreadLocal.setPortletImportInProcess(
-					portletImportInProcess);
-			}
-
-			JournalArticle importedJournalArticle =
-				JournalArticleLocalServiceUtil.
-					fetchJournalArticleByUuidAndGroupId(
-						journalArticle.getUuid(), liveGroup.getGroupId());
-
-			Assert.assertNotNull(importedJournalArticle);
-
-			LayoutPageTemplateEntry importedLayoutPageTemplateEntry =
-				_layoutPageTemplateEntryLocalService.
-					fetchLayoutPageTemplateEntry(
-						liveGroup.getGroupId(),
-						layoutPageTemplateEntry.
-							getLayoutPageTemplateEntryKey());
-
-			Assert.assertNotNull(importedLayoutPageTemplateEntry);
-
-			LayoutPageTemplateStructure importedLayoutPageTemplateStructure =
-				_layoutPageTemplateStructureLocalService.
-					fetchLayoutPageTemplateStructure(
-						liveGroup.getGroupId(),
-						importedLayoutPageTemplateEntry.getPlid());
-
-			Assert.assertNotNull(importedLayoutPageTemplateStructure);
-
-			PortletPreferences importedPortletPreferences =
-				_portletPreferencesLocalService.getPreferences(
-					stagingGroup.getCompanyId(),
-					PortletKeys.PREFS_OWNER_ID_DEFAULT,
-					PortletKeys.PREFS_OWNER_TYPE_LAYOUT,
-					importedLayoutPageTemplateEntry.getPlid(),
-					JournalContentPortletKeys.JOURNAL_CONTENT);
-
-			Assert.assertNotNull(importedPortletPreferences);
-			Assert.assertEquals(
-				importedJournalArticle.getExternalReferenceCode(),
-				importedPortletPreferences.getValue(
-					"articleExternalReferenceCode", null));
-		}
 	}
 
 	@Override
@@ -802,7 +662,7 @@ public class JournalArticleStagedModelDataHandlerTest
 			DisplayPageTemplateTestUtil.addDisplayPageTemplate(
 				stagingGroup.getGroupId(),
 				_portal.getClassNameId(JournalArticle.class.getName()),
-				journalArticle.getDDMStructureId(), true,
+				journalArticle.getDDMStructureKey(), true,
 				WorkflowConstants.STATUS_APPROVED);
 
 		ServiceContext serviceContext =
@@ -841,6 +701,16 @@ public class JournalArticleStagedModelDataHandlerTest
 				journalArticle);
 
 			Assert.assertNotNull(exportedStagedModel);
+
+			LayoutPageTemplateEntryLocalServiceUtil.addLayoutPageTemplateEntry(
+				layoutPageTemplateEntry.getExternalReferenceCode(),
+				TestPropsValues.getUserId(), liveGroup.getGroupId(), 0, null,
+				_portal.getClassNameId(JournalArticle.class.getName()), null,
+				RandomTestUtil.randomString(),
+				LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE, 0, true, 0,
+				0, 0, WorkflowConstants.STATUS_APPROVED,
+				ServiceContextTestUtil.getServiceContext(
+					liveGroup.getGroupId(), TestPropsValues.getUserId()));
 
 			boolean portletImportInProcess =
 				ExportImportThreadLocal.isPortletImportInProcess();

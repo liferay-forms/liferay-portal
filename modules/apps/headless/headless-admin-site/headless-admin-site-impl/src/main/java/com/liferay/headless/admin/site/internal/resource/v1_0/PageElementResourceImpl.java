@@ -31,6 +31,9 @@ import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.segments.model.SegmentsExperience;
 import com.liferay.segments.service.SegmentsExperienceLocalService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
@@ -45,6 +48,7 @@ import org.osgi.service.component.annotations.ServiceScope;
 public class PageElementResourceImpl extends BasePageElementResourceImpl {
 
 	@Override
+	@Tags({@Tag(description = "[DEV]", name = "PageElement")})
 	public void deleteSitePageSpecificationPageExperiencePageElement(
 			String siteExternalReferenceCode,
 			String pageSpecificationExternalReferenceCode,
@@ -52,7 +56,9 @@ public class PageElementResourceImpl extends BasePageElementResourceImpl {
 			String pageElementExternalReferenceCode)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-35443")) {
+		if (!FeatureFlagManagerUtil.isEnabled(
+				contextCompany.getCompanyId(), "LPD-74328")) {
+
 			throw new UnsupportedOperationException();
 		}
 
@@ -109,7 +115,9 @@ public class PageElementResourceImpl extends BasePageElementResourceImpl {
 			String pageElementExternalReferenceCode)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-35443")) {
+		if (!FeatureFlagManagerUtil.isEnabled(
+				contextCompany.getCompanyId(), "LPD-74328")) {
+
 			throw new UnsupportedOperationException();
 		}
 
@@ -165,7 +173,9 @@ public class PageElementResourceImpl extends BasePageElementResourceImpl {
 				String pageElementExternalReferenceCode, Boolean flatten)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-35443")) {
+		if (!FeatureFlagManagerUtil.isEnabled(
+				contextCompany.getCompanyId(), "LPD-74328")) {
+
 			throw new UnsupportedOperationException();
 		}
 
@@ -220,7 +230,9 @@ public class PageElementResourceImpl extends BasePageElementResourceImpl {
 				String pageExperienceExternalReferenceCode, Boolean flatten)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-35443")) {
+		if (!FeatureFlagManagerUtil.isEnabled(
+				contextCompany.getCompanyId(), "LPD-74328")) {
+
 			throw new UnsupportedOperationException();
 		}
 
@@ -270,7 +282,9 @@ public class PageElementResourceImpl extends BasePageElementResourceImpl {
 			String pageExperienceExternalReferenceCode, PageElement pageElement)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-35443")) {
+		if (!FeatureFlagManagerUtil.isEnabled(
+				contextCompany.getCompanyId(), "LPD-74328")) {
+
 			throw new UnsupportedOperationException();
 		}
 
@@ -323,7 +337,9 @@ public class PageElementResourceImpl extends BasePageElementResourceImpl {
 			String pageElementExternalReferenceCode, PageElement pageElement)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-35443")) {
+		if (!FeatureFlagManagerUtil.isEnabled(
+				contextCompany.getCompanyId(), "LPD-74328")) {
+
 			throw new UnsupportedOperationException();
 		}
 

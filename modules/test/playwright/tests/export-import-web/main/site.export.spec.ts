@@ -30,15 +30,6 @@ export const test = mergeTests(
 	baseTest,
 	featureFlagsTest({
 		'LPD-35443': {enabled: false},
-		'LPD-35914': {enabled: false},
-	})
-);
-
-export const testWithExportImportAtInstanceLevelFF = mergeTests(
-	baseTest,
-	featureFlagsTest({
-		'LPD-35443': {enabled: true},
-		'LPD-35914': {enabled: true},
 	})
 );
 
@@ -46,24 +37,10 @@ export const testWithHeadlessContentPagesFF = mergeTests(
 	baseTest,
 	featureFlagsTest({
 		'LPD-35443': {enabled: true},
-		'LPD-35914': {enabled: true},
 	}),
 	masterPagesPagesTest,
 	pageTemplatesPagesTest
 );
-
-async function expectExportName(exportImportPage, taskName: string) {
-	await exportImportPage.goToExport();
-
-	await exportImportPage.newExportButton.click();
-
-	await exportImportPage.exportButton.click();
-
-	const exportFilePath =
-		await exportImportPage.downloadExportProcess(taskName);
-
-	expect(exportFilePath).toMatch(new RegExp(`^${getTempDir()}${taskName}-`));
-}
 
 test('can export at site level with custom export task name', async ({
 	exportImportPage,
@@ -77,18 +54,20 @@ test('can export at site level with custom export task name', async ({
 	expect(exportFilePath).toMatch(new RegExp(`^${getTempDir()}MyExport-`));
 });
 
-test('can export at site level with old file name', async ({
+test('can export at site level with the default file name', async ({
 	exportImportPage,
 }) => {
-	await expectExportName(exportImportPage, 'Pages');
-});
+	await exportImportPage.goToExport();
 
-testWithExportImportAtInstanceLevelFF(
-	'can export at site level with new file name',
-	async ({exportImportPage}) => {
-		await expectExportName(exportImportPage, 'Export');
-	}
-);
+	await exportImportPage.newExportButton.click();
+
+	await exportImportPage.exportButton.click();
+
+	const exportFilePath =
+		await exportImportPage.downloadExportProcess('Export');
+
+	expect(exportFilePath).toMatch(new RegExp(`^${getTempDir()}Export-`));
+});
 
 test('can see corresponding elements at site level', async ({
 	productMenuPage,

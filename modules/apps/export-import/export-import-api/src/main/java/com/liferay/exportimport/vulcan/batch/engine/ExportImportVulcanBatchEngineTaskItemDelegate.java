@@ -28,6 +28,8 @@ public interface ExportImportVulcanBatchEngineTaskItemDelegate<T>
 			return null;
 		}
 
+		public String getKey();
+
 		public String getLabelLanguageKey();
 
 		public String getModelClassName();
@@ -52,8 +54,6 @@ public interface ExportImportVulcanBatchEngineTaskItemDelegate<T>
 			return null;
 		}
 
-		public String getResourceClassName();
-
 		public Scope getScope();
 
 		public default String getTag(Locale locale) {
@@ -71,6 +71,10 @@ public interface ExportImportVulcanBatchEngineTaskItemDelegate<T>
 		}
 
 		public default boolean isHidden() {
+			return false;
+		}
+
+		public default boolean isMissingPortletSupported() {
 			return false;
 		}
 

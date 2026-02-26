@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.FileUtil;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -308,16 +307,16 @@ public class ExportDisplayPagesMVCResourceCommandTest {
 		return _layoutPageTemplateEntryLocalService.addLayoutPageTemplateEntry(
 			null, _serviceContext.getUserId(),
 			_serviceContext.getScopeGroupId(), 0, null,
-			_portal.getClassNameId(className), _getClassTypeId(className), name,
-			LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE, 0, status,
+			_portal.getClassNameId(className), _getClassTypeKey(className),
+			name, LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE, 0, status,
 			_serviceContext);
 	}
 
-	private long _getClassTypeId(String className) {
+	private String _getClassTypeKey(String className) {
 		InfoItemFormVariation infoItemFormVariation =
 			_getFirstInfoItemFormVariation(className);
 
-		return GetterUtil.getLong(infoItemFormVariation.getKey());
+		return infoItemFormVariation.getExternalReferenceCode();
 	}
 
 	private InfoItemFormVariation _getFirstInfoItemFormVariation(

@@ -34,7 +34,6 @@ export const test = mergeTests(
 	exportImportPagesTest,
 	featureFlagsTest({
 		'LPD-35443': {enabled: true},
-		'LPD-35914': {enabled: true},
 	}),
 	loginTest(),
 	productMenuPageTest,
@@ -46,7 +45,6 @@ const rootModelTest = mergeTests(
 	featureFlagsTest({
 		'LPD-34594': {enabled: true},
 		'LPD-35443': {enabled: true},
-		'LPD-35914': {enabled: true},
 	})
 );
 
@@ -303,7 +301,7 @@ test('can export custom object entries at instance level with date filter', asyn
 	});
 
 	const content1 = await readFileFromZip(
-		`C_${objectDefinition.name}.json`,
+		`${objectDefinition.externalReferenceCode}.json`,
 		exportFilePath1
 	);
 
@@ -332,7 +330,10 @@ test('can export custom object entries at instance level with date filter', asyn
 	});
 
 	await expect(
-		checkInZip(exportFilePath2, `C_${objectDefinition.name}.json`)
+		checkInZip(
+			exportFilePath2,
+			`${objectDefinition.externalReferenceCode}.json`
+		)
 	).resolves.toBe(false);
 
 	await applicationsMenuPage.goToExport();
@@ -343,7 +344,7 @@ test('can export custom object entries at instance level with date filter', asyn
 	});
 
 	const content3 = await readFileFromZip(
-		`C_${objectDefinition.name}.json`,
+		`${objectDefinition.externalReferenceCode}.json`,
 		exportFilePath3
 	);
 
@@ -424,7 +425,7 @@ test('can export custom object entries at instance level with permissions', asyn
 	});
 
 	const content = await readFileFromZip(
-		`C_${objectDefinition.name}.json`,
+		`${objectDefinition.externalReferenceCode}.json`,
 		exportFilePath
 	);
 
@@ -473,7 +474,7 @@ test('can see corresponding elements at instance level', async ({
 
 	await expect(
 		companyExportImportPage.page.getByText(
-			`C_${objectDefinition.name} Change`
+			`${objectDefinition.externalReferenceCode} Change`
 		)
 	).not.toBeVisible();
 
@@ -592,3 +593,68 @@ test('Can/not view Export menu item in Application menu depending on permissions
 
 	await expect(exportImportPage.newExportButton).toBeHidden();
 });
+
+test(
+	'Reset date filters when exporting',
+	{tag: '@LPD-78925'},
+	async ({exportImportPage}) => {
+		await exportImportPage.goToExport();
+
+		await exportImportPage.newExportButton.click();
+
+		await exportImportPage.rangeDateRangeRadioButton.click();
+
+		const endDate = new Date('2026-01-02 08:00');
+
+		await exportImportPage.rangeDateRangeEndDate.fill(
+			toDateRangeDate(endDate)
+		);
+		await exportImportPage.rangeDateRangeEndTime.fill(
+			toDateRangeTime(endDate)
+		);
+
+		const startDate = new Date('2026-01-01 08:00');
+
+		await exportImportPage.rangeDateRangeStartDate.fill(
+			toDateRangeDate(startDate)
+		);
+		await exportImportPage.rangeDateRangeStartTime.fill(
+			toDateRangeTime(startDate)
+		);
+
+		await exportImportPage.refreshCountsLink.click();
+
+		await expect(exportImportPage.rangeDateRangeEndDate).toBeEnabled();
+		await expect(exportImportPage.rangeDateRangeEndDate).toHaveValue(
+			toDateRangeDate(endDate)
+		);
+		await expect(exportImportPage.rangeDateRangeStartDate).toBeEnabled();
+		await expect(exportImportPage.rangeDateRangeStartDate).toHaveValue(
+			toDateRangeDate(startDate)
+		);
+
+		await exportImportPage.allRadioButton.click();
+
+		await exportImportPage.refreshCountsLink.click();
+
+		await expect(exportImportPage.rangeDateRangeEndDate).toBeEnabled();
+		await expect(exportImportPage.rangeDateRangeEndDate).not.toHaveValue(
+			toDateRangeDate(endDate)
+		);
+		await expect(exportImportPage.rangeDateRangeStartDate).toBeEnabled();
+		await expect(exportImportPage.rangeDateRangeStartDate).not.toHaveValue(
+			toDateRangeDate(endDate)
+		);
+
+		await exportImportPage.rangeDateRangeRadioButton.click();
+
+		await expect(exportImportPage.rangeDateRangeEndDate).toBeEnabled();
+		await expect(exportImportPage.rangeDateRangeEndDate).not.toHaveValue(
+			toDateRangeDate(endDate)
+		);
+		await expect(exportImportPage.rangeDateRangeStartDate).toBeEnabled();
+		await expect(exportImportPage.rangeDateRangeStartDate).not.toHaveValue(
+			toDateRangeDate(endDate)
+		);
+	}
+);

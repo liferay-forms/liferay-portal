@@ -22,7 +22,9 @@ import com.liferay.list.type.model.ListTypeEntry;
 import com.liferay.list.type.service.ListTypeEntryLocalService;
 import com.liferay.object.constants.ObjectActionTriggerConstants;
 import com.liferay.object.constants.ObjectFieldConstants;
+import com.liferay.object.constants.ObjectFieldSettingConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
+import com.liferay.object.field.setting.util.ObjectFieldSettingUtil;
 import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.info.field.converter.ObjectFieldInfoFieldConverter;
 import com.liferay.object.info.field.type.util.ObjectFieldInfoFieldTypeUtil;
@@ -64,6 +66,9 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
@@ -345,7 +350,7 @@ public class ObjectEntryInfoItemValuesProviderUtil {
 							_parseValue(
 								listTypeEntryLocalService, curLocale,
 								objectEntryLocalService, objectField,
-								objectRelationshipLocalService,
+								objectRelationshipLocalService, themeDisplay,
 								entry.getValue()));
 					}
 				}
@@ -354,7 +359,8 @@ public class ObjectEntryInfoItemValuesProviderUtil {
 		else {
 			infoFieldValue = _parseValue(
 				listTypeEntryLocalService, locale, objectEntryLocalService,
-				objectField, objectRelationshipLocalService, value);
+				objectField, objectRelationshipLocalService, themeDisplay,
+				value);
 		}
 
 		if (infoFieldValue == null) {
@@ -578,7 +584,7 @@ public class ObjectEntryInfoItemValuesProviderUtil {
 		ObjectEntryLocalService objectEntryLocalService,
 		ObjectField objectField,
 		ObjectRelationshipLocalService objectRelationshipLocalService,
-		Object value) {
+		ThemeDisplay themeDisplay, Object value) {
 
 		if (value == null) {
 			return null;
@@ -636,10 +642,37 @@ public class ObjectEntryInfoItemValuesProviderUtil {
 		else if (objectField.compareBusinessType(
 					ObjectFieldConstants.BUSINESS_TYPE_DATE_TIME)) {
 
-			return LocalDateTime.parse(
+			LocalDateTime localDateTime = LocalDateTime.parse(
 				value.toString(),
 				DateTimeFormatter.ofPattern(
 					ObjectFieldUtil.getDateTimePattern(value.toString())));
+
+			String timeStorage = ObjectFieldSettingUtil.getValue(
+				ObjectFieldSettingConstants.NAME_TIME_STORAGE, objectField);
+
+			if (StringUtil.equals(
+					timeStorage,
+					ObjectFieldSettingConstants.VALUE_USE_INPUT_AS_ENTERED)) {
+
+				return localDateTime;
+			}
+
+			ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneOffset.UTC);
+
+			if (themeDisplay == null) {
+				return zonedDateTime.toLocalDateTime();
+			}
+
+			String timeZoneId = ObjectFieldSettingUtil.getTimeZoneId(
+				objectField.getObjectFieldSettings(), themeDisplay.getUser());
+
+			if (timeZoneId == null) {
+				return zonedDateTime.toLocalDateTime();
+			}
+
+			return zonedDateTime.withZoneSameInstant(
+				ZoneId.of(timeZoneId)
+			).toLocalDateTime();
 		}
 		else if (objectField.compareBusinessType(
 					ObjectFieldConstants.BUSINESS_TYPE_MULTISELECT_PICKLIST)) {

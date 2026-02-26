@@ -9,6 +9,7 @@ import '../../../css/content_editor/ContentEditorSidePanel.scss';
 
 import {Button, VerticalBar} from '@clayui/core';
 import ClayIcon from '@clayui/icon';
+import {useIsMounted} from '@liferay/frontend-js-react-web';
 import {datetimeUtils} from '@liferay/object-js-components-web';
 import {LiferayEditorConfig} from 'frontend-editor-ckeditor-web';
 import {openToast} from 'frontend-js-components-web';
@@ -17,6 +18,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 
 import {IAssetObjectEntry} from '../../common/types/AssetType';
 import focusInvalidElement from '../../common/utils/focusInvalidElement';
+import ObjectEntryService from '../../main_view/info_panel/services/ObjectEntryService';
 import {Comment} from '../services/CommentService';
 import {EVENT_VALIDATE_FORM} from './ContentEditorToolbar';
 import {dateConfig, toMomentDate, toServerISOFormat} from './ScheduleField';
@@ -48,7 +50,7 @@ type Props = {
 };
 
 type SidePanelProps = Props & {
-	categorizationFields: CategorizationFields;
+	categorizationFields: CategorizationFields | null;
 	dateConfig: datetimeUtils.DateConfig;
 	onUpdateCategorization: (props: UpdateCategorizationProps) => void;
 	onUpdateSchedule: (props: UpdateScheduleProps) => void;
@@ -148,17 +150,15 @@ export default function ContentEditorSidePanel(props: Props) {
 		},
 	});
 	const [categorizationFields, setCategorizationFields] =
-		useState<CategorizationFields>({
-			assetCategoryIds: {serverValue: '', value: []},
-			assetTagNames: {serverValue: '', value: []},
-		});
+		useState<CategorizationFields | null>(null);
+
+	const isMounted = useIsMounted();
 
 	const onUpdateCategorization = useCallback(
 		([name, value]: UpdateCategorizationProps) => {
-			setCategorizationFields((fields) => ({
-				...fields,
-				[name]: value,
-			}));
+			setCategorizationFields((fields) =>
+				fields ? {...fields, [name]: value} : fields
+			);
 		},
 		[]
 	);
@@ -187,6 +187,47 @@ export default function ContentEditorSidePanel(props: Props) {
 	};
 
 	useEffect(() => {
+		ObjectEntryService.getObjectEntry(props.contentAPIURL).then(
+			({data, error}) => {
+				if (!isMounted()) {
+					return;
+				}
+
+				if (data) {
+					setCategorizationFields((prevState) => {
+
+						// Only populate the categorization fields if they are
+						// empty. If they are not empty, it means that the
+						// categorization panel has already been opened and the
+						// data has been fetched by the AssetCategorization
+						// component.
+
+						if (prevState) {
+							return prevState;
+						}
+
+						return {
+							assetCategoryIds: {
+								serverValue: (data.taxonomyCategoryBriefs || [])
+									.map(({taxonomyCategoryId: id}) => id)
+									.join(','),
+								value: data.taxonomyCategoryBriefs || [],
+							},
+							assetTagNames: {
+								serverValue: (data.keywords || []).join(','),
+								value: data.keywords || [],
+							},
+						};
+					});
+				}
+				else if (error) {
+					console.error(error);
+				}
+			}
+		);
+	}, [isMounted, props.contentAPIURL]);
+
+	useEffect(() => {
 		let form = document.querySelector('.lfr-main-form-container');
 
 		if (!form) {
@@ -208,6 +249,7 @@ export default function ContentEditorSidePanel(props: Props) {
 				onUpdateSchedule={onUpdateSchedule}
 				scheduleFields={scheduleFields}
 			/>
+
 			{Object.entries(scheduleFields).map(([name, {serverValue}]) => (
 				<input
 					form={formId}
@@ -218,17 +260,18 @@ export default function ContentEditorSidePanel(props: Props) {
 				/>
 			))}
 
-			{Object.entries(categorizationFields).map(
-				([name, {serverValue}]) => (
-					<input
-						form={formId}
-						key={name}
-						name={name}
-						type="hidden"
-						value={serverValue}
-					/>
-				)
-			)}
+			{categorizationFields &&
+				Object.entries(categorizationFields).map(
+					([name, {serverValue}]) => (
+						<input
+							form={formId}
+							key={name}
+							name={name}
+							type="hidden"
+							value={serverValue}
+						/>
+					)
+				)}
 		</>
 	);
 }

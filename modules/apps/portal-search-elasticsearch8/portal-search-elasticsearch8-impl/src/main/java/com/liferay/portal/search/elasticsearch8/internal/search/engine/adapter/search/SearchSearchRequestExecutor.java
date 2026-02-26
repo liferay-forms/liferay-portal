@@ -12,6 +12,7 @@ import co.elastic.clients.elasticsearch.core.ScrollRequest;
 import co.elastic.clients.elasticsearch.core.ScrollResponse;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.ResponseBody;
 import co.elastic.clients.json.JsonData;
 
 import com.liferay.petra.string.StringBundler;
@@ -38,6 +39,11 @@ public class SearchSearchRequestExecutor {
 	public SearchSearchResponse execute(
 		SearchSearchRequest searchSearchRequest) {
 
+		ElasticsearchClient elasticsearchClient =
+			_elasticsearchClientResolver.getElasticsearchClient(
+				searchSearchRequest.getConnectionId(),
+				searchSearchRequest.isPreferLocalCluster());
+
 		SearchRequest.Builder searchRequestBuilder =
 			new SearchRequest.Builder();
 
@@ -57,7 +63,7 @@ public class SearchSearchRequestExecutor {
 		SearchRequest searchRequest = searchRequestBuilder.build();
 
 		String searchRequestString = DebugStringsUtil.getSearchRequestString(
-			searchRequest);
+			elasticsearchClient, searchRequest);
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(
@@ -66,20 +72,21 @@ public class SearchSearchRequestExecutor {
 					searchRequestString));
 		}
 
-		SearchResponse<JsonData> searchResponse = null;
+		ResponseBody<JsonData> responseBody = null;
 
 		if (searchSearchRequest.getScrollId() != null) {
-			_getScrollResponse(searchSearchRequest);
+			responseBody = _getScrollResponse(
+				elasticsearchClient, searchSearchRequest);
 		}
 		else {
-			searchResponse = _getSearchResponse(
-				searchRequest, searchSearchRequest);
+			responseBody = _getSearchResponse(
+				elasticsearchClient, searchRequest);
 		}
 
 		SearchSearchResponse searchSearchResponse = new SearchSearchResponse();
 
 		SearchSearchResponseAssembler.INSTANCE.assemble(
-			searchResponse, searchRequestString, searchSearchRequest,
+			responseBody, searchRequestString, searchSearchRequest,
 			searchSearchResponse);
 
 		if (_log.isDebugEnabled()) {
@@ -93,12 +100,8 @@ public class SearchSearchRequestExecutor {
 	}
 
 	private ScrollResponse<JsonData> _getScrollResponse(
+		ElasticsearchClient elasticsearchClient,
 		SearchSearchRequest searchSearchRequest) {
-
-		ElasticsearchClient elasticsearchClient =
-			_elasticsearchClientResolver.getElasticsearchClient(
-				searchSearchRequest.getConnectionId(),
-				searchSearchRequest.isPreferLocalCluster());
 
 		ScrollRequest.Builder scrollRequestBuilder =
 			new ScrollRequest.Builder();
@@ -126,12 +129,7 @@ public class SearchSearchRequestExecutor {
 	}
 
 	private SearchResponse _getSearchResponse(
-		SearchRequest searchRequest, SearchSearchRequest searchSearchRequest) {
-
-		ElasticsearchClient elasticsearchClient =
-			_elasticsearchClientResolver.getElasticsearchClient(
-				searchSearchRequest.getConnectionId(),
-				searchSearchRequest.isPreferLocalCluster());
+		ElasticsearchClient elasticsearchClient, SearchRequest searchRequest) {
 
 		try {
 			return elasticsearchClient.search(searchRequest, JsonData.class);

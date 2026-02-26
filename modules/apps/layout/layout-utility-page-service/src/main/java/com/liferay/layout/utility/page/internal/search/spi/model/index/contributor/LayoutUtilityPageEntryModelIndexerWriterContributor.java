@@ -10,7 +10,6 @@ import com.liferay.layout.utility.page.service.LayoutUtilityPageEntryLocalServic
 import com.liferay.portal.search.batch.BatchIndexingActionable;
 import com.liferay.portal.search.batch.DynamicQueryBatchIndexingActionableFactory;
 import com.liferay.portal.search.spi.model.index.contributor.ModelIndexerWriterContributor;
-import com.liferay.portal.search.spi.model.index.contributor.helper.ModelIndexerWriterDocumentHelper;
 
 /**
  * @author Juan Pablo Montero
@@ -30,28 +29,11 @@ public class LayoutUtilityPageEntryModelIndexerWriterContributor
 	}
 
 	@Override
-	public void customize(
-		BatchIndexingActionable batchIndexingActionable,
-		ModelIndexerWriterDocumentHelper modelIndexerWriterDocumentHelper) {
-
-		batchIndexingActionable.setPerformActionMethod(
-			(LayoutUtilityPageEntry layoutUtilityPageEntry) ->
-				batchIndexingActionable.addDocument(
-					modelIndexerWriterDocumentHelper.getDocument(
-						layoutUtilityPageEntry)));
-	}
-
-	@Override
 	public BatchIndexingActionable getBatchIndexingActionable() {
 		return _dynamicQueryBatchIndexingActionableFactory.
 			getBatchIndexingActionable(
 				_layoutUtilityPageEntryLocalService.
 					getIndexableActionableDynamicQuery());
-	}
-
-	@Override
-	public long getCompanyId(LayoutUtilityPageEntry layoutUtilityPageEntry) {
-		return layoutUtilityPageEntry.getCompanyId();
 	}
 
 	private final DynamicQueryBatchIndexingActionableFactory

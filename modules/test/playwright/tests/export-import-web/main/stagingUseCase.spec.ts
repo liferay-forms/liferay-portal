@@ -41,7 +41,6 @@ const test = mergeTests(
 	dataApiHelpersTest,
 	featureFlagsTest({
 		'LPD-35443': {enabled: true},
-		'LPD-35914': {enabled: true},
 	}),
 	loginTest(),
 	assetPublisherPagesTest,
@@ -64,12 +63,12 @@ const testWithBatchStagingFF = mergeTests(
 	dataApiHelpersTest,
 	featureFlagsTest({
 		'LPD-35443': {enabled: true},
-		'LPD-35914': {enabled: true},
 		'LPD-41367': {enabled: true},
 	}),
 	loginTest(),
 	stagingConfigurationPageTest,
-	stagingPageTest
+	stagingPageTest,
+	uiElementsPageTest
 );
 
 testWithBatchStagingFF(
@@ -162,7 +161,9 @@ testWithBatchStagingFF(
 			);
 
 		await stagingPage.goto(site.name);
-		await stagingPage.enableLocalStaging([StageableEntities.CATEGORIES]);
+		await stagingPage.enableLocalStaging({
+			stagedPortlets: [StageableEntities.CATEGORIES],
+		});
 
 		const stagingSite = await apiHelpers.headlessSite.getSite(
 			`${site.key}-staging`
@@ -212,6 +213,64 @@ testWithBatchStagingFF(
 			name: taxonomyVocabulary.name,
 			siteId: stagingSite.id,
 		});
+	}
+);
+
+testWithBatchStagingFF(
+	'Taxonomy Categories display controls on staging page',
+	{tag: ['@LPD-78848']},
+	async ({apiHelpers, page, stagingPage, uiElementsPage}) => {
+		const site = await apiHelpers.headlessSite.createSite({
+			name: getRandomString(),
+		});
+
+		apiHelpers.data.push({
+			id: site.id,
+			type: 'site',
+		});
+
+		const taxonomyVocabularyAPIClient = await apiHelpers.buildRestClient(
+			TaxonomyVocabularyAPI
+		);
+
+		const {body: taxonomyVocabulary} =
+			await taxonomyVocabularyAPIClient.postSiteTaxonomyVocabulary(
+				Number(site.id),
+				{
+					externalReferenceCode: getRandomString(),
+					name: getRandomString(),
+				}
+			);
+
+		const taxonomyCategoryAPIClient =
+			await apiHelpers.buildRestClient(TaxonomyCategoryAPI);
+
+		await taxonomyCategoryAPIClient.postSiteTaxonomyCategory(
+			Number(site.id),
+			{
+				externalReferenceCode: getRandomString(),
+				name: getRandomString(),
+				taxonomyVocabularyId: taxonomyVocabulary.id,
+			}
+		);
+
+		await stagingPage.goto(site.name);
+		await stagingPage.enableLocalStaging([StageableEntities.CATEGORIES]);
+
+		await stagingPage.goto(`${site.name}-staging`);
+
+		await uiElementsPage.newButton.click();
+
+		await stagingPage.page
+			.getByTestId('headerTitle')
+			.filter({hasText: 'New Publish Process'})
+			.waitFor();
+
+		await expect(page.getByRole('button', {name: 'Select'})).toHaveCount(0);
+
+		await expect(
+			stagingPage.page.getByText('Categories (1), Vocabularies (1)')
+		).toBeVisible();
 	}
 );
 
@@ -749,5 +808,31 @@ testWithBatchStagingFF(
 				)
 			).externalReferenceCode
 		).toBe(layout.externalReferenceCode);
+	}
+);
+
+testWithBatchStagingFF(
+	'Content selection is empty after initial publication to live when using the From Last Publish Date option',
+	async ({apiHelpers, stagingPage}) => {
+		const site = await apiHelpers.headlessSite.createSite({
+			name: 'site-' + getRandomString(),
+		});
+
+		apiHelpers.data.push({id: site.id, type: 'site'});
+
+		await apiHelpers.headlessAdminSite.createPage(
+			site.externalReferenceCode,
+			{
+				name_i18n: {en_US: getRandomString()},
+				type: 'WidgetPage',
+			}
+		);
+
+		await stagingPage.goto(site.name);
+		await stagingPage.enableLocalStaging({stagedPortlets: 'all'});
+
+		const contentItems = await stagingPage.getContentItems();
+
+		expect(contentItems.size).toEqual(0);
 	}
 );

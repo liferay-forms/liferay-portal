@@ -37,12 +37,12 @@ public class JournalArticleInfoItemFormVariationsProvider
 		long groupId, String formVariationKey) {
 
 		DDMStructure ddmStructure = _ddmStructureLocalService.fetchStructure(
-			GetterUtil.getLong(formVariationKey));
+			groupId, _portal.getClassNameId(JournalArticle.class.getName()),
+			formVariationKey);
 
 		if (ddmStructure == null) {
 			ddmStructure = _ddmStructureLocalService.fetchStructure(
-				groupId, _portal.getClassNameId(JournalArticle.class.getName()),
-				formVariationKey);
+				GetterUtil.getLong(formVariationKey));
 		}
 
 		if (ddmStructure == null) {
@@ -82,6 +82,11 @@ public class JournalArticleInfoItemFormVariationsProvider
 			).values(
 				_localization.getLocalizationMap(ddmStructure.getName(), true)
 			).build());
+	}
+
+	@Override
+	public String getInfoItemFormVariationClassName() {
+		return DDMStructure.class.getName();
 	}
 
 	@Override

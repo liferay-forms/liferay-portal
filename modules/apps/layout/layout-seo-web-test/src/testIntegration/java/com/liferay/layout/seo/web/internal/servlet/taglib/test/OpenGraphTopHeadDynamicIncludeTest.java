@@ -1842,7 +1842,7 @@ public class OpenGraphTopHeadDynamicIncludeTest {
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
 			_layoutPageTemplateEntryLocalService.addLayoutPageTemplateEntry(
 				null, _group.getCreatorUserId(), _group.getGroupId(), 0, null,
-				classNameId, 0, RandomTestUtil.randomString(),
+				classNameId, null, RandomTestUtil.randomString(),
 				LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE, 0, true, 0,
 				0, 0, 0,
 				ServiceContextTestUtil.getServiceContext(_group.getGroupId()));
@@ -1875,7 +1875,8 @@ public class OpenGraphTopHeadDynamicIncludeTest {
 
 		LayoutDisplayPageProvider<?> layoutDisplayPageProvider =
 			_layoutDisplayPageProviderRegistry.
-				getLayoutDisplayPageProviderByClassName(className);
+				getLayoutDisplayPageProviderByClassName(
+					fileEntry.getCompanyId(), className);
 
 		httpServletRequest.setAttribute(
 			LayoutDisplayPageWebKeys.LAYOUT_DISPLAY_PAGE_OBJECT_PROVIDER,

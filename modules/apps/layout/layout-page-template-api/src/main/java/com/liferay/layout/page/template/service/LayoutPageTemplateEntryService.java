@@ -52,7 +52,7 @@ public interface LayoutPageTemplateEntryService extends BaseService {
 			String externalReferenceCode, long groupId,
 			long layoutPageTemplateCollectionId,
 			String layoutPageTemplateEntryKey, long classNameId,
-			long classTypeId, String name, int type, long previewFileEntryId,
+			String classTypeKey, String name, int type, long previewFileEntryId,
 			boolean defaultTemplate, long layoutPrototypeId, long plid,
 			long masterLayoutPlid, int status, ServiceContext serviceContext)
 		throws PortalException;
@@ -61,7 +61,7 @@ public interface LayoutPageTemplateEntryService extends BaseService {
 			String externalReferenceCode, long groupId,
 			long layoutPageTemplateCollectionId,
 			String layoutPageTemplateEntryKey, long classNameId,
-			long classTypeId, String name, long masterLayoutPlid, int status,
+			String classTypeKey, String name, long masterLayoutPlid, int status,
 			ServiceContext serviceContext)
 		throws PortalException;
 
@@ -376,7 +376,8 @@ public interface LayoutPageTemplateEntryService extends BaseService {
 		throws PortalException;
 
 	public LayoutPageTemplateEntry updateLayoutPageTemplateEntry(
-			long layoutPageTemplateEntryId, long classNameId, long classTypeId)
+			long layoutPageTemplateEntryId, long classNameId,
+			String classTypeKey)
 		throws PortalException;
 
 	public LayoutPageTemplateEntry updateLayoutPageTemplateEntry(

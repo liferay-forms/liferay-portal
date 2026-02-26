@@ -7,15 +7,22 @@ package com.liferay.headless.admin.site.internal.dto.v1_0.util;
 
 import com.liferay.asset.list.model.AssetListEntry;
 import com.liferay.asset.list.service.AssetListEntryLocalServiceUtil;
+import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.headless.admin.site.dto.v1_0.ClassNameReference;
 import com.liferay.headless.admin.site.dto.v1_0.CollectionItemExternalReference;
 import com.liferay.headless.admin.site.dto.v1_0.CollectionReference;
 import com.liferay.headless.admin.site.internal.util.LogUtil;
 import com.liferay.info.collection.provider.InfoCollectionProvider;
+import com.liferay.info.collection.provider.RelatedInfoItemCollectionProvider;
 import com.liferay.info.collection.provider.SingleFormVariationInfoCollectionProvider;
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.info.list.provider.item.selector.criterion.InfoListProviderItemSelectorReturnType;
 import com.liferay.item.selector.criteria.InfoListItemSelectorReturnType;
+import com.liferay.object.constants.ObjectDefinitionSettingConstants;
+import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.model.ObjectDefinitionSetting;
+import com.liferay.object.service.ObjectDefinitionLocalServiceUtil;
+import com.liferay.object.service.ObjectDefinitionSettingLocalServiceUtil;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
@@ -24,6 +31,8 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Lourdes Fernández Besada
@@ -41,11 +50,13 @@ public class CollectionUtil {
 
 		if (collectionReference instanceof ClassNameReference) {
 			return _getClassNameReferenceJSONObject(
-				collectionReference, companyId, infoItemServiceRegistry);
+				(ClassNameReference)collectionReference, companyId,
+				infoItemServiceRegistry);
 		}
 
 		return _getCollectionItemExternalReferenceJSONObject(
-			collectionReference, companyId, scopeGroupId);
+			(CollectionItemExternalReference)collectionReference, companyId,
+			scopeGroupId);
 	}
 
 	public static CollectionReference getCollectionReference(
@@ -86,32 +97,44 @@ public class CollectionUtil {
 	}
 
 	private static JSONObject _getClassNameReferenceJSONObject(
-		CollectionReference collectionReference, long companyId,
+		ClassNameReference classNameReference, long companyId,
 		InfoItemServiceRegistry infoItemServiceRegistry) {
 
 		if (infoItemServiceRegistry == null) {
 			return JSONFactoryUtil.createJSONObject();
 		}
 
-		ClassNameReference classNameReference =
-			(ClassNameReference)collectionReference;
+		String className = classNameReference.getClassName();
 
-		if (Validator.isNull(classNameReference.getClassName())) {
+		if (Validator.isNull(className)) {
 			return JSONFactoryUtil.createJSONObject();
 		}
 
+		if (ExportImportThreadLocal.isImportInProcess()) {
+			Matcher matcher = _objectDefinitionClassNamePattern.matcher(
+				className);
+
+			if (matcher.find()) {
+				ObjectDefinition objectDefinition = _getObjectDefinition(
+					companyId, matcher.group(0));
+
+				if (objectDefinition != null) {
+					className = matcher.replaceFirst(
+						Matcher.quoteReplacement(
+							objectDefinition.getClassName()));
+				}
+			}
+		}
+
 		InfoCollectionProvider infoCollectionProvider =
-			infoItemServiceRegistry.getInfoItemService(
-				InfoCollectionProvider.class,
-				classNameReference.getClassName());
+			_getInfoCollectionProvider(className, infoItemServiceRegistry);
 
 		if (infoCollectionProvider == null) {
 			LogUtil.logOptionalReference(
-				InfoCollectionProvider.class, classNameReference.getClassName(),
-				companyId);
+				InfoCollectionProvider.class, className, companyId);
 
 			return JSONUtil.put(
-				"key", classNameReference.getClassName()
+				"key", className
 			).put(
 				"type", InfoListProviderItemSelectorReturnType.class.getName()
 			);
@@ -147,12 +170,9 @@ public class CollectionUtil {
 	}
 
 	private static JSONObject _getCollectionItemExternalReferenceJSONObject(
-			CollectionReference collectionReference, long companyId,
-			long scopeGroupId)
+			CollectionItemExternalReference collectionItemExternalReference,
+			long companyId, long scopeGroupId)
 		throws Exception {
-
-		CollectionItemExternalReference collectionItemExternalReference =
-			(CollectionItemExternalReference)collectionReference;
 
 		if (Validator.isNull(
 				collectionItemExternalReference.getExternalReferenceCode())) {
@@ -226,6 +246,39 @@ public class CollectionUtil {
 		);
 	}
 
+	private static InfoCollectionProvider _getInfoCollectionProvider(
+		String className, InfoItemServiceRegistry infoItemServiceRegistry) {
+
+		InfoCollectionProvider infoCollectionProvider =
+			infoItemServiceRegistry.getInfoItemService(
+				InfoCollectionProvider.class, className);
+
+		if (infoCollectionProvider == null) {
+			infoCollectionProvider = infoItemServiceRegistry.getInfoItemService(
+				RelatedInfoItemCollectionProvider.class, className);
+		}
+
+		return infoCollectionProvider;
+	}
+
+	private static ObjectDefinition _getObjectDefinition(
+		long companyId, String objectDefinitionSettingValue) {
+
+		ObjectDefinitionSetting objectDefinitionSetting =
+			ObjectDefinitionSettingLocalServiceUtil.
+				fetchObjectDefinitionSetting(
+					companyId,
+					ObjectDefinitionSettingConstants.NAME_OLD_CLASS_NAME,
+					objectDefinitionSettingValue);
+
+		if (objectDefinitionSetting == null) {
+			return null;
+		}
+
+		return ObjectDefinitionLocalServiceUtil.fetchObjectDefinition(
+			objectDefinitionSetting.getObjectDefinitionId());
+	}
+
 	private static CollectionItemExternalReference
 		_toCollectionItemExternalReference(
 			AssetListEntry assetListEntry, long companyId,
@@ -264,5 +317,10 @@ public class CollectionUtil {
 
 		return collectionItemExternalReference;
 	}
+
+	private static final Pattern _objectDefinitionClassNamePattern =
+		Pattern.compile(
+			"(com\\.liferay\\.object\\.model\\.ObjectDefinition#" +
+				"[a-zA-Z]\\d[a-zA-Z]\\d)");
 
 }

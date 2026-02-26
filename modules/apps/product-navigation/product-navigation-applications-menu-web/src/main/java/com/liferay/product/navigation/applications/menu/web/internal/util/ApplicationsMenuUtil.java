@@ -10,12 +10,7 @@ import com.liferay.application.list.PanelAppRegistry;
 import com.liferay.application.list.PanelCategory;
 import com.liferay.application.list.constants.PanelCategoryKeys;
 import com.liferay.application.list.util.PanelCategoryRegistryUtil;
-import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.product.navigation.applications.menu.configuration.ApplicationsMenuInstanceConfiguration;
 
 import java.util.List;
 
@@ -53,34 +48,5 @@ public class ApplicationsMenuUtil {
 
 		return false;
 	}
-
-	public static boolean isEnableApplicationsMenu(
-		long companyId, ConfigurationProvider configurationProvider) {
-
-		try {
-			ApplicationsMenuInstanceConfiguration
-				applicationsMenuInstanceConfiguration =
-					configurationProvider.getCompanyConfiguration(
-						ApplicationsMenuInstanceConfiguration.class, companyId);
-
-			if (applicationsMenuInstanceConfiguration.
-					enableApplicationsMenu()) {
-
-				return true;
-			}
-		}
-		catch (ConfigurationException configurationException) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(
-					"Unable to get applications menu instance configuration",
-					configurationException);
-			}
-		}
-
-		return false;
-	}
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		ApplicationsMenuUtil.class);
 
 }

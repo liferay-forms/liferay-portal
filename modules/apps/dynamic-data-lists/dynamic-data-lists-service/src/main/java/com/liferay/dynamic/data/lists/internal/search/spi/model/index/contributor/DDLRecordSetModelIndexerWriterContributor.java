@@ -11,7 +11,6 @@ import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalService;
 import com.liferay.portal.search.batch.BatchIndexingActionable;
 import com.liferay.portal.search.batch.DynamicQueryBatchIndexingActionableFactory;
 import com.liferay.portal.search.spi.model.index.contributor.ModelIndexerWriterContributor;
-import com.liferay.portal.search.spi.model.index.contributor.helper.ModelIndexerWriterDocumentHelper;
 
 /**
  * @author Marcela Cunha
@@ -32,25 +31,10 @@ public class DDLRecordSetModelIndexerWriterContributor
 	}
 
 	@Override
-	public void customize(
-		BatchIndexingActionable batchIndexingActionable,
-		ModelIndexerWriterDocumentHelper modelIndexerWriterDocumentHelper) {
-
-		batchIndexingActionable.setPerformActionMethod(
-			(DDLRecordSet ddlRecordSet) -> batchIndexingActionable.addDocument(
-				modelIndexerWriterDocumentHelper.getDocument(ddlRecordSet)));
-	}
-
-	@Override
 	public BatchIndexingActionable getBatchIndexingActionable() {
 		return _dynamicQueryBatchIndexingActionableFactory.
 			getBatchIndexingActionable(
 				_ddlRecordSetLocalService.getIndexableActionableDynamicQuery());
-	}
-
-	@Override
-	public long getCompanyId(DDLRecordSet ddlRecordSet) {
-		return ddlRecordSet.getCompanyId();
 	}
 
 	@Override

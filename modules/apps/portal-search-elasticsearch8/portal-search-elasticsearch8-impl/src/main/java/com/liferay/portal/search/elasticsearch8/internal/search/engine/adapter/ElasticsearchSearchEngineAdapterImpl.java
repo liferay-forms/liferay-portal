@@ -9,6 +9,7 @@ import co.elastic.clients.elasticsearch._types.query_dsl.QueryVariant;
 
 import com.liferay.petra.lang.CentralizedThreadLocal;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.portal.kernel.concurrent.SystemExecutorServiceUtil;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.SearchContext;
@@ -45,6 +46,10 @@ import com.liferay.portal.search.engine.adapter.snapshot.SnapshotResponse;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -153,18 +158,36 @@ public class ElasticsearchSearchEngineAdapterImpl
 				return null;
 			}
 
-			try {
-				S documentResponse =
-					(S)_documentRequestExecutor.executeBulkDocumentRequest(
-						bulkDocumentRequest);
+			ExecutorService executorService =
+				SystemExecutorServiceUtil.getExecutorService();
 
-				bulkableDocumentRequests.clear();
+			BulkDocumentRequest transferCopyBulkDocumentRequest =
+				bulkDocumentRequest.transferCopy();
 
-				return documentResponse;
-			}
-			catch (RuntimeException runtimeException) {
-				throw _getRuntimeException(runtimeException);
-			}
+			AtomicReference<Future<?>> futureAtomicReference =
+				new AtomicReference<>();
+
+			FutureTask<?> futureTask = new FutureTask<Void>(
+				() -> {
+					try {
+						_documentRequestExecutor.executeBulkDocumentRequest(
+							transferCopyBulkDocumentRequest);
+					}
+					finally {
+						SearchContext.unregisterBatchModeSyncFuture(
+							futureAtomicReference.get());
+					}
+
+					return null;
+				});
+
+			futureAtomicReference.set(futureTask);
+
+			SearchContext.registerBatchModeSyncFuture(futureTask);
+
+			executorService.execute(futureTask);
+
+			return null;
 		}
 
 		try {

@@ -18,7 +18,6 @@ import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
-import com.liferay.product.navigation.applications.menu.configuration.ApplicationsMenuInstanceConfiguration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,33 +62,7 @@ public class ProductMenuDisplayContextTest {
 	}
 
 	@Test
-	public void testShouldReturnOnlyPanelCategoriesThatContainPanelApps() {
-		_assertGetPanelCategories(
-			productMenuDisplayContext -> {
-				List<PanelCategory> childPanelCategories =
-					productMenuDisplayContext.getChildPanelCategories();
-
-				Assert.assertEquals(
-					childPanelCategories.toString(), 5,
-					childPanelCategories.size());
-
-				Mockito.verify(
-					_panelCategoryHelper
-				).getChildPanelCategories(
-					PanelCategoryKeys.APPLICATIONS_MENU, _themeDisplay
-				);
-
-				Mockito.verify(
-					_panelCategoryHelper, Mockito.times(3)
-				).getAllPanelApps(
-					ArgumentMatchers.matches("application-panel*")
-				);
-			},
-			false);
-	}
-
-	@Test
-	public void testShouldReturnOnlyRootPanelCategoriesWhenApplicationsMenuIsEnabled() {
+	public void testShouldReturnOnlyRootPanelCategories() {
 		_assertGetPanelCategories(
 			productMenuDisplayContext -> {
 				List<PanelCategory> childPanelCategories =
@@ -116,13 +89,11 @@ public class ProductMenuDisplayContextTest {
 				).getAllPanelApps(
 					ArgumentMatchers.matches("application-panel*")
 				);
-			},
-			true);
+			});
 	}
 
 	private void _assertGetPanelCategories(
-		Consumer<ProductMenuDisplayContext> consumer,
-		boolean enableApplicationsMenu) {
+		Consumer<ProductMenuDisplayContext> consumer) {
 
 		try (MockedStatic<ConfigurationProviderUtil>
 				configurationProviderUtilMockedStatic = Mockito.mockStatic(
@@ -130,23 +101,10 @@ public class ProductMenuDisplayContextTest {
 			MockedStatic<PortalUtil> portalUtilMockedStatic =
 				Mockito.mockStatic(PortalUtil.class)) {
 
-			configurationProviderUtilMockedStatic.when(
-				() -> ConfigurationProviderUtil.getCompanyConfiguration(
-					ArgumentMatchers.any(), ArgumentMatchers.anyLong())
-			).thenReturn(
-				_applicationsMenuInstanceConfiguration
-			);
-
 			portalUtilMockedStatic.when(
 				() -> PortalUtil.getHttpServletRequest(ArgumentMatchers.any())
 			).thenReturn(
 				_mockHttpServletRequest
-			);
-
-			Mockito.when(
-				_applicationsMenuInstanceConfiguration.enableApplicationsMenu()
-			).thenReturn(
-				enableApplicationsMenu
 			);
 
 			Mockito.when(
@@ -193,9 +151,6 @@ public class ProductMenuDisplayContextTest {
 		return panelCategory;
 	}
 
-	private final ApplicationsMenuInstanceConfiguration
-		_applicationsMenuInstanceConfiguration = Mockito.mock(
-			ApplicationsMenuInstanceConfiguration.class);
 	private final List<PanelCategory> _applicationsMenuPanelCategories =
 		Arrays.asList(
 			_mockPanelCategory("application-panel1"),

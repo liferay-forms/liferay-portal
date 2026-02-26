@@ -165,6 +165,7 @@ export interface IItemsActions {
 		| 'link'
 		| 'modal'
 		| 'modal-permissions'
+		| 'modal-workflow-transition'
 		| 'sidePanel'
 		| 'event';
 	type?: EItemActionsType | `${EItemActionsType}`;
@@ -237,6 +238,7 @@ export interface IDynamicCardLabelSchema extends IBaseCardLabelSchema {
 export type ICardLabelSchema = IStaticCardLabelSchema | IDynamicCardLabelSchema;
 
 export interface ICardSchema {
+	accessibleNameField?: string;
 	description: string;
 	image?: string;
 	labels?: ICardLabelSchema[];
@@ -255,6 +257,7 @@ export interface IListTitleRenderer {
 }
 
 export interface IListSchema {
+	accessibleNameField?: string;
 	description: string;
 	image?: string;
 	sticker?: string;

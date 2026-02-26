@@ -12,6 +12,7 @@ import com.liferay.exportimport.changeset.constants.ChangesetPortletKeys;
 import com.liferay.exportimport.configuration.ExportImportServiceConfiguration;
 import com.liferay.exportimport.constants.ExportImportConstants;
 import com.liferay.exportimport.controller.PortletExportController;
+import com.liferay.exportimport.internal.data.handler.BatchEnginePortletDataHandler;
 import com.liferay.exportimport.internal.lar.PermissionExporter;
 import com.liferay.exportimport.kernel.controller.ExportImportController;
 import com.liferay.exportimport.kernel.exception.ExportImportIOException;
@@ -33,6 +34,8 @@ import com.liferay.exportimport.kernel.lifecycle.constants.ExportImportLifecycle
 import com.liferay.exportimport.kernel.model.ExportImportConfiguration;
 import com.liferay.exportimport.lar.DeletionSystemEventExporter;
 import com.liferay.exportimport.portlet.data.handler.provider.PortletDataHandlerProvider;
+import com.liferay.exportimport.portlet.element.handler.PortletElementHandler;
+import com.liferay.exportimport.portlet.element.handler.PortletElementHandlerFactory;
 import com.liferay.exportimport.portlet.preferences.processor.Capability;
 import com.liferay.exportimport.portlet.preferences.processor.ExportImportPortletPreferencesProcessor;
 import com.liferay.exportimport.portlet.preferences.processor.ExportImportPortletPreferencesProcessorRegistryUtil;
@@ -527,45 +530,49 @@ public class PortletExportControllerImpl implements PortletExportController {
 
 		// Zip
 
-		Element element = parentElement.addElement("portlet");
+		PortletElementHandler portletElementHandler =
+			_portletElementHandlerFactory.create(
+				parentElement.addElement("portlet"));
 
-		element.addAttribute("display-name", portlet.getDisplayName());
-		element.addAttribute("portlet-id", portlet.getPortletId());
-		element.addAttribute("layout-id", String.valueOf(layoutId));
-		element.addAttribute("path", path);
-
-		StringBundler configurationOptionsSB = new StringBundler(6);
-
-		if (exportPortletSetup) {
-			configurationOptionsSB.append("setup");
-			configurationOptionsSB.append(StringPool.COMMA);
-		}
+		List<String> configurationPortletOptions = new ArrayList<>(3);
 
 		if (exportPortletArchivedSetups) {
-			configurationOptionsSB.append("archived-setups");
-			configurationOptionsSB.append(StringPool.COMMA);
+			configurationPortletOptions.add("archived-setups");
+		}
+
+		if (exportPortletSetup) {
+			configurationPortletOptions.add("setup");
 		}
 
 		if (exportPortletUserPreferences) {
-			configurationOptionsSB.append("user-preferences");
-			configurationOptionsSB.append(StringPool.COMMA);
+			configurationPortletOptions.add("user-preferences");
 		}
 
-		if (configurationOptionsSB.index() > 0) {
-			configurationOptionsSB.setIndex(configurationOptionsSB.index() - 1);
+		portletElementHandler.setConfigurationPortletOptions(
+			configurationPortletOptions.toArray(new String[0]));
+
+		portletElementHandler.setDisplayName(portlet.getDisplayName());
+		portletElementHandler.setLayoutId(layoutId);
+		portletElementHandler.setPath(path);
+		portletElementHandler.setPortletData(
+			exportPortletData || portletDataHandler.isHidden());
+		portletElementHandler.setSchemaVersion(
+			portletDataHandler.getSchemaVersion());
+		portletElementHandler.setSourcePortletId(portlet.getPortletId());
+
+		if ((portletDataHandler instanceof
+				BatchEnginePortletDataHandler batchEnginePortletDataHandler) &&
+			batchEnginePortletDataHandler.isMissingPortletSupported()) {
+
+			portletElementHandler.setMissingPortletSupported(true);
+			portletElementHandler.setPortletDataHandlerKey(
+				batchEnginePortletDataHandler.getKey());
+			portletElementHandler.setRank(
+				batchEnginePortletDataHandler.getRank());
 		}
-
-		element.addAttribute(
-			"portlet-configuration", configurationOptionsSB.toString());
-
-		element.addAttribute(
-			"portlet-data",
-			String.valueOf(exportPortletData || portletDataHandler.isHidden()));
-		element.addAttribute(
-			"schema-version", portletDataHandler.getSchemaVersion());
 
 		if (portletDataContext.isValidateExistingDataHandler()) {
-			element.addAttribute("validate-existing-data-handler", "true");
+			portletElementHandler.setValidateExistingDataHandler(true);
 		}
 
 		try {
@@ -1409,6 +1416,9 @@ public class PortletExportControllerImpl implements PortletExportController {
 	@Reference
 	private PortletDataHandlerStatusMessageSender
 		_portletDataHandlerStatusMessageSender;
+
+	@Reference
+	private PortletElementHandlerFactory _portletElementHandlerFactory;
 
 	@Reference
 	private PortletItemLocalService _portletItemLocalService;

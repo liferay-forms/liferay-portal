@@ -70,7 +70,7 @@ public class LayoutPageTemplateEntryLocalServiceUtil {
 			String externalReferenceCode, long userId, long groupId,
 			long layoutPageTemplateCollectionId,
 			String layoutPageTemplateEntryKey, long classNameId,
-			long classTypeId, String name, int type, long previewFileEntryId,
+			String classTypeKey, String name, int type, long previewFileEntryId,
 			boolean defaultTemplate, long layoutPrototypeId, long plid,
 			long masterLayoutPlid, int status,
 			com.liferay.portal.kernel.service.ServiceContext serviceContext)
@@ -79,7 +79,7 @@ public class LayoutPageTemplateEntryLocalServiceUtil {
 		return getService().addLayoutPageTemplateEntry(
 			externalReferenceCode, userId, groupId,
 			layoutPageTemplateCollectionId, layoutPageTemplateEntryKey,
-			classNameId, classTypeId, name, type, previewFileEntryId,
+			classNameId, classTypeKey, name, type, previewFileEntryId,
 			defaultTemplate, layoutPrototypeId, plid, masterLayoutPlid, status,
 			serviceContext);
 	}
@@ -88,7 +88,7 @@ public class LayoutPageTemplateEntryLocalServiceUtil {
 			String externalReferenceCode, long userId, long groupId,
 			long layoutPageTemplateCollectionId,
 			String layoutPageTemplateEntryKey, long classNameId,
-			long classTypeId, String name, int type, long masterLayoutPlid,
+			String classTypeKey, String name, int type, long masterLayoutPlid,
 			int status,
 			com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws PortalException {
@@ -96,7 +96,7 @@ public class LayoutPageTemplateEntryLocalServiceUtil {
 		return getService().addLayoutPageTemplateEntry(
 			externalReferenceCode, userId, groupId,
 			layoutPageTemplateCollectionId, layoutPageTemplateEntryKey,
-			classNameId, classTypeId, name, type, masterLayoutPlid, status,
+			classNameId, classTypeKey, name, type, masterLayoutPlid, status,
 			serviceContext);
 	}
 
@@ -294,6 +294,13 @@ public class LayoutPageTemplateEntryLocalServiceUtil {
 
 		return getService().fetchDefaultLayoutPageTemplateEntry(
 			groupId, classNameId, classTypeId);
+	}
+
+	public static LayoutPageTemplateEntry fetchDefaultLayoutPageTemplateEntry(
+		long groupId, long classNameId, String classTypeKey) {
+
+		return getService().fetchDefaultLayoutPageTemplateEntry(
+			groupId, classNameId, classTypeKey);
 	}
 
 	public static LayoutPageTemplateEntry fetchFirstLayoutPageTemplateEntry(
@@ -650,11 +657,11 @@ public class LayoutPageTemplateEntryLocalServiceUtil {
 
 	public static LayoutPageTemplateEntry updateLayoutPageTemplateEntry(
 			long userId, long layoutPageTemplateEntryId, long classNameId,
-			long classTypeId)
+			String classTypeKey)
 		throws PortalException {
 
 		return getService().updateLayoutPageTemplateEntry(
-			userId, layoutPageTemplateEntryId, classNameId, classTypeId);
+			userId, layoutPageTemplateEntryId, classNameId, classTypeKey);
 	}
 
 	public static LayoutPageTemplateEntry updateLayoutPageTemplateEntry(

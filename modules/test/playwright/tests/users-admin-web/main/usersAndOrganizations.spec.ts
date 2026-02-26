@@ -32,7 +32,6 @@ export const test = mergeTests(
 	dataApiHelpersTest,
 	featureFlagsTest({
 		'LPD-35443': {enabled: true},
-		'LPD-35914': {enabled: true},
 	}),
 	loginTest(),
 	usersAndOrganizationsPagesTest
@@ -1857,6 +1856,48 @@ test(
 		await editUserPage.saveButton.click();
 
 		await waitForAlert(page);
+	}
+);
+
+test(
+	'Allow uploading user profile image of any size when max file size is set to 0',
+	{tag: '@LPD-1799'},
+	async ({editUserPage, userSettingsPage, usersAndOrganizationsPage}) => {
+		await userSettingsPage.updateUserImageMaxFileSize(10);
+
+		await usersAndOrganizationsPage.goToUsers();
+
+		await (
+			await usersAndOrganizationsPage.usersTableRowLink('test')
+		).click();
+
+		await editUserPage.changeImageButton.click();
+
+		await expect(editUserPage.uploadImageSelectImageButton).toBeVisible();
+
+		await expect(
+			editUserPage.uploadImageFrame.getByText(
+				'Upload images no larger than 10 B.'
+			)
+		).toBeVisible();
+
+		await userSettingsPage.updateUserImageMaxFileSize(0);
+
+		await usersAndOrganizationsPage.goToUsers();
+
+		await (
+			await usersAndOrganizationsPage.usersTableRowLink('test')
+		).click();
+
+		await editUserPage.changeImageButton.click();
+
+		await expect(editUserPage.uploadImageSelectImageButton).toBeVisible();
+
+		await expect(
+			editUserPage.uploadImageFrame.getByText(
+				'Upload images no larger than 0 B.'
+			)
+		).not.toBeVisible();
 	}
 );
 

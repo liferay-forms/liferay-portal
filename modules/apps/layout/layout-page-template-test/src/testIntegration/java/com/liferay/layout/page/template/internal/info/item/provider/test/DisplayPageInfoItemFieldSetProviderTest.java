@@ -45,6 +45,7 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -53,6 +54,7 @@ import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.junit.After;
@@ -101,8 +103,8 @@ public class DisplayPageInfoItemFieldSetProviderTest {
 		_layoutPageTemplateEntry =
 			DisplayPageTemplateTestUtil.addDisplayPageTemplate(
 				_group.getGroupId(), _classNameId,
-				_journalArticle.getDDMStructureId(), true,
-				WorkflowConstants.STATUS_APPROVED);
+				_journalArticle.getDDMStructureKey(), true, null,
+				"layoutPageTemplateEntry", WorkflowConstants.STATUS_APPROVED);
 
 		AssetDisplayPageEntry assetDisplayPageEntry =
 			_assetDisplayPageEntryLocalService.addAssetDisplayPageEntry(
@@ -120,6 +122,32 @@ public class DisplayPageInfoItemFieldSetProviderTest {
 	@After
 	public void tearDown() throws Exception {
 		ServiceContextThreadLocal.popServiceContext();
+	}
+
+	@Test
+	public void testGetInfoFieldSet() {
+		InfoFieldSet infoFieldSet =
+			_displayPageInfoItemFieldSetProvider.getInfoFieldSet(
+				JournalArticle.class.getName(),
+				String.valueOf(_journalArticle.getDDMStructureId()),
+				"LayoutPageTemplateEntry", _group.getGroupId());
+
+		List<InfoField<?>> infoFields = infoFieldSet.getAllInfoFields();
+
+		Assert.assertEquals(infoFields.toString(), 2, infoFields.size());
+
+		List<InfoField<?>> sortedInfoFields = ListUtil.sort(
+			infoFields, Comparator.comparing(InfoField::getName));
+
+		_assertInfoField(
+			"LayoutPageTemplateEntry_displayPageURL", sortedInfoFields.get(0),
+			"displayPageURL", "LayoutPageTemplateEntry_displayPageURL");
+		_assertInfoField(
+			"LayoutPageTemplateEntry__ERC__" +
+				_layoutPageTemplateEntry.getExternalReferenceCode(),
+			sortedInfoFields.get(1), _layoutPageTemplateEntry.getName(),
+			"LayoutPageTemplateEntry_" +
+				_layoutPageTemplateEntry.getLayoutPageTemplateEntryId());
 	}
 
 	@Test
@@ -165,7 +193,7 @@ public class DisplayPageInfoItemFieldSetProviderTest {
 		DisplayPageTemplateTestUtil.addDisplayPageTemplate(
 			_group.getGroupId(),
 			_portal.getClassNameId(JournalArticle.class.getName()),
-			_journalArticle.getDDMStructureId(), false,
+			_journalArticle.getDDMStructureKey(), false,
 			WorkflowConstants.STATUS_DRAFT);
 
 		InfoItemReference infoItemReference = new InfoItemReference(
@@ -193,15 +221,23 @@ public class DisplayPageInfoItemFieldSetProviderTest {
 		Assert.assertEquals(infoFields.toString(), 1, infoFields.size());
 	}
 
+	private void _assertInfoField(
+		String externalUniqueId, InfoField infoField, String name,
+		String uniqueId) {
+
+		Assert.assertEquals(externalUniqueId, infoField.getExternalUniqueId());
+		Assert.assertEquals(name, infoField.getName());
+		Assert.assertEquals(uniqueId, infoField.getUniqueId());
+	}
+
 	private void _assertInfoFieldValue(
-			InfoFieldValue<Object> infoFieldValue, String name, String uniqueId,
+			String externalUniqueId, InfoFieldValue<Object> infoFieldValue,
+			String name, String uniqueId,
 			UnsafeConsumer<Object, Exception> unsafeConsumer)
 		throws Exception {
 
-		InfoField infoField = infoFieldValue.getInfoField();
-
-		Assert.assertEquals(name, infoField.getName());
-		Assert.assertEquals(uniqueId, infoField.getUniqueId());
+		_assertInfoField(
+			externalUniqueId, infoFieldValue.getInfoField(), name, uniqueId);
 
 		unsafeConsumer.accept(
 			infoFieldValue.getValue(LocaleUtil.getSiteDefault()));
@@ -224,15 +260,27 @@ public class DisplayPageInfoItemFieldSetProviderTest {
 		Assert.assertEquals(
 			infoFieldValues.toString(), 3, infoFieldValues.size());
 
+		List<InfoFieldValue<Object>> sortedInfoFieldValues = ListUtil.sort(
+			infoFieldValues,
+			Comparator.comparing(
+				infoFieldValue -> {
+					InfoField infoField = infoFieldValue.getInfoField();
+
+					return infoField.getName();
+				}));
+
 		_assertInfoFieldValue(
-			infoFieldValues.get(0), "displayPageURL",
+			JournalArticle.class.getSimpleName() + "_displayPageURL",
+			sortedInfoFieldValues.get(0), "displayPageURL",
 			JournalArticle.class.getSimpleName() + "_displayPageURL",
 			object -> Assert.assertEquals(
 				_assetDisplayPageFriendlyURLProvider.getFriendlyURL(
 					infoItemReference, _journalArticle, _themeDisplay),
 				object));
 		_assertInfoFieldValue(
-			infoFieldValues.get(1), _layoutPageTemplateEntry.getName(),
+			LayoutPageTemplateEntry.class.getSimpleName() + "__ERC__" +
+				_layoutPageTemplateEntry.getExternalReferenceCode(),
+			sortedInfoFieldValues.get(1), _layoutPageTemplateEntry.getName(),
 			LayoutPageTemplateEntry.class.getSimpleName() +
 				StringPool.UNDERLINE +
 					_layoutPageTemplateEntry.getLayoutPageTemplateEntryId(),
@@ -255,7 +303,9 @@ public class DisplayPageInfoItemFieldSetProviderTest {
 					layoutPageTemplateEntryWebURL.getURL());
 			});
 		_assertInfoFieldValue(
-			infoFieldValues.get(2), _layoutPageTemplateEntry.getName(),
+			LayoutPageTemplateEntry.class.getSimpleName() + "__ERC__" +
+				_layoutPageTemplateEntry.getExternalReferenceCode(),
+			sortedInfoFieldValues.get(2), _layoutPageTemplateEntry.getName(),
 			LayoutPageTemplateEntry.class.getSimpleName() +
 				StringPool.UNDERLINE +
 					_layoutPageTemplateEntry.getLayoutPageTemplateEntryKey(),

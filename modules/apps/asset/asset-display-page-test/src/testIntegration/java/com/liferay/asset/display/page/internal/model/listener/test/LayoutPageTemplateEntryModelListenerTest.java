@@ -101,7 +101,7 @@ public class LayoutPageTemplateEntryModelListenerTest {
 		return DisplayPageTemplateTestUtil.addDisplayPageTemplate(
 			group.getGroupId(),
 			_portal.getClassNameId(JournalArticle.class.getName()),
-			journalArticle.getDDMStructureId(), true,
+			journalArticle.getDDMStructureKey(), true,
 			WorkflowConstants.STATUS_APPROVED);
 	}
 

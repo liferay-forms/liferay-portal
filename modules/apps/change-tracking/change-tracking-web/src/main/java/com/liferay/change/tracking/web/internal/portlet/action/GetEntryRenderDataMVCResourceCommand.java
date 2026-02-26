@@ -623,7 +623,7 @@ public class GetEntryRenderDataMVCResourceCommand
 			jsonObject.put("rightTitle", rightTitle);
 		}
 
-		if (ctDisplayRenderer.showPreviewDiff() && (leftPreview != null) &&
+		if (ctDisplayRenderer.isShowPreviewDiff() && (leftPreview != null) &&
 			(rightPreview != null)) {
 
 			jsonObject.put(
@@ -654,7 +654,7 @@ public class GetEntryRenderDataMVCResourceCommand
 			}
 		}
 
-		if (ctDisplayRenderer.showPreviewDiff() &&
+		if (ctDisplayRenderer.isShowPreviewDiff() &&
 			(leftLocalizedPreviewJSONObject != null) &&
 			(rightLocalizedPreviewJSONObject != null)) {
 

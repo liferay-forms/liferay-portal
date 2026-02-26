@@ -4,11 +4,10 @@
  */
 
 import {useEffect, useMemo, useState} from 'react';
-import {useOutletContext} from 'react-router-dom';
 
 import Page from '../../../../components/Page';
-import {useMarketplaceContext} from '../../../../context/MarketplaceContext';
 import {OrderTypes, OrderWorkflowStatusCode} from '../../../../enums/Order';
+import {useCustomerDashboardOutletContext} from '../../CustomerDashboardOutlet';
 import PurchasedSolutionsTable from '../../components/PurchasedSolutionsTable';
 import {usePurchasedOrders} from '../../usePurchasedOrders';
 
@@ -19,20 +18,16 @@ const Solutions = () => {
 	const [refreshInterval, setRefreshInterval] = useState(
 		DEFAULT_REFRESH_INTERVAL
 	);
-	const {channel} = useMarketplaceContext();
-	const {selectedAccount} = useOutletContext<any>();
-
+	const {selectedAccount} = useCustomerDashboardOutletContext();
 	const {
 		data: placedOrders = {items: []},
 		error,
 		isLoading,
 	} = usePurchasedOrders({
 		accountId: selectedAccount?.id,
-		channelId: channel?.id,
 		orderTypeExternalReferenceCodes: [
 			OrderTypes.SOLUTIONS7,
 			OrderTypes.SOLUTIONS30,
-			OrderTypes.ADDONS,
 		],
 		page: 1,
 		pageSize: 20,

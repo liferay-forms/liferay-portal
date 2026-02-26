@@ -18,6 +18,7 @@ import {
 	deleteAssetEntriesBulkAction,
 	deleteItemAction,
 } from '@liferay/site-cms-site-initializer';
+import {sub} from 'frontend-js-web';
 import React from 'react';
 
 import {openCMPModal} from '../../utils/openCMPModal';
@@ -99,10 +100,22 @@ const WORKFLOW_TASK_MODALS: Record<
 	),
 };
 
+const styleActions = (actions: any[]): any[] =>
+	actions.map((action) => {
+		if (action?.data?.id === 'delete') {
+			action.className = 'text-danger';
+		}
+
+		if (action.items) {
+			action.items = styleActions(action.items);
+		}
+
+		return action;
+	});
+
 export default function TasksFDSPropsTransformer({
 	additionalProps,
 	creationMenu,
-	currentURL,
 	id,
 	itemsActions = [],
 	views,
@@ -111,7 +124,6 @@ export default function TasksFDSPropsTransformer({
 	additionalProps: any;
 	apiURL: string;
 	creationMenu: any;
-	currentURL: string;
 	id: string;
 	itemsActions?: any[];
 	otherProps: any;
@@ -126,7 +138,8 @@ export default function TasksFDSPropsTransformer({
 	});
 
 	const kanbanView: IView = {
-		component: (props: any) => KanbanView({...props, currentURL}),
+		component: (props: any) =>
+			KanbanView({...props, projectId: additionalProps.projectId}),
 		default: false,
 		initialPaginationDelta: FDS_PAGINATION_DELTA_ALL,
 		label: Liferay.Language.get('kanban'),
@@ -162,7 +175,18 @@ export default function TasksFDSPropsTransformer({
 							_CLASS_NAME_KALEO_TASK_INSTANCE_TOKEN
 						) {
 							if (itemData.embedded?.assigneePerson) {
-								return itemData.embedded.assigneePerson.name;
+								return (
+									<AssigneeRenderer
+										image={
+											itemData.embedded.assigneePerson
+												.image
+										}
+										name={
+											itemData.embedded.assigneePerson
+												.name
+										}
+									/>
+								);
 							}
 
 							return itemData.embedded?.assigneeRoles
@@ -273,17 +297,9 @@ export default function TasksFDSPropsTransformer({
 				} as IInternalRenderer,
 			],
 		},
+		hideManagementBarInEmptyState: true,
 		id,
-		itemsActions: itemsActions.map((action) => {
-			if (action?.data?.id === 'delete') {
-				return {
-					...action,
-					className: 'text-danger',
-				};
-			}
-
-			return action;
-		}),
+		itemsActions: styleActions(itemsActions),
 		async onActionDropdownItemClick({
 			action,
 			itemData,
@@ -294,7 +310,14 @@ export default function TasksFDSPropsTransformer({
 			loadData: () => Promise<void>;
 		}) {
 			if (action?.data?.id === 'delete') {
-				await deleteItemAction(itemData, loadData);
+				await deleteItemAction(
+					sub(
+						Liferay.Language.get('delete-task-confirmation-body'),
+						itemData.embedded.title
+					),
+					itemData,
+					loadData
+				);
 			}
 			else if (action?.data?.id === 'assign-to') {
 				await openCMPModal({

@@ -8,13 +8,11 @@ package com.liferay.flags.taglib.servlet.taglib.react;
 import com.liferay.flags.taglib.internal.servlet.ServletContextUtil;
 import com.liferay.flags.taglib.servlet.taglib.util.FlagsTagUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.AggregateResourceBundle;
 import com.liferay.portal.kernel.util.Constants;
@@ -178,7 +176,28 @@ public class FlagsTag extends IncludeTag {
 						WebKeys.THEME_DISPLAY);
 
 				return HashMapBuilder.<String, Object>put(
-					"baseData", _getDataJSONObject(themeDisplay)
+					"baseData",
+					() -> {
+						String namespace = PortalUtil.getPortletNamespace(
+							PortletKeys.FLAGS);
+
+						String contentURL = _contentURL;
+
+						if (Validator.isNull(contentURL)) {
+							contentURL = FlagsTagUtil.getCurrentURL(
+								getRequest());
+						}
+
+						return JSONUtil.put(
+							namespace + "className", _className
+						).put(
+							namespace + "classPK", _classPK
+						).put(
+							namespace + "contentTitle", _contentTitle
+						).put(
+							namespace + "contentURL", contentURL
+						);
+					}
 				).put(
 					"captchaURI", FlagsTagUtil.getCaptchaURI(httpServletRequest)
 				).put(
@@ -224,39 +243,6 @@ public class FlagsTag extends IncludeTag {
 				).build();
 			}
 		).build();
-	}
-
-	private JSONObject _getDataJSONObject(ThemeDisplay themeDisplay) {
-		String namespace = PortalUtil.getPortletNamespace(PortletKeys.FLAGS);
-
-		String contentURL = _contentURL;
-
-		if (Validator.isNull(contentURL)) {
-			contentURL = FlagsTagUtil.getCurrentURL(getRequest());
-		}
-
-		return JSONUtil.put(
-			namespace + "className", _className
-		).put(
-			namespace + "classPK", _classPK
-		).put(
-			namespace + "contentTitle", _contentTitle
-		).put(
-			namespace + "contentURL", contentURL
-		).put(
-			namespace + "reportedUserId", _reportedUserId
-		).put(
-			namespace + "reporterEmailAddress",
-			() -> {
-				if (!themeDisplay.isSignedIn()) {
-					return null;
-				}
-
-				User user = themeDisplay.getUser();
-
-				return user.getEmailAddress();
-			}
-		);
 	}
 
 	private String _getMessage() {

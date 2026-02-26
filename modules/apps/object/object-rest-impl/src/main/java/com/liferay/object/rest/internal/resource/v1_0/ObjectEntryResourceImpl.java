@@ -528,6 +528,11 @@ public class ObjectEntryResourceImpl
 			}
 
 			@Override
+			public String getKey() {
+				return _objectDefinition.getExternalReferenceCode();
+			}
+
+			@Override
 			public String getLabelLanguageKey() {
 				return _getLabelLanguageKey(_objectDefinition);
 			}
@@ -569,10 +574,6 @@ public class ObjectEntryResourceImpl
 				return references;
 			}
 
-			public String getResourceClassName() {
-				return _objectDefinition.getClassName();
-			}
-
 			@Override
 			public Scope getScope() {
 				if (StringUtil.equalsIgnoreCase(
@@ -600,8 +601,8 @@ public class ObjectEntryResourceImpl
 			}
 
 			@Override
-			public boolean isStagingSupported() {
-				return false;
+			public boolean isMissingPortletSupported() {
+				return true;
 			}
 
 		};

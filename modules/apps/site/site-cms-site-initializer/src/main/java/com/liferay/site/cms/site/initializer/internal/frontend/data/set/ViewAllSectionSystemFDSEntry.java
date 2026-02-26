@@ -38,8 +38,10 @@ public class ViewAllSectionSystemFDSEntry implements SystemFDSEntry {
 		HttpServletRequest httpServletRequest) {
 
 		String filterString = _sectionDisplayContextHelper.appendStatus(
-			"cmsKind eq 'object' and (cmsSection eq 'contents' or cmsSection " +
-				"eq 'files')");
+			_sectionDisplayContextHelper.appendGroupIds(
+				"cmsKind eq 'object' and (cmsSection eq 'contents' or " +
+					"cmsSection eq 'files')",
+				httpServletRequest));
 
 		if (httpServletRequest.getParameter("q") != null) {
 			return HttpComponentsUtil.addParameters(
@@ -60,6 +62,11 @@ public class ViewAllSectionSystemFDSEntry implements SystemFDSEntry {
 	@Override
 	public String getDescription() {
 		return "CMS All Section";
+	}
+
+	@Override
+	public boolean getHideManagementBarInEmptyState() {
+		return true;
 	}
 
 	@Override

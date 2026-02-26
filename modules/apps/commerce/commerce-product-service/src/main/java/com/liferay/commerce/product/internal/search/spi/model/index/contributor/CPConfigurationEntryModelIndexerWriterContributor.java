@@ -11,7 +11,6 @@ import com.liferay.portal.search.batch.BatchIndexingActionable;
 import com.liferay.portal.search.batch.DynamicQueryBatchIndexingActionableFactory;
 import com.liferay.portal.search.spi.model.index.contributor.ModelIndexerWriterContributor;
 import com.liferay.portal.search.spi.model.index.contributor.helper.IndexerWriterMode;
-import com.liferay.portal.search.spi.model.index.contributor.helper.ModelIndexerWriterDocumentHelper;
 
 /**
  * @author Andrea Sbarra
@@ -30,28 +29,11 @@ public class CPConfigurationEntryModelIndexerWriterContributor
 	}
 
 	@Override
-	public void customize(
-		BatchIndexingActionable batchIndexingActionable,
-		ModelIndexerWriterDocumentHelper modelIndexerWriterDocumentHelper) {
-
-		batchIndexingActionable.setPerformActionMethod(
-			(CPConfigurationEntry cpConfigurationEntry) ->
-				batchIndexingActionable.addDocument(
-					modelIndexerWriterDocumentHelper.getDocument(
-						cpConfigurationEntry)));
-	}
-
-	@Override
 	public BatchIndexingActionable getBatchIndexingActionable() {
 		return _dynamicQueryBatchIndexingActionableFactory.
 			getBatchIndexingActionable(
 				_cpConfigurationEntryLocalService.
 					getIndexableActionableDynamicQuery());
-	}
-
-	@Override
-	public long getCompanyId(CPConfigurationEntry cpConfigurationEntry) {
-		return cpConfigurationEntry.getCompanyId();
 	}
 
 	@Override

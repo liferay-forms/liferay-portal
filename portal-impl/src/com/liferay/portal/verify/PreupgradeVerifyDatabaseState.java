@@ -24,7 +24,6 @@ import com.liferay.portal.upgrade.PortalUpgradeProcess;
 import java.sql.Connection;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -150,15 +149,16 @@ public class PreupgradeVerifyDatabaseState extends PreupgradeVerifyProcess {
 		}
 
 		Set<String> targetVersionNewTableNames =
-			DBResourceUtil.getModuleTableNames(connection);
+			DBResourceUtil.getModuleTableNames();
 
-		targetVersionNewTableNames.addAll(
-			DBResourceUtil.getPortalTableNames(connection));
+		targetVersionNewTableNames.addAll(DBResourceUtil.getPortalTableNames());
 
 		targetVersionNewTableNames.removeAll(tableNames);
 
-		Set<String> previousUpgradeStaleTableNames = new HashSet<>(
-			databaseTableNames);
+		Set<String> previousUpgradeStaleTableNames = new TreeSet<>(
+			String.CASE_INSENSITIVE_ORDER);
+
+		previousUpgradeStaleTableNames.addAll(databaseTableNames);
 
 		previousUpgradeStaleTableNames.retainAll(targetVersionNewTableNames);
 

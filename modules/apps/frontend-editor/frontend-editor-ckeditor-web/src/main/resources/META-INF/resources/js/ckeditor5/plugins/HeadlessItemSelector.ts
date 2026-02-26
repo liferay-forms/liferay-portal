@@ -5,8 +5,14 @@
 
 import {Command, Plugin} from '@ckeditor/ckeditor5-core/dist/index.js';
 import {ButtonView} from '@ckeditor/ckeditor5-ui/dist/index.js';
-import {IFrontendDataSetProps} from '@liferay/frontend-data-set-web';
+import ClayIcon from '@clayui/icon';
+import {
+	EConfigInURLBehavior,
+	IFrontendDataSetProps,
+} from '@liferay/frontend-data-set-web';
 import {openItemSelectorModal} from '@liferay/frontend-js-item-selector-web';
+import {mimeTypeUtils} from 'frontend-js-web';
+import React from 'react';
 
 import getIcon from '../utils/getIcon';
 
@@ -23,6 +29,7 @@ const ALLOWED_IMAGE_FILE_EXTENSIONS = [
 ];
 
 const CMS_FILE_ITEM_SELECTOR_CONFIG = {
+	createItemURL: `${location.origin}/web/cms/files?com.liferay.site.cms.site.initializer-filesSection_fdsConfig=(view:gallery)`,
 	items: [],
 	locator: {
 		id: 'embedded.id',
@@ -38,6 +45,7 @@ const CMS_FILE_SEARCH_API_URL = `${location.origin}/o/search/v1.0/search?${[
 ].join('&')}`;
 
 const FDS_PROPS: IFrontendDataSetProps = {
+	configInURLBehavior: EConfigInURLBehavior.OFF,
 	filters: [
 		{
 			apiURL: '/o/headless-asset-library/v1.0/asset-libraries',
@@ -73,11 +81,11 @@ const FDS_PROPS: IFrontendDataSetProps = {
 				item: {
 					embedded:
 						| {coverImage: {link: {href: string}}}
-						| {file: {thumbnailURL: string}};
+						| {file: {mimeType: string; thumbnailURL: string}};
 				};
 				props: object;
 			}) => {
-				const stickerProps = {
+				const stickerConfig = {
 					stickerProps: {
 						className: 'file-icon-color-5',
 						displayType: 'unstyled',
@@ -85,16 +93,29 @@ const FDS_PROPS: IFrontendDataSetProps = {
 				};
 
 				if ('file' in item.embedded) {
+					const mimeType = item.embedded?.file?.mimeType || '';
+
 					return {
 						...props,
 						imgProps: {src: item.embedded.file.thumbnailURL},
-						...stickerProps,
+						stickerProps: {
+							className:
+								mimeTypeUtils.getClassNameFromMimeType(
+									mimeType
+								),
+							content: React.createElement(ClayIcon, {
+								symbol: mimeTypeUtils.getIconFromMimeType(
+									mimeType
+								),
+							}),
+							displayType: 'unstyled',
+						},
 					};
 				}
 
 				return {
 					...props,
-					...stickerProps,
+					...stickerConfig,
 				};
 			},
 

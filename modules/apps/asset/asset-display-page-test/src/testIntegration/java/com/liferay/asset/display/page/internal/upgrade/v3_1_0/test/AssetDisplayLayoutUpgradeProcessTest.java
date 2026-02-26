@@ -73,7 +73,7 @@ public class AssetDisplayLayoutUpgradeProcessTest
 			_group.getGroupId(),
 			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID);
 
-		_addLayoutPageTemplateEntry(journalArticle.getDDMStructureId());
+		_addLayoutPageTemplateEntry(journalArticle.getDDMStructureKey());
 
 		_addAssetDisplayPageEntry(
 			journalArticle.getResourcePrimKey(), 0,
@@ -90,7 +90,7 @@ public class AssetDisplayLayoutUpgradeProcessTest
 			_group.getGroupId(),
 			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID);
 
-		_addLayoutPageTemplateEntry(journalArticle.getDDMStructureId());
+		_addLayoutPageTemplateEntry(journalArticle.getDDMStructureKey());
 
 		_addAssetDisplayPageEntry(
 			journalArticle.getResourcePrimKey(), 0,
@@ -108,7 +108,7 @@ public class AssetDisplayLayoutUpgradeProcessTest
 			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID);
 
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
-			_addLayoutPageTemplateEntry(journalArticle.getDDMStructureId());
+			_addLayoutPageTemplateEntry(journalArticle.getDDMStructureKey());
 
 		_addAssetDisplayPageEntry(
 			journalArticle.getResourcePrimKey(),
@@ -132,7 +132,7 @@ public class AssetDisplayLayoutUpgradeProcessTest
 			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID);
 
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
-			_addLayoutPageTemplateEntry(journalArticle.getDDMStructureId());
+			_addLayoutPageTemplateEntry(journalArticle.getDDMStructureKey());
 
 		_addAssetDisplayPageEntry(
 			journalArticle.getResourcePrimKey(),
@@ -153,7 +153,7 @@ public class AssetDisplayLayoutUpgradeProcessTest
 			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID);
 
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
-			_addLayoutPageTemplateEntry(journalArticle.getDDMStructureId());
+			_addLayoutPageTemplateEntry(journalArticle.getDDMStructureKey());
 
 		return _addAssetDisplayPageEntry(
 			journalArticle.getResourcePrimKey(),
@@ -207,13 +207,13 @@ public class AssetDisplayLayoutUpgradeProcessTest
 	}
 
 	private LayoutPageTemplateEntry _addLayoutPageTemplateEntry(
-			long ddmStructureId)
+			String ddmStructureKey)
 		throws Exception {
 
 		return DisplayPageTemplateTestUtil.addDisplayPageTemplate(
 			_group.getGroupId(),
 			_portal.getClassNameId(JournalArticle.class.getName()),
-			ddmStructureId, false, WorkflowConstants.STATUS_APPROVED);
+			ddmStructureKey, false, WorkflowConstants.STATUS_APPROVED);
 	}
 
 	private void _assertAssetDisplayPageEntry(long classPK, long plid) {

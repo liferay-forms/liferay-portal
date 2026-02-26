@@ -1,4 +1,6 @@
 {
+	"accountEntryRestricted": true,
+	"accountEntryRestrictedObjectFieldName": "r_accountToAIHubAgentDefinitions_accountEntryId",
 	"className": "com.liferay.object.model.ObjectDefinition#P8M2",
 	"enableFormContainer": false,
 	"enableIndexSearch": true,
@@ -42,6 +44,7 @@
 			],
 			"readOnly": "false",
 			"readOnlyConditionExpression": "",
+			"required": true,
 			"system": true,
 			"type": "String"
 		},
@@ -59,23 +62,7 @@
 			"objectFieldSettings": [
 			],
 			"readOnly": "false",
-			"system": true,
-			"type": "String"
-		},
-		{
-			"DBType": "String",
-			"businessType": "Text",
-			"defaultValue": "null",
-			"externalReferenceCode": "NAME",
-			"indexed": true,
-			"indexedLanguageId": "en_US",
-			"label": {
-				"en_US": "Name"
-			},
-			"name": "name",
-			"objectFieldSettings": [
-			],
-			"readOnly": "false",
+			"required": true,
 			"system": true,
 			"type": "String"
 		},
@@ -93,6 +80,7 @@
 			"objectFieldSettings": [
 			],
 			"readOnly": "false",
+			"required": true,
 			"system": true,
 			"type": "String"
 		},
@@ -128,8 +116,38 @@
 			"objectFieldSettings": [
 			],
 			"readOnly": "false",
+			"required": true,
 			"system": true,
 			"type": "String"
+		},
+		{
+			"DBType": "Long",
+			"businessType": "Relationship",
+			"defaultValue": "null",
+			"externalReferenceCode": "RELATIONSHIP",
+			"indexed": true,
+			"indexedLanguageId": "en_US",
+			"label": {
+				"en_US": "Account to Agent Definitions"
+			},
+			"name": "r_accountToAIHubAgentDefinitions_accountEntryId",
+			"objectDefinitionExternalReferenceCode1": "L_ACCOUNT",
+			"objectFieldSettings": [
+				{
+					"name": "objectDefinition1ShortName",
+					"value": "AccountEntry"
+				},
+				{
+					"name": "objectRelationshipERCObjectFieldName",
+					"value": "r_accountToAIHubAgentDefinitions_accountEntryERC"
+				}
+			],
+			"objectRelationshipExternalReferenceCode": "L_ACCOUNT_TO_L_AI_HUB_AGENT_DEFINITIONS",
+			"readOnly": "false",
+			"relationshipType": "oneToMany",
+			"required": true,
+			"system": true,
+			"type": "Long"
 		}
 	],
 	"objectFolderExternalReferenceCode": "default",

@@ -28,9 +28,21 @@ public class LayoutPageTemplateEntryModelListenerTest
 	public void testOnBeforeCreate() throws Exception {
 		super.testOnBeforeCreate();
 
+		_testOnBeforeCreate(
+			modifiableSystemObjectDefinition1ClassNameId,
+			modifiableSystemObjectDefinition2ClassNameId);
+		_testOnBeforeCreate(
+			objectDefinition1ClassNameId, objectDefinition2ClassNameId);
+	}
+
+	private void _testOnBeforeCreate(
+			long objectDefinition1ClassNameId,
+			long objectDefinition2ClassNameId)
+		throws Exception {
+
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
 			DisplayPageTemplateTestUtil.addDisplayPageTemplate(
-				group.getGroupId(), objectDefinition1ClassNameId, 0, false,
+				group.getGroupId(), objectDefinition1ClassNameId, null, false,
 				WorkflowConstants.STATUS_APPROVED);
 
 		Assert.assertEquals(

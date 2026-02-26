@@ -10,7 +10,6 @@ import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.portal.search.batch.BatchIndexingActionable;
 import com.liferay.portal.search.batch.DynamicQueryBatchIndexingActionableFactory;
 import com.liferay.portal.search.spi.model.index.contributor.ModelIndexerWriterContributor;
-import com.liferay.portal.search.spi.model.index.contributor.helper.ModelIndexerWriterDocumentHelper;
 
 /**
  * @author Rafael Praxedes
@@ -29,25 +28,10 @@ public class DDMTemplateModelIndexerWriterContributor
 	}
 
 	@Override
-	public void customize(
-		BatchIndexingActionable batchIndexingActionable,
-		ModelIndexerWriterDocumentHelper modelIndexerWriterDocumentHelper) {
-
-		batchIndexingActionable.setPerformActionMethod(
-			(DDMTemplate ddmTemplate) -> batchIndexingActionable.addDocument(
-				modelIndexerWriterDocumentHelper.getDocument(ddmTemplate)));
-	}
-
-	@Override
 	public BatchIndexingActionable getBatchIndexingActionable() {
 		return _dynamicQueryBatchIndexingActionableFactory.
 			getBatchIndexingActionable(
 				_ddmTemplateLocalService.getIndexableActionableDynamicQuery());
-	}
-
-	@Override
-	public long getCompanyId(DDMTemplate ddmTemplate) {
-		return ddmTemplate.getCompanyId();
 	}
 
 	private final DDMTemplateLocalService _ddmTemplateLocalService;

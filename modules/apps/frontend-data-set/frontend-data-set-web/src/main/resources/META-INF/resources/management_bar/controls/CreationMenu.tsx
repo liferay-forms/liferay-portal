@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
+import ClayButton from '@clayui/button';
 import ClayDropDown from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
 import {LinkOrButton} from '@clayui/shared';
@@ -35,27 +35,34 @@ const DropdownTrigger = React.forwardRef(
 					displayType={inEmptyState ? 'secondary' : 'primary'}
 					ref={ref}
 				>
-					<span className="inline-item-before">
+					<span className="inline-item inline-item-before">
 						{Liferay.Language.get('new')}
 					</span>
 
-					<span className="d-inline-flex inline-item-after">
-						<ClayIcon symbol="caret-bottom" />
-					</span>
+					<ClayIcon
+						className="inline-item inline-item-after"
+						symbol="caret-bottom"
+					/>
 				</ClayButton>
 			);
 		}
 		else {
 			return (
-				<ClayButtonWithIcon
+				<ClayButton
 					{...otherProps}
 					aria-label={Liferay.Language.get('new')}
 					className="nav-btn nav-btn-monospaced"
 					data-testid="fdsCreationActionButton"
 					ref={ref}
-					symbol="plus"
 					title={Liferay.Language.get('new')}
-				/>
+				>
+					<ClayIcon className="inline-item ml-2 mr-2" symbol="plus" />
+
+					<ClayIcon
+						className="inline-item mr-2"
+						symbol="caret-bottom"
+					/>
+				</ClayButton>
 			);
 		}
 	}

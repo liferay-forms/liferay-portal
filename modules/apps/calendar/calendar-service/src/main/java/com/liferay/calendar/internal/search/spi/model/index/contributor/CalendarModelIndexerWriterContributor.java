@@ -11,7 +11,6 @@ import com.liferay.calendar.service.CalendarLocalService;
 import com.liferay.portal.search.batch.BatchIndexingActionable;
 import com.liferay.portal.search.batch.DynamicQueryBatchIndexingActionableFactory;
 import com.liferay.portal.search.spi.model.index.contributor.ModelIndexerWriterContributor;
-import com.liferay.portal.search.spi.model.index.contributor.helper.ModelIndexerWriterDocumentHelper;
 
 /**
  * @author Michael C. Han
@@ -32,25 +31,10 @@ public class CalendarModelIndexerWriterContributor
 	}
 
 	@Override
-	public void customize(
-		BatchIndexingActionable batchIndexingActionable,
-		ModelIndexerWriterDocumentHelper modelIndexerWriterDocumentHelper) {
-
-		batchIndexingActionable.setPerformActionMethod(
-			(Calendar calendar) -> batchIndexingActionable.addDocument(
-				modelIndexerWriterDocumentHelper.getDocument(calendar)));
-	}
-
-	@Override
 	public BatchIndexingActionable getBatchIndexingActionable() {
 		return _dynamicQueryBatchIndexingActionableFactory.
 			getBatchIndexingActionable(
 				_calendarLocalService.getIndexableActionableDynamicQuery());
-	}
-
-	@Override
-	public long getCompanyId(Calendar calendar) {
-		return calendar.getCompanyId();
 	}
 
 	@Override

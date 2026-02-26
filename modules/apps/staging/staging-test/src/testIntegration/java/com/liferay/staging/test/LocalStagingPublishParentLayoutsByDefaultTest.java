@@ -35,7 +35,6 @@ import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.portlet.MockPortletRequest;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.Sync;
-import com.liferay.portal.kernel.test.util.FeatureFlagTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.FileUtil;
@@ -45,7 +44,6 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.test.rule.FeatureFlag;
-import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -53,7 +51,6 @@ import com.liferay.staging.configuration.StagingConfiguration;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -64,12 +61,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 /**
  * @author Daniel Szimko
  */
-@FeatureFlags(
-	featureFlags = {
-		@FeatureFlag("LPD-35443"), @FeatureFlag("LPD-35914"),
-		@FeatureFlag("LPS-199086")
-	}
-)
+@FeatureFlag("LPS-199086")
 @RunWith(Arquillian.class)
 @Sync(cleanTransaction = true)
 public class LocalStagingPublishParentLayoutsByDefaultTest
@@ -82,19 +74,10 @@ public class LocalStagingPublishParentLayoutsByDefaultTest
 			new LiferayIntegrationTestRule(),
 			PermissionCheckerMethodTestRule.INSTANCE);
 
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-		FeatureFlagTestUtil.invokeFeatureFlagListeners(
-			TestPropsValues.getCompanyId(), true, "LPD-35914");
-	}
-
 	@AfterClass
 	public static void tearDownClass() throws Exception {
 		ConfigurationTestUtil.deleteConfiguration(
 			StagingConfiguration.class.getName());
-
-		FeatureFlagTestUtil.invokeFeatureFlagListeners(
-			TestPropsValues.getCompanyId(), false, "LPD-35914");
 	}
 
 	@Test

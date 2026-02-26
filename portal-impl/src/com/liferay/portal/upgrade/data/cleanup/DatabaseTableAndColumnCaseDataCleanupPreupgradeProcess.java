@@ -5,7 +5,6 @@
 
 package com.liferay.portal.upgrade.data.cleanup;
 
-import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.db.DBResourceUtil;
 import com.liferay.portal.kernel.dao.db.DB;
@@ -73,15 +72,16 @@ public class DatabaseTableAndColumnCaseDataCleanupPreupgradeProcess
 		}
 
 		for (String expectedTableName : expectedTableNames) {
+			expectedTableName = dbInspector.normalizeName(expectedTableName);
+
 			String tableName = tableNames.get(expectedTableName);
 
 			if ((tableName == null) || tableName.equals(expectedTableName)) {
 				continue;
 			}
 
-			DataCleanupLoggingUtil.logAlter(
-				_log, expectedTableName,
-				"incorrect table name casing, was " + tableName);
+			DataCleanupLoggingUtil.logRename(
+				_log, tableName, expectedTableName, "it was incorrectly cased");
 
 			alterTableName(tableName, expectedTableName + "_temp");
 
@@ -161,11 +161,10 @@ public class DatabaseTableAndColumnCaseDataCleanupPreupgradeProcess
 				continue;
 			}
 
-			DataCleanupLoggingUtil.logAlter(
-				_log, tableName,
-				StringBundler.concat(
-					"incorrect column name casing, column: ", columnName,
-					" renamed to ", expectedColumnName));
+			DataCleanupLoggingUtil.logRename(
+				_log, tableName + StringPool.PERIOD + columnName,
+				tableName + StringPool.PERIOD + expectedColumnName,
+				"it was incorrectly cased");
 
 			int index = columnDefinition.indexOf(StringPool.SPACE);
 

@@ -10,7 +10,6 @@ import com.liferay.exportimport.report.service.ExportImportReportEntryLocalServi
 import com.liferay.portal.search.batch.BatchIndexingActionable;
 import com.liferay.portal.search.batch.DynamicQueryBatchIndexingActionableFactory;
 import com.liferay.portal.search.spi.model.index.contributor.ModelIndexerWriterContributor;
-import com.liferay.portal.search.spi.model.index.contributor.helper.ModelIndexerWriterDocumentHelper;
 
 /**
  * @author Petteri Karttunen
@@ -31,28 +30,11 @@ public class ExportImportReportEntryModelIndexerWriterContributor
 	}
 
 	@Override
-	public void customize(
-		BatchIndexingActionable batchIndexingActionable,
-		ModelIndexerWriterDocumentHelper modelIndexerWriterDocumentHelper) {
-
-		batchIndexingActionable.setPerformActionMethod(
-			(ExportImportReportEntry exportImportReportEntry) ->
-				batchIndexingActionable.addDocument(
-					modelIndexerWriterDocumentHelper.getDocument(
-						exportImportReportEntry)));
-	}
-
-	@Override
 	public BatchIndexingActionable getBatchIndexingActionable() {
 		return _dynamicQueryBatchIndexingActionableFactory.
 			getBatchIndexingActionable(
 				_exportImportReportEntryLocalService.
 					getIndexableActionableDynamicQuery());
-	}
-
-	@Override
-	public long getCompanyId(ExportImportReportEntry exportImportReportEntry) {
-		return exportImportReportEntry.getCompanyId();
 	}
 
 	private final DynamicQueryBatchIndexingActionableFactory

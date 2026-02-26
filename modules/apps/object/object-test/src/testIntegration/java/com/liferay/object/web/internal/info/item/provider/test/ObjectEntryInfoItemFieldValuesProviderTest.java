@@ -23,6 +23,7 @@ import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.constants.ObjectEntryFolderConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.field.builder.AttachmentObjectFieldBuilder;
+import com.liferay.object.field.builder.DateTimeObjectFieldBuilder;
 import com.liferay.object.field.builder.PicklistObjectFieldBuilder;
 import com.liferay.object.field.builder.TextObjectFieldBuilder;
 import com.liferay.object.model.ObjectAction;
@@ -39,6 +40,7 @@ import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.test.util.ObjectDefinitionTestUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
@@ -52,6 +54,7 @@ import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -68,6 +71,9 @@ import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
 import java.io.Serializable;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -132,7 +138,7 @@ public class ObjectEntryInfoItemFieldValuesProviderTest {
 		_childObjectDefinition = _addObjectDefinition(
 			new AttachmentObjectFieldBuilder(
 			).labelMap(
-				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString())
+				RandomTestUtil.randomLocaleStringMap()
 			).name(
 				"attachmentObjectFieldName"
 			).objectFieldSettings(
@@ -142,9 +148,18 @@ public class ObjectEntryInfoItemFieldValuesProviderTest {
 						"fileSource", "documentsAndMedia"),
 					_createObjectFieldSetting("maximumFileSize", "100"))
 			).build(),
+			new DateTimeObjectFieldBuilder(
+			).labelMap(
+				RandomTestUtil.randomLocaleStringMap()
+			).name(
+				"dateTimeObjectFieldName"
+			).objectFieldSettings(
+				Collections.singletonList(
+					_createObjectFieldSetting("timeStorage", "convertToUTC"))
+			).build(),
 			new PicklistObjectFieldBuilder(
 			).labelMap(
-				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString())
+				RandomTestUtil.randomLocaleStringMap()
 			).listTypeDefinitionId(
 				_listTypeDefinition.getListTypeDefinitionId()
 			).name(
@@ -192,6 +207,8 @@ public class ObjectEntryInfoItemFieldValuesProviderTest {
 			ContentTypes.TEXT, RandomTestUtil.randomBytes(), null, null, null,
 			ServiceContextTestUtil.getServiceContext(_group.getGroupId()));
 
+		LocalDateTime localDateTime = LocalDateTime.of(2026, 1, 1, 23, 30);
+
 		String parentTextObjectFieldNameValue = RandomTestUtil.randomString();
 
 		ObjectEntry parentObjectEntry = _objectEntryLocalService.addObjectEntry(
@@ -215,6 +232,9 @@ public class ObjectEntryInfoItemFieldValuesProviderTest {
 				parentObjectEntry.getObjectEntryId()
 			).put(
 				"attachmentObjectFieldName", fileEntry.getFileEntryId()
+			).put(
+				"dateTimeObjectFieldName",
+				Date.from(localDateTime.toInstant(ZoneOffset.UTC))
 			).put(
 				"expirationDate",
 				new Date(System.currentTimeMillis() + Time.DAY)
@@ -240,7 +260,7 @@ public class ObjectEntryInfoItemFieldValuesProviderTest {
 			false);
 
 		_testObjectEntryInfoItemFieldValuesProvider(
-			fileEntry, objectAction, objectEntry,
+			fileEntry, localDateTime, objectAction, objectEntry,
 			parentTextObjectFieldNameValue, null);
 
 		ThemeDisplay themeDisplay = new ThemeDisplay();
@@ -250,12 +270,26 @@ public class ObjectEntryInfoItemFieldValuesProviderTest {
 		themeDisplay.setLocale(LocaleUtil.getDefault());
 		themeDisplay.setScopeGroupId(_group.getGroupId());
 		themeDisplay.setSiteGroupId(_group.getGroupId());
-		themeDisplay.setTimeZone(TimeZoneUtil.getDefault());
-		themeDisplay.setUser(TestPropsValues.getUser());
+
+		User user = UserTestUtil.addUser();
+
+		user.setTimeZoneId("Asia/Kolkata");
+
+		themeDisplay.setTimeZone(
+			TimeZoneUtil.getTimeZone(user.getTimeZoneId()));
+		themeDisplay.setUser(user);
 
 		_testObjectEntryInfoItemFieldValuesProvider(
-			fileEntry, objectAction, objectEntry,
-			parentTextObjectFieldNameValue, themeDisplay);
+			fileEntry,
+			localDateTime.atZone(
+				ZoneOffset.UTC
+			).withZoneSameInstant(
+				TimeZoneUtil.getTimeZone(
+					"Asia/Kolkata"
+				).toZoneId()
+			).toLocalDateTime(),
+			objectAction, objectEntry, parentTextObjectFieldNameValue,
+			themeDisplay);
 	}
 
 	private ObjectDefinition _addObjectDefinition(ObjectField... objectFields)
@@ -297,9 +331,9 @@ public class ObjectEntryInfoItemFieldValuesProviderTest {
 	}
 
 	private void _testObjectEntryInfoItemFieldValuesProvider(
-			FileEntry fileEntry, ObjectAction objectAction,
-			ObjectEntry objectEntry, String parentTextObjectFieldNameValue,
-			ThemeDisplay themeDisplay)
+			FileEntry fileEntry, LocalDateTime localDateTime,
+			ObjectAction objectAction, ObjectEntry objectEntry,
+			String parentTextObjectFieldNameValue, ThemeDisplay themeDisplay)
 		throws Exception {
 
 		ServiceContext serviceContext =
@@ -363,6 +397,13 @@ public class ObjectEntryInfoItemFieldValuesProviderTest {
 				fileEntry.getMimeType());
 			_assertInfoFieldValue(
 				"#size", infoItemFieldValues, objectField, fileEntry.getSize());
+
+			InfoFieldValue<Object> dateTimeInfoFieldValue =
+				infoItemFieldValues.getInfoFieldValue(
+					"dateTimeObjectFieldName");
+
+			Assert.assertEquals(
+				localDateTime, dateTimeInfoFieldValue.getValue());
 
 			InfoFieldValue<Object> parentTextObjectFieldNameInfoFieldValue =
 				infoItemFieldValues.getInfoFieldValue(

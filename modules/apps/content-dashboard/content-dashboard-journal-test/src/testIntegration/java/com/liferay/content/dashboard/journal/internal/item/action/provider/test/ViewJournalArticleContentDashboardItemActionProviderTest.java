@@ -77,7 +77,7 @@ public class ViewJournalArticleContentDashboardItemActionProviderTest {
 				DisplayPageTemplateTestUtil.addDisplayPageTemplate(
 					_group.getGroupId(),
 					_portal.getClassNameId(JournalArticle.class.getName()),
-					journalArticle.getDDMStructureId(), true,
+					journalArticle.getDDMStructureKey(), true,
 					WorkflowConstants.STATUS_APPROVED);
 
 			ServiceContext serviceContext =
@@ -179,7 +179,7 @@ public class ViewJournalArticleContentDashboardItemActionProviderTest {
 				DisplayPageTemplateTestUtil.addDisplayPageTemplate(
 					_group.getGroupId(),
 					_portal.getClassNameId(JournalArticle.class.getName()),
-					journalArticle.getDDMStructureId(), true,
+					journalArticle.getDDMStructureKey(), true,
 					WorkflowConstants.STATUS_APPROVED);
 
 			_assetDisplayPageEntryLocalService.addAssetDisplayPageEntry(
@@ -263,7 +263,7 @@ public class ViewJournalArticleContentDashboardItemActionProviderTest {
 				DisplayPageTemplateTestUtil.addDisplayPageTemplate(
 					_group.getGroupId(),
 					_portal.getClassNameId(JournalArticle.class.getName()),
-					journalArticle.getDDMStructureId(), true,
+					journalArticle.getDDMStructureKey(), true,
 					WorkflowConstants.STATUS_APPROVED);
 
 			ServiceContext serviceContext =

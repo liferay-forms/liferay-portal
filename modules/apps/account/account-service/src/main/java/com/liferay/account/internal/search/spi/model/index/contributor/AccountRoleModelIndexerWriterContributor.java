@@ -10,7 +10,6 @@ import com.liferay.account.service.AccountRoleLocalService;
 import com.liferay.portal.search.batch.BatchIndexingActionable;
 import com.liferay.portal.search.batch.DynamicQueryBatchIndexingActionableFactory;
 import com.liferay.portal.search.spi.model.index.contributor.ModelIndexerWriterContributor;
-import com.liferay.portal.search.spi.model.index.contributor.helper.ModelIndexerWriterDocumentHelper;
 
 /**
  * @author Drew Brokke
@@ -29,25 +28,10 @@ public class AccountRoleModelIndexerWriterContributor
 	}
 
 	@Override
-	public void customize(
-		BatchIndexingActionable batchIndexingActionable,
-		ModelIndexerWriterDocumentHelper modelIndexerWriterDocumentHelper) {
-
-		batchIndexingActionable.setPerformActionMethod(
-			(AccountRole accountRole) -> batchIndexingActionable.addDocument(
-				modelIndexerWriterDocumentHelper.getDocument(accountRole)));
-	}
-
-	@Override
 	public BatchIndexingActionable getBatchIndexingActionable() {
 		return _dynamicQueryBatchIndexingActionableFactory.
 			getBatchIndexingActionable(
 				_accountRoleLocalService.getIndexableActionableDynamicQuery());
-	}
-
-	@Override
-	public long getCompanyId(AccountRole accountRole) {
-		return accountRole.getCompanyId();
 	}
 
 	private final AccountRoleLocalService _accountRoleLocalService;

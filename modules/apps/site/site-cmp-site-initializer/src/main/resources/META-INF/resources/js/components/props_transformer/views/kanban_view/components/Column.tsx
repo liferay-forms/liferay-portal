@@ -43,7 +43,8 @@ export function ColumnView({
 	column: {icon, key, name, tasks},
 	stateFlow,
 }: IColumnViewProps) {
-	const {changeTaskStatus, loadData} = useContext(KanbanViewContext);
+	const {changeTaskStatus, loadData, projectId} =
+		useContext(KanbanViewContext);
 
 	const canTransition = (taskStateKey: string) => {
 		if (!stateFlow) {
@@ -115,6 +116,7 @@ export function ColumnView({
 					<ClayButton
 						borderless
 						className="lfr__kaban-view-column-state-add-button"
+						displayType="secondary"
 						onClick={async () => {
 							await openCMPModal({
 								center: true,
@@ -126,12 +128,14 @@ export function ColumnView({
 									<CreateTaskModal
 										closeModal={closeModal}
 										loadData={loadData}
+										projectId={projectId}
 										state={key}
 									/>
 								),
 								size: 'md',
 							});
 						}}
+						size="xs"
 					>
 						<ClayIcon symbol="plus" />
 

@@ -11,13 +11,9 @@ import com.liferay.application.list.constants.PanelCategoryKeys;
 import com.liferay.application.list.display.context.logic.PanelCategoryHelper;
 import com.liferay.application.list.util.PanelCategoryRegistryUtil;
 import com.liferay.petra.reflect.ReflectionUtil;
-import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.language.Language;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
-import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.servlet.taglib.BaseDynamicInclude;
 import com.liferay.portal.kernel.servlet.taglib.DynamicInclude;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -25,7 +21,6 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.SessionClicks;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.product.navigation.applications.menu.configuration.ApplicationsMenuInstanceConfiguration;
 import com.liferay.product.navigation.control.menu.manager.ProductNavigationControlMenuManager;
 import com.liferay.product.navigation.product.menu.constants.ProductNavigationProductMenuPortletKeys;
 import com.liferay.taglib.portletext.RuntimeTag;
@@ -71,13 +66,9 @@ public class ProductMenuBodyTopDynamicInclude extends BaseDynamicInclude {
 
 		Group scopeGroup = themeDisplay.getScopeGroup();
 
-		if ((_isApplicationsMenuApp(themeDisplay) || scopeGroup.isDepot()) &&
-			_isEnableApplicationsMenu(themeDisplay.getCompanyId())) {
+		if (_isApplicationsMenuApp(themeDisplay) || scopeGroup.isDepot() ||
+			!_hasPanelCategories(themeDisplay)) {
 
-			return;
-		}
-
-		if (!_hasPanelCategories(themeDisplay)) {
 			return;
 		}
 
@@ -146,23 +137,7 @@ public class ProductMenuBodyTopDynamicInclude extends BaseDynamicInclude {
 				PanelCategoryKeys.ROOT, themeDisplay.getPermissionChecker(),
 				themeDisplay.getScopeGroup());
 
-		if (!childPanelCategories.isEmpty()) {
-			return true;
-		}
-
-		if (!_isEnableApplicationsMenu(themeDisplay.getCompanyId())) {
-			childPanelCategories =
-				PanelCategoryRegistryUtil.getChildPanelCategories(
-					PanelCategoryKeys.APPLICATIONS_MENU,
-					themeDisplay.getPermissionChecker(),
-					themeDisplay.getScopeGroup());
-
-			if (!childPanelCategories.isEmpty()) {
-				return true;
-			}
-		}
-
-		return false;
+		return !childPanelCategories.isEmpty();
 	}
 
 	private boolean _isApplicationsMenuApp(ThemeDisplay themeDisplay) {
@@ -188,37 +163,7 @@ public class ProductMenuBodyTopDynamicInclude extends BaseDynamicInclude {
 		return true;
 	}
 
-	private boolean _isEnableApplicationsMenu(long companyId) {
-		try {
-			ApplicationsMenuInstanceConfiguration
-				applicationsMenuInstanceConfiguration =
-					_configurationProvider.getCompanyConfiguration(
-						ApplicationsMenuInstanceConfiguration.class, companyId);
-
-			if (applicationsMenuInstanceConfiguration.
-					enableApplicationsMenu()) {
-
-				return true;
-			}
-		}
-		catch (ConfigurationException configurationException) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(
-					"Unable to get applications menu instance configuration",
-					configurationException);
-			}
-		}
-
-		return false;
-	}
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		ProductMenuBodyTopDynamicInclude.class);
-
 	private volatile BundleContext _bundleContext;
-
-	@Reference
-	private ConfigurationProvider _configurationProvider;
 
 	@Reference
 	private Language _language;

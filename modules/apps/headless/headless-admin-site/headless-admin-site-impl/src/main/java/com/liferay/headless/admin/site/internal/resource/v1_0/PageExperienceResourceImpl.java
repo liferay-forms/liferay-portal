@@ -30,6 +30,9 @@ import com.liferay.segments.exception.NoSuchExperienceException;
 import com.liferay.segments.model.SegmentsExperience;
 import com.liferay.segments.service.SegmentsExperienceService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
+
 import java.util.Collections;
 
 import org.osgi.service.component.annotations.Component;
@@ -46,12 +49,17 @@ import org.osgi.service.component.annotations.ServiceScope;
 public class PageExperienceResourceImpl extends BasePageExperienceResourceImpl {
 
 	@Override
+	@Tags({@Tag(description = "[DEV]", name = "PageExperience")})
 	public void deleteSitePageExperience(
 			String siteExternalReferenceCode,
 			String pageExperienceExternalReferenceCode)
 		throws Exception {
 
-		FeatureFlagManagerUtil.checkEnabled("LPD-35443");
+		if (!FeatureFlagManagerUtil.isEnabled(
+				contextCompany.getCompanyId(), "LPD-74328")) {
+
+			throw new UnsupportedOperationException();
+		}
 
 		long groupId = GroupUtil.getStagingAwareGroupId(
 			contextCompany.getCompanyId(), siteExternalReferenceCode);
@@ -82,7 +90,9 @@ public class PageExperienceResourceImpl extends BasePageExperienceResourceImpl {
 			String pageExperienceExternalReferenceCode)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-35443")) {
+		if (!FeatureFlagManagerUtil.isEnabled(
+				contextCompany.getCompanyId(), "LPD-74328")) {
+
 			throw new UnsupportedOperationException();
 		}
 
@@ -101,7 +111,9 @@ public class PageExperienceResourceImpl extends BasePageExperienceResourceImpl {
 			String pageSpecificationExternalReferenceCode)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-35443")) {
+		if (!FeatureFlagManagerUtil.isEnabled(
+				contextCompany.getCompanyId(), "LPD-74328")) {
+
 			throw new UnsupportedOperationException();
 		}
 
@@ -130,7 +142,9 @@ public class PageExperienceResourceImpl extends BasePageExperienceResourceImpl {
 			PageExperience pageExperience)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-35443")) {
+		if (!FeatureFlagManagerUtil.isEnabled(
+				contextCompany.getCompanyId(), "LPD-74328")) {
+
 			throw new UnsupportedOperationException();
 		}
 
@@ -155,7 +169,9 @@ public class PageExperienceResourceImpl extends BasePageExperienceResourceImpl {
 			PageExperience pageExperience)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-35443")) {
+		if (!FeatureFlagManagerUtil.isEnabled(
+				contextCompany.getCompanyId(), "LPD-74328")) {
+
 			throw new UnsupportedOperationException();
 		}
 

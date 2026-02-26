@@ -22,8 +22,8 @@ OAuthClientASLocalMetadata oAuthClientASLocalMetadata = (OAuthClientASLocalMetad
 >
 	<portlet:renderURL var="editURL">
 		<portlet:param name="mvcRenderCommandName" value="/oauth_client_admin/update_oauth_client_as_local_metadata" />
-		<portlet:param name="localWellKnownURI" value="<%= oAuthClientASLocalMetadata.getLocalWellKnownURI() %>" />
 		<portlet:param name="redirect" value="<%= currentURL %>" />
+		<portlet:param name="issuer" value="<%= oAuthClientASLocalMetadata.getIssuer() %>" />
 	</portlet:renderURL>
 
 	<liferay-ui:icon
@@ -32,7 +32,7 @@ OAuthClientASLocalMetadata oAuthClientASLocalMetadata = (OAuthClientASLocalMetad
 	/>
 
 	<portlet:actionURL name="/oauth_client_admin/delete_oauth_client_as_local_metadata" var="deleteURL">
-		<portlet:param name="localWellKnownURI" value="<%= oAuthClientASLocalMetadata.getLocalWellKnownURI() %>" />
+		<portlet:param name="oAuthClientASLocalMetadataId" value="<%= String.valueOf(oAuthClientASLocalMetadata.getOAuthClientASLocalMetadataId()) %>" />
 	</portlet:actionURL>
 
 	<liferay-ui:icon-delete

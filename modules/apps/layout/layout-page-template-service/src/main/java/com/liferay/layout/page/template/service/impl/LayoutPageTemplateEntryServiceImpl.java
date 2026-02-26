@@ -15,6 +15,7 @@ import com.liferay.layout.page.template.model.LayoutPageTemplateEntryTable;
 import com.liferay.layout.page.template.service.LayoutPageTemplateCollectionLocalService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.layout.page.template.service.base.LayoutPageTemplateEntryServiceBaseImpl;
+import com.liferay.layout.page.template.util.LayoutPageTemplateEntryUtil;
 import com.liferay.petra.sql.dsl.Column;
 import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
 import com.liferay.petra.sql.dsl.Table;
@@ -69,7 +70,7 @@ public class LayoutPageTemplateEntryServiceImpl
 			String externalReferenceCode, long groupId,
 			long layoutPageTemplateCollectionId,
 			String layoutPageTemplateEntryKey, long classNameId,
-			long classTypeId, String name, int type, long previewFileEntryId,
+			String classTypeKey, String name, int type, long previewFileEntryId,
 			boolean defaultTemplate, long layoutPrototypeId, long plid,
 			long masterLayoutPlid, int status, ServiceContext serviceContext)
 		throws PortalException {
@@ -81,7 +82,7 @@ public class LayoutPageTemplateEntryServiceImpl
 		return layoutPageTemplateEntryLocalService.addLayoutPageTemplateEntry(
 			externalReferenceCode, getUserId(), groupId,
 			layoutPageTemplateCollectionId, layoutPageTemplateEntryKey,
-			classNameId, classTypeId, name, type, previewFileEntryId,
+			classNameId, classTypeKey, name, type, previewFileEntryId,
 			defaultTemplate, layoutPrototypeId, plid, masterLayoutPlid, status,
 			serviceContext);
 	}
@@ -91,7 +92,7 @@ public class LayoutPageTemplateEntryServiceImpl
 			String externalReferenceCode, long groupId,
 			long layoutPageTemplateCollectionId,
 			String layoutPageTemplateEntryKey, long classNameId,
-			long classTypeId, String name, long masterLayoutPlid, int status,
+			String classTypeKey, String name, long masterLayoutPlid, int status,
 			ServiceContext serviceContext)
 		throws PortalException {
 
@@ -102,7 +103,7 @@ public class LayoutPageTemplateEntryServiceImpl
 		return layoutPageTemplateEntryLocalService.addLayoutPageTemplateEntry(
 			externalReferenceCode, getUserId(), groupId,
 			layoutPageTemplateCollectionId, layoutPageTemplateEntryKey,
-			classNameId, classTypeId, name,
+			classNameId, classTypeKey, name,
 			LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE, masterLayoutPlid,
 			status, serviceContext);
 	}
@@ -170,8 +171,8 @@ public class LayoutPageTemplateEntryServiceImpl
 				null, getUserId(), sourceLayout.getGroupId(),
 				targetLayoutPageTemplateCollection.
 					getLayoutPageTemplateCollectionId(),
-				null, 0, 0, name, LayoutPageTemplateEntryTypeConstants.BASIC, 0,
-				false, 0, 0, sourceLayout.getMasterLayoutPlid(),
+				null, 0, null, name, LayoutPageTemplateEntryTypeConstants.BASIC,
+				0, false, 0, 0, sourceLayout.getMasterLayoutPlid(),
 				WorkflowConstants.STATUS_DRAFT, serviceContext);
 
 		Layout layout = _layoutLocalService.getLayout(
@@ -263,7 +264,10 @@ public class LayoutPageTemplateEntryServiceImpl
 		long groupId, long classNameId, long classTypeId) {
 
 		return layoutPageTemplateEntryPersistence.fetchByG_C_C_D_First(
-			groupId, classNameId, classTypeId, true, null);
+			groupId, classNameId,
+			LayoutPageTemplateEntryUtil.getClassTypeKey(
+				classNameId, classTypeId, groupId),
+			true, null);
 	}
 
 	@Override
@@ -565,11 +569,17 @@ public class LayoutPageTemplateEntryServiceImpl
 
 		if (status == WorkflowConstants.STATUS_ANY) {
 			return layoutPageTemplateEntryPersistence.filterFindByG_C_C_T(
-				groupId, classNameId, classTypeId, type);
+				groupId, classNameId,
+				LayoutPageTemplateEntryUtil.getClassTypeKey(
+					classNameId, classTypeId, groupId),
+				type);
 		}
 
 		return layoutPageTemplateEntryPersistence.filterFindByG_C_C_T_S(
-			groupId, classNameId, classTypeId, type, status);
+			groupId, classNameId,
+			LayoutPageTemplateEntryUtil.getClassTypeKey(
+				classNameId, classTypeId, groupId),
+			type, status);
 	}
 
 	@Override
@@ -580,13 +590,17 @@ public class LayoutPageTemplateEntryServiceImpl
 
 		if (status == WorkflowConstants.STATUS_ANY) {
 			return layoutPageTemplateEntryPersistence.filterFindByG_C_C_T(
-				groupId, classNameId, classTypeId, type, start, end,
-				orderByComparator);
+				groupId, classNameId,
+				LayoutPageTemplateEntryUtil.getClassTypeKey(
+					classNameId, classTypeId, groupId),
+				type, start, end, orderByComparator);
 		}
 
 		return layoutPageTemplateEntryPersistence.filterFindByG_C_C_T_S(
-			groupId, classNameId, classTypeId, type, status, start, end,
-			orderByComparator);
+			groupId, classNameId,
+			LayoutPageTemplateEntryUtil.getClassTypeKey(
+				classNameId, classTypeId, groupId),
+			type, status, start, end, orderByComparator);
 	}
 
 	@Override
@@ -607,13 +621,17 @@ public class LayoutPageTemplateEntryServiceImpl
 
 		if (status == WorkflowConstants.STATUS_ANY) {
 			return layoutPageTemplateEntryPersistence.filterFindByG_C_C_LikeN_T(
-				groupId, classNameId, classTypeId,
+				groupId, classNameId,
+				LayoutPageTemplateEntryUtil.getClassTypeKey(
+					classNameId, classTypeId, groupId),
 				_customSQL.keywords(name, false, WildcardMode.SURROUND)[0],
 				type, start, end, orderByComparator);
 		}
 
 		return layoutPageTemplateEntryPersistence.filterFindByG_C_C_LikeN_T_S(
-			groupId, classNameId, classTypeId,
+			groupId, classNameId,
+			LayoutPageTemplateEntryUtil.getClassTypeKey(
+				classNameId, classTypeId, groupId),
 			_customSQL.keywords(name, false, WildcardMode.SURROUND)[0], type,
 			status, start, end, orderByComparator);
 	}
@@ -786,11 +804,17 @@ public class LayoutPageTemplateEntryServiceImpl
 
 		if (status == WorkflowConstants.STATUS_ANY) {
 			return layoutPageTemplateEntryPersistence.filterCountByG_C_C_T(
-				groupId, classNameId, classTypeId, type);
+				groupId, classNameId,
+				LayoutPageTemplateEntryUtil.getClassTypeKey(
+					classNameId, classTypeId, groupId),
+				type);
 		}
 
 		return layoutPageTemplateEntryPersistence.filterCountByG_C_C_T_S(
-			groupId, classNameId, classTypeId, type, status);
+			groupId, classNameId,
+			LayoutPageTemplateEntryUtil.getClassTypeKey(
+				classNameId, classTypeId, groupId),
+			type, status);
 	}
 
 	@Override
@@ -811,13 +835,17 @@ public class LayoutPageTemplateEntryServiceImpl
 		if (status == WorkflowConstants.STATUS_ANY) {
 			return layoutPageTemplateEntryPersistence.
 				filterCountByG_C_C_LikeN_T(
-					groupId, classNameId, classTypeId,
+					groupId, classNameId,
+					LayoutPageTemplateEntryUtil.getClassTypeKey(
+						classNameId, classTypeId, groupId),
 					_customSQL.keywords(name, false, WildcardMode.SURROUND)[0],
 					type);
 		}
 
 		return layoutPageTemplateEntryPersistence.filterCountByG_C_C_LikeN_T_S(
-			groupId, classNameId, classTypeId,
+			groupId, classNameId,
+			LayoutPageTemplateEntryUtil.getClassTypeKey(
+				classNameId, classTypeId, groupId),
 			_customSQL.keywords(name, false, WildcardMode.SURROUND)[0], type,
 			status);
 	}
@@ -989,7 +1017,8 @@ public class LayoutPageTemplateEntryServiceImpl
 
 	@Override
 	public LayoutPageTemplateEntry updateLayoutPageTemplateEntry(
-			long layoutPageTemplateEntryId, long classNameId, long classTypeId)
+			long layoutPageTemplateEntryId, long classNameId,
+			String classTypeKey)
 		throws PortalException {
 
 		_layoutPageTemplateEntryModelResourcePermission.check(
@@ -999,7 +1028,7 @@ public class LayoutPageTemplateEntryServiceImpl
 		return layoutPageTemplateEntryLocalService.
 			updateLayoutPageTemplateEntry(
 				getUserId(), layoutPageTemplateEntryId, classNameId,
-				classTypeId);
+				classTypeKey);
 	}
 
 	@Override

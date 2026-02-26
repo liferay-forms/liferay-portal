@@ -114,6 +114,11 @@ public class FileEntryInfoItemFormVariationsProvider
 	}
 
 	@Override
+	public String getInfoItemFormVariationClassName() {
+		return DLFileEntryType.class.getName();
+	}
+
+	@Override
 	public Collection<InfoItemFormVariation> getInfoItemFormVariations(
 		long groupId) {
 

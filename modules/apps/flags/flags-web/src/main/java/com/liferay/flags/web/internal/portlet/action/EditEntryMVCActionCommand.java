@@ -5,16 +5,20 @@
 
 package com.liferay.flags.web.internal.portlet.action;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.captcha.util.CaptchaUtil;
 import com.liferay.flags.service.FlagsEntryService;
 import com.liferay.flags.web.internal.constants.FlagsPortletKeys;
 import com.liferay.portal.kernel.captcha.CaptchaException;
 import com.liferay.portal.kernel.captcha.CaptchaTextException;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
@@ -55,10 +59,6 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 
 			String className = ParamUtil.getString(actionRequest, "className");
 			long classPK = ParamUtil.getLong(actionRequest, "classPK");
-			String reporterEmailAddress = ParamUtil.getString(
-				actionRequest, "reporterEmailAddress");
-			long reportedUserId = ParamUtil.getLong(
-				actionRequest, "reportedUserId");
 			String contentTitle = ParamUtil.getString(
 				actionRequest, "contentTitle");
 			String contentURL = ParamUtil.getString(
@@ -69,8 +69,9 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 				"com.liferay.portlet.flags.model.FlagsEntry", actionRequest);
 
 			_flagsEntryService.addEntry(
-				className, classPK, reporterEmailAddress, reportedUserId,
-				contentTitle, contentURL, reason, serviceContext);
+				className, classPK, _getReporterEmailAddress(actionRequest),
+				_getReportedUserId(className, classPK), contentTitle,
+				contentURL, reason, serviceContext);
 		}
 		catch (CaptchaException captchaException) {
 			ThemeDisplay themeDisplay =
@@ -108,8 +109,33 @@ public class EditEntryMVCActionCommand extends BaseMVCActionCommand {
 		return "captcha-verification-failed";
 	}
 
+	private long _getReportedUserId(String className, long classPK)
+		throws PortalException {
+
+		AssetEntry assetEntry = _assetEntryLocalService.getEntry(
+			className, classPK);
+
+		return assetEntry.getUserId();
+	}
+
+	private String _getReporterEmailAddress(ActionRequest actionRequest) {
+		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		if (!themeDisplay.isSignedIn()) {
+			return null;
+		}
+
+		User reporterUser = themeDisplay.getUser();
+
+		return reporterUser.getEmailAddress();
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		EditEntryMVCActionCommand.class);
+
+	@Reference
+	private AssetEntryLocalService _assetEntryLocalService;
 
 	@Reference
 	private FlagsEntryService _flagsEntryService;

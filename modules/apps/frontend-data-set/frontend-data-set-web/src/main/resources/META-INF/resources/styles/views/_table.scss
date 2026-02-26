@@ -35,29 +35,37 @@
 		table-layout: auto !important;
 
 		.dnd-th-resizer {
-			background: $info;
 			cursor: col-resize;
 			display: block;
 			height: 100%;
-			opacity: 0;
+			margin: 0 -10px;
+			padding: 0 10px;
 			position: absolute;
 			right: 0;
 			top: 0;
-			transition: background-color 0.1s ease-in;
-			width: 4px;
 			z-index: 1;
 
-			&:hover {
+			&::after {
+				background: $info;
+				content: '';
+				display: block;
+				height: 100%;
+				opacity: 0;
+				transition: background-color 0.1s ease-in;
+				width: 4px;
+			}
+
+			&:hover::after {
 				opacity: 1;
 			}
 
-			&.is-active {
-				background: $danger;
+			&.is-active::after {
+				background-color: $danger;
 				opacity: 1;
+			}
 
-				&.is-allowed {
-					background: $primary;
-				}
+			is-active.is-allowed::after {
+				background-color: $primary;
 			}
 		}
 	}

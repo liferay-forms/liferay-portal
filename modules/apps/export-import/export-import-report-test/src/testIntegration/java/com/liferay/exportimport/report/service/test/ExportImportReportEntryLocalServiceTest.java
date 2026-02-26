@@ -10,8 +10,10 @@ import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.exportimport.report.constants.ExportImportReportEntryConstants;
 import com.liferay.exportimport.report.model.ExportImportReportEntry;
 import com.liferay.exportimport.report.service.ExportImportReportEntryLocalService;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.service.CompanyLocalService;
+import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.util.CompanyTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
@@ -38,6 +40,7 @@ public class ExportImportReportEntryLocalServiceTest {
 		new LiferayIntegrationTestRule();
 
 	@Test
+	@TestInfo("LPD-77587")
 	public void testAddEmptyExportImportReportEntry() throws Exception {
 		int count =
 			_exportImportReportEntryLocalService.
@@ -66,20 +69,23 @@ public class ExportImportReportEntryLocalServiceTest {
 		Assert.assertEquals(
 			exportImportConfigurationId,
 			exportImportReportEntry.getExportImportConfigurationId());
-		Assert.assertNull(exportImportReportEntry.getErrorMessage());
-		Assert.assertNull(exportImportReportEntry.getErrorStacktrace());
 		Assert.assertEquals(
 			modelNameLanguageKey,
 			exportImportReportEntry.getModelNameLanguageKey());
 		Assert.assertEquals(
+			_getEmptyReportEntryErrorMessage(
+				classExternalReferenceCode, modelNameLanguageKey),
+			exportImportReportEntry.getErrorMessage());
+		Assert.assertNull(exportImportReportEntry.getErrorStacktrace());
+		Assert.assertEquals(
 			ExportImportReportEntryConstants.ORIGIN_STAGING,
 			exportImportReportEntry.getOrigin());
 		Assert.assertEquals(
-			ExportImportReportEntryConstants.TYPE_EMPTY,
-			exportImportReportEntry.getType());
-		Assert.assertEquals(
 			ExportImportReportEntryConstants.STATUS_UNRESOLVED,
 			exportImportReportEntry.getStatus());
+		Assert.assertEquals(
+			ExportImportReportEntryConstants.TYPE_EMPTY,
+			exportImportReportEntry.getType());
 
 		Assert.assertEquals(
 			count + 1,
@@ -132,11 +138,11 @@ public class ExportImportReportEntryLocalServiceTest {
 			ExportImportReportEntryConstants.ORIGIN_STAGING,
 			exportImportReportEntry.getOrigin());
 		Assert.assertEquals(
-			ExportImportReportEntryConstants.TYPE_ERROR,
-			exportImportReportEntry.getType());
-		Assert.assertEquals(
 			ExportImportReportEntryConstants.STATUS_UNRESOLVED,
 			exportImportReportEntry.getStatus());
+		Assert.assertEquals(
+			ExportImportReportEntryConstants.TYPE_ERROR,
+			exportImportReportEntry.getType());
 
 		Assert.assertEquals(
 			count + 1,
@@ -214,7 +220,10 @@ public class ExportImportReportEntryLocalServiceTest {
 		Assert.assertEquals(
 			exportImportConfigurationId,
 			exportImportReportEntry.getExportImportConfigurationId());
-		Assert.assertNull(exportImportReportEntry.getErrorMessage());
+		Assert.assertEquals(
+			_getEmptyReportEntryErrorMessage(
+				classExternalReferenceCode, modelNameLanguageKey),
+			exportImportReportEntry.getErrorMessage());
 		Assert.assertNull(exportImportReportEntry.getErrorStacktrace());
 		Assert.assertEquals(
 			modelNameLanguageKey,
@@ -361,6 +370,15 @@ public class ExportImportReportEntryLocalServiceTest {
 			actualExportImportReportEntry.getMvccVersion());
 
 		Assert.assertEquals(status, actualExportImportReportEntry.getStatus());
+	}
+
+	private String _getEmptyReportEntryErrorMessage(
+		String classExternalReferenceCode, String modelNameLanguageKey) {
+
+		return StringBundler.concat(
+			"The ", modelNameLanguageKey, " with external reference code ",
+			classExternalReferenceCode,
+			" was not found. An empty shell was created.");
 	}
 
 	private ExportImportReportEntry _updateStatusResolved(

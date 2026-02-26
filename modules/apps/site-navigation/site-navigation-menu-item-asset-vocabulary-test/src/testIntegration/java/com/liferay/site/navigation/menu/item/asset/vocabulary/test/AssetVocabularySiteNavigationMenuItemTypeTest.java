@@ -35,7 +35,6 @@ import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
-import com.liferay.portal.kernel.test.util.FeatureFlagTestUtil;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
@@ -50,8 +49,6 @@ import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.test.rule.FeatureFlag;
-import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -175,15 +172,9 @@ public class AssetVocabularySiteNavigationMenuItemTypeTest {
 		Assert.assertEquals(assetVocabulary1, assetVocabulary2);
 	}
 
-	@FeatureFlags(
-		featureFlags = {@FeatureFlag("LPD-35443"), @FeatureFlag("LPD-35914")}
-	)
 	@Test
 	public void testGetAssetVocabularySiteNavigationMenuItemFromExportImport()
 		throws Exception {
-
-		FeatureFlagTestUtil.invokeFeatureFlagListeners(
-			TestPropsValues.getCompanyId(), true, "LPD-35914");
 
 		Locale locale = _portal.getSiteDefaultLocale(_group.getGroupId());
 
@@ -291,9 +282,6 @@ public class AssetVocabularySiteNavigationMenuItemTypeTest {
 			updatedName,
 			siteNavigationMenuItemType.getTitle(
 				siteNavigationMenuItem, locale));
-
-		FeatureFlagTestUtil.invokeFeatureFlagListeners(
-			TestPropsValues.getCompanyId(), false, "LPD-35914");
 	}
 
 	@Test
@@ -422,7 +410,7 @@ public class AssetVocabularySiteNavigationMenuItemTypeTest {
 
 		DisplayPageTemplateTestUtil.addDisplayPageTemplate(
 			_group.getGroupId(),
-			_portal.getClassNameId(AssetCategory.class.getName()), 0, true,
+			_portal.getClassNameId(AssetCategory.class.getName()), null, true,
 			WorkflowConstants.STATUS_APPROVED);
 
 		AssetCategory assetCategory = _addAssetCategory(0);
@@ -822,7 +810,7 @@ public class AssetVocabularySiteNavigationMenuItemTypeTest {
 
 		DisplayPageTemplateTestUtil.addDisplayPageTemplate(
 			_group.getGroupId(),
-			_portal.getClassNameId(AssetCategory.class.getName()), 0, true,
+			_portal.getClassNameId(AssetCategory.class.getName()), null, true,
 			WorkflowConstants.STATUS_APPROVED);
 
 		MockHttpServletRequest mockHttpServletRequest =

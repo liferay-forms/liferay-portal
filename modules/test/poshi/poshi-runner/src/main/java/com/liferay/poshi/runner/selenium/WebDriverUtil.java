@@ -151,6 +151,9 @@ public class WebDriverUtil {
 			chromeOptions.setBinary(poshiProperties.browserChromeBinFile);
 		}
 
+		chromeOptions.setCapability(
+			"selenium:sessionTimeout", poshiProperties.timeoutPageLoadWait);
+
 		if (poshiProperties.testRunType.equals("parallel")) {
 			ChromeDriverService chromeDriverService =
 				ChromeDriverService.createServiceWithConfig(chromeOptions);

@@ -142,7 +142,7 @@ public class AssetDisplayPageUtilTest {
 
 		LayoutPageTemplateEntry defaultLayoutPageTemplateEntry =
 			DisplayPageTemplateTestUtil.addDisplayPageTemplate(
-				_group.getGroupId(), classNameId, 0, true,
+				_group.getGroupId(), classNameId, null, true,
 				WorkflowConstants.STATUS_APPROVED);
 
 		Assert.assertEquals(
@@ -152,7 +152,7 @@ public class AssetDisplayPageUtilTest {
 
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
 			DisplayPageTemplateTestUtil.addDisplayPageTemplate(
-				_group.getGroupId(), classNameId, 0, false,
+				_group.getGroupId(), classNameId, null, false,
 				WorkflowConstants.STATUS_APPROVED);
 
 		_assetDisplayPageEntryLocalService.addAssetDisplayPageEntry(
@@ -202,8 +202,8 @@ public class AssetDisplayPageUtilTest {
 			LayoutPageTemplateEntry defaultLayoutPageTemplateEntry =
 				DisplayPageTemplateTestUtil.addDisplayPageTemplate(
 					_group.getGroupId(),
-					_portal.getClassNameId(MockObject.class.getName()), 0, true,
-					WorkflowConstants.STATUS_APPROVED);
+					_portal.getClassNameId(MockObject.class.getName()), null,
+					true, WorkflowConstants.STATUS_APPROVED);
 
 			Assert.assertNull(
 				AssetDisplayPageUtil.getAssetDisplayPageLayoutPageTemplateEntry(
@@ -268,7 +268,7 @@ public class AssetDisplayPageUtilTest {
 
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
 			DisplayPageTemplateTestUtil.addDisplayPageTemplate(
-				_group.getGroupId(), classNameId, 0, true,
+				_group.getGroupId(), classNameId, null, true,
 				WorkflowConstants.STATUS_APPROVED);
 
 		Assert.assertTrue(
@@ -284,7 +284,7 @@ public class AssetDisplayPageUtilTest {
 
 		layoutPageTemplateEntry =
 			DisplayPageTemplateTestUtil.addDisplayPageTemplate(
-				_group.getGroupId(), classNameId, 0, false,
+				_group.getGroupId(), classNameId, null, false,
 				WorkflowConstants.STATUS_APPROVED);
 
 		AssetDisplayPageEntry assetDisplayPageEntry =
@@ -340,7 +340,7 @@ public class AssetDisplayPageUtilTest {
 
 			DisplayPageTemplateTestUtil.addDisplayPageTemplate(
 				_group.getGroupId(),
-				_portal.getClassNameId(MockObject.class.getName()), 0, true,
+				_portal.getClassNameId(MockObject.class.getName()), null, true,
 				WorkflowConstants.STATUS_APPROVED);
 
 			Assert.assertFalse(
@@ -366,7 +366,7 @@ public class AssetDisplayPageUtilTest {
 		LayoutPageTemplateEntry defaultLayoutPageTemplateEntry =
 			DisplayPageTemplateTestUtil.addDisplayPageTemplate(
 				_group.getGroupId(), _classNameId,
-				journalArticle.getDDMStructureId(), true,
+				journalArticle.getDDMStructureKey(), true,
 				WorkflowConstants.STATUS_APPROVED);
 
 		Assert.assertEquals(
@@ -379,7 +379,7 @@ public class AssetDisplayPageUtilTest {
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
 			DisplayPageTemplateTestUtil.addDisplayPageTemplate(
 				_group.getGroupId(), _classNameId,
-				journalArticle.getDDMStructureId(), false,
+				journalArticle.getDDMStructureKey(), false,
 				WorkflowConstants.STATUS_APPROVED);
 
 		Assert.assertEquals(

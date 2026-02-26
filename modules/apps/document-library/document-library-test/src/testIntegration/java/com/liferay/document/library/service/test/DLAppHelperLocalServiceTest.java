@@ -11,6 +11,7 @@ import com.liferay.document.library.kernel.service.DLAppHelperLocalService;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.layout.page.template.test.util.DisplayPageTemplateTestUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -98,7 +99,7 @@ public class DLAppHelperLocalServiceTest {
 
 		DisplayPageTemplateTestUtil.addDisplayPageTemplate(
 			TestPropsValues.getGroupId(),
-			PortalUtil.getClassNameId(FileEntry.class.getName()), 0, true,
+			PortalUtil.getClassNameId(FileEntry.class.getName()), null, true,
 			WorkflowConstants.STATUS_APPROVED);
 
 		String fileEntryContent = StringUtil.randomString();
@@ -111,6 +112,8 @@ public class DLAppHelperLocalServiceTest {
 
 		ThemeDisplay themeDisplay = new ThemeDisplay();
 
+		themeDisplay.setCompany(
+			_companyLocalService.getCompany(TestPropsValues.getCompanyId()));
 		themeDisplay.setPortalURL("http://localhost:8080");
 		themeDisplay.setSiteGroupId(TestPropsValues.getGroupId());
 
@@ -158,6 +161,9 @@ public class DLAppHelperLocalServiceTest {
 			content.getBytes(),
 			_file.getBytes(restoredFileEntry.getContentStream()));
 	}
+
+	@Inject
+	private CompanyLocalService _companyLocalService;
 
 	@Inject
 	private DLAppHelperLocalService _dlAppHelperLocalService;

@@ -79,7 +79,7 @@ public class DisplayPageTemplateStagedModelDataHandlerTest
 		DDMStructure ddmStructure = _ddmStructureLocalService.getStructure(
 			group.getGroupId(), _classNameId, "BASIC-WEB-CONTENT");
 
-		_classTypeId = ddmStructure.getStructureId();
+		_classTypeKey = ddmStructure.getStructureKey();
 	}
 
 	@Test
@@ -90,7 +90,7 @@ public class DisplayPageTemplateStagedModelDataHandlerTest
 
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
 			DisplayPageTemplateTestUtil.addDisplayPageTemplate(
-				stagingGroup.getGroupId(), _classNameId, _classTypeId, true,
+				stagingGroup.getGroupId(), _classNameId, _classTypeKey, true,
 				WorkflowConstants.STATUS_APPROVED);
 
 		Layout layout = _layoutLocalService.fetchLayout(
@@ -211,7 +211,7 @@ public class DisplayPageTemplateStagedModelDataHandlerTest
 		throws Exception {
 
 		return DisplayPageTemplateTestUtil.addDisplayPageTemplate(
-			group.getGroupId(), _classNameId, _classTypeId, false,
+			group.getGroupId(), _classNameId, _classTypeKey, false,
 			WorkflowConstants.STATUS_APPROVED);
 	}
 
@@ -274,7 +274,7 @@ public class DisplayPageTemplateStagedModelDataHandlerTest
 	}
 
 	private long _classNameId;
-	private long _classTypeId;
+	private String _classTypeKey;
 
 	@Inject
 	private DDMStructureLocalService _ddmStructureLocalService;

@@ -46,7 +46,7 @@ public class LayoutPageTemplateEntryServiceHttp {
 				HttpPrincipal httpPrincipal, String externalReferenceCode,
 				long groupId, long layoutPageTemplateCollectionId,
 				String layoutPageTemplateEntryKey, long classNameId,
-				long classTypeId, String name, int type,
+				String classTypeKey, String name, int type,
 				long previewFileEntryId, boolean defaultTemplate,
 				long layoutPrototypeId, long plid, long masterLayoutPlid,
 				int status,
@@ -62,7 +62,7 @@ public class LayoutPageTemplateEntryServiceHttp {
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, externalReferenceCode, groupId,
 				layoutPageTemplateCollectionId, layoutPageTemplateEntryKey,
-				classNameId, classTypeId, name, type, previewFileEntryId,
+				classNameId, classTypeKey, name, type, previewFileEntryId,
 				defaultTemplate, layoutPrototypeId, plid, masterLayoutPlid,
 				status, serviceContext);
 
@@ -100,7 +100,7 @@ public class LayoutPageTemplateEntryServiceHttp {
 				HttpPrincipal httpPrincipal, String externalReferenceCode,
 				long groupId, long layoutPageTemplateCollectionId,
 				String layoutPageTemplateEntryKey, long classNameId,
-				long classTypeId, String name, long masterLayoutPlid,
+				String classTypeKey, String name, long masterLayoutPlid,
 				int status,
 				com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -114,7 +114,7 @@ public class LayoutPageTemplateEntryServiceHttp {
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, externalReferenceCode, groupId,
 				layoutPageTemplateCollectionId, layoutPageTemplateEntryKey,
-				classNameId, classTypeId, name, masterLayoutPlid, status,
+				classNameId, classTypeKey, name, masterLayoutPlid, status,
 				serviceContext);
 
 			Object returnObj = null;
@@ -2658,7 +2658,7 @@ public class LayoutPageTemplateEntryServiceHttp {
 	public static com.liferay.layout.page.template.model.LayoutPageTemplateEntry
 			updateLayoutPageTemplateEntry(
 				HttpPrincipal httpPrincipal, long layoutPageTemplateEntryId,
-				long classNameId, long classTypeId)
+				long classNameId, String classTypeKey)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		try {
@@ -2668,7 +2668,8 @@ public class LayoutPageTemplateEntryServiceHttp {
 				_updateLayoutPageTemplateEntryParameterTypes66);
 
 			MethodHandler methodHandler = new MethodHandler(
-				methodKey, layoutPageTemplateEntryId, classNameId, classTypeId);
+				methodKey, layoutPageTemplateEntryId, classNameId,
+				classTypeKey);
 
 			Object returnObj = null;
 
@@ -2792,14 +2793,14 @@ public class LayoutPageTemplateEntryServiceHttp {
 	private static final Class<?>[] _addLayoutPageTemplateEntryParameterTypes0 =
 		new Class[] {
 			String.class, long.class, long.class, String.class, long.class,
-			long.class, String.class, int.class, long.class, boolean.class,
+			String.class, String.class, int.class, long.class, boolean.class,
 			long.class, long.class, long.class, int.class,
 			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 	private static final Class<?>[] _addLayoutPageTemplateEntryParameterTypes1 =
 		new Class[] {
 			String.class, long.class, long.class, String.class, long.class,
-			long.class, String.class, long.class, int.class,
+			String.class, String.class, long.class, int.class,
 			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 	private static final Class<?>[] _addLayoutPageTemplateEntryParameterTypes2 =
@@ -3086,7 +3087,7 @@ public class LayoutPageTemplateEntryServiceHttp {
 		};
 	private static final Class<?>[]
 		_updateLayoutPageTemplateEntryParameterTypes66 = new Class[] {
-			long.class, long.class, long.class
+			long.class, long.class, String.class
 		};
 	private static final Class<?>[]
 		_updateLayoutPageTemplateEntryParameterTypes67 = new Class[] {

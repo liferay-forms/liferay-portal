@@ -229,13 +229,40 @@ public class DisplayPageTemplateDTOConverter
 	private ItemExternalReference _getSubtypeItemExternalReference(
 		LayoutPageTemplateEntry layoutPageTemplateEntry) {
 
+		if ((layoutPageTemplateEntry.getClassTypeId() < 0) &&
+			Validator.isNull(layoutPageTemplateEntry.getClassTypeKey())) {
+
+			return null;
+		}
+
 		InfoItemFormVariationsProvider<?> infoItemFormVariationsProvider =
 			_infoItemServiceRegistry.getFirstInfoItemService(
 				InfoItemFormVariationsProvider.class,
 				layoutPageTemplateEntry.getClassName());
 
 		if (infoItemFormVariationsProvider == null) {
-			return null;
+			if (Validator.isNull(layoutPageTemplateEntry.getClassTypeKey())) {
+				return null;
+			}
+
+			return new ItemExternalReference() {
+				{
+					setExternalReferenceCode(
+						layoutPageTemplateEntry::getClassTypeKey);
+				}
+			};
+		}
+
+		if (Validator.isNotNull(layoutPageTemplateEntry.getClassTypeKey())) {
+			return new ItemExternalReference() {
+				{
+					setClassName(
+						infoItemFormVariationsProvider::
+							getInfoItemFormVariationClassName);
+					setExternalReferenceCode(
+						layoutPageTemplateEntry::getClassTypeKey);
+				}
+			};
 		}
 
 		InfoItemFormVariation infoItemFormVariation =
@@ -249,6 +276,9 @@ public class DisplayPageTemplateDTOConverter
 
 		return new ItemExternalReference() {
 			{
+				setClassName(
+					infoItemFormVariationsProvider::
+						getInfoItemFormVariationClassName);
 				setExternalReferenceCode(
 					infoItemFormVariation::getExternalReferenceCode);
 			}

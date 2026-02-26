@@ -1462,7 +1462,8 @@ public class EditableFragmentEntryProcessorTest {
 		Assert.assertFalse(src.contains("imagePreview=1"));
 		Assert.assertEquals(
 			_dlURLHelper.getPreviewURL(
-				fileEntry, fileEntry.getFileVersion(), null, StringPool.BLANK),
+				fileEntry, fileEntry.getFileVersion(),
+				_serviceContext.getThemeDisplay(), StringPool.BLANK),
 			src);
 	}
 
@@ -1488,6 +1489,48 @@ public class EditableFragmentEntryProcessorTest {
 			style.contains(
 				"--background-image-file-entry-id: " +
 					fileEntry.getFileEntryId() + ";"));
+	}
+
+	@Test
+	public void testFragmentEntryProcessorEditableMappedDLImagePreviewURLWithDoAsUserId()
+		throws Exception {
+
+		FileEntry fileEntry = _addImageFileEntry(RandomTestUtil.randomString());
+
+		String editableValues = _getEditableFieldValues(
+			_portal.getClassNameId(FileEntry.class), fileEntry.getFileEntryId(),
+			"FileEntry_previewImage",
+			"fragment_entry_link_mapped_asset_field_image.json");
+
+		ThemeDisplay themeDisplay = _serviceContext.getThemeDisplay();
+
+		themeDisplay.setDoAsUserId(RandomTestUtil.randomString());
+
+		Element element = _getElement(
+			"data-lfr-editable-id", "image-square", editableValues,
+			"fragment_entry_image.html", LocaleUtil.getSiteDefault(),
+			FragmentEntryLinkConstants.VIEW);
+
+		String src = element.attr("src");
+
+		Assert.assertTrue(
+			src.contains("doAsUserId=" + themeDisplay.getDoAsUserId()));
+
+		editableValues = _getEditableFieldValues(
+			_portal.getClassNameId(FileEntry.class), fileEntry.getFileEntryId(),
+			"FileEntry_downloadURL",
+			"link/fragment_entry_link_mapped_asset_field_image.json");
+
+		element = _getElement(
+			"data-lfr-editable-id", "image-square", editableValues,
+			"fragment_entry_image.html", LocaleUtil.getSiteDefault(),
+			FragmentEntryLinkConstants.VIEW
+		).parent();
+
+		String href = element.attr("href");
+
+		Assert.assertTrue(
+			href.contains("doAsUserId=" + themeDisplay.getDoAsUserId()));
 	}
 
 	@Test
@@ -2135,7 +2178,7 @@ public class EditableFragmentEntryProcessorTest {
 		throws Exception {
 
 		DisplayPageTemplateTestUtil.addDisplayPageTemplate(
-			objectEntry.getGroupId(), classNameId, 0, true,
+			objectEntry.getGroupId(), classNameId, null, true,
 			WorkflowConstants.STATUS_APPROVED);
 
 		InfoItemFieldValuesProvider infoItemFieldValuesProvider =

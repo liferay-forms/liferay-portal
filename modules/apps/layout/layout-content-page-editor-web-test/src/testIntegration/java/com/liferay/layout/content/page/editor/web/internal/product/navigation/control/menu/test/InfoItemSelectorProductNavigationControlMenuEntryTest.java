@@ -69,7 +69,7 @@ public class InfoItemSelectorProductNavigationControlMenuEntryTest {
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
 			DisplayPageTemplateTestUtil.addDisplayPageTemplate(
 				_group.getGroupId(),
-				_portal.getClassNameId(FileEntry.class.getName()), 0, true,
+				_portal.getClassNameId(FileEntry.class.getName()), null, true,
 				WorkflowConstants.STATUS_APPROVED);
 
 		Assert.assertTrue(
@@ -95,7 +95,7 @@ public class InfoItemSelectorProductNavigationControlMenuEntryTest {
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
 			_layoutPageTemplateEntryLocalService.addLayoutPageTemplateEntry(
 				null, _group.getCreatorUserId(), _group.getGroupId(), 0, null,
-				_portal.getClassNameId(FileEntry.class.getName()), 0,
+				_portal.getClassNameId(FileEntry.class.getName()), null,
 				RandomTestUtil.randomString(),
 				LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE, 0, true, 0,
 				0, masterLayoutPageTemplateEntry.getPlid(), 0,

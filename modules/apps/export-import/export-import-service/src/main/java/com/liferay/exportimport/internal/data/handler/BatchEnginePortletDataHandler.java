@@ -20,7 +20,6 @@ import com.liferay.exportimport.internal.lar.PortletDataContextImpl;
 import com.liferay.exportimport.internal.lar.PortletDataContextThreadLocal;
 import com.liferay.exportimport.kernel.lar.BasePortletDataHandler;
 import com.liferay.exportimport.kernel.lar.DataLevel;
-import com.liferay.exportimport.kernel.lar.ExportImportHelper;
 import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
 import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.exportimport.kernel.lar.ManifestSummary;
@@ -43,6 +42,7 @@ import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
@@ -56,7 +56,6 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.TransactionConfig;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -97,7 +96,6 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 		BatchEngineImportTaskService batchEngineImportTaskService,
 		ChangesetEntryLocalService changesetEntryLocalService,
 		ClassNameLocalService classNameLocalService,
-		ExportImportHelper exportImportHelper,
 		GroupLocalService groupLocalService,
 		LayoutLocalService layoutLocalService,
 		StagingGroupHelper stagingGroupHelper) {
@@ -108,7 +106,6 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 		_batchEngineImportTaskService = batchEngineImportTaskService;
 		_changesetEntryLocalService = changesetEntryLocalService;
 		_classNameLocalService = classNameLocalService;
-		_exportImportHelper = exportImportHelper;
 		_groupLocalService = groupLocalService;
 		_layoutLocalService = layoutLocalService;
 		_stagingGroupHelper = stagingGroupHelper;
@@ -130,18 +127,26 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 					exportImportDescriptor.getModelClassName() +
 						BATCH_DELETE_CLASS_NAME_POSTFIX);
 
+			List<String> applicableExternalReferenceCodes = ListUtil.filter(
+				ListUtil.fromCollection(newPrimaryKeysMap.keySet()),
+				exportImportDescriptor::isApplicableExternalReferenceCode);
+
 			portletDataContext.addZipEntry(
 				_normalize(
 					registration.getDeletionsFileName(),
 					portletDataContext.getScopeGroupId()),
 				JSONUtil.toJSONArray(
-					ListUtil.filter(
-						ListUtil.fromCollection(newPrimaryKeysMap.keySet()),
-						exportImportDescriptor::
-							isApplicableExternalReferenceCode),
+					applicableExternalReferenceCodes,
 					externalReferenceCode -> JSONUtil.put(
 						"externalReferenceCode", externalReferenceCode)
 				).toString());
+
+			ManifestSummary manifestSummary =
+				portletDataContext.getManifestSummary();
+
+			manifestSummary.addModelDeletionCount(
+				exportImportDescriptor.getKey(),
+				applicableExternalReferenceCodes.size());
 		}
 	}
 
@@ -162,9 +167,10 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 				locale));
 	}
 
-	@Override
-	public String getName() {
-		return getPortletId();
+	public String getKey() {
+		return _getSoleProperty(
+			ExportImportVulcanBatchEngineTaskItemDelegate.
+				ExportImportDescriptor::getKey);
 	}
 
 	@Override
@@ -200,6 +206,19 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 	}
 
 	@Override
+	public String getTitle(Locale locale) {
+		String labelLanguageKey = _getSoleProperty(
+			ExportImportVulcanBatchEngineTaskItemDelegate.
+				ExportImportDescriptor::getLabelLanguageKey);
+
+		if (labelLanguageKey == null) {
+			return super.getTitle(locale);
+		}
+
+		return LanguageUtil.get(locale, labelLanguageKey);
+	}
+
+	@Override
 	public boolean isBatch() {
 		return true;
 	}
@@ -231,6 +250,13 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 					ExportImportDescriptor::isHidden));
 	}
 
+	public boolean isMissingPortletSupported() {
+		return Boolean.TRUE.equals(
+			_getSoleProperty(
+				ExportImportVulcanBatchEngineTaskItemDelegate.
+					ExportImportDescriptor::isMissingPortletSupported));
+	}
+
 	@Override
 	public boolean isStaged() {
 		return !StringUtil.startsWith(
@@ -243,9 +269,6 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 			exportImportDescriptor,
 		String taskItemDelegateName) {
 
-		String fileNamePrefix = GetterUtil.getString(
-			taskItemDelegateName, batchEngineClassName);
-
 		_registrations.add(
 			new Registration() {
 
@@ -256,7 +279,7 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 
 				@Override
 				public String getDeletionsFileName() {
-					return fileNamePrefix + "_deletions.json";
+					return exportImportDescriptor.getKey() + "_deletions.json";
 				}
 
 				@Override
@@ -268,7 +291,7 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 
 				@Override
 				public String getFileName() {
-					return fileNamePrefix + ".json";
+					return exportImportDescriptor.getKey() + ".json";
 				}
 
 				@Override
@@ -296,7 +319,7 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 
 		setPublishToLiveByDefault(true);
 		_updateDeletionSystemEventStagedModelTypes();
-		_updateExportPortletDataHandlerControls();
+		_updatePortletDataHandlerControls();
 	}
 
 	public void unregisterExportImportVulcanBatchEngineTaskItemDelegate(
@@ -317,7 +340,7 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 				iterator.remove();
 
 				_updateDeletionSystemEventStagedModelTypes();
-				_updateExportPortletDataHandlerControls();
+				_updatePortletDataHandlerControls();
 
 				return;
 			}
@@ -393,8 +416,7 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 
 				if ((activeRegistrations.size() > 1) &&
 					!portletDataContext.getBooleanParameter(
-						getPortletId(),
-						exportImportDescriptor.getResourceClassName())) {
+						getPortletId(), exportImportDescriptor.getKey())) {
 
 					continue;
 				}
@@ -430,8 +452,7 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 						portletDataContext.getManifestSummary();
 
 					manifestSummary.addModelAdditionCount(
-						new StagedModelType(
-							exportImportDescriptor.getResourceClassName()),
+						exportImportDescriptor.getKey(),
 						batchEngineExportTask.getProcessedItemsCount());
 				}
 			}
@@ -440,7 +461,8 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 					portletDataContext.getCompanyId(),
 					portletDataContext.getScopeGroupId())) {
 
-				portletDataContext.setValidateExistingDataHandler(false);
+				portletDataContext.setValidateExistingDataHandler(
+					!isMissingPortletSupported() || (getKey() == null));
 			}
 			else {
 				portletDataContext.setValidateExistingDataHandler(true);
@@ -467,8 +489,7 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 
 			if ((activeRegistrations.size() > 1) &&
 				!portletDataContext.getBooleanParameter(
-					getPortletId(),
-					exportImportDescriptor.getResourceClassName())) {
+					getPortletId(), exportImportDescriptor.getKey())) {
 
 				continue;
 			}
@@ -583,8 +604,7 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 					result.getBatchEngineExportTask();
 
 				manifestSummary.addModelAdditionCount(
-					new StagedModelType(
-						exportImportDescriptor.getResourceClassName()),
+					exportImportDescriptor.getKey(),
 					batchEngineExportTask.getTotalItemsCount());
 			}
 		}
@@ -820,9 +840,9 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 			exportImportDescriptor = registration.getExportImportDescriptor();
 
 		return new PortletDataHandlerBoolean(
-			getPortletId(), exportImportDescriptor.getResourceClassName(),
+			getPortletId(), exportImportDescriptor.getKey(),
 			exportImportDescriptor.getLabelLanguageKey(), true, false, null,
-			exportImportDescriptor.getResourceClassName(), null);
+			exportImportDescriptor.getKey(), null);
 	}
 
 	private <T> T _getSoleProperty(
@@ -869,17 +889,20 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 				StagedModelType.class));
 	}
 
-	private void _updateExportPortletDataHandlerControls() {
+	private void _updatePortletDataHandlerControls() {
 		if (_registrations.size() > 1) {
 			setEmptyControlsAllowed(false);
 			setExportPortletDataHandlerControls(
 				TransformUtil.transformToArray(
 					_registrations, this::_getPortletDataHandlerControl,
 					PortletDataHandlerControl.class));
+			setStagingPortletDataHandlerControls(
+				getExportPortletDataHandlerControls());
 		}
 		else {
 			setEmptyControlsAllowed(true);
 			setExportPortletDataHandlerControls();
+			setStagingPortletDataHandlerControls();
 		}
 	}
 
@@ -893,7 +916,6 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 	private final BatchEngineImportTaskService _batchEngineImportTaskService;
 	private final ChangesetEntryLocalService _changesetEntryLocalService;
 	private final ClassNameLocalService _classNameLocalService;
-	private final ExportImportHelper _exportImportHelper;
 	private final GroupLocalService _groupLocalService;
 	private final LayoutLocalService _layoutLocalService;
 	private final List<Registration> _registrations = new ArrayList<>();

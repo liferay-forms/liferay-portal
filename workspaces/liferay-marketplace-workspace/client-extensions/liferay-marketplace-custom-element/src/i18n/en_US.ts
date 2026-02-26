@@ -44,6 +44,7 @@ export default {
 	'all-progress-and-information-related-to-the-creation-of-the-solution-will-be-lost-unless-you-save-the-solution-as-a-draft-do-you-still-want-to-exit':
 		'All progress and information related to the creation of the solution will be lost unless you save the solution as a draft. Do you still want to exit?',
 	'all-published-apps': 'All Published Apps',
+	'allowed-email-domains': 'Allowed Email Domains',
 	'amount': 'Amount',
 	'an-administrator-of-the-marketplace-will-review-your-request-shortly-if-you-have-questions-regarding-your-submission-please-email':
 		'An administrator of the Marketplace will review your request shortly. If you have questions regarding your submission, please email.',
@@ -89,6 +90,7 @@ export default {
 	'back': 'Back',
 	'back-to-apps': 'Back to Apps',
 	'back-to-last-transaction': 'Back to Last Transaction',
+	'back-to-liferay-services': 'Back to Liferay Services',
 	'back-to-my-apps': 'Back to My Apps',
 	'back-to-my-solutions': 'Back to My Solutions',
 	'back-to-solutions': 'Back to Solutions',
@@ -317,6 +319,8 @@ export default {
 	'go-to-trial': 'Go to Trial',
 	'got-it': 'Got it',
 	'header': 'Header',
+	'hold-tight-we-re-preparing-your-environment-so-you-can-start-using-your-liferay-data-platform-this-will-only-take-a-moment':
+		'Hold tight. We’re preparing your environment so you can start using your Liferay Data Platform. This will only take a moment!',
 	'host-name': 'Host Name',
 	'i-certify-that-the-instances-activated-with-the-selected-activation-keys-have-been-shut-down-and-that-there-is-no-liferay-software-installed-deployed-used-or-executed-that-is-activated-with-the-selected-activation-key':
 		'I certify that the instances activated with the selected activation keys have been shut down and that there is no Liferay software installed, deployed, used or executed that is activated with the selected activation key.',
@@ -376,6 +380,7 @@ export default {
 	'liferay-s': 'Liferay’s',
 	'liferay-saas': 'Liferay SaaS',
 	'liferay-self-hosted': 'Liferay Self-Hosted',
+	'liferay-services': 'Liferay Services',
 	'liferay-version': 'Liferay Version',
 	'limit-reached': 'Limit Reached',
 	'list-with-latest-published-apps': 'List with latest published apps',
@@ -401,6 +406,8 @@ export default {
 	'manage-user-roles': 'Manage User Roles',
 	'manage-users': 'Manage Users',
 	'manage-your-current-trials': 'Manage your current trials',
+	'manage-your-liferay-services-purchased-from-the-marketplace':
+		'Manage your Liferay Services purchased from the Marketplace.',
 	'manage-your-teams-trial': "Manage your team's trial",
 	'mark-as-paid': 'Mark as Paid',
 	'marked-as-paid': 'Marked as paid.',
@@ -421,6 +428,7 @@ export default {
 	'move-up': 'Move Up',
 	'mp-commission': 'MP Commission',
 	'my-apps': 'My Apps',
+	'my-liferay-services': 'My Liferay Services',
 	'my-saas-demos': 'My SaaS Demos',
 	'my-solutions': 'My Solutions',
 	'name': 'Name',
@@ -495,6 +503,8 @@ export default {
 		'Please note that since there is no cloud project associated with your instance, you will not be able to install Cloud Apps.',
 	'please-review-before-submitting-once-sent-you-will-not-be-able-to-edit-any-information-until-this-submission-is-completely-reviewed-by-liferay':
 		'Please review before submitting. Once sent, you will not be able to edit any information until this submission is fully reviewed by Liferay.',
+	'please-review-the-order-summary-below-and-flag-the-checkbox-to-complete-your-purchase':
+		'Please review the order summary below and flag the checkbox to complete your purchase',
 	'please-select-the-account-you-wish-to-link-to-your-liferay-dxp-below':
 		'Please select the account you wish to link to your Liferay DXP below.',
 	'price': 'Price',
@@ -542,6 +552,7 @@ export default {
 	'purchase-completed': 'Purchase Completed',
 	'purchase-date': 'Purchase Date',
 	'purchase-failed': 'Purchase Failed',
+	'purchase-number': 'Purchase Number',
 	'purchase-order-number': 'Purchase Order Number',
 	'purchased-by': 'Purchased by',
 	'qty': 'Qty',
@@ -587,7 +598,7 @@ export default {
 	'scroll-to-top': 'Scroll to Top',
 	'search': 'Search',
 	'section-that-shows-the-latest-sales-made':
-		'Section that shows the latest sales made',
+		'Section that shows the latest sales made.',
 	'section-that-shows-the-payments': 'Section that shows the payments.',
 	'select-a-file': 'Select a File',
 	'select-a-local-file-to-upload': 'Select a Local File to Upload',
@@ -607,6 +618,7 @@ export default {
 	'send-request': 'Send Request',
 	'set-the-users-role-ssa-users-can-create-trials-while-ssa-admins-can-manage-users-roles-and-trials':
 		'Set the user’s role: SSA Users can create trials, while SSA Admins can manage users, roles, and trials.',
+	'setting-up-your-free-version-ldp': 'Setting up your Free Version LDP 🚀',
 	'showing-x-to-x-of-x': 'Showing {0} to {1} of {2}',
 	'sign-in-with-a-different-account': 'Sign in with a Different Account',
 	'site-initializer': 'Site Initializer',
@@ -618,6 +630,7 @@ export default {
 	'solution-x-submitted': 'Solution <b>{0}</b> submitted.',
 	'solutions': 'Solutions',
 	'solutions-info': 'Solutions Info',
+	'something-went-wrong': 'Something went wrong.',
 	'sorry-there-are-no-results-found': 'Sorry, there are no results found.',
 	'specify-your-apps-version-this-will-help-the-user-understand-the-latest-version-of-your-app-offered-on-the-marketplace':
 		'Specify your app’s version. This will help the user understand the latest version of your app offered on the Marketplace.',
@@ -774,19 +787,24 @@ export default {
 	'video-url': 'Video URL',
 	'view': 'View',
 	'view-all': 'View All',
-	'view-details': 'View details',
+	'view-details': 'View Details',
 	'view-request': 'View Request',
+	'visit': 'Visit',
 	'we-are-happy-to-have-you-interested-in-the-liferay-marketplace-at-the-moment-we-are-working-on-enhancing-the-experience-for-our-customers-in-the-marketplace-and-access-is-invite-only-if-you-are-an-existing-liferay-customer-please-keep-an-eye-out-for-an-announcement-related-to-the-new-marketplace-in-the-coming-months':
 		'We are happy to have you interested in the Liferay Marketplace. At the moment, we are working on enhancing the experience for our customers in the Marketplace and access is invite only. If you are an existing Liferay customer, please keep an eye out for an announcement related to the new Marketplace in the coming months!',
 	'we-are-happy-to-have-you-interested-in-the-liferay-marketplace-at-the-moment-we-are-working-on-enhancing-the-experience-for-our-publishers-in-the-marketplace-if-you-are-an-existing-liferay-developer-or-partner-you-can-choose-to-join-our-pilot-group-of-publishers-to-submit-apps-to-the-marketplace-continue-to-request-a-publisher-account':
 		'We are happy to have you interested in the Liferay Marketplace. At the moment, we are working on enhancing the experience for our publishers in the Marketplace.  If you are an existing Liferay developer or partner, you can choose to join our pilot group of publishers to submit apps to the Marketplace.  Continue to request a publisher account.',
+	'we-couldnt-set-up-your-environment-please-contact-support':
+		'We couldn’t set up your environment. Please contact support.',
 	'website': 'Website',
 	'when-adding-app-versions-you-can-use-your-own-numbering-system-but-be-sure-it-is-consistent-and-understandable-by-the-customer':
 		'When adding app versions, you can use your own numbering system, but be sure it is consistent and understandable by the customer.',
 	'workflow-action': 'Workflow Action',
+	'workspace-friendly-url': 'Workspace Friendly URL',
 	'workspace-info': 'Workspace Info',
 	'workspace-name': 'Workspace Name',
 	'workspace-owner-email': 'Workspace Owner Email',
+	'workspace-timezone': 'Workspace Timezone',
 	'x-available-for-you': `{0} available for <b>${Liferay.ThemeDisplay.getUserEmailAddress()}</b> (you)`,
 	'x-is-required': '{0} is required',
 	'x-items': '{0} Items',

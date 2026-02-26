@@ -2881,7 +2881,7 @@ public class StructuredContentResourceTest
 		DisplayPageTemplateTestUtil.addDisplayPageTemplate(
 			testGroup.getGroupId(),
 			_portal.getClassNameId(JournalArticle.class.getName()),
-			_localizedDDMStructure.getStructureId(), true,
+			_localizedDDMStructure.getStructureKey(), true,
 			WorkflowConstants.STATUS_APPROVED);
 
 		Locale locale = LocaleUtil.getDefault();

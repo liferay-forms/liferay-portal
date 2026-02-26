@@ -21,6 +21,7 @@ import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisibl
 import getRandomString from '../../../utils/getRandomString';
 import performLoginViaApi, {performLogout} from '../../../utils/performLogin';
 import {PORTLET_URLS} from '../../../utils/portletUrls';
+import {closeProductMenu} from '../../../utils/productMenu';
 import getBasicWebContentStructureId from '../../../utils/structured-content/getBasicWebContentStructureId';
 import {journalPagesTest} from '../../journal-web/main/fixtures/journalPagesTest';
 import {pagesPagesTest} from '../../layout-admin-web/main/fixtures/pagesPagesTest';
@@ -1054,6 +1055,8 @@ test(
 
 		await widgetPagePage.goto(parentLayout, site.friendlyUrlPath);
 
+		await closeProductMenu(page);
+
 		await widgetPagePage.clickOnAction('Menu Display', 'Configuration');
 
 		const configurationIFrame = page.frameLocator(
@@ -1610,9 +1613,7 @@ test(
 		await apiHelpers.jsonWebServicesLayoutPageTemplateEntry.addDisplayPageLayoutPageTemplateEntry(
 			{
 				classNameId: className.classNameId,
-				classTypeId: String(
-					await getBasicWebContentStructureId(apiHelpers)
-				),
+				classTypeKey: 'BASIC-WEB-CONTENT',
 				groupId: site.id,
 				name: displayPageTemplateName,
 			}

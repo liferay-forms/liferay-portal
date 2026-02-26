@@ -35,6 +35,7 @@ import java.io.Serializable;
 import java.text.Format;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -80,6 +81,9 @@ public class BatchEnginePortletDataHandlerUtil {
 		PortletDataContext portletDataContext,
 		StagingGroupHelper stagingGroupHelper) {
 
+		Map<String, Serializable> exportImportDescriptorParameters =
+			exportImportDescriptor.getParameters(portletDataContext);
+
 		Map<String, Serializable> exportParameters =
 			HashMapBuilder.<String, Serializable>put(
 				"batchNestedFields",
@@ -119,40 +123,50 @@ public class BatchEnginePortletDataHandlerUtil {
 			).put(
 				"filter",
 				() -> {
+					List<String> filterStrings = new ArrayList<>();
+
 					if (ExportImportDateUtil.isRangeFromLastPublishDate(
 							portletDataContext)) {
 
-						return buildFilterParameterFromChangeset(
-							changesetEntryLocalService, classNameLocalService,
-							exportImportDescriptor.getModelClassName(),
-							portletDataContext);
-					}
+						String lastPublishDateFilterString =
+							_getLastPublishDateFilterString(
+								changesetEntryLocalService,
+								classNameLocalService,
+								exportImportDescriptor.getModelClassName(),
+								portletDataContext);
 
-					if ((portletDataContext.getEndDate() == null) &&
-						(portletDataContext.getStartDate() == null)) {
-
-						return null;
-					}
-
-					StringBundler sb = new StringBundler(5);
-
-					if (portletDataContext.getEndDate() != null) {
-						sb.append("dateModified le ");
-						sb.append(
-							_format.format(portletDataContext.getEndDate()));
-					}
-
-					if (portletDataContext.getStartDate() != null) {
-						if (sb.length() > 0) {
-							sb.append(" and ");
+						if (Validator.isNull(lastPublishDateFilterString)) {
+							return null;
 						}
 
-						sb.append("dateModified ge ");
-						sb.append(
-							_format.format(portletDataContext.getStartDate()));
+						filterStrings.add(lastPublishDateFilterString);
+					}
+					else {
+						String dateRangeFilterString =
+							_getDateRangeFilterString(portletDataContext);
+
+						if (Validator.isNull(dateRangeFilterString)) {
+							return null;
+						}
+
+						filterStrings.add(dateRangeFilterString);
 					}
 
-					return sb.toString();
+					if (exportImportDescriptorParameters != null) {
+						String exportImportDescriptorFilterString =
+							GetterUtil.getString(
+								exportImportDescriptorParameters.remove(
+									"filter"));
+
+						if (Validator.isNotNull(
+								exportImportDescriptorFilterString)) {
+
+							filterStrings.add(
+								"(" + exportImportDescriptorFilterString + ")");
+						}
+					}
+
+					return StringUtil.merge(filterStrings, " and ");
 				}
 			).put(
 				"modelClassName", exportImportDescriptor.getModelClassName()
@@ -160,7 +174,7 @@ public class BatchEnginePortletDataHandlerUtil {
 				"modelNameLanguageKey",
 				exportImportDescriptor.getLabelLanguageKey()
 			).putAll(
-				exportImportDescriptor.getParameters(portletDataContext)
+				exportImportDescriptorParameters
 			).build();
 
 		Group group = groupLocalService.fetchGroup(
@@ -183,46 +197,6 @@ public class BatchEnginePortletDataHandlerUtil {
 		}
 
 		return exportParameters;
-	}
-
-	public static String buildFilterParameterFromChangeset(
-		ChangesetEntryLocalService changesetEntryLocalService,
-		ClassNameLocalService classNameLocalService, String modelClassName,
-		PortletDataContext portletDataContext) {
-
-		long changesetCollectionId = MapUtil.getLong(
-			portletDataContext.getParameterMap(), "changesetCollectionId");
-
-		if (changesetCollectionId == 0) {
-			return null;
-		}
-
-		Set<String> externalReferenceCodes = new HashSet<>();
-
-		externalReferenceCodes.add("");
-
-		List<ChangesetEntry> changesetEntries =
-			changesetEntryLocalService.getChangesetEntries(
-				changesetCollectionId,
-				classNameLocalService.getClassNameId(modelClassName));
-
-		for (ChangesetEntry changesetEntry : changesetEntries) {
-			if (!Validator.isBlank(
-					changesetEntry.getClassExternalReferenceCode())) {
-
-				externalReferenceCodes.add(
-					changesetEntry.getClassExternalReferenceCode());
-			}
-		}
-
-		return StringBundler.concat(
-			"externalReferenceCode in (",
-			com.liferay.portal.kernel.util.StringUtil.merge(
-				TransformUtil.transform(
-					externalReferenceCodes,
-					layoutExternalReferenceCode ->
-						"'" + layoutExternalReferenceCode + "'")),
-			")");
 	}
 
 	public static Map<String, Serializable> buildImportParameters(
@@ -294,6 +268,69 @@ public class BatchEnginePortletDataHandlerUtil {
 		}
 
 		return importParameters;
+	}
+
+	private static String _getDateRangeFilterString(
+		PortletDataContext portletDataContext) {
+
+		Date endDate = portletDataContext.getEndDate();
+		Date startDate = portletDataContext.getStartDate();
+
+		if ((endDate == null) && (startDate == null)) {
+			return null;
+		}
+
+		List<String> filterStrings = new ArrayList<>();
+
+		if (endDate != null) {
+			filterStrings.add("dateModified le " + _format.format(endDate));
+		}
+
+		if (startDate != null) {
+			filterStrings.add("dateModified ge " + _format.format(startDate));
+		}
+
+		return StringUtil.merge(filterStrings, " and ");
+	}
+
+	private static String _getLastPublishDateFilterString(
+		ChangesetEntryLocalService changesetEntryLocalService,
+		ClassNameLocalService classNameLocalService, String modelClassName,
+		PortletDataContext portletDataContext) {
+
+		Set<String> externalReferenceCodes = new HashSet<>();
+
+		externalReferenceCodes.add("");
+
+		long changesetCollectionId = MapUtil.getLong(
+			portletDataContext.getParameterMap(), "changesetCollectionId");
+
+		if (changesetCollectionId > 0) {
+			List<ChangesetEntry> changesetEntries =
+				changesetEntryLocalService.getChangesetEntries(
+					changesetCollectionId,
+					classNameLocalService.getClassNameId(modelClassName));
+
+			for (ChangesetEntry changesetEntry : changesetEntries) {
+				if (Validator.isBlank(
+						changesetEntry.getClassExternalReferenceCode())) {
+
+					continue;
+				}
+
+				externalReferenceCodes.add(
+					changesetEntry.getClassExternalReferenceCode());
+			}
+		}
+
+		return StringBundler.concat(
+			"externalReferenceCode in (",
+			com.liferay.portal.kernel.util.StringUtil.merge(
+				TransformUtil.transform(
+					externalReferenceCodes,
+					layoutExternalReferenceCode ->
+						"'" + layoutExternalReferenceCode + "'")),
+			")");
 	}
 
 	private static boolean _isCompanyScoped(

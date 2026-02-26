@@ -1287,6 +1287,10 @@
 			<description name="Finds incorrect use of `LanguageUtil.get` in `.jsp` files." />
 			<property name="enabled" value="false" />
 		</check>
+		<check name="JSPLiferayUICSPTagCheck">
+			<category name="Bug Prevention" />
+			<description name="Finds new usages of deprecated liferay-ui:csp tag." />
+		</check>
 		<check name="JSPLineBreakCheck">
 			<category name="Styling" />
 			<description name="Finds missing and unnecessary line breaks in `.jsp` lines." />
@@ -1948,11 +1952,6 @@
 		<check name="UpgradeJavaFacetedSearcherCheck">
 			<category name="Upgrade" />
 			<description name="Replaces the references of the `Indexer indexer = FacetedSearcher.getInstance();` declaration and `indexer.search` method call." />
-		</check>
-		<check name="UpgradeJavaFDSActionProviderCheck">
-			<category name="Upgrade" />
-			<description name="Reorder parameters in the getDropdownItems method of the FDSDataProvider interface." />
-			<weight>1</weight>
 		</check>
 		<check name="UpgradeJavaFDSDataProviderCheck">
 			<category name="Upgrade" />

@@ -2270,6 +2270,8 @@ public class CustomFieldsUtilTest {
 		ExportImportThreadLocal.setExportImportConfigurationId(
 			exportImportConfigurationId);
 
+		ExportImportThreadLocal.setLayoutImportInProcess(true);
+
 		int initialExpandoColumnsCount =
 			_expandoColumnLocalService.getColumnsCount(
 				TestPropsValues.getCompanyId(),
@@ -2326,6 +2328,8 @@ public class CustomFieldsUtilTest {
 
 		ExportImportThreadLocal.setExportImportConfigurationId(
 			exportImportConfigurationId);
+
+		ExportImportThreadLocal.setLayoutImportInProcess(true);
 
 		int initialExpandoColumnsCount =
 			_expandoColumnLocalService.getColumnsCount(
@@ -2726,8 +2730,8 @@ public class CustomFieldsUtilTest {
 				TestPropsValues.getCompanyId(), exportImportConfigurationId);
 
 		Assert.assertEquals(
-			exportImportReportEntries.toString(),
-			exportImportReportEntries.size(), 21);
+			exportImportReportEntries.toString(), 21,
+			exportImportReportEntries.size());
 
 		ExportImportReportEntry exportImportReportEntry =
 			exportImportReportEntries.get(0);

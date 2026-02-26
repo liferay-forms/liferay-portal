@@ -14,6 +14,7 @@ import com.liferay.layout.page.template.admin.web.internal.handler.LayoutPageTem
 import com.liferay.layout.page.template.exception.RequiredLayoutPageTemplateEntryException;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryService;
+import com.liferay.layout.page.template.util.LayoutPageTemplateEntryUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.LockedLayoutException;
 import com.liferay.portal.kernel.exception.ModelListenerException;
@@ -73,10 +74,15 @@ public class UpdateDisplayPageEntryContentTypeMVCActionCommand
 
 			_layoutLockManager.getLock(draftLayout, themeDisplay.getUserId());
 
+			long classNameId = ParamUtil.getLong(actionRequest, "classNameId");
+
 			_layoutPageTemplateEntryService.updateLayoutPageTemplateEntry(
 				layoutPageTemplateEntry.getLayoutPageTemplateEntryId(),
-				ParamUtil.getLong(actionRequest, "classNameId"),
-				ParamUtil.getLong(actionRequest, "classTypeId"));
+				classNameId,
+				LayoutPageTemplateEntryUtil.getClassTypeKey(
+					classNameId,
+					ParamUtil.getLong(actionRequest, "classTypeId"),
+					themeDisplay.getScopeGroupId()));
 
 			hideDefaultSuccessMessage(actionRequest);
 
@@ -178,7 +184,8 @@ public class UpdateDisplayPageEntryContentTypeMVCActionCommand
 		).setParameter(
 			"classNameId", layoutPageTemplateEntry.getClassNameId()
 		).setParameter(
-			"classTypeId", layoutPageTemplateEntry.getClassTypeId()
+			"classTypeId",
+			LayoutPageTemplateEntryUtil.getClassTypeId(layoutPageTemplateEntry)
 		).setParameter(
 			"layoutPageTemplateEntryId",
 			layoutPageTemplateEntry.getLayoutPageTemplateEntryId()

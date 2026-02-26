@@ -7686,6 +7686,17 @@ public class DefaultObjectEntryManagerImplTest
 	}
 
 	@Test
+	public void testPartialUpdateObjectEntryWithPortletImportInProcess()
+		throws Exception {
+
+		_testUpdateObjectEntryWithPortletImportInProcess(
+			(objectDefinition, objectEntryId, objectEntry) ->
+				_defaultObjectEntryManager.partialUpdateObjectEntry(
+					_simpleDTOConverterContext, objectDefinition, objectEntryId,
+					objectEntry));
+	}
+
+	@Test
 	public void testPartialUpdateObjectEntryWithReadOnlyFields()
 		throws Exception {
 
@@ -9131,6 +9142,17 @@ public class DefaultObjectEntryManagerImplTest
 
 		PermissionThreadLocal.setPermissionChecker(_originalPermissionChecker);
 		PrincipalThreadLocal.setName(_originalName);
+	}
+
+	@Test
+	public void testUpdateObjectEntryWithPortletImportInProcess()
+		throws Exception {
+
+		_testUpdateObjectEntryWithPortletImportInProcess(
+			(objectDefinition, objectEntryId, objectEntry) ->
+				_defaultObjectEntryManager.updateObjectEntry(
+					_simpleDTOConverterContext, objectDefinition, objectEntryId,
+					objectEntry));
 	}
 
 	@FeatureFlag("LPD-17564")
@@ -11747,6 +11769,77 @@ public class DefaultObjectEntryManagerImplTest
 						objectRelationship, parentNode.getPrimaryKey()),
 					node.getPrimaryKey(), objectRelationship,
 					parentNode.getPrimaryKey()));
+		}
+	}
+
+	private void _testUpdateObjectEntryWithPortletImportInProcess(
+			UnsafeTriFunction
+				<ObjectDefinition, Long, ObjectEntry, ObjectEntry, Exception>
+					unsafeTriFunction)
+		throws Exception {
+
+		ObjectDefinition objectDefinition =
+			ObjectDefinitionTestUtil.publishObjectDefinition();
+
+		try (SafeCloseable safeCloseable =
+				LazyReferencingThreadLocal.setEnabledWithSafeCloseable(true)) {
+
+			ExportImportThreadLocal.setExportImportConfigurationId(
+				RandomTestUtil.randomLong());
+			ExportImportThreadLocal.setPortletImportInProcess(true);
+
+			com.liferay.object.model.ObjectEntry serviceBuilderObjectEntry =
+				_objectEntryLocalService.getOrAddEmptyObjectEntry(
+					RandomTestUtil.randomString(), TestPropsValues.getGroupId(),
+					TestPropsValues.getUserId(),
+					objectDefinition.getObjectDefinitionId());
+
+			Assert.assertEquals(
+				WorkflowConstants.STATUS_EMPTY,
+				serviceBuilderObjectEntry.getStatus());
+
+			_assertObjectEntryStatus(
+				WorkflowConstants.STATUS_EMPTY,
+				unsafeTriFunction.apply(
+					objectDefinition,
+					serviceBuilderObjectEntry.getObjectEntryId(),
+					new ObjectEntry()));
+			_assertObjectEntryStatus(
+				WorkflowConstants.STATUS_APPROVED,
+				unsafeTriFunction.apply(
+					objectDefinition,
+					serviceBuilderObjectEntry.getObjectEntryId(),
+					new ObjectEntry() {
+						{
+							setStatus(
+								new Status() {
+									{
+										setCode(
+											WorkflowConstants.STATUS_APPROVED);
+									}
+								});
+						}
+					}));
+			_assertObjectEntryStatus(
+				WorkflowConstants.STATUS_APPROVED,
+				unsafeTriFunction.apply(
+					objectDefinition,
+					serviceBuilderObjectEntry.getObjectEntryId(),
+					new ObjectEntry() {
+						{
+							setStatus(
+								new Status() {
+									{
+										setCode(
+											WorkflowConstants.STATUS_EXPIRED);
+									}
+								});
+						}
+					}));
+		}
+		finally {
+			ExportImportThreadLocal.setExportImportConfigurationId(0);
+			ExportImportThreadLocal.setPortletImportInProcess(false);
 		}
 	}
 

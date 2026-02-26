@@ -93,6 +93,19 @@
 	},
 	{
 		"classNames": [
+			"FDSActionProvider"
+		],
+		"classStructurePattern": true,
+		"issueKey": "LPD-7879",
+		"methodsToFormat": [
+			{
+				"from": "@Override\n\tpublic List<DropdownItem> getDropdownItems(\n\t\t\tHttpServletRequest httpServletRequest, long groupId, Object model)",
+				"to": "@Override\n\tpublic List<DropdownItem> getDropdownItems(\n\t\t\tlong groupId, HttpServletRequest httpServletRequest, Object model)"
+			}
+		]
+	},
+	{
+		"classNames": [
 			"AssetDisplayPageFriendlyURLProvider"
 		],
 		"from": "getFriendlyURL(String paramName, long paramName, Locale paramName, ThemeDisplay paramName)",
@@ -4423,6 +4436,24 @@
 	},
 	{
 		"classNames": [
+			"DLFileEntryLocalService",
+			"DLFileEntryLocalServiceUtil"
+		],
+		"from": "updateFileEntry(long paramName, long paramName, String paramName, String paramName, String paramName, String paramName, String paramName, DLVersionNumberIncrease paramName, long paramName, Map<String, DDMFormValues> paramName, File paramName, InputStream paramName, long paramName, ServiceContext paramName)",
+		"issueKey": "LPD-47411",
+		"to": "updateFileEntry(param#0#, param#1#, param#2#, param#3#, param#4#, null, param#5#, param#6#, param#7#, param#8#, param#9#, param#10#, param#11#, param#12#, null, null, null, param#13#)"
+	},
+	{
+		"classNames": [
+			"DLFileEntryService",
+			"DLFileEntryServiceUtil"
+		],
+		"from": "updateFileEntry(long paramName, String paramName, String paramName, String paramName, String paramName, String paramName, DLVersionNumberIncrease paramName, long paramName, Map<String, DDMFormValues> paramName, File paramName, InputStream paramName, long paramName, ServiceContext paramName)",
+		"issueKey": "LPD-47411",
+		"to": "updateFileEntry(param#0#, param#1#, param#2#, param#3#, null, param#4#, param#5#, param#6#, param#7#, param#8#, param#9#, param#10#, param#11#, null, null, null, param#12#)"
+	},
+	{
+		"classNames": [
 			"DefaultConfigurationAction"
 		],
 		"classStructurePattern": true,
@@ -4499,6 +4530,22 @@
 		"validExtensions": [
 			"java",
 			"jsp"
+		]
+	},
+	{
+		"classNames": [
+			"CommerceLowStockActivity"
+		],
+		"classStructurePattern": true,
+		"issueKey": "LPD-48704",
+		"newImports": [
+			"com.liferay.portal.kernel.language.LanguageUtil",
+			"java.util.HashMap",
+			"java.util.Locale",
+			"java.util.Map"
+		],
+		"newMethods": [
+			"@Override\n\tpublic Map<Locale,String> getLabelMap() {\n\t\tMap<Locale, String> labelMap = new HashMap<>();\n\n\t\tfor (Locale locale : LanguageUtil.getAvailableLocales()) {\n\t\t\tlabelMap.put(locale, getLabel(locale));\n\t\t}\n\n\t\treturn labelMap;\n\t}"
 		]
 	},
 	{
@@ -5165,6 +5212,24 @@
 	},
 	{
 		"classNames": [
+			"FragmentEntryLinkLocalService",
+			"FragmentEntryLinkLocalServiceUtil"
+		],
+		"from": "addFragmentEntryLink(long paramName, long paramName, long paramName, long paramName, long paramName, long paramName, String paramName, String paramName, String paramName, String paramName, String paramName, String paramName, int paramName, String paramName, int paramName, ServiceContext paramName)",
+		"issueKey": "LPD-58603",
+		"to": "addFragmentEntryLink(null, param#0#, param#1#, param#2#, param#3#, param#4#, param#5#, param#6#, param#7#, param#8#, param#9#, param#10#, param#11#, param#12#, param#13#, param#14#, param#15#)"
+	},
+	{
+		"classNames": [
+			"FragmentEntryLinkService",
+			"FragmentEntryLinkServiceUtil"
+		],
+		"from": "addFragmentEntryLink(long paramName, long paramName, long paramName, long paramName, long paramName, String paramName, String paramName, String paramName, String paramName, String paramName, String paramName, int paramName, String paramName, int paramName, ServiceContext paramName)",
+		"issueKey": "LPD-58603",
+		"to": "addFragmentEntryLink(null, param#0#, param#1#, param#2#, param#3#, param#4#, param#5#, param#6#, param#7#, param#8#, param#9#, param#10#, param#11#, param#12#, param#13#, param#14#)"
+	},
+	{
+		"classNames": [
 			"LayoutPageTemplateStructureLocalService",
 			"LayoutPageTemplateStructureLocalServiceUtil"
 		],
@@ -5369,6 +5434,14 @@
 			"com.liferay.portal.kernel.service.ServiceContextThreadLocal"
 		],
 		"to": "DDMUtil.getFields(param#0#, ServiceContextThreadLocal.getServiceContext())"
+	},
+	{
+		"classNames": [
+			"PropsKeys"
+		],
+		"from": "AUTO_DEPLOY_TOMCAT_DEST_DIR",
+		"hasMessage": true,
+		"issueKey": "LPD-65815"
 	},
 	{
 		"from": "PropsValues.FEATURE_FLAGS_JSON",

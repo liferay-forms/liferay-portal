@@ -10,7 +10,6 @@ import com.liferay.object.service.ObjectActionLocalService;
 import com.liferay.portal.search.batch.BatchIndexingActionable;
 import com.liferay.portal.search.batch.DynamicQueryBatchIndexingActionableFactory;
 import com.liferay.portal.search.spi.model.index.contributor.ModelIndexerWriterContributor;
-import com.liferay.portal.search.spi.model.index.contributor.helper.ModelIndexerWriterDocumentHelper;
 
 /**
  * @author Marco Leo
@@ -29,25 +28,10 @@ public class ObjectActionModelIndexerWriterContributor
 	}
 
 	@Override
-	public void customize(
-		BatchIndexingActionable batchIndexingActionable,
-		ModelIndexerWriterDocumentHelper modelIndexerWriterDocumentHelper) {
-
-		batchIndexingActionable.setPerformActionMethod(
-			(ObjectAction objectAction) -> batchIndexingActionable.addDocument(
-				modelIndexerWriterDocumentHelper.getDocument(objectAction)));
-	}
-
-	@Override
 	public BatchIndexingActionable getBatchIndexingActionable() {
 		return _dynamicQueryBatchIndexingActionableFactory.
 			getBatchIndexingActionable(
 				_objectActionLocalService.getIndexableActionableDynamicQuery());
-	}
-
-	@Override
-	public long getCompanyId(ObjectAction objectAction) {
-		return objectAction.getCompanyId();
 	}
 
 	private final DynamicQueryBatchIndexingActionableFactory

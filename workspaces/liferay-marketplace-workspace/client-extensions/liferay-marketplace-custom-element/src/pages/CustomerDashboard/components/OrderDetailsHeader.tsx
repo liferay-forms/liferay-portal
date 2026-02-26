@@ -15,7 +15,7 @@ type OrderDetailsProps = {
 	hasOrderDetails?: boolean;
 	image?: string;
 	name?: string;
-	order?: Cart;
+	order?: PlacedOrder;
 	productOwner?: string;
 	version?: string;
 };

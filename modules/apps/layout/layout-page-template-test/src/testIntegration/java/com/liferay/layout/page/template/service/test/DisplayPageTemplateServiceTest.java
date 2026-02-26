@@ -72,7 +72,7 @@ public class DisplayPageTemplateServiceTest {
 	public void testAddDisplayPageWithInvalidClassNameId()
 		throws PortalException {
 
-		_createDisplayPageEntry(0, RandomTestUtil.randomLong());
+		_createDisplayPageEntry(0, RandomTestUtil.randomString());
 	}
 
 	@Test
@@ -90,11 +90,11 @@ public class DisplayPageTemplateServiceTest {
 	}
 
 	private LayoutPageTemplateEntry _createDisplayPageEntry(
-			long classNameId, long classTypeId)
+			long classNameId, String classTypeKey)
 		throws PortalException {
 
 		return _layoutPageTemplateEntryService.addLayoutPageTemplateEntry(
-			null, _group.getGroupId(), 0, null, classNameId, classTypeId,
+			null, _group.getGroupId(), 0, null, classNameId, classTypeKey,
 			RandomTestUtil.randomString(), 0, WorkflowConstants.STATUS_DRAFT,
 			ServiceContextTestUtil.getServiceContext(
 				_group.getGroupId(), TestPropsValues.getUserId()));

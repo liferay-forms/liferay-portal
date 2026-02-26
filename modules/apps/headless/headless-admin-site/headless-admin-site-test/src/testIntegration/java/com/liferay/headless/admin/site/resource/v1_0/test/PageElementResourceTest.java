@@ -191,7 +191,7 @@ import org.junit.runner.RunWith;
 /**
  * @author Rubén Pulido
  */
-@FeatureFlag("LPD-35443")
+@FeatureFlag("LPD-74328")
 @RunWith(Arquillian.class)
 public class PageElementResourceTest extends BasePageElementResourceTestCase {
 
@@ -363,16 +363,6 @@ public class PageElementResourceTest extends BasePageElementResourceTestCase {
 		_testPostSitePageSpecificationPageExperiencePageElementWithFragmentPageElement();
 		_testPostSitePageSpecificationPageExperiencePageElementWithGridPageElement();
 		_testPostSitePageSpecificationPageExperiencePageElementWithWidgetPageElement();
-	}
-
-	@Ignore
-	@Override
-	@Test
-	public void testPostSitePageSpecificationPageExperiencePageElementFragmentComposition()
-		throws Exception {
-
-		super.
-			testPostSitePageSpecificationPageExperiencePageElementFragmentComposition();
 	}
 
 	@Override
@@ -1966,7 +1956,7 @@ public class PageElementResourceTest extends BasePageElementResourceTestCase {
 				LayoutPageTemplateEntry layoutPageTemplateEntry =
 					DisplayPageTemplateTestUtil.addDisplayPageTemplate(
 						testGroup.getGroupId(),
-						_portal.getClassNameId(className), 0, true,
+						_portal.getClassNameId(className), null, true,
 						WorkflowConstants.STATUS_APPROVED);
 
 				displayPageFormContainerSubmissionResult.

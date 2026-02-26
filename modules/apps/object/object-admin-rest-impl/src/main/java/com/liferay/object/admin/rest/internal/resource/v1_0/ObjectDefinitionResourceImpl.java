@@ -179,8 +179,13 @@ public class ObjectDefinitionResourceImpl
 		return new ExportImportDescriptor() {
 
 			@Override
+			public String getKey() {
+				return ObjectDefinitionResourceImpl.class.getName();
+			}
+
+			@Override
 			public String getLabelLanguageKey() {
-				return "object-definitions";
+				return "model.resource.com.liferay.object";
 			}
 
 			@Override
@@ -206,11 +211,6 @@ public class ObjectDefinitionResourceImpl
 			@Override
 			public int getRank() {
 				return 99;
-			}
-
-			@Override
-			public String getResourceClassName() {
-				return ObjectDefinitionResourceImpl.class.getName();
 			}
 
 			@Override
@@ -1251,10 +1251,7 @@ public class ObjectDefinitionResourceImpl
 		serviceContext.setLanguageId(
 			contextAcceptLanguage.getPreferredLanguageId());
 
-		if (!FeatureFlagManagerUtil.isEnabled(
-				contextCompany.getCompanyId(), "LPD-35914") ||
-			(objectDefinition.getPermissions() == null)) {
-
+		if (objectDefinition.getPermissions() == null) {
 			serviceContext.setModelPermissions(null);
 
 			return serviceContext;

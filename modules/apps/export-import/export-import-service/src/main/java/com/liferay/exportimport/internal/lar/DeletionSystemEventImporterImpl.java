@@ -14,12 +14,12 @@ import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelType;
 import com.liferay.exportimport.lar.DeletionSystemEventImporter;
 import com.liferay.exportimport.portlet.data.handler.provider.PortletDataHandlerProvider;
+import com.liferay.exportimport.portlet.element.handler.PortletElementHandler;
+import com.liferay.exportimport.portlet.element.handler.PortletElementHandlerFactory;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.security.xml.SecureXMLFactoryProviderUtil;
-import com.liferay.portal.kernel.service.PortletLocalService;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Element;
@@ -94,21 +94,19 @@ public class DeletionSystemEventImporterImpl
 		}
 
 		for (Element portletElement : sitePortletsElement.elements()) {
-			String portletId = portletElement.attributeValue("portlet-id");
+			PortletElementHandler portletElementHandler =
+				_portletElementHandlerFactory.create(portletElement);
 
-			Portlet portlet = _portletLocalService.getPortletById(
-				portletDataContext.getCompanyId(), portletId);
-
-			if (!portlet.isActive() || portlet.isUndeployedPortlet()) {
-				continue;
-			}
+			String targetPortletId = portletElementHandler.getTargetPortletId(
+				portletDataContext.getCompanyId());
 
 			PortletDataHandler portletDataHandler =
-				_portletDataHandlerProvider.provide(portlet);
+				_portletDataHandlerProvider.provide(
+					portletDataContext.getCompanyId(), targetPortletId);
 
 			if (portletDataHandler instanceof BatchEnginePortletDataHandler) {
 				portletDataHandler.deleteData(
-					portletDataContext, portletId, null);
+					portletDataContext, targetPortletId, null);
 			}
 		}
 	}
@@ -175,6 +173,6 @@ public class DeletionSystemEventImporterImpl
 	private PortletDataHandlerProvider _portletDataHandlerProvider;
 
 	@Reference
-	private PortletLocalService _portletLocalService;
+	private PortletElementHandlerFactory _portletElementHandlerFactory;
 
 }

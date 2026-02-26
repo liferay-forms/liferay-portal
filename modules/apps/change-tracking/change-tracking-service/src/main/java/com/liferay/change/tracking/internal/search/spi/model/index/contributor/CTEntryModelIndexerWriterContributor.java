@@ -16,7 +16,6 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.search.batch.BatchIndexingActionable;
 import com.liferay.portal.search.batch.DynamicQueryBatchIndexingActionableFactory;
 import com.liferay.portal.search.spi.model.index.contributor.ModelIndexerWriterContributor;
-import com.liferay.portal.search.spi.model.index.contributor.helper.ModelIndexerWriterDocumentHelper;
 
 /**
  * @author Pei-Jung Lan
@@ -32,16 +31,6 @@ public class CTEntryModelIndexerWriterContributor
 		_ctEntryLocalService = ctEntryLocalService;
 		_dynamicQueryBatchIndexingActionableFactory =
 			dynamicQueryBatchIndexingActionableFactory;
-	}
-
-	@Override
-	public void customize(
-		BatchIndexingActionable batchIndexingActionable,
-		ModelIndexerWriterDocumentHelper modelIndexerWriterDocumentHelper) {
-
-		batchIndexingActionable.setPerformActionMethod(
-			(CTEntry ctEntry) -> batchIndexingActionable.addDocument(
-				modelIndexerWriterDocumentHelper.getDocument(ctEntry)));
 	}
 
 	@Override
@@ -65,11 +54,6 @@ public class CTEntryModelIndexerWriterContributor
 
 		return _dynamicQueryBatchIndexingActionableFactory.
 			getBatchIndexingActionable(indexableActionableDynamicQuery);
-	}
-
-	@Override
-	public long getCompanyId(CTEntry ctEntry) {
-		return ctEntry.getCompanyId();
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

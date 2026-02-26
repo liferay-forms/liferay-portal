@@ -81,6 +81,7 @@ const ListItem = forwardRef<HTMLLIElement, any>(
 		} = useContext(FrontendDataSetContext);
 
 		const {
+			accessibleNameField,
 			description,
 			image,
 			sticker,
@@ -98,7 +99,11 @@ const ListItem = forwardRef<HTMLLIElement, any>(
 			path: selectedItemsKey,
 		});
 
-		const accessibleName = title || description || '';
+		const accessibleName =
+			accessibleNameField ||
+			title ||
+			description ||
+			Liferay.Language.get('item');
 
 		return (
 			<ClayList.Item

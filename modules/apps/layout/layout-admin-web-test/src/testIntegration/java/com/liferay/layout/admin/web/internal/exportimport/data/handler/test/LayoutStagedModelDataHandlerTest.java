@@ -337,8 +337,8 @@ public class LayoutStagedModelDataHandlerTest
 		LayoutPageTemplateEntry displayPageLayoutPageTemplateEntry =
 			DisplayPageTemplateTestUtil.addDisplayPageTemplate(
 				stagingGroup.getGroupId(),
-				_portal.getClassNameId(AssetCategory.class.getName()), 0, true,
-				WorkflowConstants.STATUS_APPROVED);
+				_portal.getClassNameId(AssetCategory.class.getName()), null,
+				true, WorkflowConstants.STATUS_APPROVED);
 
 		LayoutUtilityPageEntry layoutUtilityPageEntry =
 			_layoutUtilityPageEntryLocalService.addLayoutUtilityPageEntry(
@@ -752,7 +752,11 @@ public class LayoutStagedModelDataHandlerTest
 					HtmlUtil.escape(
 						_dlURLHelper.getPreviewURL(
 							importedFileEntry,
-							importedFileEntry.getFileVersion(), null,
+							importedFileEntry.getFileVersion(),
+							ContentLayoutTestUtil.getThemeDisplay(
+								_companyLocalService.getCompany(
+									liveGroup.getCompanyId()),
+								liveGroup, layout),
 							StringPool.BLANK)),
 					"\" data-fileentryid=\"",
 					importedFileEntry.getFileEntryId(), "\"")));
@@ -795,7 +799,11 @@ public class LayoutStagedModelDataHandlerTest
 					HtmlUtil.escape(
 						_dlURLHelper.getPreviewURL(
 							importedFileEntry,
-							importedFileEntry.getFileVersion(), null,
+							importedFileEntry.getFileVersion(),
+							ContentLayoutTestUtil.getThemeDisplay(
+								_companyLocalService.getCompany(
+									liveGroup.getCompanyId()),
+								liveGroup, layout),
 							StringPool.BLANK)),
 					"\" data-fileentryid=\"",
 					importedFileEntry.getFileEntryId(), "\"")));
@@ -886,13 +894,12 @@ public class LayoutStagedModelDataHandlerTest
 		InfoItemFormVariation infoItemFormVariation =
 			infoItemFormVariations.get(0);
 
-		long classTypeId = GetterUtil.getLong(infoItemFormVariation.getKey());
-
 		LayoutPageTemplateEntry layoutPageTemplateEntry1 =
 			_layoutPageTemplateEntryLocalService.addLayoutPageTemplateEntry(
 				null, serviceContext.getUserId(),
 				serviceContext.getScopeGroupId(), 0, null, classNameId,
-				classTypeId, RandomTestUtil.randomString(),
+				infoItemFormVariation.getExternalReferenceCode(),
+				RandomTestUtil.randomString(),
 				LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE,
 				masterLayout.getPlid(), WorkflowConstants.STATUS_APPROVED,
 				serviceContext);
@@ -901,7 +908,8 @@ public class LayoutStagedModelDataHandlerTest
 			_layoutPageTemplateEntryLocalService.addLayoutPageTemplateEntry(
 				null, serviceContext.getUserId(),
 				serviceContext.getScopeGroupId(), 0, null, classNameId,
-				classTypeId, RandomTestUtil.randomString(),
+				infoItemFormVariation.getExternalReferenceCode(),
+				RandomTestUtil.randomString(),
 				LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE,
 				masterLayout.getPlid(), WorkflowConstants.STATUS_APPROVED,
 				serviceContext);

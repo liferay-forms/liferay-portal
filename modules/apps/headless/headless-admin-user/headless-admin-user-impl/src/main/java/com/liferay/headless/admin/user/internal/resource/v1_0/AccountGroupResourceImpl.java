@@ -26,7 +26,6 @@ import com.liferay.headless.admin.user.resource.v1_0.AccountGroupResource;
 import com.liferay.headless.common.spi.odata.entity.EntityFieldsUtil;
 import com.liferay.headless.common.spi.service.context.ServiceContextBuilder;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Field;
@@ -206,6 +205,11 @@ public class AccountGroupResourceImpl
 		return new ExportImportDescriptor() {
 
 			@Override
+			public String getKey() {
+				return AccountGroupResourceImpl.class.getName();
+			}
+
+			@Override
 			public String getLabelLanguageKey() {
 				return "account-groups";
 			}
@@ -223,11 +227,6 @@ public class AccountGroupResourceImpl
 			@Override
 			public String getPortletId() {
 				return AccountPortletKeys.ACCOUNT_GROUPS_ADMIN;
-			}
-
-			@Override
-			public String getResourceClassName() {
-				return AccountGroupResourceImpl.class.getName();
 			}
 
 			@Override
@@ -501,10 +500,6 @@ public class AccountGroupResourceImpl
 			AccountGroup accountGroup,
 			com.liferay.account.model.AccountGroup serviceBuilderAccountGroup)
 		throws Exception {
-
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-35914")) {
-			return serviceBuilderAccountGroup;
-		}
 
 		AccountBrief[] accountBriefs = accountGroup.getAccountBriefs();
 

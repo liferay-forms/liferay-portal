@@ -51,7 +51,6 @@ import com.liferay.portal.kernel.webserver.WebServerServletToken;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.product.navigation.applications.menu.web.internal.constants.ProductNavigationApplicationsMenuPortletKeys;
-import com.liferay.product.navigation.applications.menu.web.internal.util.ApplicationsMenuUtil;
 import com.liferay.site.item.selector.SiteItemSelectorCriterion;
 import com.liferay.site.manager.RecentGroupManager;
 import com.liferay.site.provider.GroupURLProvider;
@@ -493,8 +492,7 @@ public class ApplicationsMenuPanelAppsMVCResourceCommand
 
 		JSONArray recentSitesJSONArray = _jsonFactory.createJSONArray();
 
-		boolean applicationMenuApp = _isApplicationMenuApp(
-			resourceRequest, themeDisplay);
+		boolean applicationMenuApp = _isApplicationMenuApp(resourceRequest);
 
 		for (Group group : groups) {
 			recentSitesJSONArray.put(
@@ -597,15 +595,7 @@ public class ApplicationsMenuPanelAppsMVCResourceCommand
 				siteItemSelectorCriterion));
 	}
 
-	private boolean _isApplicationMenuApp(
-		ResourceRequest resourceRequest, ThemeDisplay themeDisplay) {
-
-		if (!ApplicationsMenuUtil.isEnableApplicationsMenu(
-				themeDisplay.getCompanyId(), _configurationProvider)) {
-
-			return false;
-		}
-
+	private boolean _isApplicationMenuApp(ResourceRequest resourceRequest) {
 		String selectedPortletId = ParamUtil.getString(
 			resourceRequest, "selectedPortletId");
 
@@ -645,6 +635,10 @@ public class ApplicationsMenuPanelAppsMVCResourceCommand
 			PanelApp panelApp = _panelAppRegistry.getFirstAvailablePanelApp(
 				panelCategory.getKey(), themeDisplay.getPermissionChecker(),
 				themeDisplay.getScopeGroup());
+
+			if (panelApp == null) {
+				continue;
+			}
 
 			panelCategoriesJSONArray.put(
 				JSONUtil.put(

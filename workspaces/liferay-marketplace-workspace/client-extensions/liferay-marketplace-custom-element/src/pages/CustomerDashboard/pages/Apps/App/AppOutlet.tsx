@@ -65,7 +65,7 @@ const BaseOutlet: React.FC<BaseOutletProps> = ({
 					hasOrderDetails
 					image={placedOrderItems[0]?.thumbnail}
 					name={placedOrderItems[0]?.name}
-					order={data?.placedOrder as unknown as Cart}
+					order={data?.placedOrder}
 					productOwner={productCreatorAccountName}
 				/>
 

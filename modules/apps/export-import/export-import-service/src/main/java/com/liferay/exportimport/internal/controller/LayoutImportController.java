@@ -36,6 +36,8 @@ import com.liferay.exportimport.kernel.staging.Staging;
 import com.liferay.exportimport.lar.DeletionSystemEventImporter;
 import com.liferay.exportimport.lar.PermissionImporter;
 import com.liferay.exportimport.portlet.data.handler.provider.PortletDataHandlerProvider;
+import com.liferay.exportimport.portlet.element.handler.PortletElementHandler;
+import com.liferay.exportimport.portlet.element.handler.PortletElementHandlerFactory;
 import com.liferay.layout.admin.kernel.visibility.LayoutVisibilityManager;
 import com.liferay.layout.set.model.adapter.StagedLayoutSet;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
@@ -623,37 +625,33 @@ public class LayoutImportController implements ImportController {
 		List<Element> portletElements = _fetchPortletElements(rootElement);
 
 		for (Element portletElement : portletElements) {
-			String portletId = GetterUtil.getString(
-				portletElement.attributeValue("portlet-id"));
+			PortletElementHandler portletElementHandler =
+				_portletElementHandlerFactory.create(portletElement);
 
-			if (Validator.isNull(portletId)) {
-				continue;
-			}
+			String targetPortletId = portletElementHandler.getTargetPortletId(
+				companyId);
 
 			PortletDataHandler portletDataHandler =
-				_portletDataHandlerProvider.provide(companyId, portletId);
+				_portletDataHandlerProvider.provide(companyId, targetPortletId);
 
 			if (portletDataHandler == null) {
-				if (GetterUtil.getBoolean(
-						portletElement.attributeValue(
-							"validate-existing-data-handler"))) {
-
+				if (portletElementHandler.isValidateExistingDataHandler()) {
 					throw new MissingPortletDataHandlerException(
 						GetterUtil.getString(
-							portletElement.attributeValue("display-name")));
+							portletElementHandler.getDisplayName()));
 				}
 
 				continue;
 			}
 
 			String schemaVersion = GetterUtil.getString(
-				portletElement.attributeValue("schema-version"));
+				portletElementHandler.getSchemaVersion());
 
 			if (!portletDataHandler.validateSchemaVersion(schemaVersion)) {
 				throw new LayoutImportException(
 					LayoutImportException.TYPE_WRONG_PORTLET_SCHEMA_VERSION,
 					new Object[] {
-						schemaVersion, portletId,
+						schemaVersion, targetPortletId,
 						portletDataHandler.getSchemaVersion()
 					});
 			}
@@ -1388,6 +1386,9 @@ public class LayoutImportController implements ImportController {
 
 	@Reference
 	private PortletDataHandlerProvider _portletDataHandlerProvider;
+
+	@Reference
+	private PortletElementHandlerFactory _portletElementHandlerFactory;
 
 	@Reference
 	private PortletImportController _portletImportController;

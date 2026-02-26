@@ -21,7 +21,6 @@ import com.liferay.object.rest.dto.v1_0.util.CreatorUtil;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Field;
@@ -90,8 +89,13 @@ public class ListTypeDefinitionResourceImpl
 		return new ExportImportDescriptor() {
 
 			@Override
+			public String getKey() {
+				return ListTypeDefinitionResourceImpl.class.getName();
+			}
+
+			@Override
 			public String getLabelLanguageKey() {
-				return "list-type-definitions";
+				return "model.resource.com.liferay.list.type";
 			}
 
 			@Override
@@ -108,11 +112,6 @@ public class ListTypeDefinitionResourceImpl
 			@Override
 			public int getRank() {
 				return 98;
-			}
-
-			@Override
-			public String getResourceClassName() {
-				return ListTypeDefinitionResourceImpl.class.getName();
 			}
 
 			@Override
@@ -389,32 +388,21 @@ public class ListTypeDefinitionResourceImpl
 							return permissions.toArray(new Permission[0]);
 						}));
 				setStatus(
-					() -> {
-						if (!FeatureFlagManagerUtil.isEnabled(
-								serviceBuilderListTypeDefinition.getCompanyId(),
-								"LPD-35914")) {
-
-							return null;
-						}
-
-						return new Status() {
-							{
-								setCode(
-									serviceBuilderListTypeDefinition::
-										getStatus);
-								setLabel(
-									() -> WorkflowConstants.getStatusLabel(
+					() -> new Status() {
+						{
+							setCode(
+								serviceBuilderListTypeDefinition::getStatus);
+							setLabel(
+								() -> WorkflowConstants.getStatusLabel(
+									serviceBuilderListTypeDefinition.
+										getStatus()));
+							setLabel_i18n(
+								() -> LanguageUtil.get(
+									LanguageResources.getResourceBundle(locale),
+									WorkflowConstants.getStatusLabel(
 										serviceBuilderListTypeDefinition.
-											getStatus()));
-								setLabel_i18n(
-									() -> LanguageUtil.get(
-										LanguageResources.getResourceBundle(
-											locale),
-										WorkflowConstants.getStatusLabel(
-											serviceBuilderListTypeDefinition.
-												getStatus())));
-							}
-						};
+											getStatus())));
+						}
 					});
 				setSystem(serviceBuilderListTypeDefinition::isSystem);
 			}

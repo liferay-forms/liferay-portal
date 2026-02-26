@@ -12,7 +12,7 @@ import {
 	deleteItemAction,
 	manageMembersAction,
 } from '@liferay/site-cms-site-initializer';
-import {fetch} from 'frontend-js-web';
+import {fetch, sub} from 'frontend-js-web';
 
 import StateLabel from '../StateLabel';
 import ACTIONS from './actions/creationMenuActions';
@@ -117,6 +117,7 @@ export default function ProjectsFDSPropsTransformer({
 				} as IInternalRenderer,
 			],
 		},
+		hideManagementBarInEmptyState: true,
 		itemsActions: itemsActions.map((action) => {
 			if (action?.data?.id === 'delete') {
 				return {
@@ -137,7 +138,16 @@ export default function ProjectsFDSPropsTransformer({
 			loadData: () => {};
 		}) {
 			if (action?.data?.id === 'delete') {
-				await deleteItemAction(itemData, loadData);
+				await deleteItemAction(
+					sub(
+						Liferay.Language.get(
+							'delete-project-confirmation-body'
+						),
+						itemData.embedded.title
+					),
+					itemData,
+					loadData
+				);
 			}
 			else if (action?.data?.id === 'view-members') {
 				const scopeExternalReferenceCode =

@@ -35,6 +35,11 @@ public class CountSearchRequestExecutor {
 	}
 
 	public CountSearchResponse execute(CountSearchRequest countSearchRequest) {
+		ElasticsearchClient elasticsearchClient =
+			_elasticsearchClientResolver.getElasticsearchClient(
+				countSearchRequest.getConnectionId(),
+				countSearchRequest.isPreferLocalCluster());
+
 		SearchRequest.Builder builder = new SearchRequest.Builder();
 
 		CommonSearchRequestBuilderAssembler.INSTANCE.assemble(
@@ -59,7 +64,7 @@ public class CountSearchRequestExecutor {
 		SearchRequest searchRequest = builder.build();
 
 		String searchRequestString = DebugStringsUtil.getSearchRequestString(
-			searchRequest);
+			elasticsearchClient, searchRequest);
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(
@@ -71,7 +76,7 @@ public class CountSearchRequestExecutor {
 		CountSearchResponse countSearchResponse = new CountSearchResponse();
 
 		SearchResponse<JsonData> searchResponse = getSearchResponse(
-			countSearchRequest, searchRequest);
+			elasticsearchClient, searchRequest);
 
 		HitsMetadata<JsonData> hitsMetadata = searchResponse.hits();
 
@@ -94,12 +99,7 @@ public class CountSearchRequestExecutor {
 	}
 
 	protected SearchResponse<JsonData> getSearchResponse(
-		CountSearchRequest countSearchRequest, SearchRequest searchRequest) {
-
-		ElasticsearchClient elasticsearchClient =
-			_elasticsearchClientResolver.getElasticsearchClient(
-				countSearchRequest.getConnectionId(),
-				countSearchRequest.isPreferLocalCluster());
+		ElasticsearchClient elasticsearchClient, SearchRequest searchRequest) {
 
 		try {
 			return elasticsearchClient.search(searchRequest, JsonData.class);

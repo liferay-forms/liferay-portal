@@ -212,7 +212,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -464,6 +463,21 @@ public class ObjectDefinitionLocalServiceImpl
 		return objectDefinition;
 	}
 
+	@Override
+	public void addOrUpdateWorkflowDefinitionLinks(
+			ObjectDefinition objectDefinition,
+			List<WorkflowDefinitionLink> workflowDefinitionLinks)
+		throws PortalException {
+
+		_validateWorkflowDefinitionLinks(
+			objectDefinition.getCompanyId(),
+			objectDefinition.getObjectDefinitionSettings(),
+			objectDefinition.getScope(), workflowDefinitionLinks);
+
+		_addOrUpdateWorkflowDefinitionLinks(
+			objectDefinition, workflowDefinitionLinks);
+	}
+
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public ObjectDefinition addSystemObjectDefinition(
@@ -679,45 +693,57 @@ public class ObjectDefinitionLocalServiceImpl
 			}
 		}
 
-		for (ObjectRelationship objectRelationship :
-				_objectRelationshipPersistence.findByODI1_R(
-					objectDefinition.getObjectDefinitionId(), false)) {
+		try (SafeCloseable safeCloseable =
+				ObjectDefinitionThreadLocal.
+					setDeleteObjectDefinitionIdWithSafeCloseable(
+						objectDefinition.getObjectDefinitionId())) {
 
-			_objectRelationshipLocalService.deleteObjectRelationship(
-				objectRelationship);
-		}
+			_objectDefinitionSettingLocalService.
+				deleteObjectDefinitionSettingByObjectDefinitionId(
+					objectDefinition.getObjectDefinitionId());
 
-		for (ObjectRelationship objectRelationship :
-				_objectRelationshipPersistence.findByODI2_R(
-					objectDefinition.getObjectDefinitionId(), false)) {
-
-			_objectRelationshipLocalService.deleteObjectRelationship(
-				objectRelationship);
-		}
-
-		_objectFieldLocalService.deleteObjectFieldByObjectDefinitionId(
-			objectDefinition.getObjectDefinitionId());
-
-		_objectFolderItemLocalService.
-			deleteObjectFolderItemByObjectDefinitionId(
+			_objectFieldLocalService.deleteObjectFieldByObjectDefinitionId(
 				objectDefinition.getObjectDefinitionId());
 
-		_objectLayoutLocalService.deleteObjectLayouts(
-			objectDefinition.getObjectDefinitionId());
+			_objectFolderItemLocalService.
+				deleteObjectFolderItemByObjectDefinitionId(
+					objectDefinition.getObjectDefinitionId());
 
-		_objectValidationRuleLocalService.deleteObjectValidationRules(
-			objectDefinition.getObjectDefinitionId());
+			_objectLayoutLocalService.deleteObjectLayouts(
+				objectDefinition.getObjectDefinitionId());
 
-		_objectViewLocalService.deleteObjectViews(
-			objectDefinition.getObjectDefinitionId());
+			for (ObjectRelationship objectRelationship :
+					_objectRelationshipPersistence.findByODI1_R(
+						objectDefinition.getObjectDefinitionId(), false)) {
 
-		_resourceLocalService.deleteResource(
-			objectDefinition.getCompanyId(), ObjectDefinition.class.getName(),
-			ResourceConstants.SCOPE_INDIVIDUAL,
-			objectDefinition.getObjectDefinitionId());
+				_objectRelationshipLocalService.deleteObjectRelationship(
+					objectRelationship);
+			}
 
-		_workflowDefinitionLinkLocalService.deleteWorkflowDefinitionLinks(
-			objectDefinition.getCompanyId(), objectDefinition.getClassName());
+			for (ObjectRelationship objectRelationship :
+					_objectRelationshipPersistence.findByODI2_R(
+						objectDefinition.getObjectDefinitionId(), false)) {
+
+				_objectRelationshipLocalService.deleteObjectRelationship(
+					objectRelationship);
+			}
+
+			_objectValidationRuleLocalService.deleteObjectValidationRules(
+				objectDefinition.getObjectDefinitionId());
+
+			_objectViewLocalService.deleteObjectViews(
+				objectDefinition.getObjectDefinitionId());
+
+			_resourceLocalService.deleteResource(
+				objectDefinition.getCompanyId(),
+				ObjectDefinition.class.getName(),
+				ResourceConstants.SCOPE_INDIVIDUAL,
+				objectDefinition.getObjectDefinitionId());
+
+			_workflowDefinitionLinkLocalService.deleteWorkflowDefinitionLinks(
+				objectDefinition.getCompanyId(),
+				objectDefinition.getClassName());
+		}
 
 		if (objectDefinition.isUnmodifiableSystemObject()) {
 			_dropTable(objectDefinition.getExtensionDBTableName());
@@ -2252,24 +2278,11 @@ public class ObjectDefinitionLocalServiceImpl
 		}
 
 		while (true) {
-			StringBuilder sb = new StringBuilder();
+			String randomClassName =
+				ObjectDefinitionUtil.generateRandomClassName();
 
-			sb.append(
-				ObjectDefinitionConstants.
-					CLASS_NAME_PREFIX_CUSTOM_OBJECT_DEFINITION);
-			sb.append(StringUtil.toUpperCase(StringUtil.randomId(1)));
-
-			ThreadLocalRandom threadLocalRandom = ThreadLocalRandom.current();
-
-			sb.append(threadLocalRandom.nextInt(10));
-
-			sb.append(StringUtil.toUpperCase(StringUtil.randomId(1)));
-			sb.append(threadLocalRandom.nextInt(10));
-
-			int count = _getObjectDefinitionsCountByClassName(sb.toString());
-
-			if (count == 0) {
-				return sb.toString();
+			if (_getObjectDefinitionsCountByClassName(randomClassName) == 0) {
+				return randomClassName;
 			}
 		}
 	}
@@ -3082,6 +3095,12 @@ public class ObjectDefinitionLocalServiceImpl
 			boolean modifiable, boolean system)
 		throws PortalException {
 
+		if (Validator.isNull(className) && modifiable && system) {
+			_handleException(
+				new ObjectDefinitionClassNameException.MustNotBeNull(),
+				"className", className);
+		}
+
 		if (Validator.isNull(className) ||
 			_isUnmodifiableSystemObject(modifiable, system)) {
 
@@ -3377,7 +3396,8 @@ public class ObjectDefinitionLocalServiceImpl
 
 		for (FriendlyURLResolver friendlyURLResolver :
 				FriendlyURLResolverRegistryUtil.
-					getFriendlyURLResolversAsCollection()) {
+					getFriendlyURLResolversAsCollection(
+						objectDefinition.getCompanyId())) {
 
 			if (!friendlyURLResolver.isURLSeparatorConfigurable()) {
 				continue;

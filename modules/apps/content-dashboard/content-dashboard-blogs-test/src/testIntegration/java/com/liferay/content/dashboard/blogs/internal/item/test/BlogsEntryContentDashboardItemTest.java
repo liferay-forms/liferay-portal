@@ -428,7 +428,7 @@ public class BlogsEntryContentDashboardItemTest {
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
 			DisplayPageTemplateTestUtil.addDisplayPageTemplate(
 				blogsEntry.getGroupId(),
-				_portal.getClassNameId(BlogsEntry.class.getName()), 0, true,
+				_portal.getClassNameId(BlogsEntry.class.getName()), null, true,
 				WorkflowConstants.STATUS_APPROVED);
 
 		_assetDisplayPageEntryLocalService.addAssetDisplayPageEntry(

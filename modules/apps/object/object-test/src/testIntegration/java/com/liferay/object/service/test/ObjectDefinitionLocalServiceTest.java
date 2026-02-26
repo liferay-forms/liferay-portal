@@ -30,6 +30,7 @@ import com.liferay.object.constants.ObjectFieldSettingConstants;
 import com.liferay.object.constants.ObjectFolderConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.definition.setting.builder.ObjectDefinitionSettingBuilder;
+import com.liferay.object.definition.util.ObjectDefinitionUtil;
 import com.liferay.object.definition.util.ObjectDefinitionValidationThreadLocal;
 import com.liferay.object.exception.DuplicateObjectDefinitionExternalReferenceCodeException;
 import com.liferay.object.exception.NoSuchObjectDefinitionException;
@@ -87,6 +88,7 @@ import com.liferay.object.service.ObjectActionLocalService;
 import com.liferay.object.service.ObjectActionLocalServiceUtil;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectDefinitionLocalServiceUtil;
+import com.liferay.object.service.ObjectDefinitionSettingLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectEntryVersionLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
@@ -838,6 +840,46 @@ public class ObjectDefinitionLocalServiceTest {
 		_objectDefinitionLocalService.deleteObjectDefinition(objectDefinition);
 
 		_objectFolderLocalService.deleteObjectFolder(objectFolder);
+	}
+
+	@FeatureFlag("LPD-17564")
+	@Test
+	public void testAddObjectDefinitionWithAcceptedGroupIds() throws Exception {
+		String name = ObjectDefinitionTestUtil.getRandomName();
+
+		DepotEntry depotEntry1 = _depotEntryLocalService.addDepotEntry(
+			RandomTestUtil.randomLocaleStringMap(), Collections.emptyMap(),
+			DepotConstants.TYPE_ASSET_LIBRARY,
+			ServiceContextTestUtil.getServiceContext());
+		DepotEntry depotEntry2 = _depotEntryLocalService.addDepotEntry(
+			RandomTestUtil.randomLocaleStringMap(), Collections.emptyMap(),
+			DepotConstants.TYPE_ASSET_LIBRARY,
+			ServiceContextTestUtil.getServiceContext());
+		DepotEntry depotEntry3 = _depotEntryLocalService.addDepotEntry(
+			RandomTestUtil.randomLocaleStringMap(), Collections.emptyMap(),
+			DepotConstants.TYPE_ASSET_LIBRARY,
+			ServiceContextTestUtil.getServiceContext());
+
+		String acceptedGroupIds = StringBundler.concat(
+			depotEntry1.getGroupId(), StringPool.COMMA,
+			depotEntry2.getGroupId(), StringPool.COMMA,
+			depotEntry3.getGroupId());
+
+		ObjectDefinition objectDefinition = _publishCustomObjectDefinition(
+			name, ObjectDefinitionConstants.SCOPE_DEPOT,
+			Collections.singletonList(
+				new ObjectDefinitionSettingBuilder(
+				).name(
+					ObjectDefinitionSettingConstants.NAME_ACCEPTED_GROUP_IDS
+				).value(
+					acceptedGroupIds
+				).build()));
+
+		_assertObjectDefinitionSettingsValues(
+			objectDefinition.getObjectDefinitionSettings(),
+			Collections.singletonMap(
+				ObjectDefinitionSettingConstants.NAME_ACCEPTED_GROUP_IDS,
+				acceptedGroupIds));
 	}
 
 	@FeatureFlag("LPD-17564")
@@ -1804,6 +1846,20 @@ public class ObjectDefinitionLocalServiceTest {
 	@Test
 	public void testAddSystemObjectDefinition() throws Exception {
 
+		// Class name is null
+
+		AssertUtils.assertFailure(
+			ObjectDefinitionClassNameException.MustNotBeNull.class,
+			"Class name is null",
+			() -> _objectDefinitionLocalService.addSystemObjectDefinition(
+				null, TestPropsValues.getUserId(), 0, null, null, false, true,
+				false, true, false, false, false, false, false, null,
+				RandomTestUtil.randomLocaleStringMap(), true, "Test", null,
+				null, null, null, RandomTestUtil.randomLocaleStringMap(), false,
+				ObjectDefinitionConstants.SCOPE_COMPANY, null, 1,
+				WorkflowConstants.STATUS_APPROVED, Collections.emptyList(),
+				Collections.emptyList(), Collections.emptyList()));
+
 		// Enable form container
 
 		AssertUtils.assertFailure(
@@ -1837,8 +1893,9 @@ public class ObjectDefinitionLocalServiceTest {
 
 		objectDefinition =
 			_objectDefinitionLocalService.addSystemObjectDefinition(
-				null, TestPropsValues.getUserId(), 0, null, null, false, true,
-				false, true, false, false, false, false, false, null,
+				null, TestPropsValues.getUserId(), 0,
+				ObjectDefinitionUtil.generateRandomClassName(), null, false,
+				true, false, true, false, false, false, false, false, null,
 				RandomTestUtil.randomLocaleStringMap(), true, "Test", null,
 				null, null, null, RandomTestUtil.randomLocaleStringMap(), false,
 				ObjectDefinitionConstants.SCOPE_COMPANY, null, 1,
@@ -2158,8 +2215,9 @@ public class ObjectDefinitionLocalServiceTest {
 
 		objectDefinition =
 			ObjectDefinitionLocalServiceUtil.addSystemObjectDefinition(
-				null, TestPropsValues.getUserId(), 0, null, null, false, true,
-				false, true, false, true, false, false, false, null,
+				null, TestPropsValues.getUserId(), 0,
+				ObjectDefinitionUtil.generateRandomClassName(), null, false,
+				true, false, true, false, true, false, false, false, null,
 				RandomTestUtil.randomLocaleStringMap(), true, "Test", null,
 				null, null, null, RandomTestUtil.randomLocaleStringMap(), false,
 				ObjectDefinitionConstants.SCOPE_SITE, null, 1,
@@ -2428,6 +2486,17 @@ public class ObjectDefinitionLocalServiceTest {
 			_classNameLocalService.fetchByClassNameId(
 				className.getClassNameId()));
 
+		_objectDefinitionSettingLocalService.addObjectDefinitionSetting(
+			objectDefinition.getUserId(),
+			objectDefinition.getObjectDefinitionId(),
+			ObjectDefinitionSettingConstants.NAME_ACCEPT_ALL_GROUPS,
+			StringPool.TRUE);
+
+		Assert.assertNotNull(
+			_objectDefinitionSettingLocalService.getObjectDefinitionSetting(
+				objectDefinition.getObjectDefinitionId(),
+				ObjectDefinitionSettingConstants.NAME_ACCEPT_ALL_GROUPS));
+
 		_workflowDefinitionLinkLocalService.updateWorkflowDefinitionLink(
 			TestPropsValues.getUserId(), TestPropsValues.getCompanyId(), 0,
 			objectDefinition.getClassName(), 0, 0, "Single Approver", 1);
@@ -2499,6 +2568,14 @@ public class ObjectDefinitionLocalServiceTest {
 				ObjectDefinition.class.getName(),
 				ResourceConstants.SCOPE_INDIVIDUAL,
 				String.valueOf(objectDefinition.getObjectDefinitionId())));
+
+		// Object definition settings
+
+		Assert.assertTrue(
+			ListUtil.isEmpty(
+				_objectDefinitionSettingLocalService.
+					getObjectDefinitionSettings(
+						objectDefinition.getObjectDefinitionId())));
 
 		// Workflow definition links
 
@@ -4709,6 +4786,10 @@ public class ObjectDefinitionLocalServiceTest {
 		filter = "component.name=com.liferay.object.internal.model.listener.ObjectDefinitionModelListener"
 	)
 	private ModelListener<ObjectDefinition> _objectDefinitionModelListener;
+
+	@Inject
+	private ObjectDefinitionSettingLocalService
+		_objectDefinitionSettingLocalService;
 
 	private ObjectDefinitionTreeFactory _objectDefinitionTreeFactory;
 

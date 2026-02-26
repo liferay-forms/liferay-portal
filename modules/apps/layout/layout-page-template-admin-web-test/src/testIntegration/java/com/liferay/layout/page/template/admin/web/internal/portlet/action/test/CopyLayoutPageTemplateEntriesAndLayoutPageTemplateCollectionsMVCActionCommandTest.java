@@ -139,7 +139,7 @@ public class
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
 			DisplayPageTemplateTestUtil.addDisplayPageTemplate(
 				_group.getGroupId(),
-				_portal.getClassNameId(BlogsEntry.class.getName()), 0, false,
+				_portal.getClassNameId(BlogsEntry.class.getName()), null, false,
 				WorkflowConstants.STATUS_DRAFT);
 
 		_mvcActionCommand.processAction(

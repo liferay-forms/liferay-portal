@@ -35,6 +35,7 @@ import com.liferay.headless.admin.site.internal.resource.v1_0.util.GroupUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.LayoutUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.PageSpecificationUtil;
 import com.liferay.headless.admin.site.internal.resource.v1_0.util.ServiceContextUtil;
+import com.liferay.headless.admin.site.internal.util.EnabledUtil;
 import com.liferay.headless.admin.site.internal.util.LogUtil;
 import com.liferay.headless.admin.site.resource.v1_0.SitePageResource;
 import com.liferay.info.item.InfoItemServiceRegistry;
@@ -47,7 +48,6 @@ import com.liferay.layout.seo.service.LayoutSEOEntryService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.CustomizedPages;
@@ -79,6 +79,9 @@ import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 
 import jakarta.validation.ValidationException;
 
@@ -112,16 +115,13 @@ public class SitePageResourceImpl
 	implements ExportImportVulcanBatchEngineTaskItemDelegate<SitePage> {
 
 	@Override
+	@Tags({@Tag(description = "[BETA]", name = "SitePage")})
 	public void deleteSiteSitePage(
 			String siteExternalReferenceCode,
 			String sitePageExternalReferenceCode)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled(
-				contextCompany.getCompanyId(), "LPD-35443")) {
-
-			throw new UnsupportedOperationException();
-		}
+		EnabledUtil.checkEnabled(contextCompany);
 
 		Layout layout = _layoutService.getLayoutByExternalReferenceCode(
 			sitePageExternalReferenceCode,
@@ -144,6 +144,11 @@ public class SitePageResourceImpl
 
 	public ExportImportDescriptor getExportImportDescriptor() {
 		return new ExportImportDescriptor() {
+
+			@Override
+			public String getKey() {
+				return SitePageResourceImpl.class.getName();
+			}
 
 			@Override
 			public String getLabelLanguageKey() {
@@ -221,19 +226,8 @@ public class SitePageResourceImpl
 			}
 
 			@Override
-			public String getResourceClassName() {
-				return SitePageResourceImpl.class.getName();
-			}
-
-			@Override
 			public Scope getScope() {
 				return Scope.SITE;
-			}
-
-			@Override
-			public boolean isActive(PortletDataContext portletDataContext) {
-				return FeatureFlagManagerUtil.isEnabled(
-					portletDataContext.getCompanyId(), "LPD-35443");
 			}
 
 			@Override
@@ -256,11 +250,7 @@ public class SitePageResourceImpl
 			ContentPageSpecification contentPageSpecification)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled(
-				contextCompany.getCompanyId(), "LPD-35443")) {
-
-			throw new UnsupportedOperationException();
-		}
+		EnabledUtil.checkEnabled(contextCompany);
 
 		Layout layout = _layoutService.getLayoutByExternalReferenceCode(
 			sitePageExternalReferenceCode,
@@ -291,11 +281,7 @@ public class SitePageResourceImpl
 			Map<String, Serializable> parameters, String search)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled(
-				contextCompany.getCompanyId(), "LPD-35443")) {
-
-			throw new UnsupportedOperationException();
-		}
+		EnabledUtil.checkEnabled(contextCompany);
 
 		return super.read(filter, pagination, sorts, parameters, search);
 	}
@@ -306,11 +292,7 @@ public class SitePageResourceImpl
 			String sitePageExternalReferenceCode)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled(
-				contextCompany.getCompanyId(), "LPD-35443")) {
-
-			throw new UnsupportedOperationException();
-		}
+		EnabledUtil.checkEnabled(contextCompany);
 
 		Layout layout = _layoutService.getLayoutByExternalReferenceCode(
 			sitePageExternalReferenceCode,
@@ -330,11 +312,7 @@ public class SitePageResourceImpl
 			Pagination pagination, Sort[] sorts)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled(
-				contextCompany.getCompanyId(), "LPD-35443")) {
-
-			throw new UnsupportedOperationException();
-		}
+		EnabledUtil.checkEnabled(contextCompany, privateLayout);
 
 		long groupId = GroupUtil.getGroupId(
 			true, contextCompany.getCompanyId(), siteExternalReferenceCode);
@@ -389,14 +367,7 @@ public class SitePageResourceImpl
 			SitePage sitePage)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled(
-				contextCompany.getCompanyId(), "LPD-35443") ||
-			(!FeatureFlagManagerUtil.isEnabled(
-				contextCompany.getCompanyId(), "LPD-38869") &&
-			 privateLayout)) {
-
-			throw new UnsupportedOperationException();
-		}
+		EnabledUtil.checkEnabled(contextCompany, privateLayout);
 
 		return _toSitePage(
 			_addLayout(
@@ -414,14 +385,7 @@ public class SitePageResourceImpl
 			SitePage sitePage)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled(
-				contextCompany.getCompanyId(), "LPD-35443") ||
-			(!FeatureFlagManagerUtil.isEnabled(
-				contextCompany.getCompanyId(), "LPD-38869") &&
-			 privateLayout)) {
-
-			throw new UnsupportedOperationException();
-		}
+		EnabledUtil.checkEnabled(contextCompany, privateLayout);
 
 		long groupId = GroupUtil.getStagingAwareGroupId(
 			contextCompany.getCompanyId(), siteExternalReferenceCode);

@@ -15,6 +15,7 @@ import com.liferay.asset.test.util.AssetTestUtil;
 import com.liferay.blogs.model.BlogsEntry;
 import com.liferay.blogs.service.BlogsEntryLocalService;
 import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.model.DLFileEntryType;
 import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.model.DLVersionNumberIncrease;
 import com.liferay.document.library.kernel.service.DLAppService;
@@ -129,9 +130,11 @@ public class RelatedAssetsRelatedInfoItemCollectionProviderTest {
 	@Test
 	@TestInfo({"LPS-112360", "LPS-127023"})
 	public void testCollectionDisplayWithInfoListRenderer() throws Exception {
+		DLFileEntryType dlFileEntryType = _dlFileEntry.getDLFileEntryType();
+
 		Layout layout = _addDefaultDisplayPageTemplateLayout(
 			_portal.getClassNameId(FileEntry.class.getName()),
-			_dlFileEntry.getFileEntryTypeId());
+			dlFileEntryType.getFileEntryTypeKey());
 
 		Layout draftLayout = layout.fetchDraftLayout();
 
@@ -153,7 +156,7 @@ public class RelatedAssetsRelatedInfoItemCollectionProviderTest {
 	@TestInfo({"LPS-112360", "LPS-127023"})
 	public void testMapContentDisplayInCollectionDisplay() throws Exception {
 		Layout layout = _addDefaultDisplayPageTemplateLayout(
-			_portal.getClassNameId(BlogsEntry.class.getName()), 0);
+			_portal.getClassNameId(BlogsEntry.class.getName()), null);
 
 		Layout draftLayout = layout.fetchDraftLayout();
 
@@ -176,7 +179,7 @@ public class RelatedAssetsRelatedInfoItemCollectionProviderTest {
 	public void testMapInfoFieldInCollectionDisplay() throws Exception {
 		Layout layout = _addDefaultDisplayPageTemplateLayout(
 			_portal.getClassNameId(JournalArticle.class.getName()),
-			_journalArticle.getDDMStructureId());
+			_journalArticle.getDDMStructureKey());
 
 		Layout draftLayout = layout.fetchDraftLayout();
 
@@ -222,7 +225,7 @@ public class RelatedAssetsRelatedInfoItemCollectionProviderTest {
 		throws Exception {
 
 		Layout layout = _addDefaultDisplayPageTemplateLayout(
-			_portal.getClassNameId(AssetCategory.class.getName()), 0);
+			_portal.getClassNameId(AssetCategory.class.getName()), null);
 
 		Layout draftLayout = layout.fetchDraftLayout();
 
@@ -351,12 +354,12 @@ public class RelatedAssetsRelatedInfoItemCollectionProviderTest {
 	}
 
 	private Layout _addDefaultDisplayPageTemplateLayout(
-			long classNameId, long classTypeId)
+			long classNameId, String classTypeKey)
 		throws Exception {
 
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
 			DisplayPageTemplateTestUtil.addDisplayPageTemplate(
-				_group.getGroupId(), classNameId, classTypeId, true,
+				_group.getGroupId(), classNameId, classTypeKey, true,
 				WorkflowConstants.STATUS_APPROVED);
 
 		return _layoutLocalService.getLayout(layoutPageTemplateEntry.getPlid());
@@ -495,7 +498,8 @@ public class RelatedAssetsRelatedInfoItemCollectionProviderTest {
 
 		LayoutDisplayPageProvider<?> layoutDisplayPageProvider =
 			_layoutDisplayPageProviderRegistry.
-				getLayoutDisplayPageProviderByClassName(className);
+				getLayoutDisplayPageProviderByClassName(
+					_group.getCompanyId(), className);
 
 		return HashMapBuilder.<String, Object>put(
 			InfoDisplayWebKeys.INFO_ITEM, infoItem

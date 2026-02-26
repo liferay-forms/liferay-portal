@@ -9,6 +9,7 @@ import com.liferay.depot.model.DepotEntry;
 import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalService;
+import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate;
 import com.liferay.headless.common.spi.odata.entity.EntityFieldsUtil;
 import com.liferay.headless.common.spi.service.context.ServiceContextBuilder;
@@ -196,8 +197,13 @@ public class ObjectEntryFolderResourceImpl
 		return new ExportImportDescriptor() {
 
 			@Override
+			public String getKey() {
+				return ObjectEntryFolderResourceImpl.class.getName();
+			}
+
+			@Override
 			public String getLabelLanguageKey() {
-				return "objectEntryFolders";
+				return "model.resource.com.liferay.object.entry.folder";
 			}
 
 			@Override
@@ -209,11 +215,6 @@ public class ObjectEntryFolderResourceImpl
 			@Override
 			public String getPortletId() {
 				return ObjectPortletKeys.OBJECT_ENTRY_FOLDER;
-			}
-
-			@Override
-			public String getResourceClassName() {
-				return ObjectEntryFolderResourceImpl.class.getName();
 			}
 
 			@Override
@@ -755,7 +756,8 @@ public class ObjectEntryFolderResourceImpl
 						parentObjectEntryFolderExternalReferenceCode, groupId,
 						contextUser.getCompanyId());
 
-		if ((parentObjectEntryFolderId != null) &&
+		if (!ExportImportThreadLocal.isImportInProcess() &&
+			(parentObjectEntryFolderId != null) &&
 			(serviceBuilderObjectEntryFolder != null) &&
 			(serviceBuilderObjectEntryFolder.getObjectEntryFolderId() !=
 				parentObjectEntryFolderId)) {

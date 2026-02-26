@@ -28,9 +28,11 @@ import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocalService;
+import com.liferay.layout.page.template.util.LayoutPageTemplateEntryUtil;
 import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.layout.util.structure.RootLayoutStructureItem;
 import com.liferay.petra.string.CharPool;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.model.Group;
@@ -106,7 +108,7 @@ public class ExportImportDisplayPagesTest {
 		_assertExportImportDisplayPage(
 			_portal.getClassNameId(
 				"com.liferay.asset.kernel.model.AssetCategory"),
-			0, null, 0);
+			StringPool.BLANK, null, 0, null);
 	}
 
 	@Test
@@ -119,7 +121,7 @@ public class ExportImportDisplayPagesTest {
 		_assertExportImportDisplayPage(
 			_portal.getClassNameId(
 				"com.liferay.commerce.product.model.CPDefinition"),
-			0, null, 0);
+			StringPool.BLANK, null, 0, null);
 	}
 
 	@Test
@@ -183,8 +185,9 @@ public class ExportImportDisplayPagesTest {
 		_assertExportImportDisplayPage(
 			_portal.getClassNameId(
 				"com.liferay.portal.kernel.repository.model.FileEntry"),
-			dlFileEntryType1.getFileEntryTypeId(), null,
-			dlFileEntryType2.getFileEntryTypeId());
+			dlFileEntryType1.getFileEntryTypeKey(), null,
+			dlFileEntryType2.getFileEntryTypeId(),
+			dlFileEntryType2.getFileEntryTypeKey());
 	}
 
 	@Test
@@ -218,10 +221,10 @@ public class ExportImportDisplayPagesTest {
 		_assertExportImportDisplayPage(
 			_portal.getClassNameId(
 				"com.liferay.portal.kernel.repository.model.FileEntry"),
-			dlFileEntryType.getFileEntryTypeId(),
+			dlFileEntryType.getFileEntryTypeKey(),
 			"x-could-not-be-imported-because-its-content-type-or-subtype-is-" +
 				"missing",
-			0);
+			0, null);
 	}
 
 	@Test
@@ -262,8 +265,8 @@ public class ExportImportDisplayPagesTest {
 			_serviceContext2);
 
 		_assertExportImportDisplayPage(
-			classNameId, ddmStructure1.getStructureId(), null,
-			ddmStructure2.getStructureId());
+			classNameId, ddmStructure1.getStructureKey(), null,
+			ddmStructure2.getStructureId(), ddmStructure2.getStructureKey());
 	}
 
 	@Test
@@ -287,22 +290,22 @@ public class ExportImportDisplayPagesTest {
 			_serviceContext1);
 
 		_assertExportImportDisplayPage(
-			classNameId, ddmStructure.getStructureId(),
+			classNameId, ddmStructure.getStructureKey(),
 			"x-could-not-be-imported-because-its-content-type-or-subtype-is-" +
 				"missing",
-			0);
+			0, null);
 	}
 
 	private void _assertExportImportDisplayPage(
-			long classNameId, long classTypeId, String errorMessageKey,
-			long expectedClassTypeId)
+			long classNameId, String classTypeKey, String errorMessageKey,
+			long expectedClassTypeId, String expectedClassTypeKey)
 		throws Exception {
 
 		LayoutPageTemplateEntry layoutPageTemplateEntry1 =
 			_layoutPageTemplateEntryLocalService.addLayoutPageTemplateEntry(
 				null, _serviceContext1.getUserId(),
 				_serviceContext1.getScopeGroupId(), 0, null, classNameId,
-				classTypeId, "Display Page Template One",
+				classTypeKey, "Display Page Template One",
 				LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE, 0,
 				WorkflowConstants.STATUS_APPROVED, _serviceContext1);
 
@@ -397,7 +400,13 @@ public class ExportImportDisplayPagesTest {
 		Assert.assertEquals(
 			classNameId, layoutPageTemplateEntry2.getClassNameId());
 		Assert.assertEquals(
-			expectedClassTypeId, layoutPageTemplateEntry2.getClassTypeId());
+			expectedClassTypeId,
+			LayoutPageTemplateEntryUtil.getClassTypeId(
+				layoutPageTemplateEntry2));
+		Assert.assertEquals(
+			expectedClassTypeKey,
+			LayoutPageTemplateEntryUtil.getClassTypeKey(
+				layoutPageTemplateEntry2));
 
 		Layout layout2 = _layoutLocalService.fetchLayout(
 			layoutPageTemplateEntry2.getPlid());
@@ -459,10 +468,10 @@ public class ExportImportDisplayPagesTest {
 		InfoItemFormVariation infoItemFormVariation =
 			infoItemFormVariations.get(0);
 
-		long classTypeId = GetterUtil.getLong(infoItemFormVariation.getKey());
-
 		_assertExportImportDisplayPage(
-			classNameId, classTypeId, null, classTypeId);
+			classNameId, infoItemFormVariation.getExternalReferenceCode(), null,
+			GetterUtil.getLong(infoItemFormVariation.getKey()),
+			infoItemFormVariation.getExternalReferenceCode());
 	}
 
 	private String _read(String fileName) throws Exception {

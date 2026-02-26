@@ -21,15 +21,18 @@ import {
 	getProductSpecification,
 } from '../../utils/productUtils';
 import ProductPurchaseOutlet from './ProductPurchaseOutlet';
+import ProductPurchaseAccountSelection from './pages/AccountSelection';
 import AppAccountSelection from './pages/App/AccountSelection';
 import {InsuficientResources} from './pages/App/InsuficientResources';
 import ContactSalesPage from './pages/App/InsuficientResources/ContactSales';
 import ContactSalesForm from './pages/App/InsuficientResources/ContactSalesForm';
 import License from './pages/App/License';
 import PaymentMethod from './pages/App/PaymentMethod';
-import OrderSummary from './pages/App/PaymentMethod/OrderSummary/OrderSummary';
+import OrderSummary from './pages/LiferayService/OrderSummary';
+import ProjectSelection from './pages/LiferayService/Project';
 import NextSteps from './pages/NextSteps';
 import SolutionProvisioningForm from './pages/Solution';
+import LDPProvisioning from './pages/Solution/LDPProvisioningForm';
 
 export const productTypeRoutes = {
 	[ProductTypeVocabulary.APP]: {
@@ -71,6 +74,36 @@ export const productTypeRoutes = {
 				return !route.isPaidOnly;
 			});
 		},
+	},
+	[ProductTypeVocabulary.LIFERAY_SERVICE]: {
+		metadata: {
+			tinyStepsDisplay: true,
+			useCart: true,
+		},
+		routes: () => [
+			{
+				element: ProductPurchaseAccountSelection,
+				index: true,
+				title: i18n.translate('account'),
+			},
+
+			{
+				element: ProjectSelection,
+				path: 'project',
+				title: i18n.translate('project'),
+			},
+
+			{
+				element: LDPProvisioning,
+				path: 'provisioning',
+				title: i18n.translate('provisioning'),
+			},
+			{
+				element: OrderSummary,
+				path: 'summary',
+				title: i18n.translate('summary'),
+			},
+		],
 	},
 	[ProductTypeVocabulary.SOLUTION]: {
 		metadata: {

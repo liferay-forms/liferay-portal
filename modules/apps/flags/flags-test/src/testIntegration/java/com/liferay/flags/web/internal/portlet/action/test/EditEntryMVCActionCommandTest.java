@@ -1,0 +1,189 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2026 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
+package com.liferay.flags.web.internal.portlet.action.test;
+
+import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.captcha.configuration.CaptchaConfiguration;
+import com.liferay.flags.service.FlagsEntryService;
+import com.liferay.message.boards.constants.MBCategoryConstants;
+import com.liferay.message.boards.constants.MBMessageConstants;
+import com.liferay.message.boards.model.MBCategory;
+import com.liferay.message.boards.model.MBMessage;
+import com.liferay.message.boards.service.MBCategoryLocalServiceUtil;
+import com.liferay.message.boards.service.MBMessageLocalService;
+import com.liferay.portal.configuration.test.util.CompanyConfigurationTemporarySwapper;
+import com.liferay.portal.configuration.test.util.ConfigurationTemporarySwapper;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.service.CompanyLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.test.ReflectionTestUtil;
+import com.liferay.portal.kernel.test.portlet.MockLiferayPortletActionRequest;
+import com.liferay.portal.kernel.test.portlet.MockLiferayPortletActionResponse;
+import com.liferay.portal.kernel.test.rule.AggregateTestRule;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
+import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
+import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.test.util.UserTestUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.test.rule.Inject;
+import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+
+import jakarta.portlet.ActionRequest;
+import jakarta.portlet.ActionResponse;
+
+import java.util.Collections;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.junit.Assert;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+/**
+ * @author Ankita Malik
+ */
+@RunWith(Arquillian.class)
+public class EditEntryMVCActionCommandTest {
+
+	@ClassRule
+	@Rule
+	public static final AggregateTestRule aggregateTestRule =
+		new LiferayIntegrationTestRule();
+
+	@Test
+	public void testDoProcessAction() throws Exception {
+		User reportedUser = UserTestUtil.addUser();
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(
+				TestPropsValues.getGroupId());
+
+		MBCategory mbCategory = MBCategoryLocalServiceUtil.addCategory(
+			null, reportedUser.getUserId(),
+			MBCategoryConstants.DEFAULT_PARENT_CATEGORY_ID,
+			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+			serviceContext);
+
+		MBMessage mbMessage = _mbMessageLocalService.addMessage(
+			reportedUser.getUserId(), reportedUser.getFullName(),
+			TestPropsValues.getGroupId(), mbCategory.getCategoryId(),
+			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+			MBMessageConstants.DEFAULT_FORMAT, Collections.emptyList(), false,
+			0, false, serviceContext);
+
+		AtomicReference<String> reporterEmailAddressAtomicReference =
+			new AtomicReference<>();
+		User reporterUser = TestPropsValues.getUser();
+		AtomicLong reporterUserIdAtomicLong = new AtomicLong();
+
+		try (AutoCloseable autoCloseable =
+				ReflectionTestUtil.setFieldValueWithAutoCloseable(
+					_mvcActionCommand, "_flagsEntryService",
+					new FlagsEntryService() {
+
+						@Override
+						public void addEntry(
+							String className, long classPK,
+							String reporterEmailAddress, long reportedUserId,
+							String contentTitle, String contentURL,
+							String reason, ServiceContext serviceContext) {
+
+							reporterEmailAddressAtomicReference.set(
+								reporterEmailAddress);
+							reporterUserIdAtomicLong.set(reportedUserId);
+						}
+
+						@Override
+						public String getOSGiServiceIdentifier() {
+							return "";
+						}
+
+					});
+			CompanyConfigurationTemporarySwapper
+				companyConfigurationTemporarySwapper =
+					new CompanyConfigurationTemporarySwapper(
+						TestPropsValues.getCompanyId(),
+						CaptchaConfiguration.class.getName(),
+						HashMapDictionaryBuilder.<String, Object>put(
+							"maxChallenges", "-1"
+						).build());
+			ConfigurationTemporarySwapper configurationTemporarySwapper =
+				new ConfigurationTemporarySwapper(
+					CaptchaConfiguration.class.getName(),
+					HashMapDictionaryBuilder.<String, Object>put(
+						"maxChallenges", "-1"
+					).build())) {
+
+			ReflectionTestUtil.invoke(
+				_mvcActionCommand, "doProcessAction",
+				new Class<?>[] {ActionRequest.class, ActionResponse.class},
+				_getMockLiferayPortletActionRequest(mbMessage, reporterUser),
+				new MockLiferayPortletActionResponse());
+		}
+
+		Assert.assertEquals(
+			reporterUser.getEmailAddress(),
+			reporterEmailAddressAtomicReference.get());
+		Assert.assertEquals(
+			reportedUser.getUserId(), reporterUserIdAtomicLong.longValue());
+	}
+
+	private MockLiferayPortletActionRequest _getMockLiferayPortletActionRequest(
+			MBMessage mbMessage, User reporterUser)
+		throws Exception {
+
+		MockLiferayPortletActionRequest mockLiferayPortletActionRequest =
+			new MockLiferayPortletActionRequest();
+
+		ThemeDisplay themeDisplay = new ThemeDisplay();
+
+		themeDisplay.setCompany(
+			_companyLocalService.fetchCompany(TestPropsValues.getCompanyId()));
+		themeDisplay.setScopeGroupId(TestPropsValues.getGroupId());
+		themeDisplay.setSignedIn(true);
+		themeDisplay.setUser(reporterUser);
+
+		mockLiferayPortletActionRequest.setAttribute(
+			WebKeys.THEME_DISPLAY, themeDisplay);
+
+		mockLiferayPortletActionRequest.setParameter(
+			"className", MBMessage.class.getName());
+		mockLiferayPortletActionRequest.setParameter(
+			"classPK", String.valueOf(mbMessage.getMessageId()));
+		mockLiferayPortletActionRequest.setParameter(
+			"contentTitle", mbMessage.getSubject());
+		mockLiferayPortletActionRequest.setParameter(
+			"contentURL", "http://localhost/test");
+		mockLiferayPortletActionRequest.setParameter(
+			"reason", StringUtil.randomString());
+		mockLiferayPortletActionRequest.setParameter(
+			"redirect", "http://localhost");
+		mockLiferayPortletActionRequest.setParameter(
+			"reporterEmailAddress", "randomUser@liferay.com");
+		mockLiferayPortletActionRequest.setParameter(
+			"reportedUserId", String.valueOf(RandomTestUtil.nextLong()));
+
+		return mockLiferayPortletActionRequest;
+	}
+
+	@Inject
+	private CompanyLocalService _companyLocalService;
+
+	@Inject
+	private MBMessageLocalService _mbMessageLocalService;
+
+	@Inject(
+		filter = "component.name=com.liferay.flags.web.internal.portlet.action.EditEntryMVCActionCommand"
+	)
+	private MVCActionCommand _mvcActionCommand;
+
+}

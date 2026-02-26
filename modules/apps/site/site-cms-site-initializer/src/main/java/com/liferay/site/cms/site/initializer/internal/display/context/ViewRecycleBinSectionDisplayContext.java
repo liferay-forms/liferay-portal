@@ -17,6 +17,7 @@ import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.language.Language;
@@ -24,10 +25,11 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -187,48 +189,67 @@ public class ViewRecycleBinSectionDisplayContext
 	protected String getCMSSectionFilterString() {
 		String filterString =
 			"cmsRoot eq true and (cmsSection eq 'contents' or cmsSection eq " +
-				"'files') and status eq ";
+				"'files')";
 
-		Long[] groupIds;
+		List<Long> groupIds = null;
 
 		try {
 			groupIds = _getDepotGroupIds(_themeDisplay.getCompanyId());
 		}
-		catch (Exception exception) {
+		catch (PortalException portalException) {
 			if (_log.isDebugEnabled()) {
 				_log.debug(
 					"Unable to get depot group IDs for group " + _groupId,
-					exception);
+					portalException);
 			}
 
-			return filterString + WorkflowConstants.STATUS_ANY;
+			return filterString + " and status eq " +
+				WorkflowConstants.STATUS_ANY;
 		}
 
-		if (ArrayUtil.isEmpty(groupIds)) {
-			return filterString + WorkflowConstants.STATUS_ANY;
+		if (groupIds.isEmpty()) {
+			return filterString + " and status eq " +
+				WorkflowConstants.STATUS_ANY;
 		}
 
 		return StringBundler.concat(
-			filterString, WorkflowConstants.STATUS_IN_TRASH,
-			" and groupIds/any(g:g in (", StringUtil.merge(groupIds, ","),
-			"))");
+			filterString, " and groupIds/any(g:g in (",
+			StringUtil.merge(groupIds, ","), ")) and status eq ",
+			WorkflowConstants.STATUS_IN_TRASH);
 	}
 
-	private Long[] _getDepotGroupIds(long companyId) throws Exception {
-		return TransformUtil.transformToArray(
-			depotEntryLocalService.getDepotEntries(
-				companyId, DepotConstants.TYPE_SPACE),
-			depotEntry -> {
-				Group group = groupLocalService.fetchGroup(
-					depotEntry.getGroupId());
+	private List<Long> _getDepotGroupIds(long companyId)
+		throws PortalException {
+
+		List<Long> depotEntryGroupIds = null;
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		if (RoleLocalServiceUtil.hasUserRole(
+				themeDisplay.getUserId(), themeDisplay.getCompanyId(),
+				RoleConstants.CMS_ADMINISTRATOR, true)) {
+
+			depotEntryGroupIds = depotEntryLocalService.getDepotEntryGroupIds(
+				companyId, DepotConstants.TYPE_SPACE);
+		}
+		else {
+			depotEntryGroupIds = depotEntryLocalService.getDepotEntryGroupIds(
+				companyId, themeDisplay.getUserId(), DepotConstants.TYPE_SPACE);
+		}
+
+		return TransformUtil.transform(
+			depotEntryGroupIds,
+			depotEntryGroupId -> {
+				Group group = groupLocalService.fetchGroup(depotEntryGroupId);
 
 				if ((group == null) || !_trashHelper.isTrashEnabled(group)) {
 					return null;
 				}
 
 				return group.getGroupId();
-			},
-			Long.class);
+			});
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

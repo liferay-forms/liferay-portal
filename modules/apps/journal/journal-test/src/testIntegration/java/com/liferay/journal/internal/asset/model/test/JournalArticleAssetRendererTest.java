@@ -196,7 +196,7 @@ public class JournalArticleAssetRendererTest {
 		LayoutDisplayPageProvider<?> layoutDisplayPageProvider =
 			_layoutDisplayPageProviderRegistry.
 				getLayoutDisplayPageProviderByClassName(
-					JournalArticle.class.getName());
+					article.getCompanyId(), JournalArticle.class.getName());
 
 		String viewInContextURL = _getURLViewInContext(
 			article.getResourcePrimKey(), themeDisplay);
@@ -287,7 +287,7 @@ public class JournalArticleAssetRendererTest {
 			DisplayPageTemplateTestUtil.addDisplayPageTemplate(
 				_group.getGroupId(),
 				_portal.getClassNameId(JournalArticle.class.getName()),
-				article.getDDMStructureId(), true,
+				article.getDDMStructureKey(), true,
 				WorkflowConstants.STATUS_APPROVED);
 
 		ThemeDisplay themeDisplay = ContentLayoutTestUtil.getThemeDisplay(
@@ -318,7 +318,7 @@ public class JournalArticleAssetRendererTest {
 			DisplayPageTemplateTestUtil.addDisplayPageTemplate(
 				_group.getGroupId(),
 				_portal.getClassNameId(JournalArticle.class.getName()),
-				article.getDDMStructureId(), true,
+				article.getDDMStructureKey(), true,
 				WorkflowConstants.STATUS_APPROVED);
 
 		ThemeDisplay themeDisplay = ContentLayoutTestUtil.getThemeDisplay(

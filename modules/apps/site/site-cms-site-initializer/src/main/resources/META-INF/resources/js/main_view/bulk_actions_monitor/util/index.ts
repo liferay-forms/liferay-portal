@@ -37,6 +37,9 @@ export function composeCreateTaskURL(
 	if (searchQuery) {
 		postURL.searchParams.append('search', searchQuery);
 	}
+	else {
+		postURL.searchParams.append('emptySearch', 'true');
+	}
 
 	const fullFilters = filters.map(({odataFilterString}) => odataFilterString);
 
@@ -62,6 +65,8 @@ export function composeCreateTaskDTO(
 	return {
 		bulkActionItems: items.map(
 			({
+				className,
+				id,
 				embedded: {
 					externalReferenceCode: embeddedExternalReferenceCode,
 					file,
@@ -74,8 +79,11 @@ export function composeCreateTaskDTO(
 				const itemsTransformed = {
 					classExternalReferenceCode:
 						externalReferenceCode || embeddedExternalReferenceCode,
-					className: entryClassName || OBJECT_ENTRY_FOLDER_CLASS_NAME,
-					classPK,
+					className:
+						entryClassName ||
+						className ||
+						OBJECT_ENTRY_FOLDER_CLASS_NAME,
+					classPK: classPK || id,
 					name,
 				} as IBulkActionFDSDataItemTransformed;
 

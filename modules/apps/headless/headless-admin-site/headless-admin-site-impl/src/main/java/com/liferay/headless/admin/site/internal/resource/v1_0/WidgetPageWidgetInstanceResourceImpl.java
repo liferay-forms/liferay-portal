@@ -24,6 +24,9 @@ import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.pagination.Page;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
+
 import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
@@ -42,13 +45,16 @@ public class WidgetPageWidgetInstanceResourceImpl
 	extends BaseWidgetPageWidgetInstanceResourceImpl {
 
 	@Override
+	@Tags({@Tag(description = "[DEV]", name = "WidgetPageWidgetInstance")})
 	public void deleteSiteSitePageWidgetInstance(
 			String siteExternalReferenceCode,
 			String sitePageExternalReferenceCode,
 			String widgetInstanceExternalReferenceCode)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-35443")) {
+		if (!FeatureFlagManagerUtil.isEnabled(
+				contextCompany.getCompanyId(), "LPD-74328")) {
+
 			throw new UnsupportedOperationException();
 		}
 
@@ -92,7 +98,9 @@ public class WidgetPageWidgetInstanceResourceImpl
 			String widgetInstanceExternalReferenceCode)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-35443")) {
+		if (!FeatureFlagManagerUtil.isEnabled(
+				contextCompany.getCompanyId(), "LPD-74328")) {
+
 			throw new UnsupportedOperationException();
 		}
 
@@ -131,7 +139,9 @@ public class WidgetPageWidgetInstanceResourceImpl
 			String sitePageExternalReferenceCode)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-35443")) {
+		if (!FeatureFlagManagerUtil.isEnabled(
+				contextCompany.getCompanyId(), "LPD-74328")) {
+
 			throw new UnsupportedOperationException();
 		}
 
@@ -174,7 +184,9 @@ public class WidgetPageWidgetInstanceResourceImpl
 			WidgetPageWidgetInstance widgetPageWidgetInstance)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-35443")) {
+		if (!FeatureFlagManagerUtil.isEnabled(
+				contextCompany.getCompanyId(), "LPD-74328")) {
+
 			throw new UnsupportedOperationException();
 		}
 
@@ -211,7 +223,9 @@ public class WidgetPageWidgetInstanceResourceImpl
 			WidgetPageWidgetInstance widgetPageWidgetInstance)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPD-35443")) {
+		if (!FeatureFlagManagerUtil.isEnabled(
+				contextCompany.getCompanyId(), "LPD-74328")) {
+
 			throw new UnsupportedOperationException();
 		}
 
